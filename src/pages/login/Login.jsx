@@ -1,9 +1,9 @@
 import "./Login.css"
 
-export default function Login(){
-    return(
-        <main>
+export default function Login() {
+  return (
+    <main>
 
-        </main>
-    );
+    </main>
+  );
 }
