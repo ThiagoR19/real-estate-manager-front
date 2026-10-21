@@ -1,6 +1,3 @@
-export default function Navbar() {
-  return (
-    <div>Navbar</div>
-  )
-}
+// Keep the old import path working while the shared layout owns the navbar.
+export { default } from "../../layouts/Navbar";
 

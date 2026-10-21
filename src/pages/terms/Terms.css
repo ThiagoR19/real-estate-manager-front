@@ -3,7 +3,7 @@ body:has(#terms) {
 }
 
 #terms {
-  min-height: 100dvh;
+  min-height: calc(100dvh - 61px);
   background: #f7f9fc;
   color: #17235e;
   font-family: "Inter", "Segoe UI", Arial, sans-serif;

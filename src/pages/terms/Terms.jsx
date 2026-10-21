@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import { Link } from "wouter";
 import addressCardIcon from "../../assets/icons/address-card-regular-full.svg";
 import buildingIcon from "../../assets/icons/building-columns-solid-full.svg";
 import clockIcon from "../../assets/icons/clock-regular-full.svg";
@@ -40,7 +39,6 @@ const sections = [
 
 export default function Terms() {
   const [activeSection, setActiveSection] = useState(sections[0].id);
-  const [navigationHidden, setNavigationHidden] = useState(false);
   const contentRef = useRef(null);
   const sectionRefs = useRef({});
 
@@ -72,47 +70,8 @@ export default function Terms() {
 
   return (
     <main id="terms">
-      <header className="terms__header">
-        <button
-          className="terms__header-button"
-          type="button"
-          aria-label={navigationHidden ? "Mostrar secciones" : "Ocultar secciones"}
-          aria-expanded={!navigationHidden}
-          aria-controls="terms-navigation"
-          onClick={() => setNavigationHidden(!navigationHidden)}
-        >
-          <img src={addressCardIcon} className="terms__header-button-img" alt="" />
-        </button>
-
-        <Link href="/dashboard" className="terms__header-a" aria-label="AGI, inicio">
-          <img src={buildingIcon} className="terms__header-a-img" alt="" />
-          <strong className="terms__header-a-strong">AGI</strong>
-        </Link>
-
-        <nav className="terms__header-nav" aria-label="Navegación principal">
-          <Link href="/properties" className="terms__header-nav-a">Propiedades</Link>
-          <span className="terms__header-nav-span">Agenda</span>
-        </nav>
-
-        <aside className="terms__header-aside" aria-label="Cuenta de usuario">
-          <details className="terms__header-aside-details">
-            <summary className="terms__aside-details-summary" aria-label="Notificaciones">
-              <img src={clockIcon} className="terms__details-summary-img" alt="" />
-            </summary>
-            <p className="terms__aside-details-p">No tenés notificaciones nuevas.</p>
-          </details>
-          <Link href="/profile" className="terms__header-aside-a">
-            <span className="terms__aside-a-span">
-              Juan Pérez
-              <small className="terms__a-span-small">Agente</small>
-            </span>
-            <i className="terms__aside-a-i" aria-hidden="true" />
-          </Link>
-        </aside>
-      </header>
-
-      <div className="terms__div" data-navigation-hidden={navigationHidden}>
-        <aside className="terms__div-aside" id="terms-navigation" hidden={navigationHidden}>
+      <div className="terms__div">
+        <aside className="terms__div-aside" id="terms-navigation">
           <nav className="terms__div-aside-nav" aria-label="Secciones de términos y condiciones">
             {sections.map(({ id, title, icon }) => (
               <a
