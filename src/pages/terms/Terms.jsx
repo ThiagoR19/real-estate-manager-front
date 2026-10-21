@@ -1,13 +1,15 @@
 import { useRef, useState } from "react";
-import arrowsRotateIcon from "../../assets/icons/arrows-rotate-solid-full.svg";
-import circleInfoIcon from "../../assets/icons/circle-info-solid-full.svg";
-import desktopIcon from "../../assets/icons/desktop-solid-full.svg";
-import envelopeIcon from "../../assets/icons/envelope-regular-full.svg";
-import fileIcon from "../../assets/icons/file-lines-regular-full.svg";
-import houseIcon from "../../assets/icons/house-solid-full.svg";
-import lockIcon from "../../assets/icons/lock-solid-full.svg";
-import shieldIcon from "../../assets/icons/shield-halved-solid-full.svg";
-import userIcon from "../../assets/icons/user-solid-full.svg";
+import {
+  arrowsRotateIcon,
+  circleInfoIcon,
+  desktopIcon,
+  envelopeIcon,
+  fileLinesIcon as fileIcon,
+  houseIcon,
+  lockIcon,
+  shieldHalvedIcon as shieldIcon,
+  userIcon,
+} from "../../assets/icons";
 import "./Terms.css";
 
 const sections = [

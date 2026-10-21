@@ -1,13 +1,15 @@
 import { useMemo, useState } from "react";
-import angleDownIcon from "../../assets/icons/angle-down-solid-full.svg";
-import bathIcon from "../../assets/icons/bath-solid-full.svg";
-import bedIcon from "../../assets/icons/bed-solid-full.svg";
-import eyeIcon from "../../assets/icons/eye-solid-full.svg";
-import houseIcon from "../../assets/icons/house-solid-full.svg";
-import locationIcon from "../../assets/icons/location-dot-solid-full.svg";
-import plusIcon from "../../assets/icons/plus-solid-full.svg";
-import rulerIcon from "../../assets/icons/ruler-combined-solid-full.svg";
-import tagIcon from "../../assets/icons/tag-solid-full.svg";
+import {
+  angleDownIcon,
+  bathIcon,
+  bedIcon,
+  eyeIcon,
+  houseIcon,
+  locationDotIcon as locationIcon,
+  plusIcon,
+  rulerCombinedIcon as rulerIcon,
+  tagIcon,
+} from "../../assets/icons";
 import propertyImage from "/images (1).jpg";
 import "./Properties.css";
 

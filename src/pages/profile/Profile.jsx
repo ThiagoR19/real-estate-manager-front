@@ -1,8 +1,10 @@
 import { useState } from "react";
-import addressCardIcon from "../../assets/icons/address-card-regular-full.svg";
-import buildingIcon from "../../assets/icons/building-columns-solid-full.svg";
-import cameraIcon from "../../assets/icons/camera-solid-full.svg";
-import phoneIcon from "../../assets/icons/phone-solid-full.svg";
+import {
+  addressCardIcon,
+  buildingColumnsIcon as buildingIcon,
+  cameraIcon,
+  phoneIcon,
+} from "../../assets/icons";
 import "./Profile.css";
 
 const personalFields = [

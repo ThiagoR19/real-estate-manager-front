@@ -1,12 +1,14 @@
 import { useState } from "react";
-import envelopeIcon from "../../assets/icons/envelope-regular-full.svg";
-import fileIcon from "../../assets/icons/file-lines-regular-full.svg";
-import clockIcon from "../../assets/icons/clock-regular-full.svg";
-import magnifyingGlassIcon from "../../assets/icons/magnifying-glass-solid-full.svg";
-import peopleIcon from "../../assets/icons/people.svg";
-import phoneIcon from "../../assets/icons/phone-solid-full.svg";
-import plusIcon from "../../assets/icons/plus-solid-full.svg";
-import xIcon from "../../assets/icons/x-solid-full.svg";
+import {
+  envelopeIcon,
+  fileLinesIcon as fileIcon,
+  clockIcon,
+  magnifyingGlassIcon,
+  peopleIcon,
+  phoneIcon,
+  plusIcon,
+  xIcon,
+} from "../../assets/icons";
 import propertyImage from "/images.jpg";
 import "./Owners.css";
 

@@ -1,20 +1,22 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
-import bellIcon from "../assets/icons/bell-solid-full.svg";
-import briefcaseIcon from "../assets/icons/briefcase-solid-full.svg";
-import buildingIcon from "../assets/icons/building-columns-solid-full.svg";
-import calendarIcon from "../assets/icons/calendar-regular-full.svg";
-import chartIcon from "../assets/icons/chart-column-solid-full.svg";
-import chatIcon from "../assets/icons/comments-solid-full.svg";
-import closeIcon from "../assets/icons/x-solid-full.svg";
-import fileIcon from "../assets/icons/file-lines-regular-full.svg";
-import gearIcon from "../assets/icons/gear-solid-full.svg";
-import houseIcon from "../assets/icons/house-solid-full.svg";
-import houseUserIcon from "../assets/icons/house-user-solid-full.svg";
-import searchIcon from "../assets/icons/magnifying-glass-solid-full.svg";
-import menuIcon from "../assets/icons/bars-solid-full.svg";
-import peopleIcon from "../assets/icons/people.svg";
-import userIcon from "../assets/icons/user-solid-full.svg";
+import {
+  bellIcon,
+  briefcaseIcon,
+  buildingColumnsIcon as buildingIcon,
+  calendarIcon,
+  chartColumnIcon as chartIcon,
+  commentsIcon as chatIcon,
+  xIcon as closeIcon,
+  fileLinesIcon as fileIcon,
+  gearIcon,
+  houseIcon,
+  houseUserIcon,
+  magnifyingGlassIcon as searchIcon,
+  barsIcon as menuIcon,
+  peopleIcon,
+  userIcon,
+} from "../assets/icons";
 import referenceImage from "../assets/terms-reference.png";
 import brandLogo from "/logo.png";
 import "./Navbar.css";

@@ -1,11 +1,13 @@
 import { useMemo, useState } from "react";
-import angleDownIcon from "../../assets/icons/angle-down-solid-full.svg";
-import envelopeIcon from "../../assets/icons/envelope-regular-full.svg";
-import peopleIcon from "../../assets/icons/people.svg";
-import penIcon from "../../assets/icons/pen-solid-full.svg";
-import phoneIcon from "../../assets/icons/phone-solid-full.svg";
-import plusIcon from "../../assets/icons/plus-solid-full.svg";
-import trashIcon from "../../assets/icons/trash-can-solid-full.svg";
+import {
+  angleDownIcon,
+  envelopeIcon,
+  peopleIcon,
+  penIcon,
+  phoneIcon,
+  plusIcon,
+  trashCanIcon as trashIcon,
+} from "../../assets/icons";
 import "./Professional.css";
 
 const initialProfessionals = Array.from({ length: 9 }, (_, index) => ({

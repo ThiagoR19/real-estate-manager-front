@@ -1,8 +1,10 @@
 import { useState } from "react";
-import angleIcon from "../../assets/icons/angle-down-solid-full.svg";
-import calendarIcon from "../../assets/icons/calendar-regular-full.svg";
-import plusIcon from "../../assets/icons/plus-solid-full.svg";
-import userIcon from "../../assets/icons/user-solid-full.svg";
+import {
+  angleDownIcon as angleIcon,
+  calendarIcon,
+  plusIcon,
+  userIcon,
+} from "../../assets/icons";
 import propertyImage from "/images (1).jpg";
 import "./Schedule.css";
 

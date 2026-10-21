@@ -1,11 +1,13 @@
 import { useRef, useState } from "react";
-import cameraIcon from "../../assets/icons/camera-solid-full.svg";
-import checkIcon from "../../assets/icons/check-solid-full.svg";
-import envelopeIcon from "../../assets/icons/envelope-regular-full.svg";
-import imageIcon from "../../assets/icons/image-regular-full.svg";
-import phoneIcon from "../../assets/icons/phone-solid-full.svg";
-import plusIcon from "../../assets/icons/plus-solid-full.svg";
-import userIcon from "../../assets/icons/user-solid-full.svg";
+import {
+  cameraIcon,
+  checkIcon,
+  envelopeIcon,
+  imageIcon,
+  phoneIcon,
+  plusIcon,
+  userIcon,
+} from "../../assets/icons";
 import "./Agency.css";
 
 const initialAgency = {

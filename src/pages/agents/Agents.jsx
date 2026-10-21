@@ -1,14 +1,16 @@
 import { useMemo, useState } from "react";
-import angleDownIcon from "../../assets/icons/angle-down-solid-full.svg";
-import clockIcon from "../../assets/icons/clock-regular-full.svg";
-import envelopeIcon from "../../assets/icons/envelope-regular-full.svg";
-import fileIcon from "../../assets/icons/file-lines-regular-full.svg";
-import locationIcon from "../../assets/icons/location-dot-solid-full.svg";
-import magnifyingGlassIcon from "../../assets/icons/magnifying-glass-solid-full.svg";
-import peopleIcon from "../../assets/icons/people.svg";
-import phoneIcon from "../../assets/icons/phone-solid-full.svg";
-import plusIcon from "../../assets/icons/plus-solid-full.svg";
-import xIcon from "../../assets/icons/x-solid-full.svg";
+import {
+  angleDownIcon,
+  clockIcon,
+  envelopeIcon,
+  fileLinesIcon as fileIcon,
+  locationDotIcon as locationIcon,
+  magnifyingGlassIcon,
+  peopleIcon,
+  phoneIcon,
+  plusIcon,
+  xIcon,
+} from "../../assets/icons";
 import "./Agents.css";
 
 const agents = [

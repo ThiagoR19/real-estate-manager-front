@@ -1,15 +1,17 @@
 import { useState } from "react";
-import bathIcon from "../../assets/icons/bath-solid-full.svg";
-import bedIcon from "../../assets/icons/bed-solid-full.svg";
-import calendarIcon from "../../assets/icons/calendar-regular-full.svg";
-import cameraIcon from "../../assets/icons/camera-solid-full.svg";
-import clockIcon from "../../assets/icons/clock-regular-full.svg";
-import envelopeIcon from "../../assets/icons/envelope-regular-full.svg";
-import houseIcon from "../../assets/icons/house-solid-full.svg";
-import locationIcon from "../../assets/icons/location-dot-solid-full.svg";
-import phoneIcon from "../../assets/icons/phone-solid-full.svg";
-import rulerIcon from "../../assets/icons/ruler-combined-solid-full.svg";
-import userIcon from "../../assets/icons/user-solid-full.svg";
+import {
+  bathIcon,
+  bedIcon,
+  calendarIcon,
+  cameraIcon,
+  clockIcon,
+  envelopeIcon,
+  houseIcon,
+  locationDotIcon as locationIcon,
+  phoneIcon,
+  rulerCombinedIcon as rulerIcon,
+  userIcon,
+} from "../../assets/icons";
 import villaImage from "/ly-villa-costa-blanca-1_b02f5d33_900x900.jpg";
 import terraceImage from "/images.jpg";
 import houseImage from "/images (1).jpg";

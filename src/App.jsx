@@ -1,22 +1,6 @@
 import { Route, Switch } from "wouter";
-import AboutUs from "./pages/aboutUs/AboutUs";
-import Agency from "./pages/agency/Agency";
-import Agents from "./pages/agents/Agents";
-import Chat from "./pages/chat/Chat";
-import Dashboard from "./pages/dashboard/Dashboard";
-import Earnings from "./pages/earnings/Earnings";
-import Login from "./pages/login/Login";
-import Owners from "./pages/owners/Owners";
-import Payments from "./pages/payments/Payments";
-import Properties from "./pages/properties/Properties";
-import Profile from "./pages/profile/Profile";
-import Reports from "./pages/reports/Reports";
-import Tenant from "./pages/tenant/Tenant";
-import Terms from "./pages/terms/Terms";
-import Professional from "./pages/professional/Professional";
+import { AboutUs, Agency, Agents, Chat, Dashboard, Earnings, Login, Owners, Payments, Professional, Profile, Properties, Property, Reports, Schedule, Tenant, Terms } from "./pages/index.js";
 import Navbar from "./layouts/Navbar";
-import Property from "./pages/property/Property";
-import Schedule from "./pages/schedule/Schedule";
 
 import "./App.css";
 
