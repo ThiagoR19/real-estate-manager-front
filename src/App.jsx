@@ -6,7 +6,7 @@ import Chat from "./pages/chat/Chat";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Earnings from "./pages/earnings/Earnings";
 import Login from "./pages/login/Login";
-import Owner from "./pages/owner/Owner";
+import Owners from "./pages/owners/Owners";
 import Payments from "./pages/payments/Payments";
 import Properties from "./pages/properties/Properties";
 import Profile from "./pages/profile/Profile";
@@ -15,6 +15,8 @@ import Tenant from "./pages/tenant/Tenant";
 import Terms from "./pages/terms/Terms";
 import Professional from "./pages/professional/Professional";
 import Navbar from "./layouts/Navbar";
+import Property from "./pages/property/Property";
+import Schedule from "./pages/schedule/Schedule";
 
 import "./App.css";
 
@@ -27,17 +29,17 @@ function AuthenticatedApp() {
         <Route path="/agents" component={Agents} />
         <Route path="/properties" component={Properties} />
         <Route path="/tenant" component={Tenant} />
-        <Route path="/owner" component={Owner} />
+        <Route path="/property" component={Property} />
+        <Route path="/owners" component={Owners} />
         <Route path="/profile" component={Profile} />
         <Route path="/reports" component={Reports} />
-        <Route path="/terms" component={Terms} />
         <Route path="/chat" component={Chat} />
         <Route path="/agency" component={Agency} />
         <Route path="/payments" component={Payments} />
         <Route path="/earnings" component={Earnings} />
-        <Route path="/about" component={AboutUs} />
+        <Route path="/schedule" component={Schedule} />
         <Route path="/aboutUs" component={AboutUs} />
-        <Route path="/about-us" component={AboutUs} />
+        <Route path="/terms" component={Terms} />
         <Route path="/professional" component={Professional} />
       </div>
     </div>

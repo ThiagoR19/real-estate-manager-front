@@ -1,40 +1,70 @@
 import { useRef, useState } from "react";
-import addressCardIcon from "../../assets/icons/address-card-regular-full.svg";
-import buildingIcon from "../../assets/icons/building-columns-solid-full.svg";
-import clockIcon from "../../assets/icons/clock-regular-full.svg";
-import phoneIcon from "../../assets/icons/phone-solid-full.svg";
+import arrowsRotateIcon from "../../assets/icons/arrows-rotate-solid-full.svg";
+import circleInfoIcon from "../../assets/icons/circle-info-solid-full.svg";
+import desktopIcon from "../../assets/icons/desktop-solid-full.svg";
+import envelopeIcon from "../../assets/icons/envelope-regular-full.svg";
+import fileIcon from "../../assets/icons/file-lines-regular-full.svg";
+import houseIcon from "../../assets/icons/house-solid-full.svg";
+import lockIcon from "../../assets/icons/lock-solid-full.svg";
+import shieldIcon from "../../assets/icons/shield-halved-solid-full.svg";
+import userIcon from "../../assets/icons/user-solid-full.svg";
 import "./Terms.css";
 
 const sections = [
   {
     id: "introduccion",
     title: "Introducción",
-    icon: addressCardIcon,
-    text: "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like sometimes on purpose (injected humour and the like).",
+    icon: fileIcon,
+    text: "AGI Propiedades es una plataforma para organizar la gestión inmobiliaria en un solo lugar. Permite administrar propiedades, propietarios, inquilinos, agentes, contratos, pagos y comunicaciones de forma más simple y ordenada.",
   },
   {
     id: "uso-del-sistema",
     title: "Uso del sistema",
-    icon: buildingIcon,
-    text: "Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like sometimes on purpose (injected humour and the like).",
+    icon: desktopIcon,
+    text: "El sistema debe utilizarse únicamente para actividades relacionadas con la administración y comercialización de inmuebles. Cada usuario debe cargar información verdadera, mantenerla actualizada y evitar cualquier uso que pueda afectar a la plataforma o a otras personas.",
   },
   {
     id: "cuentas-de-usuario",
     title: "Cuentas de usuario",
-    icon: addressCardIcon,
-    text: "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like",
+    icon: userIcon,
+    text: "Cada cuenta es personal y debe utilizarse con las credenciales asignadas a su titular. El usuario es responsable de mantener su contraseña en reserva y debe informar de inmediato cualquier acceso no autorizado o actividad sospechosa.",
   },
   {
     id: "propiedades-y-datos",
     title: "Propiedades y datos",
-    icon: buildingIcon,
-    text: "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of",
+    icon: houseIcon,
+    text: "La información de las propiedades, sus documentos y sus condiciones debe ser exacta y estar actualizada. Solo deben incorporarse datos y archivos que el usuario esté autorizado a administrar, respetando los derechos de sus titulares.",
   },
-  { id: "responsabilidades", title: "Responsabilidades", icon: buildingIcon },
-  { id: "privacidad", title: "Privacidad", icon: addressCardIcon },
-  { id: "limitaciones", title: "Limitaciones", icon: addressCardIcon },
-  { id: "modificaciones", title: "Modificaciones", icon: clockIcon },
-  { id: "contacto", title: "Contacto", icon: phoneIcon },
+  {
+    id: "responsabilidades",
+    title: "Responsabilidades",
+    icon: shieldIcon,
+    text: "AGI Propiedades brinda herramientas para facilitar la gestión, pero cada usuario debe revisar la información antes de tomar decisiones o compartirla. La plataforma no reemplaza el asesoramiento legal, contable o profesional que pueda requerir cada operación.",
+  },
+  {
+    id: "privacidad",
+    title: "Privacidad",
+    icon: lockIcon,
+    text: "Los datos se utilizan para prestar y mejorar las funciones de la plataforma, gestionar las operaciones y facilitar las comunicaciones autorizadas. El acceso debe limitarse a las personas que lo necesitan para cumplir sus tareas y tratarse con la debida confidencialidad.",
+  },
+  {
+    id: "limitaciones",
+    title: "Limitaciones",
+    icon: circleInfoIcon,
+    text: "El servicio puede presentar interrupciones por mantenimiento, fallas técnicas o causas externas. Aunque se procura mantener la información disponible y segura, se recomienda conservar respaldos de los documentos importantes y verificar los datos antes de utilizarlos.",
+  },
+  {
+    id: "modificaciones",
+    title: "Modificaciones",
+    icon: arrowsRotateIcon,
+    text: "Estos términos pueden actualizarse para reflejar cambios en la plataforma, en sus funciones o en la normativa aplicable. Cuando una modificación sea relevante, se comunicará por los canales disponibles; continuar usando el sistema después de su publicación implica aceptar la versión vigente.",
+  },
+  {
+    id: "contacto",
+    title: "Contacto",
+    icon: envelopeIcon,
+    text: "Si necesitás ayuda, querés reportar un problema o tenés una consulta sobre estos términos, podés comunicarte con el equipo de AGI Propiedades a través de los canales de atención habilitados. Para agilizar la respuesta, incluí tu nombre, el detalle de la consulta y la sección relacionada.",
+  },
 ];
 
 export default function Terms() {
