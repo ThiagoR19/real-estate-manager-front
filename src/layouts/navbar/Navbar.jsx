@@ -9,19 +9,14 @@ function NavigationItem({ item, pathname, onNavigate }) {
   const active = isItemActive(pathname, item.href);
 
   return (
-    <Link
-      href={item.href}
-      className={`navbar__drawer-link${active ? " is-active" : ""}`}
-      aria-current={active ? "page" : undefined}
-      onClick={onNavigate}
-    >
+    <Link href={item.href} className={`navbar__drawer-link${active ? " is-active" : ""}`} aria-current={active ? "page" : undefined} onClick={onNavigate}>
       <img className="navbar__drawer-link-icon" src={item.icon} alt="" />
       <span>{item.label}</span>
     </Link>
   );
 }
 
-export default function Navbar({ menuOpen = false, onClose = () => {} }) {
+export default function Navbar({ menuOpen = false, onClose = () => { } }) {
   const [pathname] = useLocation();
 
   useEffect(() => {
