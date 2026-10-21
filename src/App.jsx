@@ -6,6 +6,7 @@ import Chat from "./pages/chat/Chat";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Earnings from "./pages/earnings/Earnings";
 import Login from "./pages/login/Login";
+import Registro from "./pages/registro/Registro";
 import Owner from "./pages/owner/Owner";
 import Payments from "./pages/payments/Payments";
 import Properties from "./pages/properties/Properties";
@@ -22,6 +23,7 @@ function App() {
     <div>
       <Route path="/" component={Login} />
       <Route path="/login" component={Login} />
+      <Route path="/registro" component={Registro} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/agents" component={Agents} />
       <Route path="/properties" component={Properties} />
@@ -43,4 +45,3 @@ function App() {
 }
 
 export default App;
-
