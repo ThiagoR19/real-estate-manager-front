@@ -144,7 +144,7 @@ export default function Terms() {
                 <span className="terms__div-section-span" aria-hidden="true">{index + 1}</span>
                 <article className="terms__div-section-article">
                   <h2 className="terms__section-article-h2" id={`terms-heading-${id}`}>{title}</h2>
-                  <p className="terms__section-article-p">{text ?? sections[1].text}</p>
+                <p className="terms__section-article-p">{text}</p>
                 </article>
               </section>
             ))}
