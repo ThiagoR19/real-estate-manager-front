@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import {
-  angleDownIcon,
   clockIcon,
   envelopeIcon,
   fileLinesIcon as fileIcon,
@@ -11,6 +10,7 @@ import {
   plusIcon,
   xIcon,
 } from "../../assets/icons";
+import DropdownSelect from "../../components/select/DropdownSelect";
 import "./Agents.css";
 
 const agents = [
@@ -38,13 +38,18 @@ function SummaryIcon({ icon }) {
 
 function ZoneFilter({ value, onChange }) {
   return (
-    <label className="agents__filter">
-      <span className="agents__filter-icon"><img src={locationIcon} alt="" /></span>
-      <select aria-label="Zona asignada" value={value} onChange={(event) => onChange(event.target.value)}>
-        {zones.map((zone) => <option key={zone} value={zone}>{zone === zones[0] ? "Zona" : zone}</option>)}
-      </select>
-      <img className="agents__filter-chevron" src={angleDownIcon} alt="" />
-    </label>
+    <DropdownSelect
+      label="Zona asignada"
+      placeholder="Zona"
+      value={value}
+      options={zones}
+      onChange={onChange}
+      icon={locationIcon}
+      className="agents__filter"
+      triggerClassName="agents__filter-trigger"
+      iconClassName="agents__filter-icon"
+      chevronClassName="agents__filter-chevron"
+    />
   );
 }
 

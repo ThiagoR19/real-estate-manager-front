@@ -30,8 +30,8 @@
   filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%);
 }
 
-.navbar__header :focus-visible,
-.navbar__drawer :focus-visible,
+.navbar__header :focus-visible:not(input):not(textarea):not(select),
+.navbar__drawer :focus-visible:not(input):not(textarea):not(select),
 .navbar__backdrop:focus-visible {
   outline: 2px solid #2178c4;
   outline-offset: 4px;
@@ -81,8 +81,8 @@
 }
 
 .navbar__brand-icon {
-  width: 44px;
-  height: 44px;
+  width: 34px;
+  height: 34px;
   filter: none !important;
 }
 
@@ -129,11 +129,6 @@
   border: 2px solid #e0e9f2;
   border-radius: 11px;
   background: #f1f6fb;
-}
-
-.navbar__search:focus-within {
-  border-color: #9ecdf2;
-  box-shadow: 0 0 0 2px #e4f2ff;
 }
 
 .navbar__search img {

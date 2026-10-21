@@ -5,9 +5,7 @@ import {
   chartColumnIcon,
   commentsIcon,
   fileLinesIcon,
-  gearIcon,
   houseIcon,
-  houseUserIcon,
   peopleIcon,
   userIcon,
 } from "../assets/icons";
@@ -15,7 +13,7 @@ import {
 export const primaryItems = [
   { href: "/dashboard", label: "Dashboard", icon: chartColumnIcon },
   { href: "/owners", label: "Propietarios", icon: peopleIcon },
-  { href: "/tenant", label: "Inquilinos", icon: houseUserIcon },
+  { href: "/tenant", label: "Inquilinos", icon: peopleIcon },
   { href: "/professional", label: "Profesionales", icon: briefcaseIcon },
   { href: "/schedule", label: "Agenda", icon: calendarIcon },
   { href: "/chat", label: "Chat", icon: commentsIcon },
@@ -23,11 +21,10 @@ export const primaryItems = [
 ];
 
 export const secondaryItems = [
-  { href: "/agents", label: "Agentes", icon: userIcon },
+  { href: "/agents", label: "Agentes", icon: peopleIcon },
   { href: "/agency", label: "Mi Inmobiliaria", icon: buildingColumnsIcon },
   { href: "/profile", label: "Mi perfil", icon: userIcon },
   { href: "/terms", label: "Términos y condiciones", icon: fileLinesIcon },
-  { href: "/settings", label: "Configuración", icon: gearIcon },
 ];
 
 export const allItems = [...primaryItems, ...secondaryItems];
@@ -37,7 +34,6 @@ export const pageLabels = {
   "/payments": "Pagos",
   "/earnings": "Ganancias",
   "/about": "Acerca de nosotros",
-  "/aboutUs": "Acerca de nosotros",
   "/about-us": "Acerca de nosotros",
 };
 

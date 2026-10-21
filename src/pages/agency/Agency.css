@@ -31,7 +31,7 @@ body:has(#agency) {
   filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%);
 }
 
-#agency :focus-visible {
+#agency :focus-visible:not(input):not(textarea):not(select) {
   outline: 2px solid #2178c4;
   outline-offset: 4px;
 }
@@ -236,11 +236,6 @@ body:has(#agency) {
   background: transparent;
   color: #7e8aa6;
   font-size: 14px;
-}
-
-.agency__field-control:focus-within {
-  border-color: #9ecdf2;
-  box-shadow: 0 0 0 2px #e4f2ff;
 }
 
 .agency__uploads {

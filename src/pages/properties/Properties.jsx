@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import {
-  angleDownIcon,
   bathIcon,
   bedIcon,
   eyeIcon,
@@ -10,6 +9,7 @@ import {
   rulerCombinedIcon as rulerIcon,
   tagIcon,
 } from "../../assets/icons";
+import DropdownSelect from "../../components/select/DropdownSelect";
 import propertyImage from "/images (1).jpg";
 import "./Properties.css";
 
@@ -33,24 +33,19 @@ const filters = [
 
 function FilterSelect({ filter, value, onChange }) {
   return (
-    <label className="properties__filter">
-      <span className="properties__filter-icon" aria-hidden="true">
-        <img className="properties__icon" src={filter.icon} alt="" />
-      </span>
-      <span className="properties__filter-label">
-        {value === filter.options[0] ? filter.label : value}
-      </span>
-      <select
-        aria-label={filter.label}
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-      >
-        {filter.options.map((option) => (
-          <option key={option} value={option}>{option}</option>
-        ))}
-      </select>
-      <img className="properties__filter-chevron properties__icon" src={angleDownIcon} alt="" aria-hidden="true" />
-    </label>
+    <DropdownSelect
+      label={filter.label}
+      placeholder={filter.label}
+      value={value}
+      options={filter.options}
+      onChange={onChange}
+      icon={filter.icon}
+      className="properties__filter"
+      triggerClassName="properties__filter-trigger"
+      iconClassName="properties__filter-icon"
+      valueClassName="properties__filter-label"
+      chevronClassName="properties__filter-chevron properties__icon"
+    />
   );
 }
 

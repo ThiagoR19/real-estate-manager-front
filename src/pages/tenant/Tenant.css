@@ -17,8 +17,7 @@ body:has(#tenant) {
 }
 
 #tenant button,
-#tenant input,
-#tenant select {
+#tenant input {
   font: inherit;
   -webkit-tap-highlight-color: transparent;
 }
@@ -28,7 +27,7 @@ body:has(#tenant) {
   filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%);
 }
 
-#tenant :focus-visible {
+#tenant :focus-visible:not(input):not(textarea):not(select) {
   outline: 2px solid #2178c4;
   outline-offset: 3px;
 }
@@ -179,12 +178,6 @@ body:has(#tenant) {
   padding: 0 14px;
 }
 
-.tenant__search:focus-within,
-.tenant__filter:focus-within {
-  border-color: #9ecdf2;
-  box-shadow: 0 0 0 2px #e4f2ff;
-}
-
 .tenant__search img {
   width: 17px;
   height: 17px;
@@ -205,9 +198,22 @@ body:has(#tenant) {
 
 .tenant__filter {
   position: relative;
+  min-width: 0;
+}
+
+.tenant__filter-trigger {
+  display: flex;
+  align-items: center;
   gap: 10px;
+  width: 100%;
+  height: 100%;
   min-width: 0;
   padding: 0 13px;
+  border: 0;
+  background: transparent;
+  color: #526485;
+  cursor: pointer;
+  text-align: left;
 }
 
 .tenant__filter-icon {
@@ -225,17 +231,15 @@ body:has(#tenant) {
   height: 14px;
 }
 
-.tenant__filter select {
+.tenant__filter-trigger .select-control__value {
+  overflow: hidden;
   width: 100%;
   min-width: 0;
-  appearance: none;
   padding: 0 24px 0 0;
-  border: 0;
-  outline: 0;
-  background: transparent;
   color: #526485;
-  cursor: pointer;
   font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .tenant__filter-chevron {
@@ -372,7 +376,6 @@ body:has(#tenant) {
 .tenant__modal-fields { display: grid; gap: 14px; }
 .tenant__modal-fields label { display: grid; gap: 6px; color: #17235e; font-size: 13px; font-weight: 650; }
 .tenant__modal-fields input { height: 42px; padding: 0 12px; border: 1px solid #dbe6f1; border-radius: 9px; color: #17235e; outline: 0; }
-.tenant__modal-fields input:focus { border-color: #9ecdf2; box-shadow: 0 0 0 2px #e4f2ff; }
 .tenant__modal-submit { width: 100%; height: 43px; margin-top: 23px; border: 0; border-radius: 9px; background: #003783; color: #fff; cursor: pointer; font-weight: 700; }
 
 body:has(#tenant) .navbar__search { display: none; }

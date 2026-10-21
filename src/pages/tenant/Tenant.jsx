@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import {
-  angleDownIcon,
   calendarIcon,
   clockIcon,
   envelopeIcon,
@@ -12,6 +11,7 @@ import {
   phoneIcon,
   plusIcon,
 } from "../../assets/icons";
+import DropdownSelect from "../../components/select/DropdownSelect";
 import propertyImage from "/images.jpg";
 import "./Tenant.css";
 
@@ -44,13 +44,18 @@ function SummaryIcon({ type }) {
 
 function FilterControl({ filter, value, onChange }) {
   return (
-    <label className="tenant__filter">
-      <span className="tenant__filter-icon"><img src={filter.icon} alt="" /></span>
-      <select aria-label={filter.label} value={value} onChange={(event) => onChange(event.target.value)}>
-        {filter.options.map((option) => <option key={option} value={option}>{option === filter.options[0] ? filter.label : option}</option>)}
-      </select>
-      <img className="tenant__filter-chevron" src={angleDownIcon} alt="" />
-    </label>
+    <DropdownSelect
+      label={filter.label}
+      placeholder={filter.label}
+      value={value}
+      options={filter.options}
+      onChange={onChange}
+      icon={filter.icon}
+      className="tenant__filter"
+      triggerClassName="tenant__filter-trigger"
+      iconClassName="tenant__filter-icon"
+      chevronClassName="tenant__filter-chevron"
+    />
   );
 }
 
@@ -114,22 +119,23 @@ export default function Tenant() {
 
   return (
     <main id="tenant">
-      <section className="tenant__overview" aria-labelledby="tenant-title">
-        <div className="tenant__hero">
-          <h1 id="tenant-title">Inquilinos</h1>
-          <p>Gestiona la información de todos los inquilinos, sus contratos, pagos y estados.</p>
-        </div>
-        <div className="tenant__summary" aria-label="Resumen de inquilinos">
-          {summaryCards.map((card) => (
-            <article className={`tenant__summary-card tenant__summary-card--${card.tone}`} key={card.label}>
-              <span className="tenant__summary-icon"><SummaryIcon type={card.icon} /></span>
-              <strong>{card.label}</strong>
-              <b>{card.value}</b>
-            </article>
-          ))}
-        </div>
-      </section>
       <div className="tenant__page">
+        <section className="tenant__overview" aria-labelledby="tenant-title">
+          <div className="tenant__hero">
+            <h1 id="tenant-title">Inquilinos</h1>
+            <p>Gestiona la información de todos los inquilinos, sus contratos, pagos y estados.</p>
+          </div>
+          <div className="tenant__summary" aria-label="Resumen de inquilinos">
+            {summaryCards.map((card) => (
+              <article className={`tenant__summary-card tenant__summary-card--${card.tone}`} key={card.label}>
+                <span className="tenant__summary-icon"><SummaryIcon type={card.icon} /></span>
+                <strong>{card.label}</strong>
+                <b>{card.value}</b>
+              </article>
+            ))}
+          </div>
+        </section>
+
         <section className="tenant__toolbar" aria-label="Buscar y filtrar inquilinos">
           <label className="tenant__search">
             <img src={magnifyingGlassIcon} alt="" />

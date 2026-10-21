@@ -27,7 +27,7 @@ body:has(#owners) {
   filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%);
 }
 
-#owners :focus-visible {
+#owners :focus-visible:not(input):not(textarea):not(select) {
   outline: 2px solid #2178c4;
   outline-offset: 3px;
 }
@@ -163,11 +163,6 @@ body:has(#owners) {
   border: 2px solid #dbe6f1;
   border-radius: 11px;
   background: #fff;
-}
-
-.owners__search:focus-within {
-  border-color: #9ecdf2;
-  box-shadow: 0 0 0 2px #e4f2ff;
 }
 
 .owners__search img {
@@ -310,7 +305,6 @@ body:has(#owners) {
 .owners__modal-fields { display: grid; gap: 14px; }
 .owners__modal-fields label { display: grid; gap: 6px; color: #17235e; font-size: 13px; font-weight: 650; }
 .owners__modal-fields input { height: 42px; padding: 0 12px; border: 1px solid #dbe6f1; border-radius: 9px; color: #17235e; outline: 0; }
-.owners__modal-fields input:focus { border-color: #9ecdf2; box-shadow: 0 0 0 2px #e4f2ff; }
 .owners__modal-submit { width: 100%; height: 43px; margin-top: 23px; border: 0; border-radius: 9px; background: #003783; color: #fff; cursor: pointer; font-weight: 700; }
 
 body:has(#owners) .navbar__search { display: none; }

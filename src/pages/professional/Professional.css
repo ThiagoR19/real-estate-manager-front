@@ -16,8 +16,7 @@ body:has(#professional) {
   box-sizing: border-box;
 }
 
-#professional button,
-#professional summary {
+#professional button {
   font: inherit;
   -webkit-tap-highlight-color: transparent;
 }
@@ -57,7 +56,7 @@ body:has(#professional) {
   width: 385px;
 }
 
-.professional__filter summary {
+.professional__filter-trigger {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -69,14 +68,10 @@ body:has(#professional) {
   color: #42577e;
   cursor: pointer;
   font-size: 16px;
-  list-style: none;
+  text-align: left;
 }
 
-.professional__filter summary::-webkit-details-marker {
-  display: none;
-}
-
-.professional__filter summary:hover {
+.professional__filter-trigger:hover {
   border-color: #c5ddef;
 }
 
@@ -99,10 +94,6 @@ body:has(#professional) {
   height: 14px;
   margin-left: auto;
   transition: transform 150ms ease;
-}
-
-.professional__filter[open] .professional__filter-arrow {
-  transform: rotate(180deg);
 }
 
 .professional__filter-options {
@@ -221,7 +212,7 @@ body:has(#professional) {
   color: #061b4a;
   font-size: 13px;
   font-weight: 700;
-  text-align: center;
+  text-align: left;
 }
 
 .professional__table thead th:first-child {

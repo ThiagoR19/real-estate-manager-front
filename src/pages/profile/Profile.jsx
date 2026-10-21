@@ -14,12 +14,12 @@ import {
 import "./Profile.css";
 
 const personalFields = [
-  { id: "name", label: "Nombre", value: "Juan", icon: userIcon },
-  { id: "last-name", label: "Apellido", value: "Perez", icon: userIcon },
-  { id: "phone", label: "Teléfono", value: "2133 123123", icon: phoneIcon },
-  { id: "email", label: "Correo", value: "ejemplo@gmail.com", icon: envelopeIcon },
-  { id: "address", label: "Dirección", value: "Av San Martin 12", icon: locationDotIcon },
-  { id: "dni", label: "DNI", value: "12123123", icon: addressCardIcon },
+  { id: "name", label: "Nombre", placeholder: "Juan", icon: userIcon },
+  { id: "last-name", label: "Apellido", placeholder: "Perez", icon: userIcon },
+  { id: "phone", label: "Teléfono", placeholder: "2133 123123", icon: phoneIcon },
+  { id: "email", label: "Correo", placeholder: "ejemplo@gmail.com", icon: envelopeIcon },
+  { id: "address", label: "Dirección", placeholder: "Av San Martin 12", icon: locationDotIcon },
+  { id: "dni", label: "DNI", placeholder: "12123123", icon: addressCardIcon },
 ];
 
 const passwordFields = [
@@ -34,7 +34,7 @@ function Field({ field }) {
       <span className="profile__field-label">{field.label}</span>
       <span className="profile__field-control">
         <img className="profile__field-icon" src={field.icon} alt="" />
-        <input id={field.id} name={field.id} defaultValue={field.value} placeholder={field.placeholder} required={field.required} />
+        <input id={field.id} name={field.id} placeholder={field.placeholder} required={field.required} />
       </span>
     </label>
   );

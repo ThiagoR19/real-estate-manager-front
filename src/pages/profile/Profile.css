@@ -37,7 +37,7 @@ body:has(#profile) {
   filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%);
 }
 
-#profile :focus-visible {
+#profile :focus-visible:not(input):not(textarea):not(select) {
   outline: 2px solid #2178c4;
   outline-offset: 4px;
 }
@@ -419,11 +419,6 @@ body:has(#profile) {
   border: 2px solid #e7eff7;
   border-radius: 10px;
   background: #fff;
-}
-
-.profile__field-control:focus-within {
-  border-color: #9ec9ee;
-  box-shadow: 0 0 0 2px #d9edff;
 }
 
 .profile__field-control input {

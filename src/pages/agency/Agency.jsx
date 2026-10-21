@@ -12,8 +12,8 @@ import brandLogo from "../../assets/logoAGI.png";
 import "./Agency.css";
 
 const initialAgency = {
-  name: "AGI Propiedades",
-  phone: "1231231298",
+  name: "",
+  phone: "",
 };
 
 function SectionHeading({ icon, title, description }) {
@@ -129,14 +129,14 @@ export default function Agency() {
                 <span>Nombre inmobiliaria</span>
                 <span className="agency__field-control">
                   <img src={userIcon} alt="" />
-                  <input name="name" value={agency.name} onChange={updateAgency} aria-label="Nombre inmobiliaria" />
+                  <input name="name" value={agency.name} onChange={updateAgency} placeholder="AGI Propiedades" aria-label="Nombre inmobiliaria" />
                 </span>
               </label>
               <label className="agency__field">
                 <span>Teléfono</span>
                 <span className="agency__field-control">
                   <img src={phoneIcon} alt="" />
-                  <input name="phone" value={agency.phone} onChange={updateAgency} aria-label="Teléfono" inputMode="tel" />
+                  <input name="phone" value={agency.phone} onChange={updateAgency} placeholder="1231231298" aria-label="Teléfono" inputMode="tel" />
                 </span>
               </label>
             </div>

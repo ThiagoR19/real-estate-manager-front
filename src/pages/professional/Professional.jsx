@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import {
-  angleDownIcon,
   envelopeIcon,
   peopleIcon,
   penIcon,
@@ -8,6 +7,7 @@ import {
   plusIcon,
   trashCanIcon as trashIcon,
 } from "../../assets/icons";
+import DropdownSelect from "../../components/select/DropdownSelect";
 import "./Professional.css";
 
 const initialProfessionals = Array.from({ length: 9 }, (_, index) => ({
@@ -78,29 +78,19 @@ export default function Professional() {
   return (
     <main id="professional">
       <div className="professional__toolbar">
-        <details className="professional__filter">
-          <summary aria-label="Filtrar profesionales por tipo">
-            <span className="professional__filter-icon">
-              <img src={peopleIcon} alt="" />
-            </span>
-            <span>{selectedType}</span>
-            <img className="professional__filter-arrow" src={angleDownIcon} alt="" />
-          </summary>
-          <div className="professional__filter-options" role="listbox" aria-label="Tipo de profesional">
-            {filterOptions.map((option) => (
-              <button
-                key={option}
-                className={selectedType === option ? "is-selected" : ""}
-                type="button"
-                role="option"
-                aria-selected={selectedType === option}
-                onClick={() => setSelectedType(option)}
-              >
-                {option}
-              </button>
-            ))}
-          </div>
-        </details>
+        <DropdownSelect
+          label="Tipo de profesional"
+          placeholder="Tipo"
+          value={selectedType}
+          options={filterOptions}
+          onChange={setSelectedType}
+          icon={peopleIcon}
+          className="professional__filter"
+          triggerClassName="professional__filter-trigger"
+          iconClassName="professional__filter-icon"
+          chevronClassName="professional__filter-arrow"
+          optionsClassName="professional__filter-options"
+        />
 
         <button className="professional__new" type="button" onClick={addProfessional}>
           <img src={plusIcon} alt="" />
