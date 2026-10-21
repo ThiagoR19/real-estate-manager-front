@@ -1,25 +1,32 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import reportReference from "../../assets/reports-reference.png";
+import ReportModal from "../../components/report/ReportModal";
 import "./Reports.css";
 
-const reports = [
+const initialReports = [
   {
     id: 1,
     title: "Pérdida de agua en la cocina",
     location: "Bielke 454 - Depto. 3B",
     date: "12/09/2025",
+    type: "Plomería",
+    description: "Hay una pérdida de agua en la canilla de la cocina. Gotea constantemente, incluso cuando está cerrado. Adjunto fotos para que puedan ver el problema",
   },
   {
     id: 2,
     title: "Pérdida de agua en la cocina",
     location: "Bielke 454 - Depto. 3B",
     date: "12/09/2025",
+    type: "Plomería",
+    description: "Hay una pérdida de agua en la canilla de la cocina. Gotea constantemente, incluso cuando está cerrado. Adjunto fotos para que puedan ver el problema",
   },
   {
     id: 3,
     title: "Pérdida de agua en la cocina",
     location: "Bielke 454 - Depto. 3B",
     date: "12/09/2025",
+    type: "Plomería",
+    description: "Hay una pérdida de agua en la canilla de la cocina. Gotea constantemente, incluso cuando está cerrado. Adjunto fotos para que puedan ver el problema",
   },
 ];
 
@@ -27,7 +34,11 @@ function DrawnIcon({ name }) {
   return <span className={`reports__drawn-icon reports__drawn-icon--${name}`} aria-hidden="true" />;
 }
 
-function ReportPhoto({ className = "", label = "Foto del reporte" }) {
+function ReportPhoto({ className = "", label = "Foto del reporte", src }) {
+  if (src) {
+    return <img className={`reports__photo reports__photo--uploaded ${className}`} src={src} alt={label} />;
+  }
+
   return (
     <div
       className={`reports__photo ${className}`}
@@ -39,24 +50,30 @@ function ReportPhoto({ className = "", label = "Foto del reporte" }) {
 }
 
 export default function Reports() {
-  const [activeReportId, setActiveReportId] = useState(reports[0].id);
+  const [reportItems, setReportItems] = useState(initialReports);
+  const [activeReportId, setActiveReportId] = useState(initialReports[0].id);
   const [query, setQuery] = useState("");
   const [photoUrls, setPhotoUrls] = useState([]);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const photoUrlsRef = useRef([]);
+  const reportPhotoUrlsRef = useRef([]);
 
   const visibleReports = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
 
-    if (!normalizedQuery) return reports;
+    if (!normalizedQuery) return reportItems;
 
-    return reports.filter(({ title, location }) =>
+    return reportItems.filter(({ title, location }) =>
       `${title} ${location}`.toLowerCase().includes(normalizedQuery),
     );
-  }, [query]);
+  }, [query, reportItems]);
 
-  const activeReport = reports.find(({ id }) => id === activeReportId) ?? reports[0];
+  const activeReport = reportItems.find(({ id }) => id === activeReportId) ?? reportItems[0];
 
-  useEffect(() => () => photoUrlsRef.current.forEach((url) => URL.revokeObjectURL(url)), []);
+  useEffect(() => () => {
+    photoUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+    reportPhotoUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+  }, []);
 
   function addPhotos(event) {
     const newUrls = Array.from(event.target.files ?? []).map((file) => URL.createObjectURL(file));
@@ -68,6 +85,27 @@ export default function Reports() {
     event.target.value = "";
   }
 
+  function createReport(form) {
+    const reportPhotos = form.photos.map((file) => {
+      const url = URL.createObjectURL(file);
+      reportPhotoUrlsRef.current.push(url);
+      return { url };
+    });
+    const newReport = {
+      id: Date.now(),
+      title: form.name,
+      location: "Ubicación pendiente",
+      date: new Intl.DateTimeFormat("es-AR").format(new Date()),
+      type: form.type,
+      description: form.description,
+      photos: reportPhotos,
+    };
+
+    setReportItems((currentReports) => [newReport, ...currentReports]);
+    setActiveReportId(newReport.id);
+    setIsCreateModalOpen(false);
+  }
+
   return (
     <main id="reports">
       <section className="reports__hero" aria-labelledby="reports-title">
@@ -75,7 +113,7 @@ export default function Reports() {
           <h1 id="reports-title">Inquilinos</h1>
           <p>Gestiona la información de todos lo inquilinos, sus contratos, pagos y estados.</p>
         </div>
-        <button className="reports__new-button" type="button">
+        <button className="reports__new-button" type="button" onClick={() => setIsCreateModalOpen(true)}>
           <span aria-hidden="true">+</span>
           Nuevo reporte
         </button>
@@ -124,11 +162,20 @@ export default function Reports() {
 
           <div className="reports__detail-content">
             <div className="reports__gallery">
-              <ReportPhoto className="reports__main-photo" label="Pérdida de agua en la cocina" />
+              <ReportPhoto
+                className="reports__main-photo"
+                label={activeReport.title}
+                src={activeReport.photos?.[0]?.url}
+              />
               <div className="reports__thumbnails" aria-label="Fotos del reporte">
-                <ReportPhoto className="reports__thumbnail is-selected" label="Foto principal" />
-                <ReportPhoto className="reports__thumbnail" label="Foto adicional" />
-                <ReportPhoto className="reports__thumbnail" label="Foto adicional" />
+                {(activeReport.photos?.length ? activeReport.photos : [null, null, null]).map((photo, index) => (
+                  <ReportPhoto
+                    key={photo?.url ?? `reference-${index}`}
+                    className={`reports__thumbnail ${index === 0 ? "is-selected" : ""}`}
+                    label={index === 0 ? "Foto principal" : "Foto adicional"}
+                    src={photo?.url}
+                  />
+                ))}
               </div>
               {photoUrls.length > 0 && (
                 <div className="reports__uploaded-thumbnails">
@@ -147,7 +194,7 @@ export default function Reports() {
             <div className="reports__details">
               <article className="reports__description-card">
                 <h3>Descripción del problema</h3>
-                <p>Hay una pérdida de agua en la canilla de la cocina. Gotea constantemente, incluso cuando está cerrado. Adjunto fotos para que puedan ver el problema</p>
+                <p>{activeReport.description || "Sin descripción."}</p>
               </article>
 
               <div className="reports__facts">
@@ -157,7 +204,7 @@ export default function Reports() {
                 </article>
                 <article>
                   <h3>Tipo de problema</h3>
-                  <p>Plomería</p>
+                  <p>{activeReport.type || "Plomería"}</p>
                 </article>
               </div>
 
@@ -172,6 +219,14 @@ export default function Reports() {
           </div>
         </section>
       </div>
+
+      {isCreateModalOpen && (
+        <ReportModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+          onSubmit={createReport}
+        />
+      )}
     </main>
   );
 }

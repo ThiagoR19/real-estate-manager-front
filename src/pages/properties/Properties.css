@@ -265,6 +265,21 @@
   font-size: 16px;
 }
 
+.properties__feedback {
+  position: fixed;
+  z-index: 45;
+  right: 22px;
+  bottom: 22px;
+  margin: 0;
+  padding: 14px 18px;
+  border: 1px solid #c8dff3;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 4px 18px #17235e24;
+  color: #17235e;
+  font-size: 14px;
+}
+
 @media (max-width: 1250px) {
   .properties__toolbar {
     grid-template-columns: repeat(3, minmax(0, 1fr)) 220px;

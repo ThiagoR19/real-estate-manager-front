@@ -8,10 +8,11 @@ import "./Header.css";
 export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
   const [pathname] = useLocation();
   const currentItem = allItems.find(({ href }) => isItemActive(pathname, href));
-  const currentLabel = currentItem?.label ?? pageLabels[pathname] ?? "Dashboard";
+  const isPayments = pathname === "/payments" || pathname.startsWith("/payments/");
+  const currentLabel = isPayments ? "Pagos" : currentItem?.label ?? pageLabels[pathname] ?? "Dashboard";
 
   return (
-    <header className="navbar__header">
+    <header className={`navbar__header${isPayments ? " navbar__header--payments" : ""}`}>
       <button
         className="navbar__menu-button"
         type="button"
@@ -48,7 +49,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
         <Link href="/profile" className="navbar__account-link">
           <span>
             Juan Pérez
-            <small>Agente</small>
+            <small>{isPayments ? "Inquilino" : "Agente"}</small>
           </span>
           <i
             className="navbar__account-avatar"

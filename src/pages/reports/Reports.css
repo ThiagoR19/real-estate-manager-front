@@ -335,6 +335,13 @@ body:has(#reports) {
   background-position: 45.4% 59.7%;
 }
 
+.reports__photo--uploaded {
+  display: block;
+  background: none;
+  object-fit: cover;
+  filter: none !important;
+}
+
 .reports__list-photo {
   width: 86px;
   height: 87px;

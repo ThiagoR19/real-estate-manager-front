@@ -9,13 +9,15 @@ import {
   rulerCombinedIcon as rulerIcon,
   tagIcon,
 } from "../../assets/icons";
+import PropertyModal from "../../components/property/PropertyModal";
 import DropdownSelect from "../../components/select/DropdownSelect";
 import propertyImage from "/images (1).jpg";
 import "./Properties.css";
 
-const properties = Array.from({ length: 12 }, (_, index) => ({
+const initialProperties = Array.from({ length: 12 }, (_, index) => ({
   id: index + 1,
   title: "Departamento en Belgrano",
+  name: "Departamento en Belgrano",
   location: "Av. Cabildo 2450, CABA",
   neighborhood: "Belgrano",
   type: "Departamento",
@@ -23,6 +25,15 @@ const properties = Array.from({ length: 12 }, (_, index) => ({
   bedrooms: 2,
   bathrooms: 2,
   area: 80,
+  age: 5,
+  description: "Departamento luminoso con excelente ubicación.",
+  owner: "Juan Carlos",
+  agent: "Lucía Martínez",
+  services: { water: true, gas: true, electricity: true, parking: false },
+  photos: [{ src: propertyImage, alt: "Interior de la propiedad" }],
+  operation: "Alquiler",
+  contractStatus: "Activo",
+  documents: [{ name: "Contrato de alquiler", fileName: "" }],
 }));
 
 const filters = [
@@ -49,7 +60,7 @@ function FilterSelect({ filter, value, onChange }) {
   );
 }
 
-function PropertyCard({ property }) {
+function PropertyCard({ property, onEdit }) {
   return (
     <article className="properties__card">
       <img className="properties__card-image" src={propertyImage} alt="Interior de la propiedad" />
@@ -81,7 +92,12 @@ function PropertyCard({ property }) {
             <img className="properties__icon" src={eyeIcon} alt="" aria-hidden="true" />
             <span>Ver detalle</span>
           </button>
-          <button className="properties__more-button" type="button" aria-label={`Más opciones para ${property.title}`}>
+          <button
+            className="properties__more-button"
+            type="button"
+            aria-label={`Editar ${property.title}`}
+            onClick={() => onEdit(property)}
+          >
             <span aria-hidden="true">•••</span>
           </button>
         </div>
@@ -91,21 +107,70 @@ function PropertyCard({ property }) {
 }
 
 export default function Properties() {
+  const [properties, setProperties] = useState(initialProperties);
   const [selectedFilters, setSelectedFilters] = useState({
     type: "Todos",
     status: "Todos",
     location: "Todas",
   });
+  const [modal, setModal] = useState({ isOpen: false, mode: "create", property: null });
+  const [feedback, setFeedback] = useState("");
 
   function updateFilter(id, value) {
     setSelectedFilters((current) => ({ ...current, [id]: value }));
+  }
+
+  function openCreateModal() {
+    setModal({ isOpen: true, mode: "create", property: null });
+  }
+
+  function openEditModal(property) {
+    setModal({ isOpen: true, mode: "edit", property });
+  }
+
+  function closePropertyModal() {
+    setModal((current) => ({ ...current, isOpen: false }));
+  }
+
+  function saveProperty(form) {
+    const property = {
+      ...form,
+      title: form.name || "Propiedad sin nombre",
+      neighborhood: form.location?.split(",")[1]?.trim() || "Sin zona",
+      status: form.operation === "Alquiler" ? "Alquiler" : "Venta",
+    };
+
+    if (modal.mode === "edit") {
+      setProperties((current) => current.map((item) => (
+        item.id === modal.property.id ? { ...item, ...property } : item
+      )));
+      setFeedback(`Se actualizó ${property.title}.`);
+    } else {
+      setProperties((current) => [
+        {
+          ...property,
+          id: Date.now(),
+          title: property.title,
+          name: property.name,
+          location: property.location || "Ubicación pendiente",
+          neighborhood: property.neighborhood || "Sin zona",
+          type: property.type === "Tipo" ? "Propiedad" : property.type,
+          status: property.status === "Operación" ? "Venta" : property.status,
+        },
+        ...current,
+      ]);
+      setFeedback(`Se agregó ${property.title} a la lista.`);
+    }
+
+    closePropertyModal();
+    window.setTimeout(() => setFeedback(""), 2600);
   }
 
   const visibleProperties = useMemo(() => properties.filter((property) => (
     (selectedFilters.type === "Todos" || property.type === selectedFilters.type)
     && (selectedFilters.status === "Todos" || property.status === selectedFilters.status)
     && (selectedFilters.location === "Todas" || property.neighborhood === selectedFilters.location)
-  )), [selectedFilters]);
+  )), [properties, selectedFilters]);
 
   return (
     <main id="properties">
@@ -118,7 +183,7 @@ export default function Properties() {
             onChange={(value) => updateFilter(filter.id, value)}
           />
         ))}
-        <button className="properties__new-button" type="button">
+        <button className="properties__new-button" type="button" onClick={openCreateModal}>
           <img className="properties__new-button-icon" src={plusIcon} alt="" aria-hidden="true" />
           <span>Nueva Propiedad</span>
         </button>
@@ -126,11 +191,23 @@ export default function Properties() {
 
       <section className="properties__grid" aria-label="Listado de propiedades">
         {visibleProperties.length > 0 ? (
-          visibleProperties.map((property) => <PropertyCard key={property.id} property={property} />)
+          visibleProperties.map((property) => <PropertyCard key={property.id} property={property} onEdit={openEditModal} />)
         ) : (
           <p className="properties__empty">No hay propiedades que coincidan con los filtros seleccionados.</p>
         )}
       </section>
+
+      <p className="properties__feedback" aria-live="polite">{feedback}</p>
+
+      {modal.isOpen && (
+        <PropertyModal
+          isOpen={modal.isOpen}
+          mode={modal.mode}
+          property={modal.property}
+          onClose={closePropertyModal}
+          onSubmit={saveProperty}
+        />
+      )}
     </main>
   );
 }

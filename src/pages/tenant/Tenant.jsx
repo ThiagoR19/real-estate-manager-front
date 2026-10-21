@@ -8,14 +8,16 @@ import {
   locationDotIcon as locationIcon,
   magnifyingGlassIcon,
   peopleIcon,
+  penIcon,
   phoneIcon,
   plusIcon,
 } from "../../assets/icons";
 import DropdownSelect from "../../components/select/DropdownSelect";
+import TenantModal from "../../components/tenant/TenantModal";
 import propertyImage from "/images.jpg";
 import "./Tenant.css";
 
-const tenants = [
+const initialTenants = [
   { initials: "LM", name: "Lucía Martínez", dni: "41.234.567", email: "lucia.m@gmail.com", phone: "11 2345- 6789", address: "Av. San Martín 1250", unit: "Depto. 3B", contract: "Alquiler", dates: "01/03/2024 - 28/02/2026", status: "Activo", due: "28/02/2026" },
   { initials: "LM", name: "Lucía Martínez", dni: "41.234.567", email: "lucia.m@gmail.com", phone: "11 2345- 6789", address: "Av. San Martín 1250", unit: "Depto. 3B", contract: "Alquiler", dates: "01/03/2024 - 28/02/2026", status: "Activo", due: "28/02/2026" },
   { initials: "LM", name: "Lucía Martínez", dni: "41.234.567", email: "lucia.m@gmail.com", phone: "11 2345- 6789", address: "Av. San Martín 1250", unit: "Depto. 3B", contract: "Alquiler", dates: "01/03/2024 - 28/02/2026", status: "Activo", due: "28/02/2026" },
@@ -59,7 +61,7 @@ function FilterControl({ filter, value, onChange }) {
   );
 }
 
-function TenantRow({ tenant, onMenu }) {
+function TenantRow({ tenant, onEdit }) {
   return (
     <tr>
       <td data-label="Inquilino">
@@ -86,16 +88,19 @@ function TenantRow({ tenant, onMenu }) {
       <td data-label="Estado"><span className="tenant__status">{tenant.status}</span></td>
       <td data-label="Próximo vencimiento"><strong className="tenant__due">{tenant.due}</strong></td>
       <td data-label="Acciones" className="tenant__actions-cell">
-        <button className="tenant__actions" type="button" aria-label={`Acciones para ${tenant.name}`} onClick={onMenu}>⋮</button>
+        <button className="tenant__actions" type="button" aria-label={`Editar a ${tenant.name}`} onClick={() => onEdit(tenant)}>
+          <img src={penIcon} alt="" />
+        </button>
       </td>
     </tr>
   );
 }
 
 export default function Tenant() {
+  const [tenants, setTenants] = useState(initialTenants);
   const [query, setQuery] = useState("");
   const [filterValues, setFilterValues] = useState(filters.map(({ options }) => options[0]));
-  const [showModal, setShowModal] = useState(false);
+  const [modal, setModal] = useState({ isOpen: false, mode: "create", tenant: null });
   const [notice, setNotice] = useState("");
 
   const visibleTenants = useMemo(() => {
@@ -106,15 +111,56 @@ export default function Tenant() {
       const matchesStatus = filterValues[1] === filters[1].options[0] || tenant.status === filterValues[1];
       return matchesQuery && matchesProperty && matchesStatus;
     });
-  }, [filterValues, query]);
+  }, [filterValues, query, tenants]);
 
   function updateFilter(index, value) {
     setFilterValues((current) => current.map((item, itemIndex) => itemIndex === index ? value : item));
   }
 
-  function showRowNotice() {
-    setNotice("Las acciones del inquilino estarán disponibles próximamente.");
+  function openCreateModal() {
+    setModal({ isOpen: true, mode: "create", tenant: null });
+  }
+
+  function editTenant(tenant) {
+    setModal({ isOpen: true, mode: "edit", tenant });
+  }
+
+  function closeTenantModal() {
+    setModal((current) => ({ ...current, isOpen: false }));
+  }
+
+  function saveTenant(form) {
+    const tenantData = {
+      name: form.name,
+      initials: form.name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join("").toUpperCase(),
+      dni: form.dni,
+      email: form.email,
+      phone: form.phone,
+      address: form.address || form.property,
+      status: form.status,
+    };
+
+    if (modal.mode === "edit") {
+      setTenants((current) => current.map((tenant) => (
+        tenant === modal.tenant ? { ...tenant, ...tenantData } : tenant
+      )));
+      setNotice(`Se actualizó la información de ${form.name}.`);
+    } else {
+      setTenants((current) => [
+        ...current,
+        {
+          ...tenantData,
+          unit: "Sin asignar",
+          contract: "Sin contrato",
+          dates: "Sin contrato",
+          due: "—",
+        },
+      ]);
+      setNotice(`Se agregó a ${form.name} a la lista.`);
+    }
+
     window.setTimeout(() => setNotice(""), 2800);
+    closeTenantModal();
   }
 
   return (
@@ -142,14 +188,14 @@ export default function Tenant() {
             <input type="search" placeholder="Buscar contacto..." aria-label="Buscar contacto" value={query} onChange={(event) => setQuery(event.target.value)} />
           </label>
           {filters.map((filter, index) => <FilterControl key={filter.label} filter={filter} value={filterValues[index]} onChange={(value) => updateFilter(index, value)} />)}
-          <button className="tenant__new-button" type="button" onClick={() => setShowModal(true)}><img src={plusIcon} alt="" />Nuevo inquilino</button>
+          <button className="tenant__new-button" type="button" onClick={openCreateModal}><img src={plusIcon} alt="" />Nuevo inquilino</button>
         </section>
 
         <section className="tenant__table-card" aria-label="Listado de inquilinos">
           <div className="tenant__table-wrap">
             <table>
               <thead><tr><th>Inquilino</th><th>Contacto</th><th>Propiedad</th><th>Contrato</th><th>Estado</th><th>Próximo vencimiento</th><th>Acciones</th></tr></thead>
-              <tbody>{visibleTenants.map((tenant, index) => <TenantRow key={`${tenant.name}-${index}`} tenant={tenant} onMenu={showRowNotice} />)}</tbody>
+              <tbody>{visibleTenants.map((tenant, index) => <TenantRow key={`${tenant.name}-${index}`} tenant={tenant} onEdit={editTenant} />)}</tbody>
             </table>
           </div>
           {!visibleTenants.length && <p className="tenant__empty">No encontramos inquilinos con esos criterios.</p>}
@@ -158,16 +204,14 @@ export default function Tenant() {
 
       {notice && <p className="tenant__notice" role="status">{notice}</p>}
 
-      {showModal && (
-        <div className="tenant__modal-backdrop" role="presentation" onClick={() => setShowModal(false)}>
-          <section className="tenant__modal" role="dialog" aria-modal="true" aria-labelledby="tenant-modal-title" onClick={(event) => event.stopPropagation()}>
-            <button className="tenant__modal-close" type="button" aria-label="Cerrar" onClick={() => setShowModal(false)}>×</button>
-            <h2 id="tenant-modal-title">Nuevo inquilino</h2>
-            <p>Completá los datos del nuevo inquilino para incorporarlo al listado.</p>
-            <div className="tenant__modal-fields"><label>Nombre completo<input type="text" placeholder="Ej. Lucía Martínez" /></label><label>Correo electrónico<input type="email" placeholder="nombre@email.com" /></label></div>
-            <button className="tenant__modal-submit" type="button" onClick={() => setShowModal(false)}>Guardar inquilino</button>
-          </section>
-        </div>
+      {modal.isOpen && (
+        <TenantModal
+          isOpen={modal.isOpen}
+          mode={modal.mode}
+          tenant={modal.tenant}
+          onClose={closeTenantModal}
+          onSubmit={saveTenant}
+        />
       )}
     </main>
   );

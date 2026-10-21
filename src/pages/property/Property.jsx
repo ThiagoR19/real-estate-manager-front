@@ -12,6 +12,7 @@ import {
   rulerCombinedIcon as rulerIcon,
   userIcon,
 } from "../../assets/icons";
+import PropertyModal from "../../components/property/PropertyModal";
 import villaImage from "/ly-villa-costa-blanca-1_b02f5d33_900x900.jpg";
 import terraceImage from "/images.jpg";
 import houseImage from "/images (1).jpg";
@@ -23,26 +24,23 @@ const galleryImages = [
   { src: houseImage, alt: "Casa familiar rodeada de árboles" },
 ];
 
-const propertyDetails = [
-  { label: "Tipo", value: "Casa", icon: houseIcon },
-  { label: "Ubicación", value: "Av. Libertador 2450, Vicente López, buenos Aires", icon: locationIcon },
-  { label: "Dueño / Propietario", value: "Martin Valdez", icon: userIcon },
-  {
-    label: "Agente asignado",
-    value: "Martin Valdez",
-    icon: userIcon,
-    contact: { email: "lucia.m@gmail.com", phone: "11 2345- 6789" },
-  },
-  { label: "Ultima actualización", value: "28 de Abril de 2026", icon: clockIcon },
-  { label: "Fecha de alta", value: "12 de Marzo de 2026", icon: calendarIcon },
-];
-
-const propertyStats = [
-  { label: "Habitaciones", value: "10", icon: bedIcon },
-  { label: "Antigüedad (años)", value: "5", icon: calendarIcon },
-  { label: "Baños", value: "10", icon: bathIcon },
-  { label: "Superficie (m²)", value: "120", icon: rulerIcon },
-];
+const initialProperty = {
+  name: "Propiedad Valdez",
+  type: "Casa",
+  location: "Av. Libertador 2450, Vicente López, buenos Aires",
+  owner: "Martin Valdez",
+  agent: "Martin Valdez",
+  age: 5,
+  bedrooms: 10,
+  bathrooms: 10,
+  area: 120,
+  description: "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.",
+  photos: galleryImages,
+  services: { water: true, gas: true, electricity: true, parking: true },
+  operation: "Compra",
+  contractStatus: "Activo",
+  documents: [{ name: "Contrato de alquiler", fileName: "" }],
+};
 
 const dueDates = [
   { name: "Expensas", date: "Abril 2024" },
@@ -80,16 +78,47 @@ function DetailRow({ detail }) {
 export default function Property() {
   const [activeImage, setActiveImage] = useState(0);
   const [actionsOpen, setActionsOpen] = useState(false);
+  const [propertyData, setPropertyData] = useState(initialProperty);
+  const [propertyModalOpen, setPropertyModalOpen] = useState(false);
+  const currentGalleryImages = propertyData.photos?.length ? propertyData.photos : galleryImages;
+  const safeActiveImage = Math.min(activeImage, currentGalleryImages.length - 1);
+
+  const propertyDetails = [
+    { label: "Tipo", value: propertyData.type, icon: houseIcon },
+    { label: "Ubicación", value: propertyData.location, icon: locationIcon },
+    { label: "Dueño / Propietario", value: propertyData.owner, icon: userIcon },
+    {
+      label: "Agente asignado",
+      value: propertyData.agent,
+      icon: userIcon,
+      contact: { email: "lucia.m@gmail.com", phone: "11 2345- 6789" },
+    },
+    { label: "Ultima actualización", value: "28 de Abril de 2026", icon: clockIcon },
+    { label: "Fecha de alta", value: "12 de Marzo de 2026", icon: calendarIcon },
+  ];
+
+  const propertyStats = [
+    { label: "Habitaciones", value: propertyData.bedrooms, icon: bedIcon },
+    { label: "Antigüedad (años)", value: propertyData.age, icon: calendarIcon },
+    { label: "Baños", value: propertyData.bathrooms, icon: bathIcon },
+    { label: "Superficie (m²)", value: propertyData.area, icon: rulerIcon },
+  ];
 
   function changeImage(direction) {
-    setActiveImage((current) => (current + direction + galleryImages.length) % galleryImages.length);
+    setActiveImage((current) => (current + direction + currentGalleryImages.length) % currentGalleryImages.length);
+  }
+
+  function saveProperty(form) {
+    setPropertyData((current) => ({ ...current, ...form, name: form.name || current.name }));
+    setActiveImage(0);
+    setPropertyModalOpen(false);
   }
 
   return (
     <main id="property">
       <div className="property__page">
         <header className="property__title-row">
-          <h1>Propiedad Valdez</h1>
+          <h1>{propertyData.name}</h1>
           <div className="property__actions">
             <button
               className="property__actions-button"
@@ -103,7 +132,7 @@ export default function Property() {
             </button>
             {actionsOpen && (
               <div className="property__actions-menu" role="menu">
-                <button type="button" role="menuitem" onClick={() => setActionsOpen(false)}>Editar propiedad</button>
+                <button type="button" role="menuitem" onClick={() => { setActionsOpen(false); setPropertyModalOpen(true); }}>Editar propiedad</button>
                 <button type="button" role="menuitem" onClick={() => setActionsOpen(false)}>Compartir ficha</button>
               </div>
             )}
@@ -116,8 +145,8 @@ export default function Property() {
               <div className="property__gallery-main">
                 <img
                   className="property__gallery-main-image"
-                  src={galleryImages[activeImage].src}
-                  alt={galleryImages[activeImage].alt}
+                  src={currentGalleryImages[safeActiveImage].src}
+                  alt={currentGalleryImages[safeActiveImage].alt}
                 />
                 <button
                   className="property__gallery-arrow property__gallery-arrow--previous"
@@ -137,12 +166,12 @@ export default function Property() {
                 </button>
                 <span className="property__gallery-counter">
                   <Icon src={cameraIcon} />
-                  {activeImage + 1}/12
+                  {safeActiveImage + 1}/{currentGalleryImages.length}
                 </span>
               </div>
 
               <div className="property__gallery-thumbnails" role="list" aria-label="Seleccionar foto">
-                {galleryImages.map((image, index) => (
+                {currentGalleryImages.map((image, index) => (
                   <button
                     className={`property__thumbnail${activeImage === index ? " is-active" : ""}`}
                     key={image.src}
@@ -174,11 +203,7 @@ export default function Property() {
           <div className="property__right-column">
             <section className="property__info-card" aria-labelledby="property-description-title">
               <h2 id="property-description-title">Descripción</h2>
-              <p className="property__description">
-                It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using
-                <br />
-                Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using &apos;Content here, content here&apos;, making it look like
-              </p>
+              <p className="property__description">{propertyData.description}</p>
               <div className="property__details">
                 {propertyDetails.map((detail) => <DetailRow detail={detail} key={detail.label} />)}
               </div>
@@ -201,6 +226,16 @@ export default function Property() {
           </div>
         </div>
       </div>
+
+      {propertyModalOpen && (
+        <PropertyModal
+          isOpen={propertyModalOpen}
+          mode="edit"
+          property={propertyData}
+          onClose={() => setPropertyModalOpen(false)}
+          onSubmit={saveProperty}
+        />
+      )}
     </main>
   );
 }

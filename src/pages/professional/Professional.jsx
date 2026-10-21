@@ -8,6 +8,7 @@ import {
   trashCanIcon as trashIcon,
 } from "../../assets/icons";
 import DropdownSelect from "../../components/select/DropdownSelect";
+import ProfessionalModal from "../../components/professional/ProfessionalModal";
 import "./Professional.css";
 
 const initialProfessionals = Array.from({ length: 9 }, (_, index) => ({
@@ -40,6 +41,7 @@ export default function Professional() {
   const [professionals, setProfessionals] = useState(initialProfessionals);
   const [selectedType, setSelectedType] = useState("Tipo");
   const [feedback, setFeedback] = useState("");
+  const [modal, setModal] = useState({ isOpen: false, mode: "create", professional: null });
 
   const visibleProfessionals = useMemo(() => (
     selectedType === "Tipo"
@@ -47,23 +49,49 @@ export default function Professional() {
       : professionals.filter(({ specialty }) => specialty === selectedType)
   ), [professionals, selectedType]);
 
-  function addProfessional() {
-    const newProfessional = {
-      id: Date.now(),
-      name: "Nuevo profesional",
-      specialty: "Plomero",
-      email: "nuevo@gmail.com",
-      phone: "11 0000-0000",
-      rating: "0.0",
-      reviews: 0,
-    };
-
-    setProfessionals((current) => [...current, newProfessional]);
-    setFeedback("Se agregó un nuevo profesional.");
+  function openCreateModal() {
+    setModal({ isOpen: true, mode: "create", professional: null });
   }
 
   function editProfessional(professional) {
-    setFeedback(`Editar a ${professional.name}.`);
+    setModal({ isOpen: true, mode: "edit", professional });
+  }
+
+  function closeProfessionalModal() {
+    setModal((current) => ({ ...current, isOpen: false }));
+  }
+
+  function saveProfessional(form) {
+    if (modal.mode === "edit") {
+      setProfessionals((current) => current.map((professional) => (
+        professional.id === modal.professional.id
+          ? {
+            ...professional,
+            name: form.name,
+            specialty: form.specialty,
+            email: form.email,
+            phone: form.phone,
+          }
+          : professional
+      )));
+      setFeedback(`Se actualizó la información de ${form.name}.`);
+    } else {
+      setProfessionals((current) => [
+        ...current,
+        {
+          id: Date.now(),
+          name: form.name,
+          specialty: form.specialty,
+          email: form.email,
+          phone: form.phone,
+          rating: "0.0",
+          reviews: 0,
+        },
+      ]);
+      setFeedback(`Se agregó a ${form.name} a la lista.`);
+    }
+
+    closeProfessionalModal();
   }
 
   function rateProfessional(professional) {
@@ -92,7 +120,7 @@ export default function Professional() {
           optionsClassName="professional__filter-options"
         />
 
-        <button className="professional__new" type="button" onClick={addProfessional}>
+        <button className="professional__new" type="button" onClick={openCreateModal}>
           <img src={plusIcon} alt="" />
           <span>Nuevo profesional</span>
         </button>
@@ -181,6 +209,16 @@ export default function Professional() {
       </section>
 
       <p className="professional__feedback" aria-live="polite">{feedback}</p>
+
+      {modal.isOpen && (
+        <ProfessionalModal
+          isOpen={modal.isOpen}
+          mode={modal.mode}
+          professional={modal.professional}
+          onClose={closeProfessionalModal}
+          onSubmit={saveProfessional}
+        />
+      )}
     </main>
   );
 }

@@ -6,7 +6,7 @@ export { default as Dashboard } from "./dashboard/Dashboard";
 export { default as Earnings } from "./earnings/Earnings";
 export { default as Login } from "./login/Login";
 export { default as Owners } from "./owners/Owners";
-export { default as Payments } from "./payments/Payments";
+export { default as Payments } from "./payments/PaymentsReference";
 export { default as Professional } from "./professional/Professional";
 export { default as Profile } from "./profile/Profile";
 export { default as Properties } from "./properties/Properties";

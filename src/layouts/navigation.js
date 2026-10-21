@@ -3,10 +3,13 @@ import {
   buildingColumnsIcon,
   calendarIcon,
   chartColumnIcon,
+  circleInfoIcon,
   commentsIcon,
   fileLinesIcon,
   houseIcon,
+  houseUserIcon,
   peopleIcon,
+  percentIcon,
   userIcon,
 } from "../assets/icons";
 
@@ -21,10 +24,15 @@ export const primaryItems = [
 ];
 
 export const secondaryItems = [
+  { href: "/property", label: "Propiedad", icon: houseUserIcon },
+  { href: "/reports", label: "Reportes", icon: chartColumnIcon },
+  { href: "/payments", label: "Pagos", icon: percentIcon },
+  { href: "/earnings", label: "Ganancias", icon: chartColumnIcon },
   { href: "/agents", label: "Agentes", icon: peopleIcon },
   { href: "/agency", label: "Mi Inmobiliaria", icon: buildingColumnsIcon },
   { href: "/profile", label: "Mi perfil", icon: userIcon },
   { href: "/terms", label: "Términos y condiciones", icon: fileLinesIcon },
+  { href: "/aboutUs", label: "Acerca de nosotros", icon: circleInfoIcon },
 ];
 
 export const allItems = [...primaryItems, ...secondaryItems];
@@ -33,8 +41,7 @@ export const pageLabels = {
   "/reports": "Reportes",
   "/payments": "Pagos",
   "/earnings": "Ganancias",
-  "/about": "Acerca de nosotros",
-  "/about-us": "Acerca de nosotros",
+  "/aboutUs": "Acerca de nosotros",
 };
 
 export function isItemActive(pathname, href) {
