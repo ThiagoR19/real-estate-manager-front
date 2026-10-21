@@ -1,18 +1,24 @@
 import { useState } from "react";
 import {
   addressCardIcon,
-  buildingColumnsIcon as buildingIcon,
   cameraIcon,
+  checkIcon,
+  envelopeIcon,
+  eyeIcon,
+  eyeSlashIcon,
+  locationDotIcon,
+  lockIcon,
   phoneIcon,
+  userIcon,
 } from "../../assets/icons";
 import "./Profile.css";
 
 const personalFields = [
-  { id: "name", label: "Nombre", value: "Juan", icon: addressCardIcon },
-  { id: "last-name", label: "Apellido", value: "Perez", icon: addressCardIcon },
+  { id: "name", label: "Nombre", value: "Juan", icon: userIcon },
+  { id: "last-name", label: "Apellido", value: "Perez", icon: userIcon },
   { id: "phone", label: "Teléfono", value: "2133 123123", icon: phoneIcon },
-  { id: "email", label: "Correo", value: "ejemplo@gmail.com", icon: addressCardIcon },
-  { id: "address", label: "Dirección", value: "Av San Martin 12", icon: buildingIcon },
+  { id: "email", label: "Correo", value: "ejemplo@gmail.com", icon: envelopeIcon },
+  { id: "address", label: "Dirección", value: "Av San Martin 12", icon: locationDotIcon },
   { id: "dni", label: "DNI", value: "12123123", icon: addressCardIcon },
 ];
 
@@ -50,7 +56,7 @@ function PasswordField({ field, visible, onToggle }) {
           aria-pressed={visible}
           onClick={onToggle}
         >
-          <span className="profile__eye-icon" aria-hidden="true" />
+          <img src={visible ? eyeIcon : eyeSlashIcon} alt="" aria-hidden="true" />
         </button>
       </span>
     </label>
@@ -78,13 +84,13 @@ export default function Profile() {
             <h1>Thiago Riffo</h1>
             <p className="profile__role">Administrador</p>
             <p className="profile__email">
-              <img src={addressCardIcon} alt="" />
+              <img src={envelopeIcon} alt="" />
               {"riffo"}thiago19@gmail.com
             </p>
           </section>
 
           <section className="profile__password-hint" aria-labelledby="password-hint-title">
-            <img src={addressCardIcon} alt="" />
+            <img src={lockIcon} alt="" />
             <div>
               <h2 id="password-hint-title">Tu contraseña debe incluir</h2>
               <ul>
@@ -105,7 +111,7 @@ export default function Profile() {
 
           <section className="profile__form-section" aria-labelledby="personal-information-title">
             <div className="profile__section-heading">
-              <span className="profile__section-icon"><img src={addressCardIcon} alt="" /></span>
+              <span className="profile__section-icon"><img src={userIcon} alt="" /></span>
               <div>
                 <h3 id="personal-information-title">Información personal</h3>
                 <p>Mantén tu información actualizada. Estos datos se utilizan en la plataforma y en las comunicaciones del sistema</p>
@@ -118,7 +124,7 @@ export default function Profile() {
 
           <section className="profile__form-section profile__form-section--security" aria-labelledby="security-title">
             <div className="profile__section-heading">
-              <span className="profile__section-icon"><img src={addressCardIcon} alt="" /></span>
+              <span className="profile__section-icon"><img src={lockIcon} alt="" /></span>
               <div>
                 <h3 id="security-title">Seguridad</h3>
                 <p>Cambia tu contraseña periódicamente para mantener tu cuenta segura</p>
@@ -139,7 +145,7 @@ export default function Profile() {
       </div>
 
       <button className="profile__save-button" type="button">
-        <span aria-hidden="true">✓</span>
+        <img src={checkIcon} alt="" aria-hidden="true" />
         Guardar cambios
       </button>
     </main>

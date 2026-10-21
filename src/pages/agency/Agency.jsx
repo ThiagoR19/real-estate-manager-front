@@ -8,6 +8,7 @@ import {
   plusIcon,
   userIcon,
 } from "../../assets/icons";
+import brandLogo from "../../assets/logoAGI.png";
 import "./Agency.css";
 
 const initialAgency = {
@@ -98,7 +99,7 @@ export default function Agency() {
       <div className="agency__layout">
         <aside className="agency__identity-card" aria-label="Resumen de la inmobiliaria">
           <div className="agency__identity-logo-wrap">
-            <img className="agency__identity-logo" src="/logo.png" alt="Logo de AGI Propiedades" />
+            <img className="agency__identity-logo" src={brandLogo} alt="Logo de AGI Propiedades" />
             <button className="agency__identity-camera" type="button" aria-label="Cambiar logo de la inmobiliaria">
               <img src={cameraIcon} alt="" />
             </button>

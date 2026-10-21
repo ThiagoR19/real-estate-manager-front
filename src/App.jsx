@@ -1,13 +1,18 @@
+import { useState } from "react";
 import { Route, Switch } from "wouter";
 import { AboutUs, Agency, Agents, Chat, Dashboard, Earnings, Login, Owners, Payments, Professional, Profile, Properties, Property, Reports, Schedule, Tenant, Terms } from "./pages/index.js";
-import Navbar from "./layouts/Navbar";
+
+import { Header, Navbar } from "./layouts/index.js";
 
 import "./App.css";
 
 function AuthenticatedApp() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <div id="app-layout">
-      <Navbar />
+      <Header menuOpen={menuOpen} onToggleMenu={() => setMenuOpen((open) => !open)} />
+      <Navbar menuOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       <div id="app-content">
         <Route path="/dashboard" component={Dashboard} />
         <Route path="/agents" component={Agents} />

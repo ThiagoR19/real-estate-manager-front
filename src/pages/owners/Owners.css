@@ -54,15 +54,16 @@ body:has(#owners) {
   overflow: hidden;
   padding: 19px 25px;
   border-radius: 21px;
-  background: linear-gradient(110deg, #f7f9fc 0%, #dceafa 47%, #d2e6fa 100%);
+  background: #f7f9fc;
 }
 
 .owners__hero::after {
   position: absolute;
   z-index: -1;
-  inset: 0 0 0 auto;
-  width: 49%;
-  background: url("../../assets/terms-reference.png") right -61px top -109px / 1521px 766px no-repeat;
+  inset: 0;
+  width: 100%;
+  background: url("../../assets/fondoCasa.png") right center / cover no-repeat;
+  opacity: 0.4;
   content: "";
 }
 
@@ -335,7 +336,7 @@ body:has(#owners) .navbar__search { display: none; }
 @media (max-width: 560px) {
   .owners__page { width: calc(100% - 20px); }
   .owners__hero { padding: 17px 18px; border-radius: 15px; }
-  .owners__hero::after { opacity: .35; }
+  .owners__hero::after { opacity: 0.4; }
   .owners__hero h1 { font-size: 26px; }
   .owners__hero p { font-size: 14px; }
   .owners__summary { grid-template-columns: repeat(2, 1fr); }

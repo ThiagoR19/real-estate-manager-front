@@ -57,17 +57,16 @@ body:has(#schedule) {
   overflow: hidden;
   padding: 15px 26px;
   border-radius: 21px;
-  background: linear-gradient(110deg, #f6f8fb 0%, #d9eafa 37%, #b9d8f1 66%);
+  background: #f7f9fc;
 }
 
 .schedule__hero::before {
   position: absolute;
   z-index: -1;
-  inset: 0 0 0 auto;
-  width: 49%;
-  max-width: 550px;
-  background: url("../../assets/terms-reference.png") right -61px top -109px / 1521px 766px no-repeat;
-  opacity: 0.55;
+  inset: 0;
+  width: 100%;
+  background: url("../../assets/fondoCasa.png") right center / cover no-repeat;
+  opacity: 0.4;
   content: "";
 }
 
@@ -659,8 +658,8 @@ body:has(#schedule) {
 
 @media (max-width: 1300px) and (min-width: 761px) {
   .schedule__hero::before {
-    width: 40%;
-    opacity: 0.6;
+    width: 100%;
+    opacity: 0.4;
   }
 
   .schedule__hero p {
@@ -693,7 +692,7 @@ body:has(#schedule) {
   }
 
   .schedule__hero::before {
-    opacity: 0.35;
+    opacity: 0.4;
   }
 
   .schedule__hero h1 {

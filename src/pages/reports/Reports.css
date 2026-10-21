@@ -202,15 +202,16 @@ body:has(#reports) {
   min-height: 115px;
   padding: 18px 20px 17px 40px;
   overflow: hidden;
-  background: linear-gradient(105deg, #f8f9fb 0%, #d6e9fa 41%, #b9d8ef 67%, #a5c5db 100%);
+  background: #f7f9fc;
 }
 
 .reports__hero::after {
   position: absolute;
   z-index: -1;
-  inset: 0 0 0 auto;
-  width: 51%;
-  background: linear-gradient(90deg, #b9d8ef 0%, #b9d8ef 30%, transparent 51%), url("../../assets/terms-reference.png") right -60px top -109px / 1521px 766px no-repeat;
+  inset: 0;
+  width: 100%;
+  background: url("../../assets/fondoCasa.png") right center / cover no-repeat;
+  opacity: 0.4;
   content: "";
 }
 
@@ -769,7 +770,7 @@ body:has(#reports) {
   }
 
   .reports__hero::after {
-    opacity: 0.35;
+    opacity: 0.4;
   }
 
   .reports__hero h1 {

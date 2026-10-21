@@ -114,23 +114,22 @@ export default function Tenant() {
 
   return (
     <main id="tenant">
+      <section className="tenant__overview" aria-labelledby="tenant-title">
+        <div className="tenant__hero">
+          <h1 id="tenant-title">Inquilinos</h1>
+          <p>Gestiona la información de todos los inquilinos, sus contratos, pagos y estados.</p>
+        </div>
+        <div className="tenant__summary" aria-label="Resumen de inquilinos">
+          {summaryCards.map((card) => (
+            <article className={`tenant__summary-card tenant__summary-card--${card.tone}`} key={card.label}>
+              <span className="tenant__summary-icon"><SummaryIcon type={card.icon} /></span>
+              <strong>{card.label}</strong>
+              <b>{card.value}</b>
+            </article>
+          ))}
+        </div>
+      </section>
       <div className="tenant__page">
-        <section className="tenant__overview" aria-labelledby="tenant-title">
-          <div className="tenant__hero">
-            <h1 id="tenant-title">Inquilinos</h1>
-            <p>Gestiona la información de todos los inquilinos, sus contratos, pagos y estados.</p>
-          </div>
-          <div className="tenant__summary" aria-label="Resumen de inquilinos">
-            {summaryCards.map((card) => (
-              <article className={`tenant__summary-card tenant__summary-card--${card.tone}`} key={card.label}>
-                <span className="tenant__summary-icon"><SummaryIcon type={card.icon} /></span>
-                <strong>{card.label}</strong>
-                <b>{card.value}</b>
-              </article>
-            ))}
-          </div>
-        </section>
-
         <section className="tenant__toolbar" aria-label="Buscar y filtrar inquilinos">
           <label className="tenant__search">
             <img src={magnifyingGlassIcon} alt="" />
