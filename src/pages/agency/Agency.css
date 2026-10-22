@@ -1,0 +1,432 @@
+body:has(#agency) {
+  margin: 0;
+}
+
+#agency {
+  min-height: calc(100dvh - 61px);
+  padding: 20px 20px 23px 29px;
+  background: #f7f9fc;
+  color: #17235e;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+#agency,
+#agency * {
+  box-sizing: border-box;
+}
+
+#agency button:not(.button),
+#agency input {
+  font: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#agency button:not(.button) {
+  color: inherit;
+}
+
+#agency img {
+  object-fit: contain;
+  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%);
+}
+
+#agency :focus-visible:not(input):not(textarea):not(select) {
+  outline: 2px solid #2178c4;
+  outline-offset: 4px;
+}
+
+.agency__layout {
+  display: grid;
+  grid-template-columns: 373px minmax(0, 1fr);
+  gap: 20px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.agency__identity-card,
+.agency__form-card {
+  border: 1px solid #dfe5eb;
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: 0 0 3px 1px #17235e0d;
+}
+
+.agency__identity-card {
+  display: flex;
+  min-height: 509px;
+  flex-direction: column;
+  align-items: center;
+  padding: 108px 22px 30px;
+}
+
+.agency__identity-logo-wrap {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 168px;
+  height: 168px;
+  margin-bottom: 8px;
+}
+
+.agency__identity-logo {
+  width: 168px;
+  height: 168px;
+  filter: none !important;
+}
+
+.agency__identity-camera {
+  position: absolute;
+  right: -1px;
+  bottom: 0;
+  display: grid;
+  place-items: center;
+  width: 33px;
+  height: 33px;
+  padding: 7px;
+  border: 0;
+  border-radius: 50%;
+}
+
+.agency__identity-camera img {
+  width: 100%;
+  height: 100%;
+  filter: brightness(0) invert(1) !important;
+}
+
+.agency__identity-card h1 {
+  margin: 0 0 9px;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.agency__identity-type {
+  margin: 0 0 10px;
+  color: #111;
+  font-size: 16px;
+  line-height: 1.25;
+}
+
+.agency__identity-email {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin: 0;
+  color: #7e8aa6;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.agency__identity-email img {
+  width: 23px;
+  height: 23px;
+}
+
+.agency__form-card {
+  min-height: 509px;
+  padding: 21px 17px 23px;
+}
+
+.agency__form-header {
+  padding: 0 0 20px;
+}
+
+.agency__form-header h1 {
+  margin: 0 0 1px;
+  font-size: 31px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.agency__form-header p {
+  margin: 0;
+  color: #7e8aa6;
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+.agency__form-section + .agency__form-section {
+  margin-top: 20px;
+}
+
+.agency__section-heading {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-height: 47px;
+  margin-bottom: 18px;
+}
+
+.agency__section-heading-icon {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #eef6fd;
+}
+
+.agency__section-heading-icon img {
+  width: 22px;
+  height: 22px;
+}
+
+.agency__section-heading h2 {
+  margin: 0 0 1px;
+  font-size: 20px;
+  font-weight: 650;
+  line-height: 1.25;
+}
+
+.agency__section-heading p {
+  margin: 0;
+  color: #7e8aa6;
+  font-size: 14px;
+  line-height: 1.25;
+}
+
+.agency__fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 10px;
+  padding: 0 4px;
+}
+
+.agency__field,
+.agency__upload-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.agency__field > span:first-child,
+.agency__upload-field > label {
+  margin: 0 0 4px;
+  padding-left: 1px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.agency__field-control {
+  display: flex;
+  align-items: center;
+  height: 46px;
+  padding: 0 14px;
+  border: 2px solid #e4eef8;
+  border-radius: 10px;
+}
+
+.agency__field-control img {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-right: 20px;
+}
+
+.agency__field-control input {
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #7e8aa6;
+  font-size: 14px;
+}
+
+.agency__uploads {
+  display: grid;
+  grid-template-columns: minmax(0, 1.62fr) minmax(140px, 0.57fr) minmax(140px, 0.57fr);
+  gap: 31px;
+  max-width: 854px;
+  padding: 0 7px;
+}
+
+.agency__upload-field > label {
+  margin-bottom: 17px;
+}
+
+.agency__upload {
+  display: grid;
+  place-items: center;
+  height: 112px;
+  padding: 10px;
+  border: 2px dashed #d5e8fb;
+  border-radius: 10px;
+  background: #f5f9fd;
+  color: #17235e;
+  cursor: pointer;
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+.agency__upload:hover {
+  border-color: #8fc6f4;
+  background: #f0f7fe;
+}
+
+.agency__upload-plus {
+  width: 31px;
+  height: 31px;
+  margin-bottom: 4px;
+}
+
+.agency__upload span {
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+.agency__upload input {
+  display: none;
+}
+
+.agency__upload-field > input {
+  display: none;
+}
+
+.agency__upload--filled {
+  padding: 0;
+  overflow: hidden;
+  border-style: solid;
+}
+
+.agency__upload-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover !important;
+  filter: none !important;
+}
+
+.agency__save {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  width: 262px;
+  height: 48px;
+  margin: 90px 2px 0 auto;
+  padding: 0 17px;
+  border: 0;
+  border-radius: 15px;
+  box-shadow: 0 4px 4px #17235e42;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.agency__save:active {
+  transform: translateY(1px);
+}
+
+.agency__save img {
+  width: 21px;
+  height: 21px;
+  filter: brightness(0) invert(1) !important;
+}
+
+@media (min-width: 1600px) {
+  #agency {
+    padding-right: 29px;
+  }
+}
+
+@media (max-width: 1100px) {
+  #agency {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+
+  .agency__layout {
+    grid-template-columns: 290px minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .agency__identity-card {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .agency__identity-email {
+    font-size: 14px;
+  }
+
+  .agency__form-card {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .agency__uploads {
+    gap: 16px;
+    padding-right: 0;
+    padding-left: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  #agency {
+    padding: 14px 12px 22px;
+  }
+
+  .agency__layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .agency__identity-card {
+    min-height: 350px;
+    padding-top: 36px;
+  }
+
+  .agency__form-card {
+    min-height: 0;
+    padding: 18px 14px 20px;
+  }
+
+  .agency__form-header h1 {
+    font-size: 27px;
+  }
+
+  .agency__form-header p {
+    font-size: 16px;
+  }
+
+  .agency__section-heading {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .agency__section-heading h2 {
+    font-size: 18px;
+  }
+
+  .agency__section-heading p {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .agency__fields,
+  .agency__uploads {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .agency__upload-field > label {
+    margin-bottom: 7px;
+  }
+
+  .agency__upload {
+    height: 115px;
+  }
+
+  .agency__save {
+    width: min(100%, 262px);
+    margin-top: 25px;
+    margin-right: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .agency__upload,
+  .agency__save {
+    transition: none;
+  }
+}
