@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import reportReference from "../../assets/reports-reference.png";
+import { plusIcon } from "../../assets/icons";
+import Button from "../../components/button/Button";
 import ReportModal from "../../components/report/ReportModal";
 import "./Reports.css";
 
@@ -113,10 +115,7 @@ export default function Reports() {
           <h1 id="reports-title">Inquilinos</h1>
           <p>Gestiona la información de todos lo inquilinos, sus contratos, pagos y estados.</p>
         </div>
-        <button className="reports__new-button" type="button" onClick={() => setIsCreateModalOpen(true)}>
-          <span aria-hidden="true">+</span>
-          Nuevo reporte
-        </button>
+        <Button className="reports__new-button" icon={plusIcon} text="Nuevo reporte" onClick={() => setIsCreateModalOpen(true)} />
       </section>
 
       <div className="reports__workspace">

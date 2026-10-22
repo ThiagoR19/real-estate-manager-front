@@ -14,6 +14,7 @@ import {
 } from "../../assets/icons";
 import DropdownSelect from "../../components/select/DropdownSelect";
 import TenantModal from "../../components/tenant/TenantModal";
+import Button from "../../components/button/Button";
 import propertyImage from "/images.jpg";
 import "./Tenant.css";
 
@@ -188,7 +189,7 @@ export default function Tenant() {
             <input type="search" placeholder="Buscar contacto..." aria-label="Buscar contacto" value={query} onChange={(event) => setQuery(event.target.value)} />
           </label>
           {filters.map((filter, index) => <FilterControl key={filter.label} filter={filter} value={filterValues[index]} onChange={(value) => updateFilter(index, value)} />)}
-          <button className="tenant__new-button" type="button" onClick={openCreateModal}><img src={plusIcon} alt="" />Nuevo inquilino</button>
+          <Button className="tenant__new-button" onClick={openCreateModal} icon={plusIcon} text="Nuevo inquilino" />
         </section>
 
         <section className="tenant__table-card" aria-label="Listado de inquilinos">

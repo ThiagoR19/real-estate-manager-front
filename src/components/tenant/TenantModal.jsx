@@ -9,6 +9,7 @@ import {
   userIcon,
 } from "../../assets/icons";
 import DropdownSelect from "../select/DropdownSelect";
+import Button from "../button/Button";
 import "./TenantModal.css";
 
 const propertyOptions = ["Propiedad", "Av. San Martín 1250", "Av. Santa Fe 850"];
@@ -274,9 +275,7 @@ export default function TenantModal({ isOpen, mode, tenant, onClose, onSubmit })
             <button className="tenant-modal__cancel" type="button" onClick={onClose}>
               Cancelar
             </button>
-            <button className="tenant-modal__submit" type="submit">
-              Guardar cambios
-            </button>
+            <Button className="tenant-modal__submit" type="submit" text="Guardar cambios" />
           </footer>
         </form>
       </section>

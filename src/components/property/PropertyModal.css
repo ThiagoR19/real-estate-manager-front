@@ -29,7 +29,7 @@
   animation: property-modal-slide-in 180ms ease-out;
 }
 
-.property-modal button,
+.property-modal button:not(.button),
 .property-modal input,
 .property-modal textarea {
   font: inherit;
@@ -74,18 +74,20 @@
 }
 
 .property-modal__tabs button {
+  padding: 0 10px;
   border: 0;
   border-radius: 8px;
-  background: transparent;
-  color: #17235e;
   cursor: pointer;
   font-size: 12px;
   font-weight: 700;
 }
 
+.property-modal__tabs button:not(.is-active) {
+  background: transparent;
+  color: #17235e;
+}
+
 .property-modal__tabs button.is-active {
-  background: #003f9c;
-  color: #fff;
   box-shadow: 0 2px 3px rgb(23 35 94 / 20%);
 }
 
@@ -641,14 +643,7 @@
 
 .property-modal__submit {
   width: 228px;
-  border: 0;
-  background: #003f9c;
   box-shadow: 0 3px 4px rgb(23 35 94 / 25%);
-  color: #fff !important;
-}
-
-.property-modal__submit:hover {
-  background: #00327b;
 }
 
 @keyframes property-modal-fade-in {

@@ -6,6 +6,7 @@ import {
   userIcon,
 } from "../../assets/icons";
 import DropdownSelect from "../select/DropdownSelect";
+import Button from "../button/Button";
 import "./ProfessionalModal.css";
 
 const specialtyOptions = ["Profesión", "Albañil", "Plomero", "Electricista", "Gasista"];
@@ -228,9 +229,11 @@ export default function ProfessionalModal({ isOpen, mode, professional, onClose,
             <button className="professional-modal__cancel" type="button" onClick={onClose}>
               Cancelar
             </button>
-            <button className="professional-modal__submit" type="submit">
-              {isEditing ? "Guardar cambios" : "Crear profesional"}
-            </button>
+            <Button
+              className="professional-modal__submit"
+              type="submit"
+              text={isEditing ? "Guardar cambios" : "Crear profesional"}
+            />
           </footer>
         </form>
       </section>

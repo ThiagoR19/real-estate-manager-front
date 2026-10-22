@@ -11,6 +11,7 @@ import {
   xIcon,
 } from "../../assets/icons";
 import DropdownSelect from "../../components/select/DropdownSelect";
+import Button from "../../components/button/Button";
 import "./Agents.css";
 
 const agents = [
@@ -122,7 +123,7 @@ export default function Agents() {
             <input type="search" placeholder="Buscar contacto..." aria-label="Buscar contacto" value={query} onChange={(event) => setQuery(event.target.value)} />
           </label>
           <ZoneFilter value={zone} onChange={setZone} />
-          <button className="agents__new-button" type="button" onClick={() => setShowModal(true)}><img src={plusIcon} alt="" />Nuevo agente</button>
+          <Button className="agents__new-button" onClick={() => setShowModal(true)} icon={plusIcon} text="Nuevo agente" />
         </section>
 
         <section className="agents__table-card" aria-label="Listado de agentes">
@@ -145,7 +146,7 @@ export default function Agents() {
             <h2 id="agents-modal-title">Nuevo agente</h2>
             <p>Completá los datos del nuevo agente para incorporarlo al listado.</p>
             <div className="agents__modal-fields"><label>Nombre completo<input type="text" placeholder="Ej. Lucía Martínez" /></label><label>Correo electrónico<input type="email" placeholder="nombre@email.com" /></label></div>
-            <button className="agents__modal-submit" type="button" onClick={() => setShowModal(false)}>Guardar agente</button>
+            <Button className="agents__modal-submit" onClick={() => setShowModal(false)} text="Guardar agente" />
           </section>
         </div>
       )}

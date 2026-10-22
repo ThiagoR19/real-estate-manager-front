@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { calendarIcon, checkIcon, downloadIcon, fileLinesIcon, magnifyingGlassIcon, paperPlaneIcon, xIcon } from "../../assets/icons";
 import paymentReference from "../../assets/pagos.png";
+import Button from "../../components/button/Button";
 import "./PaymentsReference.css";
 
 const months = [["Mayo", "Sin comprobante", "neutral"], ["Marzo", "Impago", "danger"], ["Abril", "Aprobado", "success"], ["Febrero", "En proceso", "info"], ["Enero", "Rechazado", "danger"]];
@@ -31,7 +32,7 @@ export default function PaymentsReference() {
     <main id="payment-view">
       <aside className="payment-view__sidebar" aria-label="Propiedades y períodos">
         <h1>Propiedades</h1>
-        <button className="payment-view__property" type="button" aria-label="Cambiar propiedad"><span>‹</span><strong>Bielke 454</strong><span>›</span></button>
+        <Button className="payment-view__property" aria-label="Cambiar propiedad"><span aria-hidden="true">‹</span><strong>Bielke 454</strong><span aria-hidden="true">›</span></Button>
         <div className="payment-view__years">
           {["2026", "2025"].map((year) => <section className="payment-view__year" key={year}>
             <button className="payment-view__year-button" type="button" onClick={() => toggleYear(year)} aria-expanded={Boolean(openYears[year])}><strong>{year}</strong><span className={`payment-view__chevron${openYears[year] ? " is-open" : ""}`} /></button>
@@ -60,7 +61,7 @@ export default function PaymentsReference() {
             <header><h1 id="payment-view-title">{title}</h1><span className={`payment-view__status payment-view__status--${tone}`}>{status === "Aprobado" && <Icon src={checkIcon} />}{status}</span></header>
             <dl><div><Icon src={calendarIcon} /><dt>Fecha de pago:</dt><dd>{paid}</dd></div><div><Icon src={calendarIcon} /><dt>Fecha de aprobación:</dt><dd>{approved}</dd></div><div><span className="payment-view__coin">$</span><dt>Monto abonado:</dt><dd>{amount}</dd></div></dl>
             <aside className={status === "Rechazado" ? "is-rejected" : ""}><span><Icon src={fileLinesIcon} /></span><div><strong>Observaciones de administración</strong><p>{note}</p></div></aside>
-            <div className="payment-view__actions"><label><Icon src={downloadIcon} /><span>{uploadedFile ? "Cambiar comprobante" : "Subir comprobante"}</span><input type="file" accept="image/*,.pdf" onChange={upload} /></label><button type="button" onClick={() => setFeedback("Solicitud de revisión enviada")}><Icon src={paperPlaneIcon} /><span>{feedback ? "Enviado para revisión" : "Enviar para revisión"}</span></button></div>
+            <div className="payment-view__actions"><label><Icon src={downloadIcon} /><span>{uploadedFile ? "Cambiar comprobante" : "Subir comprobante"}</span><input type="file" accept="image/*,.pdf" onChange={upload} /></label><Button icon={paperPlaneIcon} text={feedback ? "Enviado para revisión" : "Enviar para revisión"} onClick={() => setFeedback("Solicitud de revisión enviada")} /></div>
             <p className="payment-view__note">Nota: Cuando un comprobante es aprobado, ya no puede modificarse.</p><p className="payment-view__feedback" aria-live="polite">{feedback}</p>
           </section>
         </div>

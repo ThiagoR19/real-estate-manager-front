@@ -9,6 +9,7 @@ import {
   userIcon,
 } from "../../assets/icons";
 import brandLogo from "../../assets/logoAGI.png";
+import Button from "../../components/button/Button";
 import "./Agency.css";
 
 const initialAgency = {
@@ -100,9 +101,7 @@ export default function Agency() {
         <aside className="agency__identity-card" aria-label="Resumen de la inmobiliaria">
           <div className="agency__identity-logo-wrap">
             <img className="agency__identity-logo" src={brandLogo} alt="Logo de AGI Propiedades" />
-            <button className="agency__identity-camera" type="button" aria-label="Cambiar logo de la inmobiliaria">
-              <img src={cameraIcon} alt="" />
-            </button>
+            <Button className="agency__identity-camera" icon={cameraIcon} aria-label="Cambiar logo de la inmobiliaria" />
           </div>
           <h1>AGI Propiedades</h1>
           <p className="agency__identity-type">Inmobiliaria</p>
@@ -157,10 +156,7 @@ export default function Agency() {
         </form>
       </div>
 
-      <button className="agency__save" type="button" onClick={saveChanges} aria-live="polite">
-        <img src={checkIcon} alt="" />
-        <span>{saved ? "Cambios guardados" : "Guardar cambios"}</span>
-      </button>
+      <Button className="agency__save" icon={checkIcon} text={saved ? "Cambios guardados" : "Guardar cambios"} onClick={saveChanges} aria-live="polite" />
     </main>
   );
 }

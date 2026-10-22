@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { houseIcon, xIcon } from "../../assets/icons";
 import DropdownSelect from "../select/DropdownSelect";
+import Button from "../button/Button";
 import "./ReportModal.css";
 
 const typeOptions = ["Tipo", "Plomería", "Electricidad", "Gas", "Pintura", "Carpintería", "Otro"];
@@ -210,9 +211,7 @@ export default function ReportModal({ isOpen, onClose, onSubmit }) {
               <button className="report-modal__cancel" type="button" onClick={onClose}>
                 Cancelar
               </button>
-              <button className="report-modal__submit" type="submit">
-                Crear reporte
-              </button>
+              <Button className="report-modal__submit" type="submit" text="Crear reporte" />
             </div>
           </footer>
         </form>

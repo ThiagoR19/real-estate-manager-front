@@ -9,6 +9,7 @@ import {
   xIcon,
 } from "../../assets/icons";
 import paymentReference from "../../assets/cobros.png";
+import Button from "../../components/button/Button";
 import "./Payments.css";
 
 const months = [
@@ -74,9 +75,9 @@ export default function Payments() {
     <main id="payments">
       <aside className="payments__sidebar" aria-label="Propiedades y períodos">
         <h1>Propiedades</h1>
-        <button className="payments__property-switcher" type="button" aria-label="Cambiar propiedad">
+        <Button className="payments__property-switcher" aria-label="Cambiar propiedad">
           <span aria-hidden="true">‹</span><strong>Bielke 454</strong><span aria-hidden="true">›</span>
-        </button>
+        </Button>
         <div className="payments__years">
           <section className="payments__year">
             <YearButton year="2026" expanded={Boolean(openYears[2026])} onClick={() => toggleYear(2026)} />
@@ -130,7 +131,7 @@ export default function Payments() {
             <aside className={`payments__admin-note${details.status === "Rechazado" ? " is-rejected" : ""}`}><span className="payments__admin-note-icon"><Icon src={fileLinesIcon} /></span><div><strong>Detalle de administración</strong><p>{details.note}</p></div></aside>
             <div className="payments__actions">
               {hasReceipt ? <button className="payments__button payments__button--secondary" type="button" onClick={() => setFeedback("Comprobante descargado")}><Icon src={downloadIcon} /><span>Descargar comprobante</span></button> : <label className="payments__button payments__button--secondary"><Icon src={downloadIcon} /><span>{uploadedFile ? "Cambiar comprobante" : "Subir comprobante"}</span><input type="file" accept="image/*,.pdf" onChange={uploadReceipt} /></label>}
-              <button className="payments__button payments__button--primary" type="button" onClick={() => setFeedback("Solicitud de revisión enviada")}><Icon src={paperPlaneIcon} /><span>{feedback === "Solicitud de revisión enviada" ? "Enviado para revisión" : "Solicitar revisión"}</span></button>
+              <Button className="payments__button payments__button--primary" icon={paperPlaneIcon} text={feedback === "Solicitud de revisión enviada" ? "Enviado para revisión" : "Solicitar revisión"} onClick={() => setFeedback("Solicitud de revisión enviada")} />
             </div>
             <p className="payments__disclaimer">Nota: una vez liquidado el periodo, la información queda disponible para consultas y descarga</p>
             <p className="payments__feedback" aria-live="polite">{feedback}</p>

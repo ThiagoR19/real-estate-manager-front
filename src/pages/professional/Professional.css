@@ -16,7 +16,7 @@ body:has(#professional) {
   box-sizing: border-box;
 }
 
-#professional button {
+#professional button:not(.button) {
   font: inherit;
   -webkit-tap-highlight-color: transparent;
 }
@@ -49,39 +49,46 @@ body:has(#professional) {
 .professional__filter {
   position: relative;
   width: 385px;
+  height: 44px;
+  border: 2px solid #e1ebf4;
+  border-radius: 10px;
+  background: #fff;
+  color: #526485;
 }
 
 .professional__filter-trigger {
   display: flex;
   align-items: center;
-  gap: 12px;
-  height: 44px;
-  padding: 0 15px 0 8px;
-  border: 2px solid #e1ebf4;
-  border-radius: 10px;
-  background: #fff;
-  color: #42577e;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  padding: 0 8px;
+  border: 0;
+  background: transparent;
+  color: #526485;
   cursor: pointer;
   font-size: 16px;
   text-align: left;
 }
 
-.professional__filter-trigger:hover {
+.professional__filter:hover {
   border-color: #c5ddef;
 }
 
 .professional__filter-icon {
   display: grid;
+  flex-shrink: 0;
   place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 9px;
-  background: #edf6fd;
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
+  background: #e6f1fc;
 }
 
 .professional__filter-icon img {
-  width: 19px;
-  height: 19px;
+  width: 18px;
+  height: 18px;
 }
 
 .professional__filter-arrow {
@@ -131,17 +138,11 @@ body:has(#professional) {
   padding: 0 18px;
   border: 0;
   border-radius: 10px;
-  background: #003f9c;
   box-shadow: 0 4px 4px #17235e42;
-  color: #fff !important;
   cursor: pointer;
   font-size: 16px;
   font-weight: 700;
   transition: background-color 150ms ease, transform 150ms ease;
-}
-
-.professional__new:hover {
-  background: #00327b;
 }
 
 .professional__new:active {
@@ -151,7 +152,6 @@ body:has(#professional) {
 .professional__new img {
   width: 20px;
   height: 20px;
-  filter: brightness(0) invert(1) !important;
 }
 
 .professional__table-card {
@@ -345,14 +345,11 @@ body:has(#professional) {
   width: 110px;
   height: 35px;
   border-radius: 18px;
-  background: #2867e9;
   box-shadow: 0 3px 4px #17235e40;
-  color: #fff !important;
   font-size: 12px;
 }
 
 .professional__rate>span:first-child {
-  color: #fff;
   font-size: 16px;
   line-height: 1;
 }

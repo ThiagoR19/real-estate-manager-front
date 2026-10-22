@@ -16,13 +16,13 @@ body:has(#agency) {
   box-sizing: border-box;
 }
 
-#agency button,
+#agency button:not(.button),
 #agency input {
   font: inherit;
   -webkit-tap-highlight-color: transparent;
 }
 
-#agency button {
+#agency button:not(.button) {
   color: inherit;
 }
 
@@ -86,8 +86,6 @@ body:has(#agency) {
   padding: 7px;
   border: 0;
   border-radius: 50%;
-  background: #17235e;
-  cursor: pointer;
 }
 
 .agency__identity-camera img {
@@ -311,17 +309,9 @@ body:has(#agency) {
   padding: 0 17px;
   border: 0;
   border-radius: 15px;
-  background: #0044a5;
   box-shadow: 0 4px 4px #17235e42;
-  color: #fff !important;
-  cursor: pointer;
   font-size: 18px;
   font-weight: 700;
-  transition: background-color 150ms ease, transform 150ms ease;
-}
-
-.agency__save:hover {
-  background: #003786;
 }
 
 .agency__save:active {

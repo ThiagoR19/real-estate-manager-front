@@ -14,7 +14,7 @@
   -webkit-font-smoothing: antialiased;
 }
 
-#payment-view button,
+#payment-view button:not(.button),
 #payment-view input { font: inherit; }
 #payment-view button:focus-visible,
 #payment-view label:focus-within { outline: 2px solid #2178c4; outline-offset: 3px; }
@@ -31,7 +31,7 @@
 }
 
 .payment-view__sidebar h1 { height: 55px; margin: 0; padding: 18px 22px 0; color: #17235e; font-size: 21px; font-weight: 750; text-align: center; }
-.payment-view__property { display: flex; align-items: center; justify-content: space-between; width: 100%; height: 51px; padding: 0 12px; border: 0; background: #1d5bc1; color: #fff; cursor: pointer; }
+.payment-view__property { display: flex; align-items: center; justify-content: space-between; width: 100%; height: 51px; padding: 0 12px; border: 0; border-radius: 0; }
 .payment-view__property span { font-size: 34px; font-weight: 200; line-height: 1; }
 .payment-view__property strong { font-size: 18px; font-weight: 500; }
 .payment-view__years { padding: 15px 22px 0 25px; }
@@ -115,10 +115,9 @@
 .payment-view__detail aside p { max-width: 610px; margin: 0; color: #627493; font-size: 13px; line-height: 1.25; }
 .payment-view__actions { display: grid; grid-template-columns: minmax(200px, 235px) minmax(200px, 1fr); gap: 10px; margin-top: 69px; }
 .payment-view__actions label,
-.payment-view__actions button { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 18px; min-height: 48px; border: 1px solid #1858c8; border-radius: 10px; background: #fff; color: #1858c8; cursor: pointer; font-size: 14px; font-weight: 750; }
-.payment-view__actions button { background: #1858c8; color: #fff; }
-.payment-view__actions .payment-view__icon { width: 20px; height: 20px; }
-.payment-view__actions button .payment-view__icon { filter: brightness(0) invert(1); }
+.payment-view__actions button { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 18px; min-height: 48px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 750; }
+.payment-view__actions label { border: 1px solid #1858c8; background: #fff; color: #1858c8; }
+.payment-view__actions img { width: 20px; height: 20px; }
 .payment-view__actions label .payment-view__icon { filter: brightness(0) saturate(100%) invert(31%) sepia(93%) saturate(1753%) hue-rotate(204deg) brightness(82%) contrast(105%); transform: rotate(180deg); }
 .payment-view__actions input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 .payment-view__note { margin: 14px 0 0; color: #657694; font-size: 13px; text-align: right; }

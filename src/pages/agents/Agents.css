@@ -14,7 +14,7 @@ body:has(#agents) {
 #agents,
 #agents * { box-sizing: border-box; }
 
-#agents button,
+#agents button:not(.button),
 #agents input { font: inherit; -webkit-tap-highlight-color: transparent; }
 
 #agents img {
@@ -112,9 +112,9 @@ body:has(#agents) {
 .agents__search input { width: 100%; min-width: 0; padding: 0; border: 0; outline: 0; background: transparent; color: #17235e; font-size: 14px; }
 .agents__search input::placeholder { color: #7e8aa6; opacity: 1; }
 .agents__filter { position: relative; min-width: 0; }
-.agents__filter-trigger { display: flex; align-items: center; gap: 10px; width: 100%; height: 100%; min-width: 0; padding: 0 13px; border: 0; background: transparent; color: #526485; cursor: pointer; text-align: left; }
-.agents__filter-icon { display: grid; flex-shrink: 0; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #e6f1fc; }
-.agents__filter-icon img { width: 14px; height: 14px; }
+.agents__filter-trigger { display: flex; align-items: center; gap: 10px; width: 100%; height: 100%; min-width: 0; padding: 0 8px; border: 0; background: transparent; color: #526485; cursor: pointer; text-align: left; }
+.agents__filter-icon { display: grid; flex-shrink: 0; place-items: center; width: 28px; height: 28px; border-radius: 10px; background: #e6f1fc; }
+.agents__filter-icon img { width: 18px; height: 18px; }
 .agents__filter-trigger .select-control__value { overflow: hidden; width: 100%; min-width: 0; padding: 0 24px 0 0; color: #526485; font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
 .agents__filter-chevron { position: absolute; right: 13px; width: 13px; height: 13px; pointer-events: none; }
 
@@ -128,9 +128,7 @@ body:has(#agents) {
   padding: 0 19px;
   border: 0;
   border-radius: 11px;
-  background: #003783;
   box-shadow: 0 3px 5px #17235e45;
-  color: #fff;
   cursor: pointer;
   font-size: 18px;
   font-weight: 700;
@@ -138,9 +136,7 @@ body:has(#agents) {
   grid-column: 4;
 }
 
-.agents__new-button:hover,
-.agents__modal-submit:hover { background: #092f6a; }
-.agents__new-button img { width: 20px; height: 20px; filter: brightness(0) invert(1) !important; }
+.agents__new-button img { width: 20px; height: 20px; }
 
 .agents__table-card { overflow: hidden; border: 1px solid #e1e8ef; border-radius: 12px 12px 0 0; background: #fff; box-shadow: 0 0 4px #17235e12; }
 .agents__table-wrap { overflow-x: auto; }
@@ -183,7 +179,7 @@ body:has(#agents) {
 .agents__modal-fields { display: grid; gap: 14px; }
 .agents__modal-fields label { display: grid; gap: 6px; color: #17235e; font-size: 13px; font-weight: 650; }
 .agents__modal-fields input { height: 42px; padding: 0 12px; border: 1px solid #dbe6f1; border-radius: 9px; color: #17235e; outline: 0; }
-.agents__modal-submit { width: 100%; height: 43px; margin-top: 23px; border: 0; border-radius: 9px; background: #003783; color: #fff; cursor: pointer; font-weight: 700; }
+.agents__modal-submit { width: 100%; height: 43px; margin-top: 23px; border: 0; border-radius: 9px; cursor: pointer; font-weight: 700; }
 
 body:has(#agents) .navbar__search { display: none; }
 

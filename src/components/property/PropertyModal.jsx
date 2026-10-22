@@ -17,6 +17,7 @@ import {
   xIcon,
 } from "../../assets/icons";
 import DropdownSelect from "../select/DropdownSelect";
+import Button from "../button/Button";
 import propertyImage from "/images (1).jpg";
 import terraceImage from "/images.jpg";
 import villaImage from "/ly-villa-costa-blanca-1_b02f5d33_900x900.jpg";
@@ -263,7 +264,7 @@ export default function PropertyModal({ isOpen, mode, property, onClose, onSubmi
           </div>
 
           <div className="property-modal__tabs" role="tablist" aria-label="Secciones de la propiedad">
-            <button
+            <Button
               className={activeSection === "information" ? "is-active" : ""}
               type="button"
               role="tab"
@@ -271,8 +272,8 @@ export default function PropertyModal({ isOpen, mode, property, onClose, onSubmi
               onClick={() => setActiveSection("information")}
             >
               Información
-            </button>
-            <button
+            </Button>
+            <Button
               className={activeSection === "documentation" ? "is-active" : ""}
               type="button"
               role="tab"
@@ -280,7 +281,7 @@ export default function PropertyModal({ isOpen, mode, property, onClose, onSubmi
               onClick={() => setActiveSection("documentation")}
             >
               Documentación
-            </button>
+            </Button>
           </div>
         </header>
 
@@ -513,7 +514,7 @@ export default function PropertyModal({ isOpen, mode, property, onClose, onSubmi
 
           <footer className="property-modal__actions">
             <button className="property-modal__cancel" type="button" onClick={onClose}>Cancelar</button>
-            <button className="property-modal__submit" type="submit">{isEditing ? "Guardar cambios" : "Crear propiedad"}</button>
+            <Button className="property-modal__submit" type="submit" text={isEditing ? "Guardar cambios" : "Crear propiedad"} />
           </footer>
         </form>
       </section>

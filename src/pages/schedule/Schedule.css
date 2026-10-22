@@ -15,10 +15,13 @@ body:has(#schedule) {
   box-sizing: border-box;
 }
 
-#schedule button {
+#schedule button:not(.button) {
   font: inherit;
-  color: inherit;
   -webkit-tap-highlight-color: transparent;
+}
+
+#schedule button:not(.button) {
+  color: inherit;
 }
 
 #schedule button:focus-visible {
@@ -98,9 +101,7 @@ body:has(#schedule) {
   margin-top: 2px;
   border: 0;
   border-radius: 11px;
-  background: linear-gradient(110deg, #09265d, #054fbc);
   box-shadow: 0 3px 4px #101a2f4d;
-  color: #fff !important;
   cursor: pointer;
   font-weight: 700;
   transition: transform 150ms ease, box-shadow 150ms ease;
@@ -130,20 +131,22 @@ body:has(#schedule) {
 .schedule__view-toggle button {
   border: 0;
   border-radius: 5px;
-  background: transparent;
   cursor: pointer;
   font-size: 13px;
   font-weight: 700;
 }
 
-.schedule__view-toggle button:hover {
+.schedule__view-toggle button:not(.is-active) {
+  background: transparent;
+  color: #17235e;
+}
+
+.schedule__view-toggle button:not(.is-active):hover {
   background: #f0f6fc;
 }
 
 .schedule__view-toggle button.is-active {
-  background: #214195;
   box-shadow: 0 1px 3px #17235e38;
-  color: #fff;
 }
 
 .schedule__panel {

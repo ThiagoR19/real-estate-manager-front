@@ -12,6 +12,7 @@ import {
   userIcon,
 } from "../../assets/icons";
 import "./Profile.css";
+import Button from "../../components/button/Button";
 
 const personalFields = [
   { id: "name", label: "Nombre", placeholder: "Juan", icon: userIcon },
@@ -77,9 +78,7 @@ export default function Profile() {
           <section className="profile__identity-card" aria-label="Resumen del perfil">
             <div className="profile__avatar">
               <span>TR</span>
-              <button type="button" aria-label="Cambiar foto de perfil">
-                <img src={cameraIcon} alt="" />
-              </button>
+              <Button icon={cameraIcon} aria-label="Cambiar foto de perfil" />
             </div>
             <h1>Thiago Riffo</h1>
             <p className="profile__role">Administrador</p>
@@ -144,10 +143,7 @@ export default function Profile() {
         </form>
       </div>
 
-      <button className="profile__save-button" type="button">
-        <img src={checkIcon} alt="" aria-hidden="true" />
-        Guardar cambios
-      </button>
+      <Button className="profile__save-button" icon={checkIcon} text="Guardar cambios" />
     </main>
   );
 }

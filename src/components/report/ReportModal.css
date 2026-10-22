@@ -29,7 +29,7 @@
   animation: report-modal-slide-in 180ms ease-out;
 }
 
-.report-modal button,
+.report-modal button:not(.button),
 .report-modal input,
 .report-modal textarea {
   font: inherit;
@@ -376,14 +376,7 @@
 
 .report-modal__submit {
   width: 228px;
-  border: 0;
-  background: #003f9c;
   box-shadow: 0 3px 4px rgb(23 35 94 / 25%);
-  color: #fff !important;
-}
-
-.report-modal__submit:hover {
-  background: #00327b;
 }
 
 @keyframes report-modal-fade-in {

@@ -10,6 +10,7 @@ import {
   xIcon,
 } from "../../assets/icons";
 import propertyImage from "/images.jpg";
+import Button from "../../components/button/Button";
 import "./Owners.css";
 
 const owners = Array.from({ length: 6 }, (_, index) => ({
@@ -122,10 +123,7 @@ export default function Owners() {
               onChange={(event) => setQuery(event.target.value)}
             />
           </label>
-          <button className="owners__new-button" type="button" onClick={() => setShowModal(true)}>
-            <img src={plusIcon} alt="" />
-            Nuevo propietario
-          </button>
+          <Button className="owners__new-button" onClick={() => setShowModal(true)} icon={plusIcon} text="Nuevo propietario" />
         </section>
 
         <section className="owners__table-card" aria-label="Listado de propietarios">
@@ -155,7 +153,7 @@ export default function Owners() {
               <label>Nombre completo<input type="text" placeholder="Ej. Lucía Martínez" /></label>
               <label>Correo electrónico<input type="email" placeholder="nombre@email.com" /></label>
             </div>
-            <button className="owners__modal-submit" type="button" onClick={() => setShowModal(false)}>Guardar propietario</button>
+            <Button className="owners__modal-submit" onClick={() => setShowModal(false)} text="Guardar propietario" />
           </section>
         </div>
       )}

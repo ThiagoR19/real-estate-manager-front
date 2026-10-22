@@ -29,7 +29,7 @@
   animation: professional-modal-slide-in 180ms ease-out;
 }
 
-.professional-modal button,
+.professional-modal button:not(.button),
 .professional-modal input {
   font: inherit;
   -webkit-tap-highlight-color: transparent;
@@ -272,14 +272,7 @@
 
 .professional-modal__submit {
   width: 228px;
-  border: 0;
-  background: #003f9c;
   box-shadow: 0 3px 4px rgb(23 35 94 / 25%);
-  color: #fff !important;
-}
-
-.professional-modal__submit:hover {
-  background: #00327b;
 }
 
 @keyframes professional-modal-fade-in {

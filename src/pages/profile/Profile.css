@@ -15,14 +15,14 @@ body:has(#profile) {
   box-sizing: border-box;
 }
 
-#profile button,
+#profile button:not(.button),
 #profile input,
 #profile a,
 #profile summary {
   -webkit-tap-highlight-color: transparent;
 }
 
-#profile button,
+#profile button:not(.button),
 #profile input {
   font: inherit;
 }
@@ -251,8 +251,6 @@ body:has(#profile) {
   padding: 7px;
   border: 2px solid #fff;
   border-radius: 50%;
-  background: #061b4a;
-  cursor: pointer;
 }
 
 .profile__avatar button img {
@@ -493,12 +491,9 @@ body:has(#profile) {
   height: 48px;
   border: 0;
   border-radius: 15px;
-  background: #0640a8;
   box-shadow: 0 3px 4px #17235e4a;
-  color: #fff;
   font-size: 18px;
   font-weight: 700;
-  cursor: pointer;
 }
 
 .profile__save-button img {

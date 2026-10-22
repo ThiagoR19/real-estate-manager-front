@@ -16,7 +16,7 @@
   box-sizing: border-box;
 }
 
-#payments button,
+#payments button:not(.button),
 #payments input {
   font: inherit;
   -webkit-tap-highlight-color: transparent;
@@ -54,9 +54,7 @@
   height: 51px;
   padding: 0 12px;
   border: 0;
-  background: var(--payments-ink);
-  color: #fff;
-  cursor: pointer;
+  border-radius: 0;
 }
 
 .payments__property-switcher span {
@@ -500,19 +498,19 @@
   justify-content: center;
   gap: 18px;
   min-height: 48px;
-  border: 1px solid var(--payments-blue);
   border-radius: 10px;
   cursor: pointer;
   font-size: 14px;
   font-weight: 750;
 }
 
-.payments__button .payments__icon {
+.payments__button img {
   width: 20px;
   height: 20px;
 }
 
 .payments__button--secondary {
+  border: 1px solid var(--payments-blue);
   background: #fff;
   color: var(--payments-blue);
 }
@@ -521,16 +519,7 @@
   filter: brightness(0) saturate(100%) invert(31%) sepia(93%) saturate(1753%) hue-rotate(204deg) brightness(82%) contrast(105%);
 }
 
-.payments__button--primary {
-  background: #1858c8;
-  color: #fff;
-}
-
-.payments__button--primary .payments__icon {
-  filter: brightness(0) invert(1);
-}
-
-.payments__button:hover { filter: brightness(0.97); }
+.payments__button--secondary:hover { filter: brightness(0.97); }
 
 .payments__button input {
   position: absolute;

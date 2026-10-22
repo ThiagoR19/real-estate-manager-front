@@ -11,6 +11,7 @@ import {
 } from "../../assets/icons";
 import PropertyModal from "../../components/property/PropertyModal";
 import DropdownSelect from "../../components/select/DropdownSelect";
+import Button from "../../components/button/Button";
 import propertyImage from "/images (1).jpg";
 import "./Properties.css";
 
@@ -183,10 +184,7 @@ export default function Properties() {
             onChange={(value) => updateFilter(filter.id, value)}
           />
         ))}
-        <button className="properties__new-button" type="button" onClick={openCreateModal}>
-          <img className="properties__new-button-icon" src={plusIcon} alt="" aria-hidden="true" />
-          <span>Nueva Propiedad</span>
-        </button>
+        <Button className="properties__new-button" onClick={openCreateModal} icon={plusIcon} text="Nueva Propiedad" />
       </section>
 
       <section className="properties__grid" aria-label="Listado de propiedades">

@@ -5,6 +5,7 @@ import {
   plusIcon,
   userIcon,
 } from "../../assets/icons";
+import Button from "../../components/button/Button";
 import propertyImage from "/images (1).jpg";
 import "./Schedule.css";
 
@@ -148,14 +149,11 @@ function ScheduleHeader({ view, onViewChange }) {
         <p>Organiza tus visitas, gestiona tu tiempo y haz seguimiento de tus clientes</p>
       </header>
 
-      <button className="schedule__new-visit" type="button">
-        <img src={plusIcon} alt="" />
-        <span>Nueva visita</span>
-      </button>
+      <Button className="schedule__new-visit" icon={plusIcon} text="Nueva visita" />
 
       <div className="schedule__view-toggle" role="tablist" aria-label="Tipo de vista">
         {viewOptions.map(({ id, label }) => (
-          <button
+          <Button
             key={id}
             className={view === id ? "is-active" : ""}
             type="button"
@@ -164,7 +162,7 @@ function ScheduleHeader({ view, onViewChange }) {
             onClick={() => onViewChange(id)}
           >
             {label}
-          </button>
+          </Button>
         ))}
       </div>
     </div>

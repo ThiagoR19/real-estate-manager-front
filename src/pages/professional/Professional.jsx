@@ -4,6 +4,7 @@ import {
   peopleIcon,
   penIcon,
   phoneIcon,
+  plusIcon,
   trashCanIcon as trashIcon,
 } from "../../assets/icons";
 import DropdownSelect from "../../components/select/DropdownSelect";
@@ -119,7 +120,7 @@ export default function Professional() {
           optionsClassName="professional__filter-options"
         />
 
-        <Button openCreateModal={openCreateModal} text={'Nuevo profesional'} />
+        <Button className="professional__new" onClick={openCreateModal} icon={plusIcon} text="Nuevo profesional" />
       </div>
 
       <section className="professional__table-card" aria-label="Lista de profesionales">
@@ -168,14 +169,12 @@ export default function Professional() {
                   <td><Rating rating={professional.rating} reviews={professional.reviews} /></td>
                   <td>
                     <div className="professional__actions">
-                      <button
+                      <Button
                         className="professional__rate"
-                        type="button"
                         onClick={() => rateProfessional(professional)}
-                      >
-                        <span aria-hidden="true">★</span>
-                        <span>Valorar</span>
-                      </button>
+                        icon={<span aria-hidden="true">★</span>}
+                        text="Valorar"
+                      />
                       <button
                         className="professional__action professional__action--edit"
                         type="button"
