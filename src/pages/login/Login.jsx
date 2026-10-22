@@ -1,13 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
+import Esqueleto from "../../components/esqueleto/Esqueleto";
 import PanelImagen from "../../components/panelImagen/PanelImagen";
 import CampoTexto from "../../components/campoTexto/CampoTexto";
 import BotonPrincipal from "../../components/botonPrincipal/BotonPrincipal";
 import AccesoGoogle from "../../components/accesoGoogle/AccesoGoogle";
 import TextoLegal from "../../components/textoLegal/TextoLegal";
-import SkeletonAuth from "../../components/skeletonAuth/SkeletonAuth";
 
-import useCargaCompleta from "../../hooks/useCargaCompleta";
 import useEnvio from "../../hooks/useEnvio";
 import esperar from "../../utils/esperar";
 
@@ -18,8 +17,6 @@ import fondo from "../../assets/loginFondo.png"
 import "./Login.css"
 
 export default function Login() {
-    const vistaRef = useRef(null);
-    const cargado = useCargaCompleta(vistaRef, [fondo]);
     const [estadoEnvio, enviar] = useEnvio();
 
     // Si venimos de la animación de Registro, el hero ya está en pantalla: solo falta el panel
@@ -36,8 +33,8 @@ export default function Login() {
     };
 
     return (
-        <main className="login" ref={vistaRef}>
-            <PanelImagen conMarca className="login__hero" />
+        <Esqueleto as="main" className="login" fondos={[fondo]}>
+            <PanelImagen conMarca className={`login__hero ${desdeRegistro ? "Esqueleto-no" : ""}`} />
             <section className="login__panel">
                 <form className="login__form" onSubmit={handleSubmit}>
                     <header className="login__header">
@@ -80,8 +77,6 @@ export default function Login() {
 
                 <TextoLegal className="login__terms" />
             </section>
-
-            <SkeletonAuth variante="login" sinHero={desdeRegistro} oculto={cargado} />
-        </main>
+        </Esqueleto>
     );
 }

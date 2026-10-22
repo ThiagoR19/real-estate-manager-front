@@ -1,0 +1,150 @@
+.TarjetaPropiedad {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    border-radius: 10px;
+    background-color: var(--blanc);
+    box-shadow: 0 4px 16px rgba(15, 23, 42, .12);
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.TarjetaPropiedad:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 26px rgba(15, 23, 42, .16);
+}
+
+.TarjetaPropiedad__imagen {
+    display: block;
+    width: 100%;
+    height: var(--tarjeta-imagen, 150px);
+    object-fit: cover;
+
+    -webkit-user-drag: none;
+    user-select: none;
+}
+
+.TarjetaPropiedad__cuerpo {
+    display: flex;
+    flex-direction: column;
+    padding: 13px 20px 20px;
+    color: var(--azulOsc);
+}
+
+.TarjetaPropiedad__titulo {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.TarjetaPropiedad__direccion {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 8px 0 0;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.TarjetaPropiedad__icono {
+    display: flex;
+    flex-shrink: 0;
+    width: 17px;
+    height: 17px;
+}
+
+.TarjetaPropiedad__icono img,
+.TarjetaPropiedad__detalle-icono img {
+    width: 100%;
+    height: 100%;
+
+    -webkit-user-drag: none;
+    user-select: none;
+}
+
+.TarjetaPropiedad__datos {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.TarjetaPropiedad__caracteristicas {
+    display: flex;
+    gap: 22px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.TarjetaPropiedad__caracteristica {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.TarjetaPropiedad__operacion {
+    padding: 5px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.TarjetaPropiedad__operacion--alquiler {
+    color: var(--azulClaro);
+    background-color: var(--azulClaroInfo);
+}
+
+.TarjetaPropiedad__operacion--venta {
+    color: var(--verdeOscInfo);
+    background-color: var(--verdeClaroInfo);
+}
+
+.TarjetaPropiedad__detalle {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    height: 47px;
+    margin-top: 12px;
+    padding: 0 26px;
+    border: 2px solid var(--bordes);
+    border-radius: 8px;
+    font-size: 16px;
+    text-decoration: none;
+    color: var(--azulOsc);
+    transition: border-color .2s, background-color .2s;
+}
+
+.TarjetaPropiedad__detalle:hover {
+    border-color: var(--azulClaroInfo);
+    background-color: var(--casiBlanc);
+}
+
+.TarjetaPropiedad__detalle-icono {
+    display: flex;
+    width: 22px;
+    height: 22px;
+}
+
+@media (max-width: 1300px) {
+
+    .TarjetaPropiedad__cuerpo {
+        padding: 12px 14px 16px;
+    }
+
+    .TarjetaPropiedad__caracteristicas {
+        gap: 14px;
+    }
+
+    .TarjetaPropiedad__operacion {
+        padding: 5px 10px;
+    }
+}

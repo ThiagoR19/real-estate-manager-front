@@ -4,7 +4,7 @@ import Marca from '../marca/Marca';
 
 export default function PanelImagen({ conMarca = false, className = "" }) {
     return (
-        <section className={`PanelImagen ${className}`}>
+        <section className={`PanelImagen ${className}`} data-sk-fondo>
             {conMarca && <Marca />}
 
             <div className='PanelImagen__contenido'>

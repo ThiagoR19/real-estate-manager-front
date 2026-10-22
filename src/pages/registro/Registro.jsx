@@ -1,15 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, useLocation } from 'wouter';
 
+import Esqueleto from '../../components/esqueleto/Esqueleto';
 import Marca from '../../components/marca/Marca';
 import PanelImagen from '../../components/panelImagen/PanelImagen';
 import CampoTexto from '../../components/campoTexto/CampoTexto';
 import BotonPrincipal from '../../components/botonPrincipal/BotonPrincipal';
 import AccesoGoogle from '../../components/accesoGoogle/AccesoGoogle';
 import TextoLegal from '../../components/textoLegal/TextoLegal';
-import SkeletonAuth from '../../components/skeletonAuth/SkeletonAuth';
+import Login from '../login/Login';
 
-import useCargaCompleta from '../../hooks/useCargaCompleta';
 import useEnvio from '../../hooks/useEnvio';
 import esperar from '../../utils/esperar';
 
@@ -22,10 +23,8 @@ import './Registro.css';
 const DURACION_SALIDA = 900;
 
 export default function Registro() {
-    const vistaRef = useRef(null);
     const panelRef = useRef(null);
 
-    const cargado = useCargaCompleta(vistaRef, [fondo]);
     const [estadoEnvio, enviar] = useEnvio();
 
     const [saliendo, setSaliendo] = useState(false);
@@ -73,9 +72,10 @@ export default function Registro() {
     };
 
     return (
-        <main
+        <Esqueleto
+            as="main"
             className={`Registro ${saliendo ? "Registro--saliendo" : ""}`}
-            ref={vistaRef}
+            fondos={[fondo]}
             style={variablesSalida}
         >
 
@@ -142,10 +142,14 @@ export default function Registro() {
 
             <PanelImagen className='Registro__imagen' />
 
-            {saliendo && <SkeletonAuth variante="login" sinHero className='Registro__skeleton-login' />}
+            {/* Login en modo skeleton: lo descubre el hero mientras se desliza */}
+            {saliendo && createPortal(
+                <div className='Registro__login-previo Esqueleto' style={variablesSalida} aria-hidden="true" inert>
+                    <Login />
+                </div>,
+                document.body
+            )}
 
-            <SkeletonAuth variante="registro" oculto={cargado} />
-
-        </main>
+        </Esqueleto>
     )
 }

@@ -5,6 +5,7 @@ import Agents from "./pages/agents/Agents";
 import Chat from "./pages/chat/Chat";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Earnings from "./pages/earnings/Earnings";
+import Home from "./pages/Home/Home";
 import Login from "./pages/login/Login";
 import Registro from "./pages/registro/Registro";
 import Owner from "./pages/owner/Owner";
@@ -22,6 +23,7 @@ function App() {
   return (
     <div>
       <Route path="/" component={Login} />
+      <Route path="/home" component={Home} />
       <Route path="/login" component={Login} />
       <Route path="/registro" component={Registro} />
       <Route path="/dashboard" component={Dashboard} />
