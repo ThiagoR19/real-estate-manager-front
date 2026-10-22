@@ -123,6 +123,50 @@
     text-decoration: underline;
 }
 
+/* ------------------------------- TRANSICION A LOGIN ------------------------------ */
+
+.Registro--saliendo {
+    --curva-salida: cubic-bezier(.77, 0, .18, 1);
+
+    pointer-events: none;
+}
+
+.Registro__skeleton-login {
+    z-index: 1;
+}
+
+/* El hero viaja hasta la izquierda, donde está en Login */
+.Registro--saliendo .Registro__imagen {
+    z-index: 2;
+    width: 100.9%;
+    transform: translateX(calc(-1 * var(--salida)));
+    transition: transform var(--duracion-salida) var(--curva-salida);
+}
+
+/* La marca queda por encima y termina en el mismo lugar que en Login */
+.Registro--saliendo .Registro__marca {
+    --marca-logo: 35px;
+    --marca-nombre: 33px;
+    --marca-sub: 22px;
+
+    position: relative;
+    z-index: 3;
+    color: var(--blanc);
+    transform: translate(var(--marca-dx), var(--marca-dy));
+    transition:
+        transform var(--duracion-salida) var(--curva-salida),
+        color calc(var(--duracion-salida) * .5) ease calc(var(--duracion-salida) * .3);
+}
+
+.Registro--saliendo .Marca__logo,
+.Registro--saliendo .Marca__nombre,
+.Registro--saliendo .Marca__sub {
+    transition:
+        width var(--duracion-salida) var(--curva-salida),
+        height var(--duracion-salida) var(--curva-salida),
+        font-size var(--duracion-salida) var(--curva-salida);
+}
+
 
 
 /* =================================================================================== */
@@ -131,7 +175,7 @@
 
 @media (max-width: 1100px) {
     .Registro {
-        grid-template-columns: 1fr 45%;
+        grid-template-columns: 1fr 48%;
     }
 }
 
@@ -158,7 +202,9 @@
 
     .Registro__imagen {
         position: absolute;
-        inset: auto 0 0;
+        top: calc(100% - clamp(60px, 28vh, 220px));
+        left: 0;
+        right: 0;
         height: clamp(60px, 28vh, 220px);
         padding: 0;
         background-position: right 30%;
@@ -233,6 +279,46 @@
     .Registro__cuenta {
         margin-top: clamp(2px, .6vh, 6px);
     }
+
+    /* ---------- TRANSICION A LOGIN ---------- */
+
+    /* La tarjeta sale por la izquierda y el hero sube a la franja de Login */
+    .Registro--saliendo .Registro__panel {
+        transform: translateX(calc(-1 * var(--salida)));
+        transition: transform var(--duracion-salida) var(--curva-salida);
+    }
+
+    .Registro--saliendo .Registro__imagen {
+        z-index: auto;
+        width: auto;
+        top: 0;
+        height: 230px;
+        transform: none;
+        background-position: 70% 30%;
+        transition:
+            top var(--duracion-salida) var(--curva-salida),
+            height var(--duracion-salida) var(--curva-salida),
+            background-position var(--duracion-salida) var(--curva-salida);
+    }
+
+    /* La marca compensa el movimiento de la tarjeta para quedarse en su lugar */
+    .Registro--saliendo .Registro__marca {
+        --marca-logo: 32px;
+        --marca-nombre: 26px;
+        --marca-sub: 18px;
+
+        transform: translate(calc(var(--marca-dx) + var(--salida)), var(--marca-dy));
+    }
+
+    .Registro__skeleton-login .SkeletonAuth__panel {
+        animation: Registro-entrarDerecha var(--duracion-salida) var(--curva-salida) both;
+    }
+}
+
+@keyframes Registro-entrarDerecha {
+    from {
+        transform: translateX(100vw);
+    }
 }
 
 /* ---------- MOBILE BAJO ---------- */
@@ -244,7 +330,7 @@
     }
 
     .Registro__imagen {
-        display: none;
+        top: 100%;
     }
 
     .Registro__panel {
