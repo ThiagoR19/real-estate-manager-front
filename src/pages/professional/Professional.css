@@ -21,16 +21,11 @@ body:has(#professional) {
   -webkit-tap-highlight-color: transparent;
 }
 
-#professional button {
-  color: inherit;
-}
-
 #professional img {
   object-fit: contain;
-  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%);
 }
 
-#professional :focus-visible {
+#professional :focus-visible:not(input):not(textarea):not(select) {
   outline: 2px solid #2178c4;
   outline-offset: 4px;
 }
@@ -251,7 +246,7 @@ body:has(#professional) {
   font-weight: 500;
 }
 
-.professional__identity > span:last-child {
+.professional__identity>span:last-child {
   display: flex;
   min-width: 0;
   flex-direction: column;
@@ -356,7 +351,7 @@ body:has(#professional) {
   font-size: 12px;
 }
 
-.professional__rate > span:first-child {
+.professional__rate>span:first-child {
   color: #fff;
   font-size: 16px;
   line-height: 1;
@@ -458,6 +453,7 @@ body:has(#professional) {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .professional__filter-arrow,
   .professional__new,
   .professional__rate,

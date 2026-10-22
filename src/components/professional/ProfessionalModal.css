@@ -35,8 +35,7 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-.professional-modal button:focus-visible,
-.professional-modal input:focus-visible {
+.professional-modal button:focus-visible {
   outline: 2px solid #2178c4;
   outline-offset: 3px;
 }
@@ -90,7 +89,7 @@
   font-weight: 600;
 }
 
-.professional-modal__summary > span:last-child {
+.professional-modal__summary>span:last-child {
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -143,8 +142,8 @@
 }
 
 .professional-modal__input-wrap:focus-within {
-  border-color: #8fbde1;
-  box-shadow: 0 0 0 3px rgb(33 120 196 / 12%);
+  border-color: #e1ebf4;
+  box-shadow: none;
 }
 
 .professional-modal__input-wrap img,
@@ -163,10 +162,16 @@
   margin-left: 14px;
   padding: 0;
   border: 0;
-  outline: 0;
+  outline: none;
   background: transparent;
   color: #17235e;
   font-size: 14px;
+  text-decoration: none;
+}
+
+.professional-modal__input-wrap input:focus {
+  border: none;
+  outline: none;
 }
 
 .professional-modal__input-wrap input::placeholder {
@@ -278,13 +283,25 @@
 }
 
 @keyframes professional-modal-fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes professional-modal-slide-in {
-  from { opacity: 0; transform: translateY(8px) scale(0.99); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 @media (max-width: 650px) {
@@ -319,6 +336,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .professional-modal__overlay,
   .professional-modal,
   .professional-modal__input-wrap,

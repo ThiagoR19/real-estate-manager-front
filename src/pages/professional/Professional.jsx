@@ -4,12 +4,12 @@ import {
   peopleIcon,
   penIcon,
   phoneIcon,
-  plusIcon,
   trashCanIcon as trashIcon,
 } from "../../assets/icons";
 import DropdownSelect from "../../components/select/DropdownSelect";
 import ProfessionalModal from "../../components/professional/ProfessionalModal";
 import "./Professional.css";
+import Button from "../../components/button/Button";
 
 const initialProfessionals = Array.from({ length: 9 }, (_, index) => ({
   id: index + 1,
@@ -44,13 +44,12 @@ export default function Professional() {
   const [modal, setModal] = useState({ isOpen: false, mode: "create", professional: null });
 
   const visibleProfessionals = useMemo(() => (
-    selectedType === "Tipo"
-      ? professionals
-      : professionals.filter(({ specialty }) => specialty === selectedType)
+    selectedType === "Tipo" ? professionals : professionals.filter(({ specialty }) => specialty === selectedType)
   ), [professionals, selectedType]);
 
   function openCreateModal() {
     setModal({ isOpen: true, mode: "create", professional: null });
+    console.log('hola')
   }
 
   function editProfessional(professional) {
@@ -120,10 +119,7 @@ export default function Professional() {
           optionsClassName="professional__filter-options"
         />
 
-        <button className="professional__new" type="button" onClick={openCreateModal}>
-          <img src={plusIcon} alt="" />
-          <span>Nuevo profesional</span>
-        </button>
+        <Button openCreateModal={openCreateModal} text={'Nuevo profesional'} />
       </div>
 
       <section className="professional__table-card" aria-label="Lista de profesionales">

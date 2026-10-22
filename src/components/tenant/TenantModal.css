@@ -35,8 +35,7 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-.tenant-modal button:focus-visible,
-.tenant-modal input:focus-visible {
+.tenant-modal button:focus-visible {
   outline: 2px solid #2178c4;
   outline-offset: 3px;
 }
@@ -143,8 +142,8 @@
 }
 
 .tenant-modal__input-wrap:focus-within {
-  border-color: #8fbde1;
-  box-shadow: 0 0 0 3px rgb(33 120 196 / 12%);
+  border-color: #e1ebf4;
+  box-shadow: none;
 }
 
 .tenant-modal__input-wrap img,

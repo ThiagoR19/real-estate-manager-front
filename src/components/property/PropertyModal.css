@@ -36,9 +36,7 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-.property-modal button:focus-visible,
-.property-modal input:focus-visible,
-.property-modal textarea:focus-visible {
+.property-modal button:focus-visible {
   outline: 2px solid #2178c4;
   outline-offset: 3px;
 }
@@ -205,9 +203,6 @@
   opacity: 1;
 }
 
-.property-modal__plain-input:focus,
-.property-modal__input-wrap:focus-within,
-.property-modal__textarea-wrap:focus-within,
 .property-modal__select-trigger:focus-visible {
   border-color: #8fbde1;
   box-shadow: 0 0 0 3px rgb(33 120 196 / 12%);

@@ -31,7 +31,7 @@ body:has(#property) {
   filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%);
 }
 
-#property :focus-visible {
+#property :focus-visible:not(input):not(textarea):not(select) {
   outline: 2px solid #2178c4;
   outline-offset: 3px;
 }

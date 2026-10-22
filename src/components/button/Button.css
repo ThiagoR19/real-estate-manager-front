@@ -1,0 +1,20 @@
+#botonAzul {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 15px;
+  background: linear-gradient(to right, #001A48, #003FAE);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#botonAzul img {
+  height: 16px;
+  width: 16px;
+  color: white;
+  margin: 0 8px;
+  margin-bottom: -4px;
+}
