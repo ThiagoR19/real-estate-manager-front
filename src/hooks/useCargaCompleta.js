@@ -1,5 +1,19 @@
 import { useEffect, useState } from 'react';
 
+import esperar from '../utils/esperar';
+
+// Si algo nunca termina (red caída, pestaña en segundo plano), el skeleton igual se va
+const LIMITE_ESPERA = 8000;
+
+// Resuelve cuando la imagen terminó de cargar (o falló): no usa img.decode()
+// porque en pestañas en segundo plano puede quedar pendiente para siempre
+const esperarImagen = (img) => img.complete
+    ? Promise.resolve()
+    : new Promise((resolver) => {
+        img.addEventListener('load', resolver, { once: true });
+        img.addEventListener('error', resolver, { once: true });
+    });
+
 // Espera a que carguen las fuentes, todas las <img> dentro de `ref`
 // y las imágenes extra (ej: fondos que se usan desde CSS).
 export default function useCargaCompleta(ref, imagenesExtra = []) {
@@ -8,20 +22,21 @@ export default function useCargaCompleta(ref, imagenesExtra = []) {
     useEffect(() => {
         let activo = true;
 
-        const decodificar = (img) => img.decode().catch(() => {});
-
-        const imagenesVista = [...(ref.current?.querySelectorAll('img') ?? [])].map(decodificar);
+        // Las imágenes con loading="lazy" no se esperan: fuera de pantalla nunca terminarían de cargar
+        const imagenesVista = [...(ref.current?.querySelectorAll('img:not([loading="lazy"])') ?? [])].map(esperarImagen);
 
         const imagenesFondo = imagenesExtra.map((src) => {
             const img = new Image();
             img.src = src;
-            return decodificar(img);
+            return esperarImagen(img);
         });
 
-        Promise.all([document.fonts.ready, ...imagenesVista, ...imagenesFondo])
-            .then(() => {
-                if (activo) setCargado(true);
-            });
+        Promise.race([
+            Promise.all([document.fonts.ready, ...imagenesVista, ...imagenesFondo]),
+            esperar(LIMITE_ESPERA)
+        ]).then(() => {
+            if (activo) setCargado(true);
+        });
 
         return () => {
             activo = false;
