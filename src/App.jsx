@@ -16,6 +16,7 @@ import Reports from "./pages/reports/Reports";
 import Tenant from "./pages/tenant/Tenant";
 import Terms from "./pages/terms/Terms";
 import Professional from "./pages/professional/Professional";
+import DemoNotificaciones from "./pages/demoNotificaciones/DemoNotificaciones";
 
 import "./App.css";
 
@@ -42,6 +43,7 @@ function App() {
       <Route path="/aboutUs" component={AboutUs} />
       <Route path="/about-us" component={AboutUs} />
       <Route path="/professional" component={Professional} />
+      {import.meta.env.DEV && <Route path="/demo/notificaciones" component={DemoNotificaciones} />}
     </div>
   );
 }
