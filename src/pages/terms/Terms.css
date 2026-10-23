@@ -3,7 +3,7 @@ body:has(#terms) {
 }
 
 #terms {
-  min-height: 100dvh;
+  min-height: calc(100dvh - 61px);
   background: #f7f9fc;
   color: #17235e;
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
@@ -254,17 +254,17 @@ body:has(#terms) {
   overflow: hidden;
   padding: 12px 24px;
   border-radius: 21px;
-  background: linear-gradient(110deg, #f6f8fb 0%, #d6e6f7 36%, #b8d8f3 62%);
+  background: #f7f9fc;
   color: #061b4a;
 }
 
 .terms__div-section-header::before {
   position: absolute;
   z-index: -1;
-  inset: 0 0 0 auto;
-  width: 50%;
-  max-width: 552px;
-  background: url("../../assets/terms-reference.png") right -61px top -109px / 1521px 766px no-repeat;
+  inset: 0;
+  width: 100%;
+  background: url("../../assets/fondoCasa.png") right center / cover no-repeat;
+  opacity: 0.4;
   content: "";
 }
 
@@ -485,7 +485,7 @@ body:has(#terms) {
   }
 
   .terms__div-section-header::before {
-    opacity: 0.3;
+    opacity: 0.4;
   }
 
   .terms__section-header-h1 {
