@@ -39,8 +39,8 @@ const initialProperties = Array.from({ length: 12 }, (_, index) => ({
 
 const filters = [
   { id: "type", label: "Tipo", icon: houseIcon, options: ["Todos", "Departamento", "Casa"] },
-  { id: "status", label: "Estado", icon: tagIcon, options: ["Todos", "Alquiler", "Venta"] },
   { id: "location", label: "Ubicación", icon: locationIcon, options: ["Todas", "Belgrano", "Palermo"] },
+  { id: "status", label: "Estado", icon: tagIcon, options: ["Todos", "Alquiler", "Venta"] },
 ];
 
 function FilterSelect({ filter, value, onChange }) {
@@ -175,16 +175,23 @@ export default function Properties() {
 
   return (
     <main id="properties">
-      <section className="properties__toolbar" aria-label="Filtros de propiedades">
-        {filters.map((filter) => (
-          <FilterSelect
-            key={filter.id}
-            filter={filter}
-            value={selectedFilters[filter.id]}
-            onChange={(value) => updateFilter(filter.id, value)}
-          />
-        ))}
-        <Button className="properties__new-button" onClick={openCreateModal} icon={plusIcon} text="Nueva Propiedad" />
+      <section className="properties__top" aria-label="Encabezado y filtros de propiedades">
+        <div className="properties__intro">
+          <h1>Propiedades</h1>
+          <p>Gestiona la información de todas las propiedades</p>
+        </div>
+
+        <div className="properties__toolbar" aria-label="Filtros de propiedades">
+          {filters.map((filter) => (
+            <FilterSelect
+              key={filter.id}
+              filter={filter}
+              value={selectedFilters[filter.id]}
+              onChange={(value) => updateFilter(filter.id, value)}
+            />
+          ))}
+          <Button className="properties__new-button" onClick={openCreateModal} icon={plusIcon} text="Nueva Propiedad" />
+        </div>
       </section>
 
       <section className="properties__grid" aria-label="Listado de propiedades">

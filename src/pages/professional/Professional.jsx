@@ -50,7 +50,6 @@ export default function Professional() {
 
   function openCreateModal() {
     setModal({ isOpen: true, mode: "create", professional: null });
-    console.log('hola')
   }
 
   function editProfessional(professional) {
@@ -105,23 +104,30 @@ export default function Professional() {
 
   return (
     <main id="professional">
-      <div className="professional__toolbar">
-        <DropdownSelect
-          label="Tipo de profesional"
-          placeholder="Tipo"
-          value={selectedType}
-          options={filterOptions}
-          onChange={setSelectedType}
-          icon={peopleIcon}
-          className="professional__filter"
-          triggerClassName="professional__filter-trigger"
-          iconClassName="professional__filter-icon"
-          chevronClassName="professional__filter-arrow"
-          optionsClassName="professional__filter-options"
-        />
+      <section className="professional__top" aria-label="Encabezado y filtros de profesionales">
+        <div className="professional__intro">
+          <h1>Profesionales</h1>
+          <p>Gestiona la información de todos los inquilinos, sus contratos, pagos y estados.</p>
+        </div>
 
-        <Button className="professional__new" onClick={openCreateModal} icon={plusIcon} text="Nuevo profesional" />
-      </div>
+        <div className="professional__toolbar">
+          <DropdownSelect
+            label="Tipo de profesional"
+            placeholder="Tipo"
+            value={selectedType}
+            options={filterOptions}
+            onChange={setSelectedType}
+            icon={peopleIcon}
+            className="professional__filter"
+            triggerClassName="professional__filter-trigger"
+            iconClassName="professional__filter-icon"
+            chevronClassName="professional__filter-arrow"
+            optionsClassName="professional__filter-options"
+          />
+
+          <Button className="professional__new" onClick={openCreateModal} icon={plusIcon} text="Nuevo profesional" />
+        </div>
+      </section>
 
       <section className="professional__table-card" aria-label="Lista de profesionales">
         <div className="professional__table-scroll">
@@ -147,7 +153,9 @@ export default function Professional() {
                 <tr key={professional.id}>
                   <th scope="row">
                     <div className="professional__identity">
-                      <span className="professional__avatar" aria-hidden="true">LM</span>
+                      <span className="professional__avatar" aria-hidden="true">
+                        {professional.name.split(" ").map((part) => part[0]).join("").slice(0, 2)}
+                      </span>
                       <span>
                         <strong>{professional.name}</strong>
                         <small>{professional.specialty}</small>

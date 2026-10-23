@@ -22,10 +22,54 @@
 }
 
 .properties__toolbar {
+  position: relative;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) 261px;
-  gap: 16px;
-  margin: 21px 22px 26px;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  grid-template-rows: repeat(2, 43px);
+  gap: 8px 10px;
+}
+
+.properties__top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 505px;
+  gap: 10px;
+  margin: 25px 30px 25px;
+}
+
+.properties__intro {
+  display: flex;
+  min-height: 94px;
+  flex-direction: column;
+  justify-content: center;
+  padding: 18px 22px;
+  overflow: hidden;
+  border-radius: 18px;
+  background-image:
+    linear-gradient(90deg, rgba(247, 250, 254, 0.98) 0%, rgba(247, 250, 254, 0.82) 43%, rgba(247, 250, 254, 0.12) 78%),
+    url("../../assets/fondoCasa.png");
+  background-position: center;
+  background-size: cover;
+}
+
+.properties__intro h1,
+.properties__intro p {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+}
+
+.properties__intro h1 {
+  color: #17235e;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.properties__intro p {
+  margin-top: 5px;
+  color: #17235e;
+  font-size: 16px;
+  line-height: 1.4;
 }
 
 .properties__filter {
@@ -97,6 +141,8 @@
   cursor: pointer;
   font-size: 17px;
   font-weight: 700;
+  grid-column: 2;
+  grid-row: 2;
 }
 
 .properties__new-button img {
@@ -108,7 +154,7 @@
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 26px 30px;
-  padding: 0 54px 40px;
+  padding: 0 38px 40px;
 }
 
 .properties__card {
@@ -275,8 +321,12 @@
 }
 
 @media (max-width: 1250px) {
+  .properties__top {
+    grid-template-columns: minmax(0, 1fr) 440px;
+  }
+
   .properties__toolbar {
-    grid-template-columns: repeat(3, minmax(0, 1fr)) 220px;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
   }
 
   .properties__grid {
@@ -305,8 +355,17 @@
 }
 
 @media (max-width: 1050px) {
+  .properties__top {
+    grid-template-columns: 1fr;
+  }
+
+  .properties__intro {
+    min-height: 105px;
+  }
+
   .properties__toolbar {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto;
   }
 
   .properties__new-button {
@@ -332,14 +391,33 @@
 }
 
 @media (max-width: 560px) {
+  .properties__top {
+    gap: 14px;
+    margin: 14px 14px 20px;
+  }
+
+  .properties__intro {
+    min-height: 112px;
+    padding: 18px;
+  }
+
+  .properties__intro h1 {
+    font-size: 26px;
+  }
+
+  .properties__intro p {
+    font-size: 14px;
+  }
+
   .properties__toolbar {
     grid-template-columns: 1fr;
+    grid-template-rows: auto;
     gap: 10px;
-    margin: 14px 14px 20px;
   }
 
   .properties__new-button {
     grid-column: auto;
+    grid-row: auto;
   }
 
   .properties__grid {

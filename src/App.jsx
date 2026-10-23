@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Route, Switch } from "wouter";
-import { AboutUs, Agency, Agents, Chat, Dashboard, Earnings, Login, Owners, Payments, Professional, Profile, Properties, Property, Reports, Schedule, Tenant, Terms } from "./pages/index.js";
+import { AboutUs, Agency, Agents, Chat, Dashboard, Earnings, Home, Login, Owners, Payments, Professional, Profile, Property, PublicProperties, PublicProperty, Reports, Schedule, Tenant, Terms } from "./pages/index.js";
 
 import { Header, Navbar } from "./layouts/index.js";
 
@@ -16,7 +16,6 @@ function AuthenticatedApp() {
       <div id="app-content">
         <Route path="/dashboard" component={Dashboard} />
         <Route path="/agents" component={Agents} />
-        <Route path="/properties" component={Properties} />
         <Route path="/tenant" component={Tenant} />
         <Route path="/property" component={Property} />
         <Route path="/owners" component={Owners} />
@@ -38,8 +37,11 @@ function AuthenticatedApp() {
 function App() {
   return (
     <Switch>
-      <Route path="/" component={Login} />
+      <Route path="/home" component={Home} />
+      <Route path="/properties" component={PublicProperties} />
+      <Route path="/property" component={PublicProperty} />
       <Route path="/login" component={Login} />
+      <Route path="/" component={Home} />
       <Route>
         <AuthenticatedApp />
       </Route>

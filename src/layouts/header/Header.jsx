@@ -9,7 +9,9 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
   const [pathname] = useLocation();
   const currentItem = allItems.find(({ href }) => isItemActive(pathname, href));
   const isPayments = pathname === "/payments" || pathname.startsWith("/payments/");
+  const isProperties = pathname === "/properties" || pathname.startsWith("/properties/");
   const currentLabel = isPayments ? "Pagos" : currentItem?.label ?? pageLabels[pathname] ?? "Dashboard";
+  const searchPlaceholder = isProperties ? "Buscar propiedades..." : "Buscar contacto...";
 
   return (
     <header className={`navbar__header${isPayments ? " navbar__header--payments" : ""}`}>
@@ -36,7 +38,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
 
       <label className="navbar__search">
         <img src={searchIcon} alt="" />
-        <input type="search" placeholder="Buscar contacto..." aria-label="Buscar contacto" />
+        <input type="search" placeholder={searchPlaceholder} aria-label={searchPlaceholder.replace("...", "")} />
       </label>
 
       <aside className="navbar__account" aria-label="Cuenta de usuario">
