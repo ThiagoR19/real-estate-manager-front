@@ -1,0 +1,43 @@
+/* --------------------------------------------------------------------------------- */
+/* -------------------------------------- MARCA ------------------------------------ */
+/* --------------------------------------------------------------------------------- */
+
+.Brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--blanc);
+}
+
+.Brand--oscura {
+    color: var(--azulOsc);
+}
+
+.Brand__logo {
+    display: flex;
+    flex-shrink: 0;
+    width: var(--marca-logo, 35px);
+    height: var(--marca-logo, 35px);
+}
+
+.Brand__logo img {
+    width: 100%;
+    height: 100%;
+
+    -webkit-user-drag: none;
+    user-select: none;
+}
+
+.Brand__nombre {
+    padding-left: 5px;
+    font-size: var(--marca-nombre, 33px);
+    font-weight: 700;
+    letter-spacing: -.5px;
+}
+
+.Brand__sub {
+    padding-top: 5px;
+    margin-left: 2px;
+    font-size: var(--marca-sub, 22px);
+    font-weight: 500;
+}

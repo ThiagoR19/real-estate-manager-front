@@ -1,0 +1,102 @@
+/* --------------------------------------------------------------------------------- */
+/* ------------------------------------ ESQUELETO ---------------------------------- */
+/* --------------------------------------------------------------------------------- */
+
+/* Se activa con la clase .Skeleton en cualquier ancestro (la agrega <Skeleton>) */
+
+.Skeleton {
+    --sk-color: var(--bordes);
+    --sk-brillo: var(--bordes2);
+    --sk-fondo: var(--casiBlanc);
+
+    pointer-events: none;
+    user-select: none;
+}
+
+/* ------------------------------------- TEXTOS ------------------------------------ */
+/* Una barra del ancho exacto de cada línea de texto (usa el subrayado) */
+
+.Skeleton :is(h1, h2, h3, h4, h5, h6, p, a, span, strong, b, em, small, label, li, dt, dd, figcaption, legend, th, td):not(.Skeleton-no, .Skeleton-no *) {
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+    text-shadow: none !important;
+    text-decoration-line: underline !important;
+    text-decoration-style: solid !important;
+    text-decoration-thickness: .82em !important;
+    text-underline-offset: -.68em !important;
+    text-decoration-skip-ink: none !important;
+    animation: Skeleton-texto 1.4s ease-in-out infinite;
+}
+
+/* ------------------------------------ BLOQUES ------------------------------------ */
+
+.Skeleton :is(img, svg, picture, video, button, input, select, textarea, [data-sk]):not(.Skeleton-no, .Skeleton-no *) {
+    color: transparent !important;
+    background-image: none !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    animation: Skeleton-bloque 1.4s ease-in-out infinite;
+}
+
+/* El contenido de un bloque no se ve (ni sus textos) */
+.Skeleton :is(button, select, [data-sk]):not(.Skeleton-no, .Skeleton-no *) *,
+.Skeleton svg:not(.Skeleton-no, .Skeleton-no *) * {
+    visibility: hidden !important;
+}
+
+/* Oculta los píxeles de la imagen pero deja su caja */
+.Skeleton img:not(.Skeleton-no, .Skeleton-no *) {
+    object-position: -99999px 0 !important;
+}
+
+.Skeleton :is(input, textarea)::placeholder {
+    color: transparent !important;
+}
+
+/* ------------------------------------- FONDOS ------------------------------------ */
+
+.Skeleton [data-sk-fondo]:not(.Skeleton-no, .Skeleton-no *) {
+    background-image: none !important;
+    background-color: var(--sk-fondo) !important;
+}
+
+/* ----------------------------------- ANIMACIONES --------------------------------- */
+
+@keyframes Skeleton-texto {
+
+    from,
+    to {
+        text-decoration-color: var(--sk-color);
+    }
+
+    50% {
+        text-decoration-color: var(--sk-brillo);
+    }
+}
+
+@keyframes Skeleton-bloque {
+
+    from,
+    to {
+        background-color: var(--sk-color);
+    }
+
+    50% {
+        background-color: var(--sk-brillo);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .Skeleton * {
+        animation: none !important;
+    }
+
+    .Skeleton :is(h1, h2, h3, h4, h5, h6, p, a, span, strong, b, em, small, label, li, dt, dd, figcaption, legend, th, td):not(.Skeleton-no, .Skeleton-no *) {
+        text-decoration-color: var(--sk-color) !important;
+    }
+
+    .Skeleton :is(img, svg, picture, video, button, input, select, textarea, [data-sk]):not(.Skeleton-no, .Skeleton-no *) {
+        background-color: var(--sk-color) !important;
+    }
+}

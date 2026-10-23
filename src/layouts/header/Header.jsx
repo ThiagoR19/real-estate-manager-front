@@ -43,7 +43,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
 
       <aside className="navbar__account" aria-label="Cuenta de usuario">
         <details className="navbar__notifications">
-          <summary aria-label="Notificaciones">
+          <summary aria-label="Notificationes">
             <img src={bellIcon} alt="" />
           </summary>
           <p>No tenés notificaciones nuevas.</p>

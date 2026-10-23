@@ -1,0 +1,87 @@
+/* --------------------------------------------------------------------------------- */
+/* ---------------------------------- CAMPO TEXTO ---------------------------------- */
+/* --------------------------------------------------------------------------------- */
+
+.TextField {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.TextField__label {
+    margin-bottom: var(--campo-label-margen, 8px);
+    font-size: var(--campo-label, 15px);
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--azulOsc);
+}
+
+.TextField__contenedor {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* ------------------------------------- ICONOS ------------------------------------ */
+
+.TextField__icono {
+    position: absolute;
+    left: var(--campo-icono-izq, 14px);
+    display: flex;
+    width: var(--campo-icono, 20px);
+    height: var(--campo-icono, 20px);
+    pointer-events: none;
+}
+
+.TextField__icono img,
+.TextField__ojo img {
+    width: 100%;
+    height: 100%;
+
+    -webkit-user-drag: none;
+    user-select: none;
+}
+
+.TextField__ojo {
+    position: absolute;
+    right: 12px;
+    display: flex;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+/* ------------------------------------- INPUT ------------------------------------- */
+
+.TextField__input {
+    width: 100%;
+    height: var(--campo-alto, 42px);
+    padding: 0 14px 0 var(--campo-padding-izq, 49px);
+    border: 1.5px solid var(--bordes);
+    border-radius: 6px;
+    font: inherit;
+    font-size: var(--campo-fuente, 14px);
+    text-overflow: ellipsis;
+    color: var(--azulOsc);
+    background-color: var(--blanc);
+    transition: border-color .2s, box-shadow .2s;
+}
+
+.TextField__input--ojo {
+    padding-right: 44px;
+}
+
+.TextField__input::placeholder {
+    color: var(--azulGris);
+}
+
+.TextField__input:focus {
+    outline: none;
+    border-color: var(--azulClaro);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--azulClaro) 15%, transparent);
+}
