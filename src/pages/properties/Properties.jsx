@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useLocation } from "wouter";
 import {
   bathIcon,
   bedIcon,
@@ -61,9 +62,27 @@ function FilterSelect({ filter, value, onChange }) {
   );
 }
 
-function PropertyCard({ property, onEdit }) {
+function PropertyCard({ property, onEdit, onOpen }) {
+  function openProperty() {
+    onOpen(property);
+  }
+
+  function handleCardKeyDown(event) {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openProperty();
+    }
+  }
+
   return (
-    <article className="properties__card">
+    <article
+      className="properties__card"
+      role="link"
+      tabIndex={0}
+      onClick={openProperty}
+      onKeyDown={handleCardKeyDown}
+      aria-label={`Ver detalle de ${property.title}`}
+    >
       <img className="properties__card-image" src={propertyImage} alt="Interior de la propiedad" />
       <div className="properties__card-content">
         <h2 className="properties__card-title">{property.title}</h2>
@@ -89,7 +108,14 @@ function PropertyCard({ property, onEdit }) {
         </div>
 
         <div className="properties__card-actions">
-          <button className="properties__details-button" type="button">
+          <button
+            className="properties__details-button"
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation();
+              openProperty();
+            }}
+          >
             <img className="properties__icon" src={eyeIcon} alt="" aria-hidden="true" />
             <span>Ver detalle</span>
           </button>
@@ -97,7 +123,10 @@ function PropertyCard({ property, onEdit }) {
             className="properties__more-button"
             type="button"
             aria-label={`Editar ${property.title}`}
-            onClick={() => onEdit(property)}
+            onClick={(event) => {
+              event.stopPropagation();
+              onEdit(property);
+            }}
           >
             <span aria-hidden="true">•••</span>
           </button>
@@ -108,6 +137,7 @@ function PropertyCard({ property, onEdit }) {
 }
 
 export default function Properties() {
+  const [, navigate] = useLocation();
   const [properties, setProperties] = useState(initialProperties);
   const [selectedFilters, setSelectedFilters] = useState({
     type: "Todos",
@@ -127,6 +157,10 @@ export default function Properties() {
 
   function openEditModal(property) {
     setModal({ isOpen: true, mode: "edit", property });
+  }
+
+  function openProperty() {
+    navigate("/property");
   }
 
   function closePropertyModal() {
@@ -196,7 +230,7 @@ export default function Properties() {
 
       <section className="properties__grid" aria-label="Listado de propiedades">
         {visibleProperties.length > 0 ? (
-          visibleProperties.map((property) => <PropertyCard key={property.id} property={property} onEdit={openEditModal} />)
+          visibleProperties.map((property) => <PropertyCard key={property.id} property={property} onEdit={openEditModal} onOpen={openProperty} />)
         ) : (
           <p className="properties__empty">No hay propiedades que coincidan con los filtros seleccionados.</p>
         )}

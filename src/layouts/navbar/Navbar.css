@@ -157,6 +157,14 @@
   display: none;
 }
 
+.navbar__header--dashboard .navbar__search {
+  display: none;
+}
+
+.navbar__header--dashboard-owner .navbar__search {
+  display: none;
+}
+
 .navbar__notifications {
   position: relative;
   padding-right: 18px;

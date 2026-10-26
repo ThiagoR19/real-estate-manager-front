@@ -9,12 +9,16 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
   const [pathname] = useLocation();
   const currentItem = allItems.find(({ href }) => isItemActive(pathname, href));
   const isPayments = pathname === "/payments" || pathname.startsWith("/payments/");
-  const isProperties = pathname === "/properties" || pathname.startsWith("/properties/");
-  const currentLabel = isPayments ? "Pagos" : currentItem?.label ?? pageLabels[pathname] ?? "Dashboard";
+  const isProperties = pathname === "/properties" || pathname.startsWith("/properties/") || pathname === "/property" || pathname.startsWith("/property/");
+  const isTenantDashboard = pathname === "/dashboard_inquilino";
+  const isOwnerDashboard = pathname === "/dashboard_dueño";
+  const isAdminDashboard = pathname === "/dashboard_admin";
+  const isTenantContext = isPayments || isTenantDashboard || isAdminDashboard;
+  const currentLabel = isPayments ? "Pagos" : currentItem?.breadcrumbLabel ?? currentItem?.label ?? pageLabels[pathname] ?? "Dashboard";
   const searchPlaceholder = isProperties ? "Buscar propiedades..." : "Buscar contacto...";
 
   return (
-    <header className={`navbar__header${isPayments ? " navbar__header--payments" : ""}`}>
+    <header className={`navbar__header${isPayments ? " navbar__header--payments" : ""}${isOwnerDashboard ? " navbar__header--dashboard-owner" : ""}${isAdminDashboard ? " navbar__header--dashboard" : ""}`}>
       <button
         className="navbar__menu-button"
         type="button"
@@ -51,7 +55,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
         <Link href="/profile" className="navbar__account-link">
           <span>
             Juan Pérez
-            <small>{isPayments ? "Inquilino" : "Agente"}</small>
+            <small>{isTenantContext ? "Inquilino" : "Agente"}</small>
           </span>
           <i
             className="navbar__account-avatar"

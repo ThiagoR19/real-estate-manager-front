@@ -15,6 +15,7 @@ import {
 
 export const primaryItems = [
   { href: "/dashboard", label: "Dashboard", icon: chartColumnIcon },
+  { href: "/dashboard_dueño", label: "Dashboard dueño", breadcrumbLabel: "Dashboard", icon: houseUserIcon },
   { href: "/owners", label: "Propietarios", icon: peopleIcon },
   { href: "/tenant", label: "Inquilinos", icon: peopleIcon },
   { href: "/professional", label: "Profesionales", icon: briefcaseIcon },
@@ -24,10 +25,8 @@ export const primaryItems = [
 ];
 
 export const secondaryItems = [
-  { href: "/property", label: "Propiedad", icon: houseUserIcon },
   { href: "/reports", label: "Reportes", icon: chartColumnIcon },
   { href: "/payments", label: "Pagos", icon: percentIcon },
-  { href: "/earnings", label: "Ganancias", icon: chartColumnIcon },
   { href: "/agents", label: "Agentes", icon: peopleIcon },
   { href: "/agency", label: "Mi Inmobiliaria", icon: buildingColumnsIcon },
   { href: "/profile", label: "Mi perfil", icon: userIcon },
@@ -38,9 +37,9 @@ export const secondaryItems = [
 export const allItems = [...primaryItems, ...secondaryItems];
 
 export const pageLabels = {
+  "/property": "Propiedad",
   "/reports": "Reportes",
   "/payments": "Pagos",
-  "/earnings": "Ganancias",
   "/aboutUs": "Acerca de nosotros",
 };
 
