@@ -3,7 +3,6 @@ export { default as Agency } from "./agency/Agency";
 export { default as Agents } from "./agents/Agents";
 export { default as Chat } from "./chat/Chat";
 export { default as Dashboard } from "./dashboard/Dashboard";
-export { default as Earnings } from "./earnings/Earnings";
 export { default as Login } from "./login/Login";
 export { default as Home } from "./home/Home";
 export { default as Owners } from "./owners/Owners";

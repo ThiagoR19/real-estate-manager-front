@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Route, Switch } from "wouter";
-import { AboutUs, Agency, Agents, Chat, Dashboard, Earnings, Home, Login, Owners, Payments, Professional, Profile, Properties, Property, PublicProperties, PublicProperty, Reports, Schedule, Tenant, Terms } from "./pages/index.js";
+import { AboutUs, Agency, Agents, Chat, Dashboard, Home, Login, Owners, Payments, Professional, Profile, Properties, Property, PublicProperties, PublicProperty, Reports, Schedule, Tenant, Terms } from "./pages/index.js";
 
 import { Header, Navbar } from "./layouts/index.js";
 
@@ -25,7 +25,6 @@ function AuthenticatedApp() {
         <Route path="/chat" component={Chat} />
         <Route path="/agency" component={Agency} />
         <Route path="/payments" component={Payments} />
-        <Route path="/earnings" component={Earnings} />
         <Route path="/schedule" component={Schedule} />
         <Route path="/aboutUs" component={AboutUs} />
         <Route path="/terms" component={Terms} />

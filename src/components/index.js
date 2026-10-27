@@ -19,7 +19,6 @@ export { default as PropertySearch } from './propertySearch/PropertySearch';
 export { default as ReportModal } from './report/ReportModal';
 export { default as SectionTitle } from './sectionTitle/SectionTitle';
 export { default as DropdownSelect } from './select/DropdownSelect';
-export { default as Skeleton } from './skeleton/Skeleton';
 export { default as Statistics } from './statistics/Statistics';
 export { default as TenantModal } from './tenant/TenantModal';
 export { default as TextField } from './textField/TextField';
