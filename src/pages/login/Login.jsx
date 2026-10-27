@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 
-import Skeleton from "../../components/skeleton/Skeleton";
-import ImagePanel from "../../components/imagePanel/ImagePanel";
-import TextField from "../../components/textField/TextField";
-import PrimaryButton from "../../components/primaryButton/PrimaryButton";
-import GoogleSignIn from "../../components/googleSignIn/GoogleSignIn";
-import LegalText from "../../components/legalText/LegalText";
+import {
+    Skeleton,
+    ImagePanel,
+    TextField,
+    PrimaryButton,
+    GoogleSignIn,
+    LegalText
+} from '../../components';
 
 import useEnvio from "../../hooks/useEnvio";
 import esperar from "../../utils/esperar";

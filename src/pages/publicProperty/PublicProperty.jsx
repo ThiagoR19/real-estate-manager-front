@@ -10,7 +10,7 @@ import {
   rulerCombinedIcon as rulerIcon,
   userIcon,
 } from "../../assets/icons";
-import { Icon } from "../../components/home/HomeIcon";
+import { Icon } from '../../components';
 import propertyImage from "../../assets/fondoCasa.png";
 import "./PublicProperty.css";
 

@@ -356,6 +356,7 @@ body:has(#terms) {
   line-height: 1.22;
 }
 
+/* 
 @media (min-width: 1600px) {
   .terms__div {
     max-width: 1600px;
@@ -577,4 +578,4 @@ body:has(#terms) {
   .terms__aside-nav-a {
     transition: none;
   }
-}
+} */

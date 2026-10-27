@@ -59,6 +59,7 @@
   margin-top: 36px;
 }
 
+/* 
 @media (max-width: 1250px) {
   .Propiedades__lista {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -121,4 +122,4 @@
     flex: 0 0 min(306px, 82%);
     scroll-snap-align: start;
   }
-}
+} */

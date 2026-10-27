@@ -12,7 +12,7 @@ import {
   rulerCombinedIcon as rulerIcon,
   userIcon,
 } from "../../assets/icons";
-import PropertyModal from "../../components/property/PropertyModal";
+import { PropertyModal } from '../../components';
 import villaImage from "/ly-villa-costa-blanca-1_b02f5d33_900x900.jpg";
 import terraceImage from "/images.jpg";
 import houseImage from "/images (1).jpg";

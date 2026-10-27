@@ -5,8 +5,7 @@ import {
   phoneIcon,
   userIcon,
 } from "../../assets/icons";
-import DropdownSelect from "../select/DropdownSelect";
-import Button from "../button/Button";
+import { DropdownSelect, Button } from '../index';
 import "./ProfessionalModal.css";
 
 const specialtyOptions = ["Profesión", "Albañil", "Plomero", "Electricista", "Gasista"];

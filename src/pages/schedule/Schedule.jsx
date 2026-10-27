@@ -5,7 +5,7 @@ import {
   plusIcon,
   userIcon,
 } from "../../assets/icons";
-import Button from "../../components/button/Button";
+import { Button } from '../../components';
 import propertyImage from "/images (1).jpg";
 import "./Schedule.css";
 

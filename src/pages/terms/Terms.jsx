@@ -1,22 +1,12 @@
-import { useRef, useState } from "react";
-import {
-  arrowsRotateIcon,
-  circleInfoIcon,
-  desktopIcon,
-  envelopeIcon,
-  fileLinesIcon as fileIcon,
-  houseIcon,
-  lockIcon,
-  shieldHalvedIcon as shieldIcon,
-  userIcon,
-} from "../../assets/icons";
+// import { useRef, useState } from "react";
+import { arrowsRotateIcon, circleInfoIcon, desktopIcon, envelopeIcon, fileLinesIcon, houseIcon, lockIcon, shieldHalvedIcon, userIcon, } from "../../assets/icons";
 import "./Terms.css";
 
 const sections = [
   {
     id: "introduccion",
     title: "Introducción",
-    icon: fileIcon,
+    icon: fileLinesIcon,
     text: "AGI Propiedades es una plataforma para organizar la gestión inmobiliaria en un solo lugar. Permite administrar propiedades, propietarios, inquilinos, agentes, contratos, pagos y comunicaciones de forma más simple y ordenada.",
   },
   {
@@ -40,7 +30,7 @@ const sections = [
   {
     id: "responsabilidades",
     title: "Responsabilidades",
-    icon: shieldIcon,
+    icon: shieldHalvedIcon,
     text: "AGI Propiedades brinda herramientas para facilitar la gestión, pero cada usuario debe revisar la información antes de tomar decisiones o compartirla. La plataforma no reemplaza el asesoramiento legal, contable o profesional que pueda requerir cada operación.",
   },
   {
@@ -70,35 +60,35 @@ const sections = [
 ];
 
 export default function Terms() {
-  const [activeSection, setActiveSection] = useState(sections[0].id);
-  const contentRef = useRef(null);
-  const sectionRefs = useRef({});
+  // const [activeSection, setActiveSection] = useState(sections[0].id);
+  // const contentRef = useRef(null);
+  // const sectionRefs = useRef({});
 
-  function navigateToSection(event, id) {
-    event.preventDefault();
-    const section = sectionRefs.current[id];
-    const content = contentRef.current;
+  // function navigateToSection(event, id) {
+  //   event.preventDefault();
+  //   const section = sectionRefs.current[id];
+  //   const content = contentRef.current;
 
-    if (!section || !content) return;
+  //   if (!section || !content) return;
 
-    setActiveSection(id);
-    content.scrollTo({
-      top: section.offsetTop,
-      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-        ? "instant"
-        : "smooth",
-    });
-    section.focus({ preventScroll: true });
-  }
+  //   setActiveSection(id);
+  //   content.scrollTo({
+  //     top: section.offsetTop,
+  //     behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  //       ? "instant"
+  //       : "smooth",
+  //   });
+  //   section.focus({ preventScroll: true });
+  // }
 
-  function updateActiveSection() {
-    const content = contentRef.current;
-    const currentSection = sections.findLast(
-      ({ id }) => sectionRefs.current[id].offsetTop <= content.scrollTop + 24,
-    );
+  // function updateActiveSection() {
+  //   const content = contentRef.current;
+  //   const currentSection = sections.findLast(
+  //     ({ id }) => sectionRefs.current[id].offsetTop <= content.scrollTop + 24,
+  //   );
 
-    if (currentSection) setActiveSection(currentSection.id);
-  }
+  //   if (currentSection) setActiveSection(currentSection.id);
+  // }
 
   return (
     <main id="terms">
@@ -110,8 +100,8 @@ export default function Terms() {
                 key={id}
                 className="terms__aside-nav-a"
                 href={`#terms-${id}`}
-                aria-current={activeSection === id ? "location" : undefined}
-                onClick={(event) => navigateToSection(event, id)}
+              // aria-current={activeSection === id ? "location" : undefined}
+              // onClick={(event) => navigateToSection(event, id)}
               >
                 <img src={icon} className="terms__nav-a-img" alt="" />
                 <span className="terms__nav-a-span">{title}</span>
@@ -128,8 +118,8 @@ export default function Terms() {
 
           <div
             className="terms__div-section-div"
-            ref={contentRef}
-            onScroll={updateActiveSection}
+            // ref={contentRef}
+            // onScroll={updateActiveSection}
             role="region"
             aria-label="Contenido de términos y condiciones"
             tabIndex={0}
@@ -141,12 +131,12 @@ export default function Terms() {
                 id={`terms-${id}`}
                 aria-labelledby={`terms-heading-${id}`}
                 tabIndex={-1}
-                ref={(element) => { sectionRefs.current[id] = element; }}
+              // ref={(element) => { sectionRefs.current[id] = element; }}
               >
                 <span className="terms__div-section-span" aria-hidden="true">{index + 1}</span>
                 <article className="terms__div-section-article">
                   <h2 className="terms__section-article-h2" id={`terms-heading-${id}`}>{title}</h2>
-                <p className="terms__section-article-p">{text}</p>
+                  <p className="terms__section-article-p">{text}</p>
                 </article>
               </section>
             ))}

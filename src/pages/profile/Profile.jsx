@@ -12,7 +12,7 @@ import {
   userIcon,
 } from "../../assets/icons";
 import "./Profile.css";
-import Button from "../../components/button/Button";
+import { Button } from '../../components';
 
 const personalFields = [
   { id: "name", label: "Nombre", placeholder: "Juan", icon: userIcon },

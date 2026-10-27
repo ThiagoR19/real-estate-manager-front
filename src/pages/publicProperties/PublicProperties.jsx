@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "wouter";
-import { Icon } from "../../components/home/HomeIcon";
+import { Icon } from '../../components';
 import "./PublicProperties.css";
 
 const properties = [

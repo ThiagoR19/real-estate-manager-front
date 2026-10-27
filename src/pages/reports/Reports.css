@@ -550,7 +550,7 @@ body:has(#reports) {
   gap: 10px;
 }
 
-.reports__facts p > span {
+.reports__facts p>span {
   font-size: 16px;
 }
 
@@ -689,6 +689,7 @@ body:has(#reports) {
   content: "";
 }
 
+/* 
 @media (min-width: 1600px) {
   .reports__workspace {
     max-width: 1600px;
@@ -930,4 +931,4 @@ body:has(#reports) {
   .reports__list-item {
     transition: none;
   }
-}
+} */

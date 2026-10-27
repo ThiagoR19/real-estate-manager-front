@@ -9,9 +9,7 @@ import {
   rulerCombinedIcon as rulerIcon,
   tagIcon,
 } from "../../assets/icons";
-import PropertyModal from "../../components/property/PropertyModal";
-import DropdownSelect from "../../components/select/DropdownSelect";
-import Button from "../../components/button/Button";
+import { PropertyModal, DropdownSelect, Button } from '../../components';
 import propertyImage from "/images (1).jpg";
 import "./Properties.css";
 

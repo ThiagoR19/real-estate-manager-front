@@ -2,7 +2,7 @@ import { useLayoutEffect, useRef, useState } from 'react';
 
 import './PropertySearch.css';
 
-import FilterSelect from '../filterSelect/FilterSelect';
+import { FilterSelect } from '../index';
 
 import ubicacionIcono from '../../assets/icons/location-dot-solid-full.svg';
 import camaIcono from '../../assets/icons/bed-solid-full.svg';

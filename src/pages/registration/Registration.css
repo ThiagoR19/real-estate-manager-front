@@ -1,184 +1,178 @@
 .Registration {
-    --marca-logo: clamp(20px, 5.2vh, 36px);
-    --marca-nombre: clamp(18px, 4.6vh, 32px);
-    --marca-sub: clamp(13px, 3.1vh, 21px);
+  --marca-logo: clamp(20px, 5.2vh, 36px);
+  --marca-nombre: clamp(18px, 4.6vh, 32px);
+  --marca-sub: clamp(13px, 3.1vh, 21px);
 
-    --campo-alto: clamp(26px, 6.1vh, 42px);
-    --campo-label: clamp(11px, 2.2vh, 15px);
-    --campo-label-margen: clamp(3px, .7vh, 5px);
-    --campo-fuente: clamp(11px, 2vh, 14px);
-    --campo-icono: clamp(14px, 2.9vh, 20px);
-    --campo-icono-izq: clamp(9px, 2vh, 14px);
-    --campo-padding-izq: clamp(30px, 7.1vh, 49px);
+  --campo-alto: clamp(26px, 6.1vh, 42px);
+  --campo-label: clamp(11px, 2.2vh, 15px);
+  --campo-label-margen: clamp(3px, .7vh, 5px);
+  --campo-fuente: clamp(11px, 2vh, 14px);
+  --campo-icono: clamp(14px, 2.9vh, 20px);
+  --campo-icono-izq: clamp(9px, 2vh, 14px);
+  --campo-padding-izq: clamp(30px, 7.1vh, 49px);
 
-    --boton-alto: clamp(26px, 6.2vh, 43px);
-    --boton-fuente: clamp(12px, 2vh, 14px);
+  --boton-alto: clamp(26px, 6.2vh, 43px);
+  --boton-fuente: clamp(12px, 2vh, 14px);
 
-    display: grid;
-    grid-template-columns: 1fr 55.6%;
-    width: 100%;
-    height: 100vh;
-    height: 100dvh;
-    overflow: hidden;
-    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    background-color: var(--blanc);
+  display: grid;
+  grid-template-columns: 1fr 55.6%;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--blanc);
 }
 
 .Registration__panel {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    min-height: 0;
-    padding: clamp(6px, 2.9vh, 20px) clamp(14px, 4.2vw, 64px) clamp(6px, 2.9vh, 20px) clamp(14px, 3vw, 45px);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  padding: clamp(6px, 2.9vh, 20px) clamp(14px, 4.2vw, 64px) clamp(6px, 2.9vh, 20px) clamp(14px, 3vw, 45px);
 }
 
 .Registration__formulario {
-    width: 100%;
-    max-width: 480px;
-    margin: clamp(4px, 3.2vh, 22px) auto 0;
+  width: 100%;
+  max-width: 480px;
+  margin: clamp(4px, 3.2vh, 22px) auto 0;
 }
 
 .Registration__encabezado {
-    padding: 0 11px;
+  padding: 0 11px;
 }
 
 .Registration__titulo {
-    margin: 0;
-    font-size: clamp(17px, 4vh, 28px);
-    font-weight: 800;
-    letter-spacing: -.3px;
-    color: var(--azulOsc);
+  margin: 0;
+  font-size: clamp(17px, 4vh, 28px);
+  font-weight: 800;
+  letter-spacing: -.3px;
+  color: var(--azulOsc);
 }
 
 .Registration__subtitulo {
-    margin: 2px 0 0 20px;
-    font-size: clamp(10px, 2vh, 14px);
-    letter-spacing: .2px;
-    color: var(--azulGris);
+  margin: 2px 0 0 20px;
+  font-size: clamp(10px, 2vh, 14px);
+  letter-spacing: .2px;
+  color: var(--azulGris);
 }
 
 .Registration__campos {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: clamp(3px, .6vh, 4px) 13px;
-    margin-top: clamp(6px, calc(15vh - 57px), 47px);
-    padding: 0 11px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(3px, .6vh, 4px) 13px;
+  margin-top: clamp(6px, calc(15vh - 57px), 47px);
+  padding: 0 11px;
 }
 
 .Registration__campo-email {
-    grid-column: 1 / -1;
+  grid-column: 1 / -1;
 }
 
 .Registration__boton {
-    margin-top: clamp(8px, calc(30vh - 128px), 79px);
+  margin-top: clamp(8px, calc(30vh - 128px), 79px);
 }
 
 
 .Registration .GoogleSignIn__separador {
-    margin: clamp(5px, 3.6vh, 25px) 0;
-    font-size: clamp(10px, 1.75vh, 12px);
+  margin: clamp(5px, 3.6vh, 25px) 0;
+  font-size: clamp(10px, 1.75vh, 12px);
 }
 
 .Registration .GoogleSignIn__boton {
-    font-size: clamp(12px, 2.2vh, 15px);
+  font-size: clamp(12px, 2.2vh, 15px);
 }
 
 
 .Registration__pie {
-    margin-top: auto;
-    padding-top: clamp(4px, 1.5vh, 10px);
-    text-align: center;
+  margin-top: auto;
+  padding-top: clamp(4px, 1.5vh, 10px);
+  text-align: center;
 }
 
 .Registration__legal {
-    font-size: clamp(10px, 1.75vh, 12px);
-    line-height: 1.4;
+  font-size: clamp(10px, 1.75vh, 12px);
+  line-height: 1.4;
 }
 
 .Registration__cuenta {
-    margin: clamp(2px, 2.3vh, 16px) 0 0;
-    font-size: clamp(10px, 1.75vh, 12px);
-    color: var(--azulGris);
+  margin: clamp(2px, 2.3vh, 16px) 0 0;
+  font-size: clamp(10px, 1.75vh, 12px);
+  color: var(--azulGris);
 }
 
 .Registration__cuenta-link {
-    font-weight: 700;
-    color: var(--azulClaro);
-    text-decoration: none;
+  font-weight: 700;
+  color: var(--azulClaro);
+  text-decoration: none;
 }
 
 .Registration__cuenta-link:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 
 .Registration--saliendo {
-    --curva-salida: cubic-bezier(.77, 0, .18, 1);
+  --curva-salida: cubic-bezier(.77, 0, .18, 1);
 
-    pointer-events: none;
+  pointer-events: none;
 }
 
 .Registration__login-previo {
-    --curva-salida: cubic-bezier(.77, 0, .18, 1);
+  --curva-salida: cubic-bezier(.77, 0, .18, 1);
 
-    position: fixed;
-    inset: 0;
-    z-index: 1;
+  position: fixed;
+  inset: 0;
+  z-index: 1;
 }
 
 
 .Registration__login-previo .login {
-    background-color: transparent;
+  background-color: transparent;
 }
 
 .Registration__login-previo .login__hero {
-    visibility: hidden;
+  visibility: hidden;
 }
 
 .Registration--saliendo .Registration__imagen {
-    z-index: 2;
-    width: 100.9%;
-    transform: translateX(calc(-1 * var(--salida)));
-    transition: transform var(--duracion-salida) var(--curva-salida);
+  z-index: 2;
+  width: 100.9%;
+  transform: translateX(calc(-1 * var(--salida)));
+  transition: transform var(--duracion-salida) var(--curva-salida);
 }
 
-/* La marca queda por encima y termina en el mismo lugar que en Login */
 .Registration--saliendo .Registration__marca {
-    --marca-logo: 35px;
-    --marca-nombre: 33px;
-    --marca-sub: 22px;
+  --marca-logo: 35px;
+  --marca-nombre: 33px;
+  --marca-sub: 22px;
 
-    position: relative;
-    z-index: 3;
-    color: var(--blanc);
-    transform: translate(var(--marca-dx), var(--marca-dy));
-    transition:
-        transform var(--duracion-salida) var(--curva-salida),
-        color calc(var(--duracion-salida) * .5) ease calc(var(--duracion-salida) * .3);
+  position: relative;
+  z-index: 3;
+  color: var(--blanc);
+  transform: translate(var(--marca-dx), var(--marca-dy));
+  transition:
+    transform var(--duracion-salida) var(--curva-salida),
+    color calc(var(--duracion-salida) * .5) ease calc(var(--duracion-salida) * .3);
 }
 
 .Registration--saliendo .Brand__logo,
 .Registration--saliendo .Brand__nombre,
 .Registration--saliendo .Brand__sub {
-    transition:
-        width var(--duracion-salida) var(--curva-salida),
-        height var(--duracion-salida) var(--curva-salida),
-        font-size var(--duracion-salida) var(--curva-salida);
+  transition:
+    width var(--duracion-salida) var(--curva-salida),
+    height var(--duracion-salida) var(--curva-salida),
+    font-size var(--duracion-salida) var(--curva-salida);
 }
 
 
-
-/* =================================================================================== */
-/* ================================ RESPONSIVE ======================================= */
-/* =================================================================================== */
-
+/* 
 @media (max-width: 1100px) {
     .Registration {
         grid-template-columns: 1fr 48%;
     }
 }
 
-/* ---------- MOBILE ---------- */
 
 @media (max-width: 768px) {
 
@@ -197,7 +191,6 @@
         background-color: var(--casiBlanc);
     }
 
-    /* ---------- IMAGEN ---------- */
 
     .Registration__imagen {
         position: absolute;
@@ -213,7 +206,6 @@
         display: none;
     }
 
-    /* ---------- TARJETA ---------- */
 
     .Registration__panel {
         position: relative;
@@ -279,9 +271,6 @@
         margin-top: clamp(2px, .6vh, 6px);
     }
 
-    /* ---------- TRANSICION A LOGIN ---------- */
-
-    /* La tarjeta sale por la izquierda y el hero sube a la franja de Login */
     .Registration--saliendo .Registration__panel {
         transform: translateX(calc(-1 * var(--salida)));
         transition: transform var(--duracion-salida) var(--curva-salida);
@@ -300,7 +289,6 @@
             background-position var(--duracion-salida) var(--curva-salida);
     }
 
-    /* La marca compensa el movimiento de la tarjeta para quedarse en su lugar */
     .Registration--saliendo .Registration__marca {
         --marca-logo: 32px;
         --marca-nombre: 26px;
@@ -319,8 +307,6 @@
         transform: translateX(100vw);
     }
 }
-
-/* ---------- MOBILE BAJO ---------- */
 
 @media (max-width: 768px) and (max-height: 520px) {
 
@@ -346,7 +332,6 @@
     }
 }
 
-/* ---------- PANTALLAS BAJAS: CREAR Y GOOGLE EN LA MISMA FILA ---------- */
 
 @media (max-height: 440px), (max-width: 768px) and (max-height: 520px) {
 
@@ -373,4 +358,4 @@
     .Registration .GoogleSignIn__boton {
         margin-top: 8px;
     }
-}
+} */

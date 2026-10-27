@@ -1,10 +1,12 @@
-import Skeleton from '../../components/skeleton/Skeleton';
-import LandingNav from '../../components/landingNav/LandingNav';
-import PropertySearch from '../../components/propertySearch/PropertySearch';
-import Statistics from '../../components/statistics/Statistics';
-import SectionTitle from '../../components/sectionTitle/SectionTitle';
-import PropertyCard from '../../components/propertyCard/PropertyCard';
-import Footer from '../../components/footer/Footer';
+import {
+    Skeleton,
+    LandingNav,
+    PropertySearch,
+    Statistics,
+    SectionTitle,
+    PropertyCard,
+    Footer
+} from '../../components';
 
 import fondoInicio from '../../assets/homeHero.png';
 

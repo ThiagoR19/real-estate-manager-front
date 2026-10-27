@@ -1,20 +1,6 @@
 import { useMemo, useState } from "react";
-import {
-  calendarIcon,
-  clockIcon,
-  envelopeIcon,
-  fileLinesIcon as fileIcon,
-  houseIcon,
-  locationDotIcon as locationIcon,
-  magnifyingGlassIcon,
-  peopleIcon,
-  penIcon,
-  phoneIcon,
-  plusIcon,
-} from "../../assets/icons";
-import DropdownSelect from "../../components/select/DropdownSelect";
-import TenantModal from "../../components/tenant/TenantModal";
-import Button from "../../components/button/Button";
+import { calendarIcon, clockIcon, envelopeIcon, fileLinesIcon, houseIcon, locationDotIcon, magnifyingGlassIcon, peopleIcon, penIcon, phoneIcon, plusIcon } from "../../assets/icons";
+import { DropdownSelect, TenantModal, Button } from '../../components'
 import propertyImage from "/images.jpg";
 import "./Tenant.css";
 
@@ -29,7 +15,7 @@ const initialTenants = [
 
 const filters = [
   { label: "Propiedad", icon: houseIcon, options: ["Todas las propiedades", "Av. San Martín 1250", "Av. Santa Fe 850"] },
-  { label: "Estado", icon: locationIcon, options: ["Todos los estados", "Activo", "Pendiente", "Finalizado"] },
+  { label: "Estado", icon: locationDotIcon, options: ["Todos los estados", "Activo", "Pendiente", "Finalizado"] },
   { label: "Vencimiento", icon: calendarIcon, options: ["Todos los vencimientos", "Este mes", "Próximos 30 días"] },
 ];
 
@@ -37,7 +23,7 @@ const summaryCards = [
   { label: "Pagos pendientes", value: "2", icon: "x", tone: "danger" },
   { label: "Contratos por vencer", value: "10", icon: clockIcon, tone: "warning" },
   { label: "Inquilinos activos", value: "24", icon: peopleIcon, tone: "success" },
-  { label: "Contratos vigentes", value: "18", icon: fileIcon, tone: "info" },
+  { label: "Contratos vigentes", value: "18", icon: fileLinesIcon, tone: "info" },
 ];
 
 function SummaryIcon({ type }) {

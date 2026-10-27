@@ -7,10 +7,9 @@ import {
   plusIcon,
   trashCanIcon as trashIcon,
 } from "../../assets/icons";
-import DropdownSelect from "../../components/select/DropdownSelect";
-import ProfessionalModal from "../../components/professional/ProfessionalModal";
+import { DropdownSelect, ProfessionalModal } from '../../components';
 import "./Professional.css";
-import Button from "../../components/button/Button";
+import { Button } from '../../components';
 
 const initialProfessionals = Array.from({ length: 9 }, (_, index) => ({
   id: index + 1,

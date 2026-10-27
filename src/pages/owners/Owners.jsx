@@ -10,7 +10,7 @@ import {
   xIcon,
 } from "../../assets/icons";
 import propertyImage from "/images.jpg";
-import Button from "../../components/button/Button";
+import { Button } from '../../components';
 import "./Owners.css";
 
 const owners = Array.from({ length: 6 }, (_, index) => ({

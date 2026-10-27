@@ -171,8 +171,8 @@ body:has(#schedule) {
   padding: 23px 11px 0;
 }
 
-.schedule__day > h2,
-.schedule__week > h2 {
+.schedule__day>h2,
+.schedule__week>h2 {
   padding: 0 2px 13px;
 }
 
@@ -258,8 +258,8 @@ body:has(#schedule) {
   min-height: 57px;
 }
 
-.schedule__day-events > p,
-.schedule__week-events > p {
+.schedule__day-events>p,
+.schedule__week-events>p {
   grid-column: 1 / -1;
   margin: 0;
   padding-left: 4px;
@@ -534,7 +534,7 @@ body:has(#schedule) {
   padding: 13px 17px 9px;
 }
 
-.schedule__sidebar-heading > div {
+.schedule__sidebar-heading>div {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -577,7 +577,7 @@ body:has(#schedule) {
   border-bottom: 1px solid #d9e1e8;
 }
 
-.schedule__upcoming-item > img {
+.schedule__upcoming-item>img {
   flex: 0 0 42px;
   width: 42px;
   height: 38px;
@@ -585,7 +585,7 @@ body:has(#schedule) {
   object-fit: cover;
 }
 
-.schedule__upcoming-item > div {
+.schedule__upcoming-item>div {
   display: flex;
   min-width: 0;
   flex-direction: column;
@@ -615,6 +615,7 @@ body:has(#schedule) {
   height: 12px;
 }
 
+/* 
 @media (min-width: 1600px) {
   .schedule__content {
     max-width: 1600px;
@@ -785,4 +786,4 @@ body:has(#schedule) {
   .schedule__view-toggle button {
     transition: none;
   }
-}
+} */

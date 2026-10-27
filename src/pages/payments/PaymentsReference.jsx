@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { calendarIcon, checkIcon, downloadIcon, fileLinesIcon, magnifyingGlassIcon, paperPlaneIcon, xIcon } from "../../assets/icons";
 import paymentReference from "../../assets/pagos.png";
-import Button from "../../components/button/Button";
+import { Button } from '../../components';
 import "./PaymentsReference.css";
 
 const months = [["Mayo", "Sin comprobante", "neutral"], ["Marzo", "Impago", "danger"], ["Abril", "Aprobado", "success"], ["Febrero", "En proceso", "info"], ["Enero", "Rechazado", "danger"]];

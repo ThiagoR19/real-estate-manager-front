@@ -10,8 +10,7 @@ import {
   plusIcon,
   xIcon,
 } from "../../assets/icons";
-import DropdownSelect from "../../components/select/DropdownSelect";
-import Button from "../../components/button/Button";
+import { DropdownSelect, Button } from '../../components';
 import "./Agents.css";
 
 const agents = [

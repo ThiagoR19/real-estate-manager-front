@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { houseIcon, xIcon } from "../../assets/icons";
-import DropdownSelect from "../select/DropdownSelect";
-import Button from "../button/Button";
+import { DropdownSelect, Button } from '../index';
 import "./ReportModal.css";
 
 const typeOptions = ["Tipo", "Plomería", "Electricidad", "Gas", "Pintura", "Carpintería", "Otro"];
