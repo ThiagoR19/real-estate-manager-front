@@ -436,6 +436,7 @@ body:has(#professional) {
   white-space: nowrap;
 }
 
+/* 
 @media (min-width: 1600px) {
   #professional {
     padding-right: 29px;
@@ -520,4 +521,4 @@ body:has(#professional) {
   .professional__action {
     transition: none;
   }
-}
+} */

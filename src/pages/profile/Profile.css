@@ -172,7 +172,7 @@ body:has(#profile) {
   gap: 15px;
 }
 
-.profile__account-link > span {
+.profile__account-link>span {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -295,7 +295,7 @@ body:has(#profile) {
   background: #edf6ff;
 }
 
-.profile__password-hint > img {
+.profile__password-hint>img {
   flex-shrink: 0;
   width: 35px;
   height: 35px;
@@ -502,6 +502,7 @@ body:has(#profile) {
   filter: brightness(0) invert(1) !important;
 }
 
+/* 
 @media (max-width: 1100px) {
   .profile__layout {
     grid-template-columns: 300px minmax(0, 1fr);
@@ -676,4 +677,4 @@ body:has(#profile) {
   .profile__save-button {
     transition: none;
   }
-}
+} */

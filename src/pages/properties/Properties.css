@@ -320,6 +320,7 @@
   font-size: 14px;
 }
 
+/* 
 @media (max-width: 1250px) {
   .properties__top {
     grid-template-columns: minmax(0, 1fr) 440px;
@@ -441,4 +442,4 @@
   .properties__new-button {
     transition: none;
   }
-}
+} */
