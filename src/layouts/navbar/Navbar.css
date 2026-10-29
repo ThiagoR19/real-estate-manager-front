@@ -165,6 +165,10 @@
   display: none;
 }
 
+.navbar__header--chat .navbar__search {
+  display: none;
+}
+
 .navbar__notifications {
   position: relative;
   padding-right: 18px;

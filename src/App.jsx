@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Route, Switch } from "wouter";
-import { AboutUs, Agency, Agents, Chat, Dashboard, DashboardAgente, DashboardInquilino, DashboardOwner, Home, Login, Owners, Payments, Professional, Profile, Properties, Property, PublicProperties, PublicProperty, Reports, Schedule, Tenant, Terms } from "./pages/index.js";
+import { AboutUs, Agency, Agents, Chat, Dashboard, DashboardAgente, DashboardInquilino, DashboardOwner, DashboardSuperAdmin, Home, Login, Owners, Payments, Professional, Profile, Properties, Property, PublicProperties, PublicProperty, Reports, Schedule, Tenant, Terms } from "./pages/index.js";
 
 import { Header, Navbar } from "./layouts/index.js";
 
@@ -45,6 +45,7 @@ function App() {
       <Route path="/public_properties" component={PublicProperties} />
       <Route path="/public_property" component={PublicProperty} />
       <Route path="/login" component={Login} />
+      <Route path="/dashboard_superadmin" component={DashboardSuperAdmin} />
       <Route path="/" component={Home} />
       <Route>
         <AuthenticatedApp />

@@ -6,6 +6,7 @@ export { default as Dashboard } from "./dashboard/Dashboard";
 export { default as DashboardAgente } from "./dashboardAgente/DashboardAgente";
 export { default as DashboardInquilino } from "./dashboardInquilino/DashboardInquilino";
 export { default as DashboardOwner } from "./dashboardOwner/DashboardOwner";
+export { default as DashboardSuperAdmin } from "./dashboardSuperAdmin/DashboardSuperAdmin";
 export { default as Login } from "./login/Login";
 export { default as Home } from "./home/Home";
 export { default as Owners } from "./owners/Owners";

@@ -13,12 +13,13 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
   const isTenantDashboard = pathname === "/dashboard_inquilino";
   const isOwnerDashboard = pathname === "/dashboard_dueño";
   const isAdminDashboard = pathname === "/dashboard_admin";
+  const isChat = pathname === "/chat";
   const isTenantContext = isPayments || isTenantDashboard || isAdminDashboard;
-  const currentLabel = isPayments ? "Pagos" : currentItem?.breadcrumbLabel ?? currentItem?.label ?? pageLabels[pathname] ?? "Dashboard";
+  const currentLabel = isChat ? "Perfil" : isPayments ? "Pagos" : currentItem?.breadcrumbLabel ?? currentItem?.label ?? pageLabels[pathname] ?? "Dashboard";
   const searchPlaceholder = isProperties ? "Buscar propiedades..." : "Buscar contacto...";
 
   return (
-    <header className={`navbar__header${isPayments ? " navbar__header--payments" : ""}${isOwnerDashboard ? " navbar__header--dashboard-owner" : ""}${isAdminDashboard ? " navbar__header--dashboard" : ""}`}>
+    <header className={`navbar__header${isPayments ? " navbar__header--payments" : ""}${isOwnerDashboard ? " navbar__header--dashboard-owner" : ""}${isAdminDashboard ? " navbar__header--dashboard" : ""}${isChat ? " navbar__header--chat" : ""}`}>
       <button
         className="navbar__menu-button"
         type="button"
@@ -55,7 +56,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
         <Link href="/profile" className="navbar__account-link">
           <span>
             Juan Pérez
-            <small>{isTenantContext ? "Inquilino" : "Agente"}</small>
+            <small>{isChat ? "Administrador" : isTenantContext ? "Inquilino" : "Agente"}</small>
           </span>
           <i
             className="navbar__account-avatar"
