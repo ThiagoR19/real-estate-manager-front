@@ -10,22 +10,14 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
   const currentItem = allItems.find(({ href }) => isItemActive(pathname, href));
   const isPayments = pathname === "/payments" || pathname.startsWith("/payments/");
   const isProperties = pathname === "/properties" || pathname.startsWith("/properties/") || pathname === "/property" || pathname.startsWith("/property/");
-<<<<<<< HEAD
-  const isTenantDashboard = pathname === "/dashboard_inquilino";
-  const isOwnerDashboard = pathname === "/dashboard_dueño";
-  const isAdminDashboard = pathname === "/dashboard_admin";
-  const isChat = pathname === "/chat";
-  const isTenantContext = isPayments || isTenantDashboard || isAdminDashboard;
-  const currentLabel = isChat ? "Perfil" : isPayments ? "Pagos" : currentItem?.breadcrumbLabel ?? currentItem?.label ?? pageLabels[pathname] ?? "Dashboard";
-=======
   const isTenantDashboard = pathname === "/dashboard_inquilino" || pathname === "/dashboard_inquilinos";
   const isOwnerDashboard = pathname === "/dashboard_dueño" || pathname === "/dashboard_propietarios" || pathname === "/mis-propiedades" || pathname === "/cobros";
   const isAdminDashboard = pathname === "/dashboard_admin" || pathname === "/superadmin" || pathname === "/indec";
-  const isTenantContext = isPayments || isTenantDashboard || isAdminDashboard;
+  const isChat = pathname === "/chat";
+  const isTenantContext = isPayments || isTenantDashboard;
   const isSuperAdmin = pathname === "/superadmin";
-  const accountRole = isSuperAdmin ? "Super admin" : isAdminDashboard ? "Administrador" : isOwnerDashboard ? "Propietario" : isTenantContext ? "Inquilino" : pathname === "/pagos-cobros" ? "Agente" : "Agente";
-  const currentLabel = isPayments ? "Pagos" : currentItem?.breadcrumbLabel ?? currentItem?.label ?? pageLabels[pathname] ?? "Dashboard";
->>>>>>> develop-thiago
+  const accountRole = isSuperAdmin ? "Super admin" : isAdminDashboard || isChat ? "Administrador" : isOwnerDashboard ? "Propietario" : isTenantContext ? "Inquilino" : "Agente";
+  const currentLabel = isChat ? "Perfil" : isPayments ? "Pagos" : currentItem?.breadcrumbLabel ?? currentItem?.label ?? pageLabels[pathname] ?? "Dashboard";
   const searchPlaceholder = isProperties ? "Buscar propiedades..." : "Buscar contacto...";
   const showSearch = isProperties || pathname === "/professional";
 
@@ -67,11 +59,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
         <Link href="/profile" className="navbar__account-link">
           <span>
             Juan Pérez
-<<<<<<< HEAD
-            <small>{isChat ? "Administrador" : isTenantContext ? "Inquilino" : "Agente"}</small>
-=======
             <small>{accountRole}</small>
->>>>>>> develop-thiago
           </span>
           <i
             className="navbar__account-avatar"

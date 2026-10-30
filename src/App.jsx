@@ -1,10 +1,6 @@
 import { useState } from "react";
 import { Route, Switch } from "wouter";
-<<<<<<< HEAD
-import { AboutUs, Agency, Agents, Chat, Dashboard, DashboardAgente, DashboardInquilino, DashboardOwner, DashboardSuperAdmin, Home, Login, Owners, Payments, Professional, Profile, Properties, Property, PublicProperties, PublicProperty, Reports, Schedule, Tenant, Terms } from "./pages/index.js";
-=======
-import { AboutUs, Agency, Agents, Chat, Cobros, Dashboard, DashboardAgente, DashboardInquilino, DashboardOwner, Home, Indec, Login, MyProperties, Owners, Payments, PaymentsAndCollections, Professional, Profile, Properties, Property, PublicProperties, PublicProperty, Reports, Schedule, SuperAdmin, Tenant, Terms } from "./pages/index.js";
->>>>>>> develop-thiago
+import { AboutUs, Agency, Agents, Chat, Cobros, Dashboard, DashboardAgente, DashboardInquilino, DashboardOwner, DashboardSuperAdmin, Home, Indec, Login, MyProperties, Owners, Payments, PaymentsAndCollections, Professional, Profile, Properties, Property, PublicProperties, PublicProperty, Reports, Schedule, SuperAdmin, Tenant, Terms } from "./pages/index.js";
 
 import { Header, Navbar } from "./layouts/index.js";
 
