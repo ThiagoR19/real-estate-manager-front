@@ -8,6 +8,7 @@ import {
   plusIconWhite,
   toolboxIcon,
   userIcon,
+  walletIcon,
 } from "../../assets/icons";
 import "./DashboardAgente.css";
 
@@ -37,7 +38,7 @@ const activityItems = Array.from({ length: 6 }, () => ({ title: "Nueva visita ag
 const statItems = [
   { label: "Inquilinos", value: "18", change: "+20%", icon: peopleIcon, tone: "green", href: "/tenant" },
   { label: "Reportes", value: "3", change: "+10%", icon: penIcon, tone: "red", href: "/reports" },
-  { label: "Cobros P.", value: "4", change: "+20%", icon: toolboxIcon, tone: "orange", href: "/payments" },
+  { label: "Cobros P.", value: "4", change: "+20%", icon: walletIcon, tone: "orange", href: "/pagos-cobros" },
   { label: "Contratos", value: "6", change: "+20%", icon: fileLinesIcon, tone: "purple", href: "/properties" },
 ];
 

@@ -11,10 +11,12 @@ import {
   penIcon,
   phoneIcon,
   plusIcon,
+  xIcon,
 } from "../../assets/icons";
 import DropdownSelect from "../../components/select/DropdownSelect";
 import TenantModal from "../../components/tenant/TenantModal";
 import Button from "../../components/button/Button";
+import SummaryPill from "../../components/summaryPill/SummaryPill";
 import propertyImage from "/images.jpg";
 import "./Tenant.css";
 
@@ -34,16 +36,12 @@ const filters = [
 ];
 
 const summaryCards = [
-  { label: "Pagos pendientes", value: "2", icon: "x", tone: "danger" },
+  { label: "Pagos pendientes", value: "2", icon: xIcon, tone: "danger" },
   { label: "Contratos por vencer", value: "10", icon: clockIcon, tone: "warning" },
   { label: "Inquilinos activos", value: "24", icon: peopleIcon, tone: "success" },
   { label: "Contratos vigentes", value: "18", icon: fileIcon, tone: "info" },
 ];
 
-function SummaryIcon({ type }) {
-  if (type === "x") return <span className="tenant__summary-x" aria-hidden="true">×</span>;
-  return <img src={type} alt="" />;
-}
 
 function FilterControl({ filter, value, onChange }) {
   return (
@@ -174,11 +172,7 @@ export default function Tenant() {
           </div>
           <div className="tenant__summary" aria-label="Resumen de inquilinos">
             {summaryCards.map((card) => (
-              <article className={`tenant__summary-card tenant__summary-card--${card.tone}`} key={card.label}>
-                <span className="tenant__summary-icon"><SummaryIcon type={card.icon} /></span>
-                <strong>{card.label}</strong>
-                <b>{card.value}</b>
-              </article>
+              <SummaryPill key={card.label} {...card} />
             ))}
           </div>
         </section>

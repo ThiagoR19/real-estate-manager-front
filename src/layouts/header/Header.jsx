@@ -10,13 +10,24 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
   const currentItem = allItems.find(({ href }) => isItemActive(pathname, href));
   const isPayments = pathname === "/payments" || pathname.startsWith("/payments/");
   const isProperties = pathname === "/properties" || pathname.startsWith("/properties/") || pathname === "/property" || pathname.startsWith("/property/");
+<<<<<<< HEAD
   const isTenantDashboard = pathname === "/dashboard_inquilino";
   const isOwnerDashboard = pathname === "/dashboard_dueño";
   const isAdminDashboard = pathname === "/dashboard_admin";
   const isChat = pathname === "/chat";
   const isTenantContext = isPayments || isTenantDashboard || isAdminDashboard;
   const currentLabel = isChat ? "Perfil" : isPayments ? "Pagos" : currentItem?.breadcrumbLabel ?? currentItem?.label ?? pageLabels[pathname] ?? "Dashboard";
+=======
+  const isTenantDashboard = pathname === "/dashboard_inquilino" || pathname === "/dashboard_inquilinos";
+  const isOwnerDashboard = pathname === "/dashboard_dueño" || pathname === "/dashboard_propietarios" || pathname === "/mis-propiedades" || pathname === "/cobros";
+  const isAdminDashboard = pathname === "/dashboard_admin" || pathname === "/superadmin" || pathname === "/indec";
+  const isTenantContext = isPayments || isTenantDashboard || isAdminDashboard;
+  const isSuperAdmin = pathname === "/superadmin";
+  const accountRole = isSuperAdmin ? "Super admin" : isAdminDashboard ? "Administrador" : isOwnerDashboard ? "Propietario" : isTenantContext ? "Inquilino" : pathname === "/pagos-cobros" ? "Agente" : "Agente";
+  const currentLabel = isPayments ? "Pagos" : currentItem?.breadcrumbLabel ?? currentItem?.label ?? pageLabels[pathname] ?? "Dashboard";
+>>>>>>> develop-thiago
   const searchPlaceholder = isProperties ? "Buscar propiedades..." : "Buscar contacto...";
+  const showSearch = isProperties || pathname === "/professional";
 
   return (
     <header className={`navbar__header${isPayments ? " navbar__header--payments" : ""}${isOwnerDashboard ? " navbar__header--dashboard-owner" : ""}${isAdminDashboard ? " navbar__header--dashboard" : ""}${isChat ? " navbar__header--chat" : ""}`}>
@@ -41,10 +52,10 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
         <span aria-current="page">{currentLabel}</span>
       </nav>
 
-      <label className="navbar__search">
+      {showSearch && <label className="navbar__search">
         <img src={searchIcon} alt="" />
         <input type="search" placeholder={searchPlaceholder} aria-label={searchPlaceholder.replace("...", "")} />
-      </label>
+      </label>}
 
       <aside className="navbar__account" aria-label="Cuenta de usuario">
         <details className="navbar__notifications">
@@ -56,7 +67,11 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
         <Link href="/profile" className="navbar__account-link">
           <span>
             Juan Pérez
+<<<<<<< HEAD
             <small>{isChat ? "Administrador" : isTenantContext ? "Inquilino" : "Agente"}</small>
+=======
+            <small>{accountRole}</small>
+>>>>>>> develop-thiago
           </span>
           <i
             className="navbar__account-avatar"

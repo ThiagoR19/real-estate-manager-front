@@ -4,7 +4,7 @@ body:has(#agency) {
 
 #agency {
   min-height: calc(100dvh - 61px);
-  padding: 20px 20px 23px 29px;
+  padding: 20px 20px 96px 29px;
   background: #f7f9fc;
   color: #17235e;
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
@@ -299,13 +299,17 @@ body:has(#agency) {
 }
 
 .agency__save {
+  position: fixed;
+  right: 22px;
+  bottom: 24px;
+  z-index: 3;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 15px;
   width: 262px;
   height: 48px;
-  margin: 90px 2px 0 auto;
+  margin: 0;
   padding: 0 17px;
   border: 0;
   border-radius: 15px;
@@ -364,7 +368,7 @@ body:has(#agency) {
 
 @media (max-width: 760px) {
   #agency {
-    padding: 14px 12px 22px;
+    padding: 14px 12px 96px;
   }
 
   .agency__layout {
@@ -418,9 +422,9 @@ body:has(#agency) {
   }
 
   .agency__save {
-    width: min(100%, 262px);
-    margin-top: 25px;
-    margin-right: auto;
+    width: calc(100% - 28px);
+    right: 14px;
+    bottom: 14px;
   }
 }
 

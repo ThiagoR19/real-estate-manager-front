@@ -242,12 +242,17 @@
 }
 
 .report-modal__photos-scroll {
+  min-width: 0;
+  max-width: 100%;
+  scrollbar-width: thin;
+  scrollbar-color: #17235e #d7e8f6;
   overflow-x: auto;
   padding: 12px 14px 10px;
 }
 
 .report-modal__photos {
   display: flex;
+  flex-wrap: nowrap;
   gap: 10px;
   min-width: max-content;
 }

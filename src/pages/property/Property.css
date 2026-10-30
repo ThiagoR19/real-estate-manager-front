@@ -202,13 +202,22 @@ body:has(#property) {
 }
 
 .property__gallery-thumbnails {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  position: relative;
+  display: flex;
+  flex-wrap: nowrap;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: #17235e #d7e8f6;
   gap: 11px;
   margin-top: 10px;
 }
 
 .property__thumbnail {
+  flex: 0 0 calc((100% - 22px) / 3);
+  min-width: 95px;
   height: clamp(78px, 8.8vw, 101px);
   overflow: hidden;
   padding: 0;

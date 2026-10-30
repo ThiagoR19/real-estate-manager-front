@@ -421,6 +421,7 @@
 }
 
 .property-modal__photos-body {
+  min-width: 0;
   padding: 12px 15px 11px;
 }
 
@@ -428,7 +429,13 @@
   display: flex;
   gap: 10px;
   min-height: 111px;
-  overflow: hidden;
+  flex-wrap: nowrap;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: #17235e #d7e8f6;
 }
 
 .property-modal__photo {

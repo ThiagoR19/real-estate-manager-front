@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Link } from "wouter";
 import {
   bathIcon,
   bedIcon,
@@ -13,6 +14,7 @@ import {
   userIcon,
 } from "../../assets/icons";
 import PropertyModal from "../../components/property/PropertyModal";
+import PropertyActions from "../../components/property/PropertyActions";
 import villaImage from "/ly-villa-costa-blanca-1_b02f5d33_900x900.jpg";
 import terraceImage from "/images.jpg";
 import houseImage from "/images (1).jpg";
@@ -77,11 +79,19 @@ function DetailRow({ detail }) {
 
 export default function Property() {
   const [activeImage, setActiveImage] = useState(0);
-  const [actionsOpen, setActionsOpen] = useState(false);
+  const [deleted, setDeleted] = useState(false);
+  const thumbnailsRef = useRef(null);
   const [propertyData, setPropertyData] = useState(initialProperty);
   const [propertyModalOpen, setPropertyModalOpen] = useState(false);
   const currentGalleryImages = propertyData.photos?.length ? propertyData.photos : galleryImages;
   const safeActiveImage = Math.min(activeImage, currentGalleryImages.length - 1);
+
+  useEffect(() => {
+    const track = thumbnailsRef.current;
+    const thumbnail = track?.children[safeActiveImage];
+    if (!thumbnail) return;
+    track.scrollTo({ left: thumbnail.offsetLeft - track.offsetLeft, behavior: "smooth" });
+  }, [safeActiveImage]);
 
   const propertyDetails = [
     { label: "Tipo", value: propertyData.type, icon: houseIcon },
@@ -114,29 +124,14 @@ export default function Property() {
     setPropertyModalOpen(false);
   }
 
+  if (deleted) return <main id="property"><div className="property__page"><h1>Propiedad eliminada</h1><Link href="/properties">Volver a propiedades</Link></div></main>;
+
   return (
     <main id="property">
       <div className="property__page">
         <header className="property__title-row">
           <h1>{propertyData.name}</h1>
-          <div className="property__actions">
-            <button
-              className="property__actions-button"
-              type="button"
-              aria-label="Más acciones"
-              aria-expanded={actionsOpen}
-              aria-haspopup="menu"
-              onClick={() => setActionsOpen((open) => !open)}
-            >
-              <span aria-hidden="true">•••</span>
-            </button>
-            {actionsOpen && (
-              <div className="property__actions-menu" role="menu">
-                <button type="button" role="menuitem" onClick={() => { setActionsOpen(false); setPropertyModalOpen(true); }}>Editar propiedad</button>
-                <button type="button" role="menuitem" onClick={() => setActionsOpen(false)}>Compartir ficha</button>
-              </div>
-            )}
-          </div>
+          <PropertyActions className="property-actions--header" name={propertyData.name} onEdit={() => setPropertyModalOpen(true)} onDelete={() => setDeleted(true)} />
         </header>
 
         <div className="property__layout">
@@ -170,7 +165,7 @@ export default function Property() {
                 </span>
               </div>
 
-              <div className="property__gallery-thumbnails" role="list" aria-label="Seleccionar foto">
+              <div ref={thumbnailsRef} className="property__gallery-thumbnails" role="list" aria-label="Seleccionar foto">
                 {currentGalleryImages.map((image, index) => (
                   <button
                     className={`property__thumbnail${activeImage === index ? " is-active" : ""}`}

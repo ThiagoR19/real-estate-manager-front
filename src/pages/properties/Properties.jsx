@@ -11,6 +11,7 @@ import {
   tagIcon,
 } from "../../assets/icons";
 import PropertyModal from "../../components/property/PropertyModal";
+import PropertyActions from "../../components/property/PropertyActions";
 import DropdownSelect from "../../components/select/DropdownSelect";
 import Button from "../../components/button/Button";
 import propertyImage from "/images (1).jpg";
@@ -62,12 +63,13 @@ function FilterSelect({ filter, value, onChange }) {
   );
 }
 
-function PropertyCard({ property, onEdit, onOpen }) {
+function PropertyCard({ property, onEdit, onDelete, onOpen }) {
   function openProperty() {
     onOpen(property);
   }
 
   function handleCardKeyDown(event) {
+    if (event.target !== event.currentTarget) return;
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
       openProperty();
@@ -83,7 +85,7 @@ function PropertyCard({ property, onEdit, onOpen }) {
       onKeyDown={handleCardKeyDown}
       aria-label={`Ver detalle de ${property.title}`}
     >
-      <img className="properties__card-image" src={propertyImage} alt="Interior de la propiedad" />
+      <img className="properties__card-image" src={property.photos?.[0]?.src || propertyImage} alt="Interior de la propiedad" />
       <div className="properties__card-content">
         <h2 className="properties__card-title">{property.title}</h2>
         <p className="properties__card-location">
@@ -119,17 +121,7 @@ function PropertyCard({ property, onEdit, onOpen }) {
             <img className="properties__icon" src={eyeIcon} alt="" aria-hidden="true" />
             <span>Ver detalle</span>
           </button>
-          <button
-            className="properties__more-button"
-            type="button"
-            aria-label={`Editar ${property.title}`}
-            onClick={(event) => {
-              event.stopPropagation();
-              onEdit(property);
-            }}
-          >
-            <span aria-hidden="true">•••</span>
-          </button>
+          <PropertyActions name={property.title} onEdit={() => onEdit(property)} onDelete={() => onDelete(property)} />
         </div>
       </div>
     </article>
@@ -165,6 +157,11 @@ export default function Properties() {
 
   function closePropertyModal() {
     setModal((current) => ({ ...current, isOpen: false }));
+  }
+
+  function deleteProperty(property) {
+    setProperties((current) => current.filter((item) => item.id !== property.id));
+    setFeedback(`Se eliminó ${property.title}.`);
   }
 
   function saveProperty(form) {
@@ -230,7 +227,7 @@ export default function Properties() {
 
       <section className="properties__grid" aria-label="Listado de propiedades">
         {visibleProperties.length > 0 ? (
-          visibleProperties.map((property) => <PropertyCard key={property.id} property={property} onEdit={openEditModal} onOpen={openProperty} />)
+          visibleProperties.map((property) => <PropertyCard key={property.id} property={property} onEdit={openEditModal} onDelete={deleteProperty} onOpen={openProperty} />)
         ) : (
           <p className="properties__empty">No hay propiedades que coincidan con los filtros seleccionados.</p>
         )}
