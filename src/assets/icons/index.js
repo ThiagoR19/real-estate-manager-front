@@ -50,3 +50,5 @@ export { default as toolboxIcon } from "./toolbox-solid-full.svg";
 export { default as trashCanIcon } from "./trash-can-solid-full.svg";
 export { default as userIcon } from "./user-solid-full.svg";
 export { default as xIcon } from "./x-solid-full.svg";
+export { default as walletIcon } from "./wallet.svg";
+export { default as starIcon } from "./star.svg";

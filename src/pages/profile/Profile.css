@@ -3,6 +3,7 @@ body:has(#profile) {
 }
 
 #profile {
+  display: flow-root;
   min-height: calc(100dvh - 61px);
   background: #f7f9fc;
   color: #17235e;

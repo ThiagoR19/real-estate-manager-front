@@ -5,6 +5,7 @@ import {
   penIcon,
   phoneIcon,
   plusIcon,
+  starIcon,
   trashCanIcon as trashIcon,
 } from "../../assets/icons";
 import DropdownSelect from "../../components/select/DropdownSelect";
@@ -180,7 +181,7 @@ export default function Professional() {
                       <Button
                         className="professional__rate"
                         onClick={() => rateProfessional(professional)}
-                        icon={<span aria-hidden="true">★</span>}
+                        icon={starIcon}
                         text="Valorar"
                       />
                       <button

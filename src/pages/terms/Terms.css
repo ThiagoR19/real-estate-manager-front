@@ -3,6 +3,7 @@ body:has(#terms) {
 }
 
 #terms {
+  display: flow-root;
   min-height: calc(100dvh - 61px);
   background: #f7f9fc;
   color: #17235e;
@@ -296,11 +297,6 @@ body:has(#terms) {
   display: none;
 }
 
-/* Space lets the final section align with the top when selected. */
-.terms__div-section-div::after {
-  flex: 0 0 calc(100dvh - 395px);
-  content: "";
-}
 
 .terms__section-div-section {
   display: flex;
@@ -501,9 +497,6 @@ body:has(#terms) {
     gap: 14px;
   }
 
-  .terms__div-section-div::after {
-    flex-basis: calc(100dvh - 420px);
-  }
 
   .terms__section-div-section,
   .terms__section-div-section:first-child,

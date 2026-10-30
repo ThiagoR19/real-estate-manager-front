@@ -11,6 +11,7 @@ import {
 } from "../../assets/icons";
 import propertyImage from "/images.jpg";
 import Button from "../../components/button/Button";
+import SummaryPill from "../../components/summaryPill/SummaryPill";
 import "./Owners.css";
 
 const owners = Array.from({ length: 6 }, (_, index) => ({
@@ -34,9 +35,6 @@ const summaryCards = [
   { label: "Cobros acreditados", value: "18", icon: fileIcon, tone: "info" },
 ];
 
-function SummaryIcon({ icon }) {
-  return <img src={icon} alt="" />;
-}
 
 function OwnerRow({ owner, onMenu }) {
   return (
@@ -103,11 +101,7 @@ export default function Owners() {
 
           <div className="owners__summary" aria-label="Resumen de propietarios">
             {summaryCards.map((card) => (
-              <article className={`owners__summary-card owners__summary-card--${card.tone}`} key={card.label}>
-                <span className="owners__summary-icon"><SummaryIcon icon={card.icon} /></span>
-                <strong>{card.label}</strong>
-                <b>{card.value}</b>
-              </article>
+              <SummaryPill key={card.label} {...card} />
             ))}
           </div>
         </section>

@@ -55,10 +55,11 @@ export default function Reports() {
   const [reportItems, setReportItems] = useState(initialReports);
   const [activeReportId, setActiveReportId] = useState(initialReports[0].id);
   const [query, setQuery] = useState("");
-  const [photoUrls, setPhotoUrls] = useState([]);
+  const [selectedPhotos, setSelectedPhotos] = useState({});
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const photoUrlsRef = useRef([]);
   const reportPhotoUrlsRef = useRef([]);
+  const thumbnailsRef = useRef(null);
 
   const visibleReports = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -71,6 +72,18 @@ export default function Reports() {
   }, [query, reportItems]);
 
   const activeReport = reportItems.find(({ id }) => id === activeReportId) ?? reportItems[0];
+  const photos = activeReport.photos?.length ? activeReport.photos : [{}, {}, {}];
+  const selectedPhoto = Math.min(selectedPhotos[activeReport.id] ?? 0, photos.length - 1);
+
+  useEffect(() => {
+    const track = thumbnailsRef.current;
+    const thumbnail = track?.children[selectedPhoto];
+    if (thumbnail) track.scrollTo({ left: thumbnail.offsetLeft - track.offsetLeft, behavior: "smooth" });
+  }, [activeReportId, selectedPhoto]);
+
+  function selectPhoto(index) {
+    setSelectedPhotos((current) => ({ ...current, [activeReport.id]: index }));
+  }
 
   useEffect(() => () => {
     photoUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
@@ -79,11 +92,9 @@ export default function Reports() {
 
   function addPhotos(event) {
     const newUrls = Array.from(event.target.files ?? []).map((file) => URL.createObjectURL(file));
-    setPhotoUrls((currentUrls) => {
-      const nextUrls = [...currentUrls, ...newUrls];
-      photoUrlsRef.current = nextUrls;
-      return nextUrls;
-    });
+    photoUrlsRef.current.push(...newUrls);
+    setReportItems((current) => current.map((report) => report.id === activeReport.id ? { ...report, photos: [...photos, ...newUrls.map((url) => ({ url }))] } : report));
+    if (newUrls.length) selectPhoto(photos.length);
     event.target.value = "";
   }
 
@@ -140,7 +151,7 @@ export default function Reports() {
                 onClick={() => setActiveReportId(report.id)}
                 aria-pressed={activeReportId === report.id}
               >
-                <ReportPhoto className="reports__list-photo" label="Foto de pérdida de agua" />
+                <ReportPhoto className="reports__list-photo" label={report.title} src={report.photos?.[0]?.url} />
                 <span className="reports__list-copy">
                   <strong>{report.title}</strong>
                   <span><DrawnIcon name="location" />{report.location}</span>
@@ -161,28 +172,15 @@ export default function Reports() {
 
           <div className="reports__detail-content">
             <div className="reports__gallery">
-              <ReportPhoto
-                className="reports__main-photo"
-                label={activeReport.title}
-                src={activeReport.photos?.[0]?.url}
-              />
-              <div className="reports__thumbnails" aria-label="Fotos del reporte">
-                {(activeReport.photos?.length ? activeReport.photos : [null, null, null]).map((photo, index) => (
-                  <ReportPhoto
-                    key={photo?.url ?? `reference-${index}`}
-                    className={`reports__thumbnail ${index === 0 ? "is-selected" : ""}`}
-                    label={index === 0 ? "Foto principal" : "Foto adicional"}
-                    src={photo?.url}
-                  />
-                ))}
+              <div className="reports__main-photo-frame">
+                <ReportPhoto className="reports__main-photo" label={activeReport.title} src={photos[selectedPhoto].url} />
+                <button className="reports__gallery-arrow reports__gallery-arrow--previous" type="button" aria-label="Foto anterior" onClick={() => selectPhoto((selectedPhoto - 1 + photos.length) % photos.length)}>‹</button>
+                <button className="reports__gallery-arrow reports__gallery-arrow--next" type="button" aria-label="Foto siguiente" onClick={() => selectPhoto((selectedPhoto + 1) % photos.length)}>›</button>
+                <span className="reports__photo-count">{selectedPhoto + 1}/{photos.length}</span>
               </div>
-              {photoUrls.length > 0 && (
-                <div className="reports__uploaded-thumbnails">
-                  {photoUrls.map((url) => (
-                    <img key={url} src={url} alt="Foto agregada al reporte" />
-                  ))}
-                </div>
-              )}
+              <div ref={thumbnailsRef} className="reports__thumbnails" aria-label="Fotos del reporte">
+                {photos.map((photo, index) => <button key={photo.url ?? `reference-${index}`} className={`reports__thumbnail-button${selectedPhoto === index ? " is-selected" : ""}`} type="button" aria-label={`Ver foto ${index + 1}`} aria-pressed={selectedPhoto === index} onClick={() => selectPhoto(index)}><ReportPhoto className="reports__thumbnail" label={`Foto ${index + 1}`} src={photo.url} /></button>)}
+              </div>
               <label className="reports__add-photos">
                 <span aria-hidden="true">+</span>
                 Agregar fotos

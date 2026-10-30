@@ -9,13 +9,20 @@ import {
   houseIcon,
   houseUserIcon,
   peopleIcon,
-  percentIcon,
+  walletIcon,
   userIcon,
 } from "../assets/icons";
 
 export const primaryItems = [
   { href: "/dashboard", label: "Dashboard", icon: chartColumnIcon },
-  { href: "/dashboard_dueño", label: "Dashboard dueño", breadcrumbLabel: "Dashboard", icon: houseUserIcon },
+  { href: "/dashboard_inquilinos", label: "Dashboard inquilinos", breadcrumbLabel: "Dashboard", icon: houseUserIcon },
+  { href: "/dashboard_agente", label: "Dashboard agente", breadcrumbLabel: "Dashboard", icon: chartColumnIcon },
+  { href: "/dashboard_propietarios", label: "Dashboard propietarios", breadcrumbLabel: "Dashboard", icon: houseUserIcon },
+  { href: "/mis-propiedades", label: "Mis propiedades", breadcrumbLabel: "Tus propiedades", icon: houseIcon },
+  { href: "/cobros", label: "Cobros", breadcrumbLabel: "Zona de cobro", icon: walletIcon },
+  { href: "/pagos-cobros", label: "Pagos y cobros", breadcrumbLabel: "Pagos", icon: walletIcon },
+  { href: "/indec", label: "INDEC", icon: chartColumnIcon },
+  { href: "/superadmin", label: "Panel superAdmin", breadcrumbLabel: "Panel administrativo", icon: buildingColumnsIcon },
   { href: "/owners", label: "Propietarios", icon: peopleIcon },
   { href: "/tenant", label: "Inquilinos", icon: peopleIcon },
   { href: "/professional", label: "Profesionales", icon: briefcaseIcon },
@@ -26,7 +33,7 @@ export const primaryItems = [
 
 export const secondaryItems = [
   { href: "/reports", label: "Reportes", icon: chartColumnIcon },
-  { href: "/payments", label: "Pagos", icon: percentIcon },
+  { href: "/payments", label: "Pagos del inquilino", icon: walletIcon },
   { href: "/agents", label: "Agentes", icon: peopleIcon },
   { href: "/agency", label: "Mi Inmobiliaria", icon: buildingColumnsIcon },
   { href: "/profile", label: "Mi perfil", icon: userIcon },
@@ -40,6 +47,11 @@ export const pageLabels = {
   "/property": "Propiedad",
   "/reports": "Reportes",
   "/payments": "Pagos",
+  "/cobros": "Zona de cobro",
+  "/pagos-cobros": "Pagos",
+  "/indec": "INDEC",
+  "/mis-propiedades": "Tus propiedades",
+  "/superadmin": "Panel administrativo",
   "/aboutUs": "Acerca de nosotros",
 };
 

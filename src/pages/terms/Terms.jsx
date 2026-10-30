@@ -83,7 +83,7 @@ export default function Terms() {
 
     setActiveSection(id);
     content.scrollTo({
-      top: section.offsetTop,
+      top: Math.min(section.offsetTop, content.scrollHeight - content.clientHeight),
       behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
         ? "instant"
         : "smooth",
@@ -93,6 +93,10 @@ export default function Terms() {
 
   function updateActiveSection() {
     const content = contentRef.current;
+    if (content.scrollTop + content.clientHeight >= content.scrollHeight - 2) {
+      setActiveSection(sections.at(-1).id);
+      return;
+    }
     const currentSection = sections.findLast(
       ({ id }) => sectionRefs.current[id].offsetTop <= content.scrollTop + 24,
     );

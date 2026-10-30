@@ -387,7 +387,6 @@ export default function PropertyModal({ isOpen, mode, property, onClose, onSubmi
                       </button>
                     </div>
                     <input ref={photoInputRef} className="property-modal__hidden-input" type="file" accept="image/*" multiple onChange={updatePhotoFiles} />
-                    <div className="property-modal__photos-scroll" aria-hidden="true"><span /></div>
                   </div>
                 </section>
               </div>

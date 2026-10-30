@@ -12,6 +12,7 @@ import {
 } from "../../assets/icons";
 import DropdownSelect from "../../components/select/DropdownSelect";
 import Button from "../../components/button/Button";
+import SummaryPill from "../../components/summaryPill/SummaryPill";
 import "./Agents.css";
 
 const agents = [
@@ -33,9 +34,6 @@ const summaryCards = [
   { label: "Operaciones activas", value: "18", icon: fileIcon, tone: "info" },
 ];
 
-function SummaryIcon({ icon }) {
-  return <img src={icon} alt="" />;
-}
 
 function ZoneFilter({ value, onChange }) {
   return (
@@ -108,11 +106,7 @@ export default function Agents() {
           </div>
           <div className="agents__summary" aria-label="Resumen de agentes">
             {summaryCards.map((card) => (
-              <article className={`agents__summary-card agents__summary-card--${card.tone}`} key={card.label}>
-                <span className="agents__summary-icon"><SummaryIcon icon={card.icon} /></span>
-                <strong>{card.label}</strong>
-                <b>{card.value}</b>
-              </article>
+              <SummaryPill key={card.label} {...card} />
             ))}
           </div>
         </section>
