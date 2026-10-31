@@ -10,7 +10,7 @@ import {
   userIcon,
   walletIcon,
 } from "../../assets/icons";
-import "./DashboardAgente.css";
+import "./AgentDashboard.css";
 
 const propertyPhotos = [
   "/images (1).jpg",
@@ -37,8 +37,8 @@ const activityItems = Array.from({ length: 6 }, () => ({ title: "Nueva visita ag
 
 const statItems = [
   { label: "Inquilinos", value: "18", change: "+20%", icon: peopleIcon, tone: "green", href: "/tenant" },
-  { label: "Reportes", value: "3", change: "+10%", icon: penIcon, tone: "red", href: "/reports" },
-  { label: "Cobros P.", value: "4", change: "+20%", icon: walletIcon, tone: "orange", href: "/pagos-cobros" },
+  { label: "Reportes", value: "3", change: "+10%", icon: penIcon, tone: "red", href: "/reports-agent" },
+  { label: "Cobros P.", value: "4", change: "+20%", icon: walletIcon, tone: "orange", href: "/payments-collections" },
   { label: "Contratos", value: "6", change: "+20%", icon: fileLinesIcon, tone: "purple", href: "/properties" },
 ];
 
@@ -151,7 +151,7 @@ function ReportsCard() {
 
       <div className="agent-dashboard__reports-list">
         {reports.map((report) => (
-          <Link className="agent-dashboard__report-item" href="/reports" key={report.title}>
+          <Link className="agent-dashboard__report-item" href="/reports-agent" key={report.title}>
             <img src={report.photo} alt="" />
             <span className="agent-dashboard__report-copy">
               <strong>{report.title} <i aria-hidden="true" /></strong>
@@ -164,7 +164,7 @@ function ReportsCard() {
         ))}
       </div>
 
-      <Link className="agent-dashboard__reports-button" href="/reports">Todos los reportes <span aria-hidden="true">→</span></Link>
+      <Link className="agent-dashboard__reports-button" href="/reports-agent">Todos los reportes <span aria-hidden="true">→</span></Link>
     </section>
   );
 }
@@ -191,7 +191,7 @@ function ActivityCard() {
   );
 }
 
-export default function DashboardAgente() {
+export default function AgentDashboard() {
   return (
     <main id="agent-dashboard">
       <div className="agent-dashboard__page">

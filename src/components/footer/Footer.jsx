@@ -24,7 +24,7 @@ const navegacion = [
     { texto: "Inicio", href: "/home" },
     { texto: "Comprar", href: "/properties?filter=buy" },
     { texto: "Alquilar", href: "/properties?filter=rent" },
-    { texto: "Nosotros", href: "/aboutUs" },
+    { texto: "Nosotros", href: "/about-us" },
     { texto: "Contacto", href: "#contacto" }
 ];
 

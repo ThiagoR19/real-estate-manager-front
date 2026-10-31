@@ -7,15 +7,19 @@ import {
   magnifyingGlassIcon,
   peopleIcon,
   phoneIcon,
+  penIcon,
   plusIcon,
+  trashCanIcon,
   xIcon,
 } from "../../assets/icons";
 import DropdownSelect from "../../components/select/DropdownSelect";
 import Button from "../../components/button/Button";
 import SummaryPill from "../../components/summaryPill/SummaryPill";
+import PersonModal from "../../components/person/PersonModal";
+import ConfirmDeleteModal from "../../components/confirmDelete/ConfirmDeleteModal";
 import "./Agents.css";
 
-const agents = [
+const initialAgents = [
   { initials: "LM", name: "Lucía Martínez", dni: "41.234.567", email: "lucia.m@gmail.com", phone: "11 2345- 6789", zone: "Palermo", properties: "120" },
   { initials: "LM", name: "Lucía Martínez", dni: "41.234.567", email: "lucia.m@gmail.com", phone: "11 2345- 6789", zone: "Palermo", properties: "120" },
   { initials: "LM", name: "Lucía Martínez", dni: "41.234.567", email: "lucia.m@gmail.com", phone: "11 2345- 6789", zone: "Palermo", properties: "120" },
@@ -52,7 +56,7 @@ function ZoneFilter({ value, onChange }) {
   );
 }
 
-function AgentRow({ agent, onMenu }) {
+function AgentRow({ agent, onEdit, onDelete }) {
   return (
     <tr>
       <td data-label="Agente">
@@ -70,16 +74,21 @@ function AgentRow({ agent, onMenu }) {
       <td data-label="Zona asignada"><strong>{agent.zone}</strong></td>
       <td data-label="Propiedades asignadas"><strong>{agent.properties}</strong></td>
       <td data-label="Acciones" className="agents__actions-cell">
-        <button className="agents__actions" type="button" aria-label={`Acciones para ${agent.name}`} onClick={onMenu}>⋮</button>
+        <div className="agents__row-actions">
+          <button type="button" aria-label={`Editar a ${agent.name}`} onClick={() => onEdit(agent)}><img src={penIcon} alt="" /></button>
+          <button type="button" aria-label={`Eliminar a ${agent.name}`} onClick={() => onDelete(agent)}><img src={trashCanIcon} alt="" /></button>
+        </div>
       </td>
     </tr>
   );
 }
 
 export default function Agents() {
+  const [agents, setAgents] = useState(() => initialAgents.map((agent, index) => ({ ...agent, id: index + 1, status: "Activo" })));
   const [query, setQuery] = useState("");
   const [zone, setZone] = useState(zones[0]);
-  const [showModal, setShowModal] = useState(false);
+  const [modal, setModal] = useState(null);
+  const [pendingDelete, setPendingDelete] = useState(null);
   const [notice, setNotice] = useState("");
 
   const visibleAgents = useMemo(() => {
@@ -89,11 +98,23 @@ export default function Agents() {
       const matchesZone = zone === zones[0] || agent.zone === zone;
       return matchesQuery && matchesZone;
     });
-  }, [query, zone]);
+  }, [agents, query, zone]);
 
-  function showRowNotice() {
-    setNotice("Las acciones del agente estarán disponibles próximamente.");
-    window.setTimeout(() => setNotice(""), 2800);
+  function saveAgent(data) {
+    if (modal.mode === "edit") {
+      setAgents((current) => current.map((agent) => agent.id === modal.person.id ? { ...agent, ...data } : agent));
+      setNotice("Agente actualizado correctamente.");
+    } else {
+      setAgents((current) => [...current, { ...data, id: Math.max(0, ...current.map((agent) => agent.id)) + 1, properties: "0" }]);
+      setNotice("Agente creado correctamente.");
+    }
+    setModal(null);
+  }
+
+  function deleteAgent() {
+    setAgents((current) => current.filter((agent) => agent.id !== pendingDelete.id));
+    setPendingDelete(null);
+    setNotice("Agente eliminado correctamente.");
   }
 
   return (
@@ -117,14 +138,14 @@ export default function Agents() {
             <input type="search" placeholder="Buscar contacto..." aria-label="Buscar contacto" value={query} onChange={(event) => setQuery(event.target.value)} />
           </label>
           <ZoneFilter value={zone} onChange={setZone} />
-          <Button className="agents__new-button" onClick={() => setShowModal(true)} icon={plusIcon} text="Nuevo agente" />
+          <Button className="agents__new-button" onClick={() => setModal({ mode: "create", person: null })} icon={plusIcon} text="Nuevo agente" />
         </section>
 
         <section className="agents__table-card" aria-label="Listado de agentes">
           <div className="agents__table-wrap">
             <table>
-              <thead><tr><th>Inquilino</th><th>Correo</th><th>Teléfono</th><th>Zona asignada</th><th>Propiedades asignadas</th><th>Acciones</th></tr></thead>
-              <tbody>{visibleAgents.map((agent, index) => <AgentRow key={`${agent.name}-${index}`} agent={agent} onMenu={showRowNotice} />)}</tbody>
+              <thead><tr><th>Agente</th><th>Correo</th><th>Teléfono</th><th>Zona asignada</th><th>Propiedades asignadas</th><th>Acciones</th></tr></thead>
+              <tbody>{visibleAgents.map((agent) => <AgentRow key={agent.id} agent={agent} onEdit={(person) => setModal({ mode: "edit", person })} onDelete={setPendingDelete} />)}</tbody>
             </table>
           </div>
           {!visibleAgents.length && <p className="agents__empty">No encontramos agentes con esos criterios.</p>}
@@ -133,17 +154,8 @@ export default function Agents() {
 
       {notice && <p className="agents__notice" role="status">{notice}</p>}
 
-      {showModal && (
-        <div className="agents__modal-backdrop" role="presentation" onClick={() => setShowModal(false)}>
-          <section className="agents__modal" role="dialog" aria-modal="true" aria-labelledby="agents-modal-title" onClick={(event) => event.stopPropagation()}>
-            <button className="agents__modal-close" type="button" aria-label="Cerrar" onClick={() => setShowModal(false)}>×</button>
-            <h2 id="agents-modal-title">Nuevo agente</h2>
-            <p>Completá los datos del nuevo agente para incorporarlo al listado.</p>
-            <div className="agents__modal-fields"><label>Nombre completo<input type="text" placeholder="Ej. Lucía Martínez" /></label><label>Correo electrónico<input type="email" placeholder="nombre@email.com" /></label></div>
-            <Button className="agents__modal-submit" onClick={() => setShowModal(false)} text="Guardar agente" />
-          </section>
-        </div>
-      )}
+      {modal && <PersonModal kind="agent" mode={modal.mode} person={modal.person} onClose={() => setModal(null)} onSubmit={saveAgent} />}
+      <ConfirmDeleteModal isOpen={Boolean(pendingDelete)} title="¿Seguro que desea eliminar un agente?" onClose={() => setPendingDelete(null)} onConfirm={deleteAgent} />
     </main>
   );
 }

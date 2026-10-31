@@ -165,21 +165,13 @@ body:has(#agents) {
 .agents__person-copy strong { overflow: hidden; font-size: 14px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
 .agents__person-copy small { color: #7e8aa6; font-size: 12px; white-space: nowrap; }
 .agents__actions-cell { text-align: center !important; }
-.agents__actions { width: 30px; height: 38px; padding: 0; border: 0; background: transparent; color: #003783; cursor: pointer; font-size: 28px; line-height: 1; }
-.agents__actions:hover { color: #2178c4; }
+.agents__row-actions { display: flex; align-items: center; justify-content: center; gap: 5px; }
+.agents__row-actions button { display: grid; flex-shrink: 0; place-items: center; width: 26px; height: 32px; padding: 5px; border: 0; border-radius: 6px; background: transparent; cursor: pointer; }
+.agents__row-actions button:hover { background: #edf4fc; }
+.agents__row-actions img { width: 15px; height: 15px; }
 .agents__empty { margin: 0; padding: 34px; color: #7e8aa6; text-align: center; }
 
 .agents__notice { position: fixed; z-index: 40; right: 22px; bottom: 22px; margin: 0; padding: 14px 18px; border: 1px solid #c8dff3; border-radius: 10px; background: #fff; box-shadow: 0 4px 18px #17235e24; color: #17235e; font-size: 14px; }
-.agents__modal-backdrop { position: fixed; z-index: 50; inset: 0; display: grid; place-items: center; padding: 20px; background: #07183b7a; }
-.agents__modal { position: relative; width: min(100%, 480px); padding: 30px; border-radius: 16px; background: #fff; box-shadow: 0 16px 40px #061b4a45; }
-.agents__modal h2 { margin: 0 0 8px; color: #061b4a; font-size: 25px; }
-.agents__modal p { margin: 0 0 23px; color: #7e8aa6; font-size: 14px; line-height: 1.5; }
-.agents__modal-close { position: absolute; top: 12px; right: 15px; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: #17235e; cursor: pointer; font-size: 25px; }
-.agents__modal-close:hover { background: #f0f6fc; }
-.agents__modal-fields { display: grid; gap: 14px; }
-.agents__modal-fields label { display: grid; gap: 6px; color: #17235e; font-size: 13px; font-weight: 650; }
-.agents__modal-fields input { height: 42px; padding: 0 12px; border: 1px solid #dbe6f1; border-radius: 9px; color: #17235e; outline: 0; }
-.agents__modal-submit { width: 100%; height: 43px; margin-top: 23px; border: 0; border-radius: 9px; cursor: pointer; font-weight: 700; }
 
 body:has(#agents) .navbar__search { display: none; }
 
@@ -233,6 +225,7 @@ body:has(#agents) .navbar__search { display: none; }
   .agents__table-card td:last-child { position: relative; display: grid; grid-template-columns: 135px minmax(0, 1fr); align-items: center; width: 100%; height: auto; min-height: 42px; padding: 7px 0; border: 0; }
   .agents__table-card td::before { color: #7e8aa6; content: attr(data-label); font-size: 11px; font-weight: 700; text-transform: uppercase; }
   .agents__actions-cell { text-align: left !important; }
+  .agents__row-actions { justify-content: flex-start; }
 }
 
 @media (prefers-reduced-motion: reduce) {

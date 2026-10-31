@@ -33,9 +33,13 @@
 }
 
 .Registration__formulario {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
     width: 100%;
     max-width: 480px;
-    margin: clamp(4px, 3.2vh, 22px) auto 0;
+    margin: 0 auto;
 }
 
 .Registration__encabezado {
@@ -234,6 +238,8 @@
     }
 
     .Registration__formulario {
+        display: block;
+        flex: initial;
         max-width: none;
         margin: clamp(4px, 2.3vh, 18px) 0 0;
     }

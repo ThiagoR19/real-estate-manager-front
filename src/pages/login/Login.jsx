@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "wouter";
 
 import Skeleton from "../../components/skeleton/Skeleton";
 import ImagePanel from "../../components/imagePanel/ImagePanel";
@@ -7,8 +8,8 @@ import PrimaryButton from "../../components/primaryButton/PrimaryButton";
 import GoogleSignIn from "../../components/googleSignIn/GoogleSignIn";
 import LegalText from "../../components/legalText/LegalText";
 
-import useEnvio from "../../hooks/useEnvio";
-import esperar from "../../utils/esperar";
+import useSubmit from "../../hooks/useSubmit";
+import wait from "../../utils/wait";
 
 import mailIcon from "../../assets/icons/loginMail.svg"
 import lockIcon from "../../assets/icons/loginLock.svg"
@@ -17,24 +18,24 @@ import fondo from "../../assets/loginFondo.png"
 import "./Login.css"
 
 export default function Login() {
-    const [estadoEnvio, enviar] = useEnvio();
+    const [submitState, submit] = useSubmit();
 
-    // Si venimos de la animación de Registration, el hero ya está en pantalla: solo falta el panel
-    const [desdeRegistration] = useState(() => window.history.state?.desdeRegistration === true);
+    // Si venimos de la animación de Register, el hero ya está en pantalla: solo falta el panel
+    const [fromRegister] = useState(() => window.history.state?.fromRegister === true);
 
     useEffect(() => {
-        if (desdeRegistration) window.history.replaceState(null, "");
-    }, [desdeRegistration]);
+        if (fromRegister) window.history.replaceState(null, "");
+    }, [fromRegister]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         // TODO: reemplazar por la petición real a la API
-        enviar(() => esperar(1800));
+        submit(() => wait(1800));
     };
 
     return (
         <Skeleton as="main" className="login" fondos={[fondo]}>
-            <ImagePanel conBrand className={`login__hero ${desdeRegistration ? "Skeleton-no" : ""}`} />
+            <ImagePanel conBrand className={`login__hero ${fromRegister ? "Skeleton-no" : ""}`} />
             <section className="login__panel">
                 <form className="login__form" onSubmit={handleSubmit}>
                     <header className="login__header">
@@ -68,14 +69,17 @@ export default function Login() {
                     <PrimaryButton
                         texto="Ingresar"
                         textoEnviando="Ingresando"
-                        estado={estadoEnvio}
+                        estado={submitState}
                         className="login__submit"
                     />
 
                     <GoogleSignIn texto="o continúa con" />
                 </form>
 
-                <LegalText className="login__terms" />
+                <div className="login__footer">
+                    <LegalText className="login__terms" />
+                    <p className="login__register">¿No tienes una cuenta? <Link href="/register">Regístrate</Link></p>
+                </div>
             </section>
         </Skeleton>
     );

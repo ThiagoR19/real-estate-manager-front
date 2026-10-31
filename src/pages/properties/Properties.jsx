@@ -12,6 +12,7 @@ import {
 } from "../../assets/icons";
 import PropertyModal from "../../components/property/PropertyModal";
 import PropertyActions from "../../components/property/PropertyActions";
+import ConfirmDeleteModal from "../../components/confirmDelete/ConfirmDeleteModal";
 import DropdownSelect from "../../components/select/DropdownSelect";
 import Button from "../../components/button/Button";
 import propertyImage from "/images (1).jpg";
@@ -138,6 +139,7 @@ export default function Properties() {
   });
   const [modal, setModal] = useState({ isOpen: false, mode: "create", property: null });
   const [feedback, setFeedback] = useState("");
+  const [pendingDelete, setPendingDelete] = useState(null);
 
   function updateFilter(id, value) {
     setSelectedFilters((current) => ({ ...current, [id]: value }));
@@ -162,6 +164,7 @@ export default function Properties() {
   function deleteProperty(property) {
     setProperties((current) => current.filter((item) => item.id !== property.id));
     setFeedback(`Se eliminó ${property.title}.`);
+    setPendingDelete(null);
   }
 
   function saveProperty(form) {
@@ -227,13 +230,15 @@ export default function Properties() {
 
       <section className="properties__grid" aria-label="Listado de propiedades">
         {visibleProperties.length > 0 ? (
-          visibleProperties.map((property) => <PropertyCard key={property.id} property={property} onEdit={openEditModal} onDelete={deleteProperty} onOpen={openProperty} />)
+          visibleProperties.map((property) => <PropertyCard key={property.id} property={property} onEdit={openEditModal} onDelete={setPendingDelete} onOpen={openProperty} />)
         ) : (
           <p className="properties__empty">No hay propiedades que coincidan con los filtros seleccionados.</p>
         )}
       </section>
 
       <p className="properties__feedback" aria-live="polite">{feedback}</p>
+
+      <ConfirmDeleteModal isOpen={Boolean(pendingDelete)} onClose={() => setPendingDelete(null)} onConfirm={() => deleteProperty(pendingDelete)} title="¿Seguro que desea eliminar esta propiedad?" />
 
       {modal.isOpen && (
         <PropertyModal

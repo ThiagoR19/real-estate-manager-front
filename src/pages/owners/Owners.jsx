@@ -6,15 +6,19 @@ import {
   magnifyingGlassIcon,
   peopleIcon,
   phoneIcon,
+  penIcon,
   plusIcon,
+  trashCanIcon,
   xIcon,
 } from "../../assets/icons";
 import propertyImage from "/images.jpg";
 import Button from "../../components/button/Button";
 import SummaryPill from "../../components/summaryPill/SummaryPill";
+import PersonModal from "../../components/person/PersonModal";
+import ConfirmDeleteModal from "../../components/confirmDelete/ConfirmDeleteModal";
 import "./Owners.css";
 
-const owners = Array.from({ length: 6 }, (_, index) => ({
+const initialOwners = Array.from({ length: 6 }, (_, index) => ({
   id: index + 1,
   initials: "LM",
   name: "Lucía Martínez",
@@ -36,7 +40,7 @@ const summaryCards = [
 ];
 
 
-function OwnerRow({ owner, onMenu }) {
+function OwnerRow({ owner, onEdit, onDelete }) {
   return (
     <tr>
       <td data-label="Propietario">
@@ -58,7 +62,7 @@ function OwnerRow({ owner, onMenu }) {
         <div className="owners__property">
           <img className="owners__property-image" src={propertyImage} alt="" />
           <span>
-            <strong>{owner.address}</strong>
+            <strong>{owner.property || owner.address}</strong>
             <small>{owner.unit}</small>
           </span>
         </div>
@@ -67,27 +71,44 @@ function OwnerRow({ owner, onMenu }) {
       <td data-label="Alias"><span className="owners__muted-value">{owner.alias}</span></td>
       <td data-label="Estado"><span className="owners__status">{owner.status}</span></td>
       <td data-label="Acciones" className="owners__actions-cell">
-        <button className="owners__actions" type="button" aria-label={`Acciones para ${owner.name}`} onClick={onMenu}>⋮</button>
+        <div className="owners__row-actions">
+          <button type="button" aria-label={`Editar a ${owner.name}`} onClick={() => onEdit(owner)}><img src={penIcon} alt="" /></button>
+          <button type="button" aria-label={`Eliminar a ${owner.name}`} onClick={() => onDelete(owner)}><img src={trashCanIcon} alt="" /></button>
+        </div>
       </td>
     </tr>
   );
 }
 
 export default function Owners() {
+  const [owners, setOwners] = useState(initialOwners);
   const [query, setQuery] = useState("");
-  const [showModal, setShowModal] = useState(false);
+  const [modal, setModal] = useState(null);
+  const [pendingDelete, setPendingDelete] = useState(null);
   const [notice, setNotice] = useState("");
 
   const normalizedQuery = query.trim().toLowerCase();
   const visibleOwners = owners.filter((owner) => (
     !normalizedQuery
-    || [owner.name, owner.dni, owner.email, owner.address, owner.cbu, owner.alias]
+    || [owner.name, owner.dni, owner.email, owner.address, owner.property || "", owner.cbu, owner.alias]
       .some((value) => value.toLowerCase().includes(normalizedQuery))
   ));
 
-  function showRowNotice() {
-    setNotice("Las acciones del propietario estarán disponibles próximamente.");
-    window.setTimeout(() => setNotice(""), 2800);
+  function saveOwner(data) {
+    if (modal.mode === "edit") {
+      setOwners((current) => current.map((owner) => owner.id === modal.person.id ? { ...owner, ...data } : owner));
+      setNotice("Propietario actualizado correctamente.");
+    } else {
+      setOwners((current) => [...current, { ...data, id: Math.max(0, ...current.map((owner) => owner.id)) + 1, unit: "" }]);
+      setNotice("Propietario creado correctamente.");
+    }
+    setModal(null);
+  }
+
+  function deleteOwner() {
+    setOwners((current) => current.filter((owner) => owner.id !== pendingDelete.id));
+    setPendingDelete(null);
+    setNotice("Propietario eliminado correctamente.");
   }
 
   return (
@@ -117,7 +138,7 @@ export default function Owners() {
               onChange={(event) => setQuery(event.target.value)}
             />
           </label>
-          <Button className="owners__new-button" onClick={() => setShowModal(true)} icon={plusIcon} text="Nuevo propietario" />
+          <Button className="owners__new-button" onClick={() => setModal({ mode: "create", person: null })} icon={plusIcon} text="Nuevo propietario" />
         </section>
 
         <section className="owners__table-card" aria-label="Listado de propietarios">
@@ -127,7 +148,7 @@ export default function Owners() {
                 <tr><th>Propietario</th><th>Contacto</th><th>Propiedad</th><th>CBU</th><th>ALIAS</th><th>Estado</th><th>Acciones</th></tr>
               </thead>
               <tbody>
-                {visibleOwners.map((owner) => <OwnerRow key={owner.id} owner={owner} onMenu={showRowNotice} />)}
+                {visibleOwners.map((owner) => <OwnerRow key={owner.id} owner={owner} onEdit={(person) => setModal({ mode: "edit", person })} onDelete={setPendingDelete} />)}
               </tbody>
             </table>
           </div>
@@ -137,20 +158,8 @@ export default function Owners() {
 
       {notice && <p className="owners__notice" role="status">{notice}</p>}
 
-      {showModal && (
-        <div className="owners__modal-backdrop" role="presentation" onClick={() => setShowModal(false)}>
-          <section className="owners__modal" role="dialog" aria-modal="true" aria-labelledby="owners-modal-title" onClick={(event) => event.stopPropagation()}>
-            <button className="owners__modal-close" type="button" aria-label="Cerrar" onClick={() => setShowModal(false)}>×</button>
-            <h2 id="owners-modal-title">Nuevo propietario</h2>
-            <p>Completá los datos del nuevo propietario para incorporarlo al listado.</p>
-            <div className="owners__modal-fields">
-              <label>Nombre completo<input type="text" placeholder="Ej. Lucía Martínez" /></label>
-              <label>Correo electrónico<input type="email" placeholder="nombre@email.com" /></label>
-            </div>
-            <Button className="owners__modal-submit" onClick={() => setShowModal(false)} text="Guardar propietario" />
-          </section>
-        </div>
-      )}
+      {modal && <PersonModal kind="owner" mode={modal.mode} person={modal.person} onClose={() => setModal(null)} onSubmit={saveOwner} />}
+      <ConfirmDeleteModal isOpen={Boolean(pendingDelete)} title="¿Seguro que desea eliminar este propietario?" onClose={() => setPendingDelete(null)} onConfirm={deleteOwner} />
     </main>
   );
 }

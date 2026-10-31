@@ -80,6 +80,23 @@
     padding-top: 16px;
 }
 
+.login__register {
+    margin: 14px 0 0;
+    color: var(--azulGris);
+    font-size: 12px;
+    text-align: center;
+}
+
+.login__register a {
+    color: var(--azulClaro);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.login__register a:hover {
+    text-decoration: underline;
+}
+
 /* Tablet */
 
 @media (max-width: 1100px) {
@@ -168,5 +185,9 @@
         margin-top: auto;
         padding-top: 32px;
         line-height: 2.6;
+    }
+
+    .login__register {
+        margin-top: 6px;
     }
 }

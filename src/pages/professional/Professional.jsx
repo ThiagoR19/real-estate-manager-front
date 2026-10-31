@@ -10,6 +10,7 @@ import {
 } from "../../assets/icons";
 import DropdownSelect from "../../components/select/DropdownSelect";
 import ProfessionalModal from "../../components/professional/ProfessionalModal";
+import ConfirmDeleteModal from "../../components/confirmDelete/ConfirmDeleteModal";
 import "./Professional.css";
 import Button from "../../components/button/Button";
 
@@ -44,6 +45,7 @@ export default function Professional() {
   const [selectedType, setSelectedType] = useState("Tipo");
   const [feedback, setFeedback] = useState("");
   const [modal, setModal] = useState({ isOpen: false, mode: "create", professional: null });
+  const [pendingDelete, setPendingDelete] = useState(null);
 
   const visibleProfessionals = useMemo(() => (
     selectedType === "Tipo" ? professionals : professionals.filter(({ specialty }) => specialty === selectedType)
@@ -101,6 +103,7 @@ export default function Professional() {
   function removeProfessional(professional) {
     setProfessionals((current) => current.filter(({ id }) => id !== professional.id));
     setFeedback(`${professional.name} fue eliminado de la lista.`);
+    setPendingDelete(null);
   }
 
   return (
@@ -196,7 +199,7 @@ export default function Professional() {
                         className="professional__action professional__action--delete"
                         type="button"
                         aria-label={`Eliminar a ${professional.name}`}
-                        onClick={() => removeProfessional(professional)}
+                        onClick={() => setPendingDelete(professional)}
                       >
                         <img src={trashIcon} alt="" />
                       </button>
@@ -213,6 +216,8 @@ export default function Professional() {
       </section>
 
       <p className="professional__feedback" aria-live="polite">{feedback}</p>
+
+      <ConfirmDeleteModal isOpen={Boolean(pendingDelete)} onClose={() => setPendingDelete(null)} onConfirm={() => removeProfessional(pendingDelete)} title="¿Seguro que desea eliminar este profesional?" />
 
       {modal.isOpen && (
         <ProfessionalModal

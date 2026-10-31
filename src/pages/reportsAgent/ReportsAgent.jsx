@@ -1,9 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import reportReference from "../../assets/reports-reference.png";
-import { plusIcon } from "../../assets/icons";
-import Button from "../../components/button/Button";
-import ReportModal from "../../components/report/ReportModal";
-import "./Reports.css";
+import "./ReportsAgent.css";
 
 const initialReports = [
   {
@@ -51,14 +48,11 @@ function ReportPhoto({ className = "", label = "Foto del reporte", src }) {
   );
 }
 
-export default function Reports() {
-  const [reportItems, setReportItems] = useState(initialReports);
+export default function ReportsAgent() {
+  const [reportItems] = useState(initialReports);
   const [activeReportId, setActiveReportId] = useState(initialReports[0].id);
   const [query, setQuery] = useState("");
   const [selectedPhotos, setSelectedPhotos] = useState({});
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const photoUrlsRef = useRef([]);
-  const reportPhotoUrlsRef = useRef([]);
   const thumbnailsRef = useRef(null);
 
   const visibleReports = useMemo(() => {
@@ -85,48 +79,13 @@ export default function Reports() {
     setSelectedPhotos((current) => ({ ...current, [activeReport.id]: index }));
   }
 
-  useEffect(() => () => {
-    photoUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
-    reportPhotoUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
-  }, []);
-
-  function addPhotos(event) {
-    const newUrls = Array.from(event.target.files ?? []).map((file) => URL.createObjectURL(file));
-    photoUrlsRef.current.push(...newUrls);
-    setReportItems((current) => current.map((report) => report.id === activeReport.id ? { ...report, photos: [...photos, ...newUrls.map((url) => ({ url }))] } : report));
-    if (newUrls.length) selectPhoto(photos.length);
-    event.target.value = "";
-  }
-
-  function createReport(form) {
-    const reportPhotos = form.photos.map((file) => {
-      const url = URL.createObjectURL(file);
-      reportPhotoUrlsRef.current.push(url);
-      return { url };
-    });
-    const newReport = {
-      id: Date.now(),
-      title: form.name,
-      location: "Ubicación pendiente",
-      date: new Intl.DateTimeFormat("es-AR").format(new Date()),
-      type: form.type,
-      description: form.description,
-      photos: reportPhotos,
-    };
-
-    setReportItems((currentReports) => [newReport, ...currentReports]);
-    setActiveReportId(newReport.id);
-    setIsCreateModalOpen(false);
-  }
-
   return (
-    <main id="reports">
+    <main id="reports-agent">
       <section className="reports__hero" aria-labelledby="reports-title">
         <div>
-          <h1 id="reports-title">Inquilinos</h1>
-          <p>Gestiona la información de todos lo inquilinos, sus contratos, pagos y estados.</p>
+          <h1 id="reports-title">Reportes</h1>
+          <p>Gestiona la información de todos los inquilinos, sus contratos, pagos y estados.</p>
         </div>
-        <Button className="reports__new-button" icon={plusIcon} text="Nuevo reporte" onClick={() => setIsCreateModalOpen(true)} />
       </section>
 
       <div className="reports__workspace">
@@ -142,8 +101,14 @@ export default function Reports() {
             />
           </label>
 
+          <button className="reports__property-filter" type="button">
+            <span className="reports__property-icon"><DrawnIcon name="house" /></span>
+            <span>Propiedad</span>
+            <span className="reports__property-chevron" aria-hidden="true" />
+          </button>
+
           <div className="reports__list">
-            {visibleReports.map((report) => (
+            {visibleReports.map((report, index) => (
               <button
                 key={report.id}
                 className={`reports__list-item ${activeReportId === report.id ? "is-active" : ""}`}
@@ -158,6 +123,7 @@ export default function Reports() {
                   <span><DrawnIcon name="calendar" />{report.date}</span>
                 </span>
                 <span className="reports__chevron" aria-hidden="true" />
+                {index > 0 && <span className="reports__pending-dot" aria-label="Reporte pendiente" />}
               </button>
             ))}
             {!visibleReports.length && <p className="reports__empty">No se encontraron reportes.</p>}
@@ -181,11 +147,6 @@ export default function Reports() {
               <div ref={thumbnailsRef} className="reports__thumbnails" aria-label="Fotos del reporte">
                 {photos.map((photo, index) => <button key={photo.url ?? `reference-${index}`} className={`reports__thumbnail-button${selectedPhoto === index ? " is-selected" : ""}`} type="button" aria-label={`Ver foto ${index + 1}`} aria-pressed={selectedPhoto === index} onClick={() => selectPhoto(index)}><ReportPhoto className="reports__thumbnail" label={`Foto ${index + 1}`} src={photo.url} /></button>)}
               </div>
-              <label className="reports__add-photos">
-                <span aria-hidden="true">+</span>
-                Agregar fotos
-                <input type="file" accept="image/*" multiple onChange={addPhotos} />
-              </label>
             </div>
 
             <div className="reports__details">
@@ -213,17 +174,15 @@ export default function Reports() {
                 </div>
               </aside>
             </div>
+
+          </div>
+
+          <div className="reports__status" aria-label="Estado del reporte">
+            <span className="reports__status-icon" aria-hidden="true">◉</span>
+            En proceso
           </div>
         </section>
       </div>
-
-      {isCreateModalOpen && (
-        <ReportModal
-          isOpen={isCreateModalOpen}
-          onClose={() => setIsCreateModalOpen(false)}
-          onSubmit={createReport}
-        />
-      )}
     </main>
   );
 }

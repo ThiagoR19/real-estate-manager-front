@@ -7,7 +7,7 @@ import {
   penIcon,
   xIcon,
 } from "../../assets/icons";
-import "./DashboardInquilino.css";
+import "./TenantDashboard.css";
 
 const agendaItems = [
   { time: "20:00", title: "Vencimiento contrato", date: "24 de agosto", icon: fileLinesIcon },
@@ -110,7 +110,7 @@ function ReportsCard() {
         <span className="tenant-dashboard__face" aria-hidden="true" />
       </div>
 
-      <Link className="tenant-dashboard__reports-button" href="/reports">
+      <Link className="tenant-dashboard__reports-button" href="/reports-agent">
         <span>Ir a reportes</span>
         <span aria-hidden="true">→</span>
       </Link>
@@ -118,7 +118,7 @@ function ReportsCard() {
   );
 }
 
-export default function DashboardInquilino() {
+export default function TenantDashboard() {
   return (
     <main id="tenant-dashboard">
       <div className="tenant-dashboard__page">

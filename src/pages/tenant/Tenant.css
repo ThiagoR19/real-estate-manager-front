@@ -307,7 +307,7 @@ body:has(#tenant) {
 .tenant__table-card th:first-child,
 .tenant__table-card td:first-child { padding-left: 34px; }
 .tenant__table-card th:last-child,
-.tenant__table-card td:last-child { padding-right: 34px; }
+.tenant__table-card td:last-child { padding-right: 12px; }
 
 .tenant__table-card th:nth-child(1) { width: 17%; }
 .tenant__table-card th:nth-child(2) { width: 17%; }
@@ -356,6 +356,7 @@ body:has(#tenant) {
 .tenant__status { display: inline-flex; align-items: center; justify-content: center; min-width: 76px; height: 27px; padding: 0 14px; border-radius: 99px; background: #d9fae6; box-shadow: 0 2px 4px #17235e26; color: #17613a; font-size: 11px; font-weight: 600; }
 .tenant__due { font-size: 14px; white-space: nowrap; }
 .tenant__actions-cell { text-align: center !important; }
+.tenant__row-actions { display: inline-flex; align-items: center; gap: 4px; }
 .tenant__actions { display: inline-grid; place-items: center; width: 30px; height: 38px; padding: 0; border: 0; background: transparent; color: #003783; cursor: pointer; line-height: 1; }
 .tenant__actions img { width: 17px; height: 17px; }
 .tenant__actions:hover { color: #2178c4; }
