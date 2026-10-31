@@ -8,15 +8,14 @@ import {
   locationDotIcon as locationIcon,
   magnifyingGlassIcon,
   peopleIcon,
-  penIcon,
   phoneIcon,
   plusIcon,
-  trashCanIcon,
   xIcon,
 } from "../../assets/icons";
 import DropdownSelect from "../../components/select/DropdownSelect";
 import TenantModal from "../../components/tenant/TenantModal";
 import ConfirmDeleteModal from "../../components/confirmDelete/ConfirmDeleteModal";
+import EntityActions from "../../components/entityActions/EntityActions";
 import Button from "../../components/button/Button";
 import SummaryPill from "../../components/summaryPill/SummaryPill";
 import propertyImage from "/images.jpg";
@@ -89,14 +88,12 @@ function TenantRow({ tenant, onEdit, onDelete }) {
       <td data-label="Estado"><span className="tenant__status">{tenant.status}</span></td>
       <td data-label="Próximo vencimiento"><strong className="tenant__due">{tenant.due}</strong></td>
       <td data-label="Acciones" className="tenant__actions-cell">
-        <span className="tenant__row-actions">
-        <button className="tenant__actions" type="button" aria-label={`Editar a ${tenant.name}`} onClick={() => onEdit(tenant)}>
-          <img src={penIcon} alt="" />
-        </button>
-        <button className="tenant__actions" type="button" aria-label={`Eliminar a ${tenant.name}`} onClick={() => onDelete(tenant)}>
-          <img src={trashCanIcon} alt="" />
-        </button>
-        </span>
+        <EntityActions
+          entity="inquilino"
+          name={tenant.name}
+          onEdit={() => onEdit(tenant)}
+          onDelete={() => onDelete(tenant)}
+        />
       </td>
     </tr>
   );

@@ -2,15 +2,14 @@ import { useMemo, useState } from "react";
 import {
   envelopeIcon,
   peopleIcon,
-  penIcon,
   phoneIcon,
   plusIcon,
   starIcon,
-  trashCanIcon as trashIcon,
 } from "../../assets/icons";
 import DropdownSelect from "../../components/select/DropdownSelect";
 import ProfessionalModal from "../../components/professional/ProfessionalModal";
 import ConfirmDeleteModal from "../../components/confirmDelete/ConfirmDeleteModal";
+import EntityActions from "../../components/entityActions/EntityActions";
 import "./Professional.css";
 import Button from "../../components/button/Button";
 
@@ -187,22 +186,12 @@ export default function Professional() {
                         icon={starIcon}
                         text="Valorar"
                       />
-                      <button
-                        className="professional__action professional__action--edit"
-                        type="button"
-                        aria-label={`Editar a ${professional.name}`}
-                        onClick={() => editProfessional(professional)}
-                      >
-                        <img src={penIcon} alt="" />
-                      </button>
-                      <button
-                        className="professional__action professional__action--delete"
-                        type="button"
-                        aria-label={`Eliminar a ${professional.name}`}
-                        onClick={() => setPendingDelete(professional)}
-                      >
-                        <img src={trashIcon} alt="" />
-                      </button>
+                      <EntityActions
+                        entity="profesional"
+                        name={professional.name}
+                        onEdit={() => editProfessional(professional)}
+                        onDelete={() => setPendingDelete(professional)}
+                      />
                     </div>
                   </td>
                 </tr>

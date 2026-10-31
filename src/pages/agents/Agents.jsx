@@ -7,9 +7,7 @@ import {
   magnifyingGlassIcon,
   peopleIcon,
   phoneIcon,
-  penIcon,
   plusIcon,
-  trashCanIcon,
   xIcon,
 } from "../../assets/icons";
 import DropdownSelect from "../../components/select/DropdownSelect";
@@ -17,6 +15,7 @@ import Button from "../../components/button/Button";
 import SummaryPill from "../../components/summaryPill/SummaryPill";
 import PersonModal from "../../components/person/PersonModal";
 import ConfirmDeleteModal from "../../components/confirmDelete/ConfirmDeleteModal";
+import EntityActions from "../../components/entityActions/EntityActions";
 import "./Agents.css";
 
 const initialAgents = [
@@ -74,10 +73,7 @@ function AgentRow({ agent, onEdit, onDelete }) {
       <td data-label="Zona asignada"><strong>{agent.zone}</strong></td>
       <td data-label="Propiedades asignadas"><strong>{agent.properties}</strong></td>
       <td data-label="Acciones" className="agents__actions-cell">
-        <div className="agents__row-actions">
-          <button type="button" aria-label={`Editar a ${agent.name}`} onClick={() => onEdit(agent)}><img src={penIcon} alt="" /></button>
-          <button type="button" aria-label={`Eliminar a ${agent.name}`} onClick={() => onDelete(agent)}><img src={trashCanIcon} alt="" /></button>
-        </div>
+        <EntityActions entity="agente" name={agent.name} onEdit={() => onEdit(agent)} onDelete={() => onDelete(agent)} />
       </td>
     </tr>
   );

@@ -6,9 +6,7 @@ import {
   magnifyingGlassIcon,
   peopleIcon,
   phoneIcon,
-  penIcon,
   plusIcon,
-  trashCanIcon,
   xIcon,
 } from "../../assets/icons";
 import propertyImage from "/images.jpg";
@@ -16,6 +14,7 @@ import Button from "../../components/button/Button";
 import SummaryPill from "../../components/summaryPill/SummaryPill";
 import PersonModal from "../../components/person/PersonModal";
 import ConfirmDeleteModal from "../../components/confirmDelete/ConfirmDeleteModal";
+import EntityActions from "../../components/entityActions/EntityActions";
 import "./Owners.css";
 
 const initialOwners = Array.from({ length: 6 }, (_, index) => ({
@@ -71,10 +70,7 @@ function OwnerRow({ owner, onEdit, onDelete }) {
       <td data-label="Alias"><span className="owners__muted-value">{owner.alias}</span></td>
       <td data-label="Estado"><span className="owners__status">{owner.status}</span></td>
       <td data-label="Acciones" className="owners__actions-cell">
-        <div className="owners__row-actions">
-          <button type="button" aria-label={`Editar a ${owner.name}`} onClick={() => onEdit(owner)}><img src={penIcon} alt="" /></button>
-          <button type="button" aria-label={`Eliminar a ${owner.name}`} onClick={() => onDelete(owner)}><img src={trashCanIcon} alt="" /></button>
-        </div>
+        <EntityActions entity="propietario" name={owner.name} onEdit={() => onEdit(owner)} onDelete={() => onDelete(owner)} />
       </td>
     </tr>
   );

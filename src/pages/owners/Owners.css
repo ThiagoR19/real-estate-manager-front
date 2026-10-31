@@ -285,10 +285,6 @@ body:has(#owners) {
 .owners__muted-value { color: #7e8aa6; font-size: 12px; white-space: nowrap; }
 .owners__status { display: inline-flex; align-items: center; justify-content: center; min-width: 76px; height: 27px; padding: 0 14px; border-radius: 99px; background: #d9fae6; box-shadow: 0 2px 4px #17235e26; color: #17613a; font-size: 11px; font-weight: 600; }
 .owners__actions-cell { text-align: center !important; }
-.owners__row-actions { display: flex; align-items: center; justify-content: center; gap: 5px; }
-.owners__row-actions button { display: grid; flex-shrink: 0; place-items: center; width: 26px; height: 32px; padding: 5px; border: 0; border-radius: 6px; background: transparent; cursor: pointer; }
-.owners__row-actions button:hover { background: #edf4fc; }
-.owners__row-actions img { width: 15px; height: 15px; }
 .owners__empty { margin: 0; padding: 34px; color: #7e8aa6; text-align: center; }
 
 .owners__notice { position: fixed; z-index: 40; right: 22px; bottom: 22px; margin: 0; padding: 14px 18px; border: 1px solid #c8dff3; border-radius: 10px; background: #fff; box-shadow: 0 4px 18px #17235e24; color: #17235e; font-size: 14px; }
@@ -342,7 +338,6 @@ body:has(#owners) .navbar__search { display: none; }
   .owners__table-card td:last-child { position: relative; display: grid; grid-template-columns: 135px minmax(0, 1fr); align-items: center; width: 100%; height: auto; min-height: 42px; padding: 7px 0; border: 0; }
   .owners__table-card td::before { color: #7e8aa6; content: attr(data-label); font-size: 11px; font-weight: 700; text-transform: uppercase; }
   .owners__actions-cell { grid-template-columns: 135px minmax(0, 1fr) !important; text-align: left !important; }
-  .owners__row-actions { justify-content: flex-start; }
   .owners__person { gap: 9px; }
   .owners__property-image { width: 52px; height: 44px; }
 }
