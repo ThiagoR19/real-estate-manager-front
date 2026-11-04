@@ -15,6 +15,7 @@ import {
 } from "../../assets/icons";
 import PropertyModal from "../../components/property/PropertyModal";
 import PropertyActions from "../../components/property/PropertyActions";
+import ConfirmDeleteModal from "../../components/confirmDelete/ConfirmDeleteModal";
 import villaImage from "/ly-villa-costa-blanca-1_b02f5d33_900x900.jpg";
 import terraceImage from "/images.jpg";
 import houseImage from "/images (1).jpg";
@@ -80,6 +81,7 @@ function DetailRow({ detail }) {
 export default function Property() {
   const [activeImage, setActiveImage] = useState(0);
   const [deleted, setDeleted] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const thumbnailsRef = useRef(null);
   const [propertyData, setPropertyData] = useState(initialProperty);
   const [propertyModalOpen, setPropertyModalOpen] = useState(false);
@@ -131,7 +133,7 @@ export default function Property() {
       <div className="property__page">
         <header className="property__title-row">
           <h1>{propertyData.name}</h1>
-          <PropertyActions className="property-actions--header" name={propertyData.name} onEdit={() => setPropertyModalOpen(true)} onDelete={() => setDeleted(true)} />
+          <PropertyActions className="property-actions--header" name={propertyData.name} onEdit={() => setPropertyModalOpen(true)} onDelete={() => setDeleteModalOpen(true)} />
         </header>
 
         <div className="property__layout">
@@ -221,6 +223,8 @@ export default function Property() {
           </div>
         </div>
       </div>
+
+      <ConfirmDeleteModal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} onConfirm={() => { setDeleteModalOpen(false); setDeleted(true); }} title="¿Seguro que desea eliminar esta propiedad?" />
 
       {propertyModalOpen && (
         <PropertyModal

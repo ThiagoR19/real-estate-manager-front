@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 // Maneja los estados del botón de envío: "inactivo" -> "enviando" -> "listo" -> "inactivo"
-export default function useEnvio(duracionListo = 1600) {
+export default function useSubmit(readyDuration = 1600) {
     const [estado, setEstado] = useState("inactivo");
     const montado = useRef(false);
 
@@ -25,7 +25,7 @@ export default function useEnvio(duracionListo = 1600) {
             setEstado("listo");
             setTimeout(() => {
                 if (montado.current) setEstado("inactivo");
-            }, duracionListo);
+            }, readyDuration);
         } catch {
             if (montado.current) setEstado("inactivo");
         }

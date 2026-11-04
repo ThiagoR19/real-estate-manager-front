@@ -279,6 +279,9 @@ body:has(#schedule) {
   border-radius: 10px;
   background: #fff;
   box-shadow: 0 3px 5px #17235e2b;
+  width: 100%;
+  cursor: pointer;
+  text-align: left;
 }
 
 .schedule__visit-marker {
@@ -433,6 +436,7 @@ body:has(#schedule) {
   grid-template-rows: 34px repeat(5, minmax(69px, 1fr));
   gap: 7px 8px;
   min-height: 0;
+  grid-auto-rows: minmax(69px, 1fr);
 }
 
 .schedule__weekday {
@@ -495,6 +499,10 @@ body:has(#schedule) {
   font-size: 9px;
   font-weight: 650;
   line-height: 1.1;
+  width: 100%;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
 }
 
 .schedule__month-event.is-blue {
@@ -575,6 +583,13 @@ body:has(#schedule) {
   min-height: 54px;
   padding: 7px 8px;
   border-bottom: 1px solid #d9e1e8;
+  width: 100%;
+  border-top: 0;
+  border-right: 0;
+  border-left: 0;
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
 }
 
 .schedule__upcoming-item > img {
@@ -613,6 +628,33 @@ body:has(#schedule) {
 .schedule__upcoming-item span img {
   width: 12px;
   height: 12px;
+}
+
+.schedule__upcoming-item > .schedule__upcoming-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.schedule__upcoming-copy small {
+  color: #64728d;
+  font-size: 10px;
+}
+
+.schedule__feedback {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  margin: 0;
+  padding: 13px 18px;
+  border: 1px solid #c8dff3;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 4px 18px #17235e24;
+  color: #17235e;
+  font-size: 14px;
 }
 
 @media (min-width: 1600px) {

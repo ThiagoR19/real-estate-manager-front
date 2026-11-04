@@ -11,21 +11,21 @@ import GoogleSignIn from '../../components/googleSignIn/GoogleSignIn';
 import LegalText from '../../components/legalText/LegalText';
 import Login from '../login/Login';
 
-import useEnvio from '../../hooks/useEnvio';
-import esperar from '../../utils/esperar';
+import useSubmit from '../../hooks/useSubmit';
+import wait from '../../utils/wait';
 
 import mailIcono from '../../assets/icons/loginMail.svg';
 import candadoIcono from '../../assets/icons/loginLock.svg';
 import fondo from '../../assets/loginFondo.png';
 
-import './Registration.css';
+import './Register.css';
 
 const DURACION_SALIDA = 900;
 
-export default function Registration() {
+export default function Register() {
     const panelRef = useRef(null);
 
-    const [estadoEnvio, enviar] = useEnvio();
+    const [submitState, submit] = useSubmit();
 
     const [saliendo, setSaliendo] = useState(false);
     const [variablesSalida, setVariablesSalida] = useState({});
@@ -36,7 +36,7 @@ export default function Registration() {
         if (!saliendo) return;
 
         const temporizador = setTimeout(() => {
-            navegar("/login", { state: { desdeRegistration: true } });
+            navegar("/login", { state: { fromRegister: true } });
         }, DURACION_SALIDA);
 
         return () => clearTimeout(temporizador);
@@ -44,8 +44,10 @@ export default function Registration() {
 
     const enviarFormulario = (e) => {
         e.preventDefault();
-        // TODO: reemplazar por la petición real a la API
-        enviar(() => esperar(1800));
+        submit(async () => {
+            await wait(700);
+            navegar('/confirm-register');
+        });
     };
 
     const irALogin = (e) => {
@@ -124,7 +126,7 @@ export default function Registration() {
                     <PrimaryButton
                         texto="Crear"
                         textoEnviando="Creando"
-                        estado={estadoEnvio}
+                        estado={submitState}
                         className='Registration__boton'
                     />
 

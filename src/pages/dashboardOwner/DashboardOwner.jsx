@@ -119,7 +119,7 @@ function ReportsPrompt() {
         <p>¿Tiene algun problema la propiedad?<br />Envie un reporte del problema y no<br />encargaremos de solucionarlo</p>
         <span className="owner-dashboard__smile" aria-hidden="true" />
       </div>
-      <Link className="owner-dashboard__reports-link" href="/reports">
+      <Link className="owner-dashboard__reports-link" href="/reports-agent">
         Ir a reportes
         <span aria-hidden="true">→</span>
       </Link>

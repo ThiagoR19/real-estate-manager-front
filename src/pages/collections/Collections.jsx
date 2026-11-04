@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { calendarIcon, checkIcon, downloadIcon, fileLinesIcon, xIcon } from "../../assets/icons";
 import paymentReference from "../../assets/pagos.png";
 import Button from "../../components/button/Button";
-import "./Cobros.css";
+import "./Collections.css";
 
 const properties = ["Bielke 454", "Casa de San Isidro", "Belgrano 123"];
 const periods = [
@@ -35,7 +35,7 @@ function SummaryCard({ icon, label, value, tone }) {
   );
 }
 
-export default function Cobros() {
+export default function Collections() {
   const [property, setProperty] = useState(properties[0]);
   const [selectedMonth, setSelectedMonth] = useState("Febrero");
   const [openYears, setOpenYears] = useState({ 2024: true });

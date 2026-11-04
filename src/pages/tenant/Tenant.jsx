@@ -8,13 +8,14 @@ import {
   locationDotIcon as locationIcon,
   magnifyingGlassIcon,
   peopleIcon,
-  penIcon,
   phoneIcon,
   plusIcon,
   xIcon,
 } from "../../assets/icons";
 import DropdownSelect from "../../components/select/DropdownSelect";
 import TenantModal from "../../components/tenant/TenantModal";
+import ConfirmDeleteModal from "../../components/confirmDelete/ConfirmDeleteModal";
+import EntityActions from "../../components/entityActions/EntityActions";
 import Button from "../../components/button/Button";
 import SummaryPill from "../../components/summaryPill/SummaryPill";
 import propertyImage from "/images.jpg";
@@ -60,7 +61,7 @@ function FilterControl({ filter, value, onChange }) {
   );
 }
 
-function TenantRow({ tenant, onEdit }) {
+function TenantRow({ tenant, onEdit, onDelete }) {
   return (
     <tr>
       <td data-label="Inquilino">
@@ -87,9 +88,12 @@ function TenantRow({ tenant, onEdit }) {
       <td data-label="Estado"><span className="tenant__status">{tenant.status}</span></td>
       <td data-label="Próximo vencimiento"><strong className="tenant__due">{tenant.due}</strong></td>
       <td data-label="Acciones" className="tenant__actions-cell">
-        <button className="tenant__actions" type="button" aria-label={`Editar a ${tenant.name}`} onClick={() => onEdit(tenant)}>
-          <img src={penIcon} alt="" />
-        </button>
+        <EntityActions
+          entity="inquilino"
+          name={tenant.name}
+          onEdit={() => onEdit(tenant)}
+          onDelete={() => onDelete(tenant)}
+        />
       </td>
     </tr>
   );
@@ -101,6 +105,14 @@ export default function Tenant() {
   const [filterValues, setFilterValues] = useState(filters.map(({ options }) => options[0]));
   const [modal, setModal] = useState({ isOpen: false, mode: "create", tenant: null });
   const [notice, setNotice] = useState("");
+  const [pendingDelete, setPendingDelete] = useState(null);
+
+  function deleteTenant() {
+    setTenants((current) => current.filter((tenant) => tenant !== pendingDelete));
+    setNotice(`${pendingDelete.name} fue eliminado de la lista.`);
+    setPendingDelete(null);
+    window.setTimeout(() => setNotice(""), 2800);
+  }
 
   const visibleTenants = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -190,7 +202,7 @@ export default function Tenant() {
           <div className="tenant__table-wrap">
             <table>
               <thead><tr><th>Inquilino</th><th>Contacto</th><th>Propiedad</th><th>Contrato</th><th>Estado</th><th>Próximo vencimiento</th><th>Acciones</th></tr></thead>
-              <tbody>{visibleTenants.map((tenant, index) => <TenantRow key={`${tenant.name}-${index}`} tenant={tenant} onEdit={editTenant} />)}</tbody>
+              <tbody>{visibleTenants.map((tenant, index) => <TenantRow key={`${tenant.name}-${index}`} tenant={tenant} onEdit={editTenant} onDelete={setPendingDelete} />)}</tbody>
             </table>
           </div>
           {!visibleTenants.length && <p className="tenant__empty">No encontramos inquilinos con esos criterios.</p>}
@@ -198,6 +210,8 @@ export default function Tenant() {
       </div>
 
       {notice && <p className="tenant__notice" role="status">{notice}</p>}
+
+      <ConfirmDeleteModal isOpen={Boolean(pendingDelete)} onClose={() => setPendingDelete(null)} onConfirm={deleteTenant} title="¿Seguro que desea eliminar este inquilino?" />
 
       {modal.isOpen && (
         <TenantModal

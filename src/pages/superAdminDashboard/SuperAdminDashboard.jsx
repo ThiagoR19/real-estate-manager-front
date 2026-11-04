@@ -2,7 +2,8 @@ import { useState } from "react";
 import brandLogo from "../../assets/logoAGI.png";
 import bannerImage from "../../assets/fondoCasa.png";
 import { plusIconWhite, trashCanIcon } from "../../assets/icons";
-import "./DashboardSuperAdmin.css";
+import AgencyModal from "../../components/agency/AgencyModal";
+import "./SuperAdminDashboard.css";
 
 const initialAgencies = [
   {
@@ -58,18 +59,6 @@ function UserAvatar({ initials, tone }) {
   return <span className={`superadmin__user-avatar superadmin__user-avatar--${tone}`}>{initials}</span>;
 }
 
-function Modal({ title, children, onClose }) {
-  return (
-    <div className="superadmin__modal-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
-      <section className="superadmin__modal" role="dialog" aria-modal="true" aria-labelledby="superadmin-modal-title">
-        <button className="superadmin__modal-close" type="button" onClick={onClose} aria-label="Cerrar">×</button>
-        <h2 id="superadmin-modal-title">{title}</h2>
-        {children}
-      </section>
-    </div>
-  );
-}
-
 function AdminCard({ admin, onRemove, onRoleChange }) {
   return (
     <article className="superadmin__admin-card">
@@ -123,11 +112,9 @@ function AgencyCard({ agency, onToggle, onAddAdmin, onEdit, onRemoveAdmin, onRol
   );
 }
 
-export default function DashboardSuperAdmin() {
+export default function SuperAdminDashboard() {
   const [agencies, setAgencies] = useState(initialAgencies);
   const [modal, setModal] = useState(null);
-  const [agencyName, setAgencyName] = useState("");
-  const [adminName, setAdminName] = useState("");
 
   const activeAgencyCount = 24 + Math.max(0, agencies.length - initialAgencies.length);
 
@@ -136,26 +123,18 @@ export default function DashboardSuperAdmin() {
   }
 
   function openNewAgency() {
-    setAgencyName("");
     setModal({ type: "new-agency" });
   }
 
   function openAddAdmin(agencyId) {
-    setAdminName("");
     setModal({ type: "new-admin", agencyId });
   }
 
   function openEditAgency(agencyId) {
-    const agency = agencies.find((item) => item.id === agencyId);
-    setAgencyName(agency?.name ?? "");
     setModal({ type: "edit-agency", agencyId });
   }
 
-  function saveAgency(event) {
-    event.preventDefault();
-    const name = agencyName.trim();
-    if (!name) return;
-
+  function saveAgency(name) {
     if (modal.type === "edit-agency") {
       setAgencies((current) => current.map((agency) => agency.id === modal.agencyId ? { ...agency, name } : agency));
     } else {
@@ -164,15 +143,11 @@ export default function DashboardSuperAdmin() {
     setModal(null);
   }
 
-  function saveAdmin(event) {
-    event.preventDefault();
-    const name = adminName.trim();
-    if (!name) return;
-
+  function saveAdmin(dni) {
     setAgencies((current) => current.map((agency) => agency.id === modal.agencyId ? {
       ...agency,
       expanded: true,
-      admins: [...agency.admins, { id: `admin-${Date.now()}`, name, initials: name.split(" ").map((word) => word[0]).join("").slice(0, 2).toUpperCase(), tone: "blue", role: "Admin" }],
+      admins: [...agency.admins, { id: `admin-${Date.now()}`, name: `DNI ${dni}`, dni, initials: "AD", tone: "blue", role: "Admin" }],
     } : agency));
     setModal(null);
   }
@@ -245,34 +220,14 @@ export default function DashboardSuperAdmin() {
         </section>
       </div>
 
-      {modal?.type === "new-agency" && (
-        <Modal title="Nueva inmobiliaria" onClose={() => setModal(null)}>
-          <form className="superadmin__modal-form" onSubmit={saveAgency}>
-            <label htmlFor="new-agency-name">Nombre de la inmobiliaria</label>
-            <input id="new-agency-name" value={agencyName} onChange={(event) => setAgencyName(event.target.value)} placeholder="Ej. Inmobiliaria Central" autoFocus />
-            <button type="submit">Crear inmobiliaria</button>
-          </form>
-        </Modal>
-      )}
-
-      {modal?.type === "edit-agency" && (
-        <Modal title="Editar inmobiliaria" onClose={() => setModal(null)}>
-          <form className="superadmin__modal-form" onSubmit={saveAgency}>
-            <label htmlFor="edit-agency-name">Nombre de la inmobiliaria</label>
-            <input id="edit-agency-name" value={agencyName} onChange={(event) => setAgencyName(event.target.value)} autoFocus />
-            <button type="submit">Guardar cambios</button>
-          </form>
-        </Modal>
-      )}
-
-      {modal?.type === "new-admin" && (
-        <Modal title="Añadir administrador" onClose={() => setModal(null)}>
-          <form className="superadmin__modal-form" onSubmit={saveAdmin}>
-            <label htmlFor="new-admin-name">Nombre completo</label>
-            <input id="new-admin-name" value={adminName} onChange={(event) => setAdminName(event.target.value)} placeholder="Ej. Ana Gómez" autoFocus />
-            <button type="submit">Añadir administrador</button>
-          </form>
-        </Modal>
+      {modal && (
+        <AgencyModal
+          key={`${modal.type}-${modal.agencyId || "new"}`}
+          mode={modal.type === "new-admin" ? "admin" : modal.type === "edit-agency" ? "edit" : "create"}
+          agency={agencies.find((agency) => agency.id === modal.agencyId)}
+          onClose={() => setModal(null)}
+          onSubmit={modal.type === "new-admin" ? saveAdmin : saveAgency}
+        />
       )}
     </main>
   );

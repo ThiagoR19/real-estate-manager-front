@@ -2,7 +2,7 @@ import { useRef } from 'react';
 
 import './Skeleton.css';
 
-import useCargaCompleta from '../../hooks/useCargaCompleta';
+import useLoadComplete from '../../hooks/useLoadComplete';
 
 // Envuelve la raíz de cualquier vista: mientras cargan fuentes e imágenes,
 // sus textos, imágenes, botones e inputs se muestran como skeleton.
@@ -14,13 +14,13 @@ import useCargaCompleta from '../../hooks/useCargaCompleta';
 // - className="Skeleton-no" -> excluye ese elemento y su contenido
 export default function Skeleton({ as: Etiqueta = "div", className = "", fondos = [], children, ...props }) {
     const ref = useRef(null);
-    const cargado = useCargaCompleta(ref, fondos);
+    const loaded = useLoadComplete(ref, fondos);
 
     return (
         <Etiqueta
             ref={ref}
-            className={`${className} ${cargado ? "" : "Skeleton"}`}
-            aria-busy={!cargado}
+            className={`${className} ${loaded ? "" : "Skeleton"}`}
+            aria-busy={!loaded}
             {...props}
         >
             {children}

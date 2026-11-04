@@ -1,0 +1,23 @@
+.management-modal--agency {
+  padding-bottom: 17px;
+}
+
+.agency-modal__band {
+  min-height: 72px;
+}
+
+.agency-modal__field {
+  width: min(100%, 430px);
+  margin: 0 auto;
+  padding: 12px 15px 30px;
+}
+
+.agency-modal__field .management-modal__label {
+  text-align: center;
+}
+
+@media (max-width: 650px) {
+  .agency-modal__field {
+    padding-bottom: 22px;
+  }
+}
