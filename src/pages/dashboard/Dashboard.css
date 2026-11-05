@@ -1,5 +1,5 @@
 .dashboard-page { position: relative; min-height: calc(100dvh - 61px); overflow: hidden; background: #f5f8fb; color: #16245f; font-family: "Inter", "Segoe UI", Arial, sans-serif; }
-.dashboard-page__background { position: absolute; z-index: 0; inset: 0; background: linear-gradient(180deg, rgb(255 255 255 / 20%), rgb(255 255 255 / 78%) 55%, #f5f8fb), url("../../assets/fondoCasa.png") center top / cover no-repeat; opacity: .83; }
+.dashboard-page__background { position: absolute; z-index: 0; inset: 0; background: linear-gradient(180deg, rgb(255 255 255 / 10%), rgb(255 255 255 / 68%) 48%, #f5f8fb 100%), url("../../assets/fondoCasa.png") center 38% / cover no-repeat; opacity: .9; }
 .dashboard-hero, .dashboard-content { position: relative; z-index: 1; width: calc(100% - 80px); max-width: 1480px; margin: 0 auto; }
 .dashboard-hero { display: flex; align-items: flex-start; justify-content: space-between; min-height: 100px; padding-top: 17px; }
 .dashboard-hero h1 { margin: 0; color: #11192e; font-size: clamp(27px, 2.15vw, 32px); font-weight: 700; letter-spacing: -.8px; line-height: 1.2; }

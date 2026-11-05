@@ -190,6 +190,11 @@ export default function SuperAdminDashboard() {
               </div>
             </div>
             <div className="superadmin__summary-column">
+              <div className="superadmin__active-count" aria-live="polite">
+                <span className="superadmin__active-icon" aria-hidden="true">✓</span>
+                <span>Inmobiliarias activas</span>
+                <strong>{agencies.length}</strong>
+              </div>
               <button className="superadmin__new-agency" type="button" onClick={openNewAgency}>
                 <img src={plusIconWhite} alt="" />
                 <span>Nueva inmobiliaria</span>

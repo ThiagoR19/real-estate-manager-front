@@ -601,12 +601,6 @@ body:has(#terms) {
     display: none;
   }
 
-  body:has(#terms) .navbar__brand::after {
-    content: "Propiedades";
-    font-size: 11px;
-    font-weight: 700;
-  }
-
   body:has(#terms) .navbar__breadcrumb {
     margin-left: auto;
   }
@@ -621,7 +615,7 @@ body:has(#terms) {
   }
 
   body:has(#terms) .navbar__breadcrumb span:last-child::after {
-    content: "Agenda";
+    content: "Términos";
     font-size: 16px;
   }
 
@@ -682,6 +676,19 @@ body:has(#terms) {
     font: inherit;
     font-size: 14px;
     text-align: left;
+  }
+
+  .terms__mobile-documentation select {
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    border: 0;
+    outline: 0;
+    appearance: none;
+    background: transparent;
+    color: #526485;
+    font: inherit;
+    font-size: 14px;
   }
 
   .terms__mobile-documentation img {

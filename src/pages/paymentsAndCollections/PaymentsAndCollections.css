@@ -40,11 +40,15 @@
     overflow: hidden;
   }
 
+  .agent-payments__people:not(.is-open) h2 {
+    display: none;
+  }
+
   .agent-payments__people-toggle {
     position: absolute;
     z-index: 2;
     top: 12px;
-    right: 0;
+    left: 0;
     display: grid;
     place-items: center;
     width: 34px;
@@ -90,4 +94,54 @@
   .agent-payments__concept {
     grid-template-columns: 22px minmax(0, 1fr) 90px 20px;
   }
+}
+
+/* Keep the payment review usable between desktop and phone widths. */
+.agent-payments__layout,
+.agent-payments__workspace,
+.agent-payments__record-grid,
+.agent-payments__property-card,
+.agent-payments__receipt,
+.agent-payments__total { min-width: 0; }
+.agent-payments__record-header {
+  grid-template-areas: "month person rent amount reject approve";
+  grid-template-columns: 110px minmax(130px, 1fr) 75px 145px auto auto;
+}
+.agent-payments__month { grid-area: month; min-width: 0; }
+.agent-payments__record-header h2 { grid-area: person; min-width: 0; overflow-wrap: anywhere; }
+.agent-payments__rent { grid-area: rent; }
+.agent-payments__record-header output { grid-area: amount; min-width: 0; }
+.agent-payments__decision--rejected { grid-area: reject; }
+.agent-payments__decision--approved { grid-area: approve; }
+.agent-payments__record-grid { grid-template-columns: minmax(0, 1.4fr) minmax(220px, .85fr) minmax(190px, .65fr); align-items: stretch; }
+.agent-payments__concepts { margin-top: 24px; }
+.agent-payments__concept-actions { gap: 10px; margin-top: 24px; }
+.agent-payments__concept-actions .button { min-width: 0; font-size: 14px; }
+.agent-payments__total div { gap: 8px; }
+.agent-payments__total div b { text-align: right; white-space: nowrap; }
+
+@media (max-width: 1180px) {
+  .agent-payments__record-header {
+    grid-template-areas: "month person person person" "rent amount amount amount" "reject reject approve approve";
+    grid-template-columns: 120px minmax(0, 1fr) 1fr 1fr;
+  }
+  .agent-payments__record-grid { grid-template-columns: minmax(0, 1fr) minmax(220px, .72fr); }
+  .agent-payments__total { grid-column: 1 / -1; }
+}
+
+@media (max-width: 850px) {
+  .agent-payments__record-grid { grid-template-columns: minmax(0, 1fr); }
+  .agent-payments__receipt-placeholder { min-height: 220px; }
+  .agent-payments__total { grid-column: auto; }
+}
+
+@media (max-width: 540px) {
+  .agent-payments__record-header {
+    grid-template-areas: "month month" "person person" "rent amount" "reject approve";
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .agent-payments__record-header h2 { font-size: 20px; }
+  .agent-payments__decision { min-height: 42px; height: auto; padding: 6px; font-size: 11px; white-space: normal; }
+  .agent-payments__concept-actions { flex-direction: column; }
+  .agent-payments__concept-actions .button { width: 100%; }
 }

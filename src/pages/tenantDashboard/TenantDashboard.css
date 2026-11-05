@@ -486,6 +486,10 @@ body:has(#tenant-dashboard) .navbar__search {
 }
 
 @media (max-width: 760px) {
+  .tenant-dashboard__agenda {
+    display: none;
+  }
+
   #tenant-dashboard {
     overflow: visible;
   }
@@ -532,6 +536,32 @@ body:has(#tenant-dashboard) .navbar__search {
 
   .tenant-dashboard__card {
     min-height: 0;
+  }
+
+  .tenant-dashboard__agenda {
+    order: -3;
+    padding: 15px 13px 18px;
+  }
+
+  .tenant-dashboard__timeline {
+    margin-top: 15px;
+  }
+
+  .tenant-dashboard__event {
+    grid-template-columns: 48px 24px 36px minmax(0, 1fr);
+    min-height: 58px;
+  }
+
+  .tenant-dashboard__timeline::before {
+    left: 59px;
+  }
+
+  .tenant-dashboard__event-copy {
+    padding-left: 10px;
+  }
+
+  .tenant-dashboard__event-copy strong {
+    white-space: normal;
   }
 
   .tenant-dashboard__status {

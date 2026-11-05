@@ -503,6 +503,12 @@
     padding-left: 10px;
   }
 
+  .owner-dashboard__chat-form button {
+    width: 40px;
+    height: 40px;
+    justify-content: center;
+  }
+
   .owner-dashboard__properties-list {
     grid-template-columns: 1fr;
   }
@@ -519,9 +525,7 @@
   }
 
   .owner-dashboard__chat-card {
-    display: flex;
-    min-height: 410px;
-    order: 1;
+    display: none;
   }
 
   .owner-dashboard__status-card {

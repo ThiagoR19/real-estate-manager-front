@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "wouter";
 import { circleInfoIcon, commentsIcon, paperPlaneIcon, toolboxIcon } from "../../assets/icons";
 import "./DashboardOwner.css";
@@ -17,6 +17,12 @@ const properties = [
 function QuickChat() {
   const [messages, setMessages] = useState(initialMessages);
   const [draft, setDraft] = useState("");
+  const messagesRef = useRef(null);
+
+  useEffect(() => {
+    const messageList = messagesRef.current;
+    if (messageList) messageList.scrollTop = messageList.scrollHeight;
+  }, [messages]);
 
   function sendMessage(event) {
     event.preventDefault();
@@ -37,7 +43,7 @@ function QuickChat() {
         <h2 id="quick-chat-title">Chat rapido</h2>
       </header>
 
-      <div className="owner-dashboard__messages" aria-live="polite">
+      <div className="owner-dashboard__messages" ref={messagesRef} aria-live="polite" aria-label="Mensajes recientes">
         {messages.map((message, index) => (
           <article className={`owner-dashboard__message owner-dashboard__message--${message.type}`} key={`${message.time}-${index}`}>
             <strong>{message.author}</strong>

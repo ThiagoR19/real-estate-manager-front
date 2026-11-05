@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   arrowsRotateIcon,
   circleInfoIcon,
@@ -79,20 +79,29 @@ export default function Terms() {
     const section = sectionRefs.current[id];
     const content = contentRef.current;
 
-    if (!section || !content) return;
+    if (!section) return;
 
     setActiveSection(id);
-    content.scrollTo({
-      top: Math.min(section.offsetTop, content.scrollHeight - content.clientHeight),
-      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-        ? "instant"
-        : "smooth",
-    });
+    const behavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth";
+    if (window.matchMedia("(max-width: 760px)").matches) {
+      section.scrollIntoView({ behavior, block: "start" });
+    } else if (content) {
+      content.scrollTo({
+        top: Math.min(section.offsetTop, content.scrollHeight - content.clientHeight),
+        behavior,
+      });
+    }
     section.focus({ preventScroll: true });
   }
 
-  function updateActiveSection() {
+  const updateActiveSection = useCallback(() => {
     const content = contentRef.current;
+    if (window.matchMedia("(max-width: 760px)").matches) {
+      const currentSection = [...sections].reverse().find(({ id }) => sectionRefs.current[id]?.getBoundingClientRect().top <= 140);
+      if (currentSection) setActiveSection(currentSection.id);
+      return;
+    }
+    if (!content) return;
     if (content.scrollTop + content.clientHeight >= content.scrollHeight - 2) {
       setActiveSection(sections.at(-1).id);
       return;
@@ -102,7 +111,16 @@ export default function Terms() {
     );
 
     if (currentSection) setActiveSection(currentSection.id);
-  }
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("scroll", updateActiveSection, { passive: true });
+    window.addEventListener("resize", updateActiveSection);
+    return () => {
+      window.removeEventListener("scroll", updateActiveSection);
+      window.removeEventListener("resize", updateActiveSection);
+    };
+  }, [updateActiveSection]);
 
   return (
     <main id="terms">
@@ -130,11 +148,20 @@ export default function Terms() {
             <p className="terms__section-header-p">Condiciones de uso, responsabilidad y uso de la plataforma</p>
           </header>
 
-          <button className="terms__mobile-documentation" type="button" onClick={() => contentRef.current?.focus()}>
+          <label className="terms__mobile-documentation">
             <img src={fileIcon} alt="" />
-            <span>Documentación</span>
+            <span className="sr-only">Ir a sección</span>
+            <select value={activeSection} onChange={(event) => {
+              const section = sectionRefs.current[event.target.value];
+              if (section) {
+                setActiveSection(event.target.value);
+                section.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth", block: "start" });
+              }
+            }} aria-label="Ir a sección de términos">
+              {sections.map(({ id, title }) => <option key={id} value={id}>{title}</option>)}
+            </select>
             <span aria-hidden="true">⌄</span>
-          </button>
+          </label>
 
           <div
             className="terms__div-section-div"

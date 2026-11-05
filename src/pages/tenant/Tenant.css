@@ -157,7 +157,7 @@ body:has(#tenant) {
 
 .tenant__toolbar {
   display: grid;
-  grid-template-columns: minmax(245px, 1fr) repeat(3, minmax(166px, 208px)) auto;
+  grid-template-columns: minmax(220px, 1fr) repeat(3, minmax(145px, 190px)) auto;
   gap: 12px;
   align-items: center;
   margin: 22px 8px 25px;
@@ -366,7 +366,8 @@ body:has(#tenant) .navbar__search { display: none; }
 
 @media (max-width: 1180px) {
   .tenant__overview { grid-template-columns: minmax(0, 1fr) 400px; gap: 17px; }
-  .tenant__toolbar { grid-template-columns: minmax(205px, 1fr) repeat(3, minmax(130px, 1fr)); }
+  .tenant__toolbar { grid-template-columns: minmax(180px, 1fr) repeat(3, minmax(110px, 1fr)) auto; }
+  .tenant__new-button { min-width: 180px; padding-inline: 12px; font-size: 15px; gap: 10px; }
   .tenant__new-button { grid-column: 1 / -1; justify-self: end; }
 }
 
@@ -380,6 +381,7 @@ body:has(#tenant) .navbar__search { display: none; }
   .tenant__summary-card b { font-size: 18px; }
   .tenant__toolbar { grid-template-columns: 1fr 1fr; margin-right: 0; margin-left: 0; }
   .tenant__search { grid-column: 1 / -1; }
+  .tenant__new-button { grid-column: auto; justify-self: stretch; width: 100%; min-width: 0; gap: 6px; padding-inline: 8px; }
 }
 
 @media (max-width: 560px) {
@@ -390,14 +392,13 @@ body:has(#tenant) .navbar__search { display: none; }
   .tenant__hero h1 { font-size: 20px; }
   .tenant__hero p { font-size: 12px; }
   .tenant__summary { grid-template-columns: repeat(2, 1fr); }
-  .tenant__toolbar { grid-template-columns: 1fr; }
-  .tenant__search,
-  .tenant__new-button { grid-column: auto; }
-  .tenant__new-button { width: 100%; }
+  .tenant__toolbar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tenant__search { grid-column: 1 / -1; }
+  .tenant__new-button { grid-column: auto; width: 100%; min-width: 0; gap: 6px; padding-inline: 8px; }
   .tenant__toolbar { margin: 10px 0 18px; gap: 8px; }
   .tenant__search, .tenant__filter, .tenant__new-button { height: 41px; }
   .tenant__filter-chevron { width: 22px; height: 22px; }
-  .tenant__new-button { font-size: 14px; }
+  .tenant__new-button { font-size: 12px; }
   .tenant__table-card { overflow: visible; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
   .tenant__table-card table,
   .tenant__table-card thead,

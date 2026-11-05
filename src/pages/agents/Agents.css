@@ -99,7 +99,7 @@ body:has(#agents) {
 
 .agents__toolbar {
   display: grid;
-  grid-template-columns: 348px 208px minmax(0, 1fr) auto;
+  grid-template-columns: minmax(245px, 1fr) minmax(180px, 220px) auto;
   gap: 12px;
   align-items: center;
   margin: 22px 8px 25px;
@@ -133,7 +133,7 @@ body:has(#agents) {
   font-size: 18px;
   font-weight: 700;
   white-space: nowrap;
-  grid-column: 4;
+  justify-self: end;
 }
 
 .agents__new-button img { width: 20px; height: 20px; }
@@ -175,7 +175,7 @@ body:has(#agents) .navbar__search { display: none; }
 
 @media (max-width: 1180px) {
   .agents__overview { grid-template-columns: minmax(0, 1fr) 400px; gap: 17px; }
-  .agents__toolbar { grid-template-columns: minmax(205px, 1fr) 208px minmax(0, 1fr) auto; }
+  .agents__toolbar { grid-template-columns: minmax(205px, 1fr) 208px auto; }
 }
 
 @media (max-width: 860px) {
@@ -188,7 +188,7 @@ body:has(#agents) .navbar__search { display: none; }
   .agents__summary-card b { font-size: 18px; }
   .agents__toolbar { grid-template-columns: 1fr 1fr; margin-right: 0; margin-left: 0; }
   .agents__search { grid-column: 1 / -1; }
-  .agents__new-button { grid-column: 1 / -1; justify-self: end; }
+  .agents__new-button { grid-column: auto; justify-self: stretch; width: 100%; min-width: 0; }
 }
 
 @media (max-width: 560px) {
@@ -199,13 +199,12 @@ body:has(#agents) .navbar__search { display: none; }
   .agents__hero h1 { font-size: 20px; }
   .agents__hero p { font-size: 14px; }
   .agents__summary { grid-template-columns: repeat(2, 1fr); }
-  .agents__toolbar { grid-template-columns: 1fr; margin: 10px 0; gap: 8px; }
+  .agents__toolbar { grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 10px 0; gap: 8px; }
   .agents__search, .agents__filter, .agents__new-button { height: 41px; }
   .agents__filter-chevron { width: 22px; height: 22px; }
   .agents__new-button { font-size: 14px; }
-  .agents__search,
-  .agents__new-button { grid-column: auto; }
-  .agents__new-button { width: 100%; }
+  .agents__search { grid-column: 1 / -1; }
+  .agents__new-button { grid-column: auto; width: 100%; min-width: 0; gap: 6px; padding-inline: 8px; justify-self: stretch; }
   .agents__table-card { overflow: visible; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
   .agents__table-card table,
   .agents__table-card thead,
