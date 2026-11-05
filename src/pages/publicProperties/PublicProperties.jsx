@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "wouter";
 import { Icon } from "../../components/home/HomeIcon";
 import kaikenLogo from "../../assets/icons/kaiken.svg";
-import filterIcon from "../../assets/icons/filter-solid-full.svg";
+import filterIcon from "../../assets/icons/options.svg";
 import "./PublicProperties.css";
 
 const properties = [
