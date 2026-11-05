@@ -146,7 +146,6 @@ export default function PublicProperties() {
   return (
     <main className="public-properties">
       <PublicHeader operation={operation} setOperation={setOperation} />
-      <div className="public-properties__breadcrumb"><Link href="/home">Inicio</Link><span>&gt;</span><strong>Propiedades</strong></div>
       <div className="public-properties__layout">
         {filtersOpen && <button className="public-properties__filter-backdrop" aria-label="Cerrar filtros" type="button" onClick={() => setFiltersOpen(false)} />}
         <FilterSidebar operation={operation} setOperation={setOperation} open={filtersOpen} onClose={() => setFiltersOpen(false)} />

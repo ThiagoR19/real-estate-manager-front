@@ -18,7 +18,7 @@
 
 .Inicio__contenido {
   width: min(707px, calc(100% - 32px));
-  margin: 38px 0 0 max(16px, min(26.7vw, calc(100% - 707px - 16px)));
+  margin: auto;
 }
 
 .Inicio__titulo {
