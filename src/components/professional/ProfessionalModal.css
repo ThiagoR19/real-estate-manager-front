@@ -299,16 +299,18 @@
 
 @media (max-width: 650px) {
   .professional-modal__overlay {
-    padding: 12px;
+    padding: 12px 8px;
+    overflow-y: auto;
+    background: rgb(0 0 0 / 50%);
   }
 
   .professional-modal {
     max-height: calc(100dvh - 24px);
-    padding: 20px 15px 22px;
+    padding: 17px 11px 14px;
   }
 
   .professional-modal__header h2 {
-    font-size: 25px;
+    font-size: 31px;
   }
 
   .professional-modal__fields {
@@ -319,13 +321,19 @@
   }
 
   .professional-modal__actions {
-    flex-direction: column-reverse;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 13px;
+    padding-top: 14px;
   }
 
-  .professional-modal__actions button {
+  .professional-modal .professional-modal__actions button {
     width: 100%;
+    min-width: 0;
+    padding: 0 6px;
+    font-size: 14px;
   }
+  .professional-modal__select-arrow { width: 22px; height: 22px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

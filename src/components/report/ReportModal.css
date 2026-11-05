@@ -448,3 +448,20 @@
     transition: none;
   }
 }
+
+@media (max-width: 650px) {
+  .report-modal__header h2 { font-size: 22px; }
+  .report-modal { scrollbar-width: none; }
+  .report-modal__header p { font-size: 12px; }
+  .report-modal__fields { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); padding: 13px 8px; }
+  .report-modal__field:last-child { grid-column: 1 / -1; }
+  .report-modal__input, .report-modal__select-trigger { font-size: 10px; }
+  .report-modal__textarea { height: 74px; font-size: 12px; }
+  .report-modal__photo, .report-modal__add-photos { flex-basis: 90px; width: 90px; height: 88px; }
+  .report-modal__photos { gap: 5px; }
+  .report-modal__photos-scroll { padding: 14px 5px 10px; }
+  .report-modal__add-photos { flex-direction: column; gap: 8px; padding: 10px; font-size: 12px; }
+  .report-modal__actions > div { flex-direction: row; justify-content: flex-end; gap: 5px; }
+  .report-modal__actions button { width: auto; height: 33px; padding: 0 13px; font-size: 12px; }
+  .report-modal__actions p { font-size: 9px; }
+}

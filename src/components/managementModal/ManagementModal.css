@@ -62,12 +62,31 @@
 @keyframes management-modal-fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes management-modal-slide-in { from { opacity: 0; transform: translateY(8px) scale(.99); } to { opacity: 1; transform: none; } }
 @media (max-width: 650px) {
-  .management-modal__overlay { padding: 12px; }
-  .management-modal { max-height: calc(100dvh - 24px); padding: 20px 15px 22px; }
-  .management-modal__header h2 { font-size: 25px; }
-  .management-modal__fields { grid-template-columns: 1fr; padding-right: 11px; padding-left: 11px; }
-  .management-modal__actions { flex-direction: column-reverse; gap: 10px; }
-  .management-modal__actions button { width: 100%; }
+  .management-modal__overlay { padding: 12px 8px; overflow-y: auto; background: rgb(0 0 0 / 50%); }
+  .management-modal { max-height: calc(100dvh - 24px); padding: 17px 11px 14px; }
+  .management-modal__header { margin-bottom: 16px; }
+  .management-modal__header h2 { font-size: 31px; }
+  .management-modal__fields { grid-template-columns: 1fr; gap: 10px; padding: 10px 8px 18px; }
+  .management-modal__summary { gap: 13px; min-height: 72px; padding: 11px 10px; }
+  .management-modal__avatar { width: 42px; height: 42px; }
+  .management-modal__actions { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; padding-top: 14px; }
+  .management-modal__actions button { width: 100%; min-width: 0; padding: 0 6px; font-size: 14px; }
+  .management-modal--person-agent .management-modal__field:nth-child(4) { order: 6; }
+  .management-modal--person-agent .management-modal__field:nth-child(5) { order: 4; }
+  .management-modal--person-agent .management-modal__field:nth-child(6) { order: 7; }
+  .management-modal--person-agent .management-modal__field:nth-child(7) { order: 5; }
+  .management-modal--person-agent .management-modal__field:nth-child(8) { order: 8; }
+  .management-modal--person-agent .management-modal__field:nth-child(-n+3) { order: 1; }
+  .management-modal--person-owner .management-modal__field:nth-child(1) { order: 1; }
+  .management-modal--person-owner .management-modal__field:nth-child(2) { order: 6; }
+  .management-modal--person-owner .management-modal__field:nth-child(3) { order: 2; }
+  .management-modal--person-owner .management-modal__field:nth-child(4) { order: 7; }
+  .management-modal--person-owner .management-modal__field:nth-child(5) { order: 3; }
+  .management-modal--person-owner .management-modal__field:nth-child(6) { order: 8; }
+  .management-modal--person-owner .management-modal__field:nth-child(7) { order: 4; }
+  .management-modal--person-owner .management-modal__field:nth-child(8) { order: 9; }
+  .management-modal--person-owner .management-modal__field:nth-child(9) { order: 5; }
+  .management-modal--person-owner .management-modal__field:nth-child(10) { order: 10; }
   .management-modal--confirmation .management-modal__actions { padding-right: 0; }
 }
 @media (prefers-reduced-motion: reduce) {

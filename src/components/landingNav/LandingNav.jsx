@@ -8,8 +8,8 @@ import lupaIcono from '../../assets/icons/search.svg';
 // "#contacto" lleva al footer de la misma página (ver Footer)
 const enlaces = [
     { texto: "Inicio", href: "/home" },
-    { texto: "Comprar", href: "/properties?filter=buy" },
-    { texto: "Alquilar", href: "/properties?filter=rent" },
+    { texto: "Comprar", href: "/public-properties?filter=buy" },
+    { texto: "Alquilar", href: "/public-properties?filter=rent" },
     { texto: "Nosotros", href: "/about-us" },
     { texto: "Contacto", href: "#contacto" }
 ];

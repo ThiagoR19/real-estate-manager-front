@@ -26,6 +26,7 @@ function AuthenticatedApp() {
         <Route path="/owners" component={Owners} />
         <Route path="/profile" component={Profile} />
         <Route path="/reports-agent" component={ReportsAgent} />
+        <Route path="/reports">{() => <ReportsAgent allowCreate />}</Route>
         <Route path="/chat" component={Chat} />
         <Route path="/agency" component={Agency} />
         <Route path="/payments" component={Payments} />
@@ -47,6 +48,7 @@ function App() {
   return (
     <Switch>
       <Route path="/home" component={Home} />
+      <Route path="/about-us" component={AboutUs} />
       <Route path="/public-properties" component={PublicProperties} />
       <Route path="/public-property" component={PublicProperty} />
       <Route path="/login" component={Login} />

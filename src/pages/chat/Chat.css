@@ -2,6 +2,7 @@ body:has(#chat) {
   margin: 0;
   background: #fff;
 }
+.chat__mobile-select { display: none; }
 
 #chat,
 #chat * {
@@ -414,4 +415,25 @@ body:has(#chat) {
   .chat__conversation {
     transition: none;
   }
+}
+
+@media (max-width: 650px) {
+  #chat { height: calc(100dvh - 40px); min-height: 0; padding: 11px 9px 5px; display: flex; flex-direction: column; gap: 16px; }
+  .chat__mobile-select { display: block; }
+  .chat__mobile-select select { width: 100%; height: 43px; padding: 0 14px; border: 2px solid #e3edf5; border-radius: 10px; background: #fff; color: #435679; font: inherit; font-size: 14px; }
+  .chat__layout { flex: 1; min-height: 0; }
+  .chat__conversations { display: none; }
+  .chat__thread { flex: 1; min-height: 0; padding: 10px 6px; }
+  .chat__thread-header { align-items: flex-start; gap: 7px; min-height: 72px; }
+  .chat__avatar--header { width: 36px; height: 36px; }
+  .chat__thread-header h2 { font-size: 21px; }
+  .chat__thread-header p { font-size: 16px; }
+  .chat__messages { gap: 12px; padding-top: 17px; }
+  .chat__message { gap: 5px; }
+  .chat__avatar--message { width: 27px; height: 27px; }
+  .chat__message--incoming .chat__bubble, .chat__message--outgoing .chat__bubble { width: 43%; max-width: 190px; }
+  .chat__bubble--small { width: 29% !important; }
+  .chat__composer { position: relative; flex-basis: 40px; margin-right: 47px; padding: 0 11px; }
+  .chat__composer button { position: absolute; right: -49px; top: -2px; width: 40px; height: 40px; border-radius: 6px; opacity: 1; pointer-events: auto; background: linear-gradient(100deg, #001b49, #0046b6); box-shadow: 0 3px 5px #17235e40; }
+  .chat__composer button img { width: 21px; height: 21px; filter: brightness(0) invert(1); }
 }

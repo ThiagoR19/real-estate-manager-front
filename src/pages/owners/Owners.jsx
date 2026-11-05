@@ -113,7 +113,7 @@ export default function Owners() {
         <section className="owners__overview" aria-labelledby="owners-title">
           <div className="owners__hero">
             <h1 id="owners-title">Propietarios</h1>
-            <p>Gestiona la información de todos los propietarios y consulta sus cobros.</p>
+            <p>Gestiona la información de todos los propietarios</p>
           </div>
 
           <div className="owners__summary" aria-label="Resumen de propietarios">

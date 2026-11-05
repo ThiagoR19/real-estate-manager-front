@@ -3,6 +3,11 @@ body:has(#superadmin-dashboard) {
   background: #f5f7fa;
 }
 
+.superadmin__mobile-navigation,
+.superadmin__mobile-copy { display: none; }
+
+#superadmin-dashboard .superadmin__icon-button--edit { color: #fff; }
+
 #superadmin-dashboard {
   min-height: 100dvh;
   overflow: hidden;
@@ -907,4 +912,48 @@ body:has(#superadmin-dashboard) {
   .superadmin__agency-actions .superadmin__collapse-button {
     order: 3;
   }
+}
+
+@media (max-width: 760px) {
+  .superadmin__mobile-navigation { display: block; }
+  .superadmin__mobile-copy { display: inline; }
+  .superadmin__desktop-copy,
+  .superadmin__topbar,
+  .superadmin__sidebar { display: none; }
+  #superadmin-dashboard { min-height: calc(100dvh - 40px); background: #fff; }
+  .superadmin__body { min-height: 0; }
+  .superadmin__content { display: flex; flex-direction: column; padding: 16px 12px 24px; }
+  .superadmin__intro-row { display: contents; }
+  .superadmin__hero { flex: none; height: 68px; margin: 0 -7px 17px; border-radius: 12px; }
+  .superadmin__hero-copy { padding: 11px 21px; }
+  .superadmin__hero-copy h1 { font-size: 21px; letter-spacing: 0; }
+  .superadmin__hero-copy p { margin-top: 2px; font-size: 14px; }
+  .superadmin__summary-column { order: 2; grid-template-columns: 1fr 1fr; margin-top: 0; }
+  .superadmin__agencies { width: 100%; margin: 0; }
+  .superadmin__agency-header { position: relative; display: block; min-height: 91px; padding: 7px 10px 10px; }
+  .superadmin__agency-title { display: block; }
+  .superadmin__agency-title h2 { max-width: none; margin: 0; padding-inline: 0; text-align: center; font-size: 25px; line-height: 1.25; }
+  .superadmin__agency-mark { position: absolute; left: 15px; bottom: 9px; width: 45px; height: 40px; }
+  .superadmin__agency-actions { flex-wrap: nowrap; justify-content: flex-end; gap: 9px; margin-top: 9px; }
+  .superadmin__add-admin { height: 35px; padding: 0 10px; font-size: 12px; }
+  .superadmin__icon-button { width: 35px; height: 35px; }
+  .superadmin__collapse-button { height: 35px; min-width: 35px; }
+  .superadmin__agency-card.is-expanded .superadmin__collapse-button { min-width: 111px; }
+  .superadmin__agency-card.is-expanded .superadmin__collapse-button span { display: inline; }
+  .superadmin__admins-grid { grid-template-columns: minmax(0, 278px); justify-content: center; gap: 21px; min-height: 0; padding: 12px 16px 30px; background: #fff; }
+  .superadmin__admin-card { min-height: 178px; padding: 17px 16px; }
+  .superadmin__user-avatar { width: 63px; height: 63px; font-size: 15px; }
+  .superadmin__delete-button { width: 37px; height: 37px; }
+  .superadmin__admin-name { margin-top: 14px; font-size: 18px; }
+  .superadmin__role-label { margin-top: -16px; font-size: 14px; }
+  .superadmin__admin-card select { height: 30px; font-size: 14px; }
+}
+
+@media (max-width: 370px) {
+  .superadmin__agency-title h2 { font-size: 22px; }
+  .superadmin__agency-actions { gap: 6px; }
+  .superadmin__agency-mark { left: 9px; width: 34px; height: 34px; }
+  .superadmin__add-admin { font-size: 11px; padding-inline: 7px; }
+  .superadmin__agency-card.is-expanded .superadmin__collapse-button { min-width: 85px; gap: 3px; font-size: 12px; }
+  .superadmin__summary-column { grid-template-columns: 1fr; }
 }

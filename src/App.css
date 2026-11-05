@@ -5,3 +5,7 @@
 #app-content {
   min-height: calc(100dvh - 61px);
 }
+
+@media (max-width: 760px) {
+  #app-content { min-height: calc(100dvh - 40px); }
+}

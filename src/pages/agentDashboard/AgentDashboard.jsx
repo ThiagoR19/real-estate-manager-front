@@ -81,7 +81,7 @@ function PerformanceChart() {
       <div className="agent-dashboard__chart-y-labels" aria-hidden="true">
         <span>20</span><span>15</span><span>10</span><span>5</span><span>0</span>
       </div>
-      <svg className="agent-dashboard__chart" viewBox="0 0 620 210" role="img" aria-label="Rendimiento semanal de visitas y contratos">
+      <svg className="agent-dashboard__chart" viewBox="0 0 620 210" preserveAspectRatio="none" role="img" aria-label="Rendimiento semanal de visitas y contratos">
         <g className="agent-dashboard__chart-grid">
           <line x1="0" y1="20" x2="620" y2="20" />
           <line x1="0" y1="60" x2="620" y2="60" />
@@ -107,7 +107,7 @@ function PerformanceCard() {
         <Icon src={chartColumnIcon} />
         <div>
           <h2 id="agent-performance-title">Rendimiento de la semana</h2>
-          <p>Visitas a la pagina, visitas a propiedades y contratos en los ultimos 7 dias</p>
+          <p>Visitas a la pagina, visitas a propiedades y contratos<span className="agent-dashboard__performance-period"> en los últimos 7 días</span></p>
         </div>
         <label className="agent-dashboard__period-select">
           <span className="sr-only">Periodo del gráfico</span>

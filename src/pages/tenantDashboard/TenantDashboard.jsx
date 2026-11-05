@@ -110,7 +110,7 @@ function ReportsCard() {
         <span className="tenant-dashboard__face" aria-hidden="true" />
       </div>
 
-      <Link className="tenant-dashboard__reports-button" href="/reports-agent">
+      <Link className="tenant-dashboard__reports-button" href="/reports">
         <span>Ir a reportes</span>
         <span aria-hidden="true">→</span>
       </Link>

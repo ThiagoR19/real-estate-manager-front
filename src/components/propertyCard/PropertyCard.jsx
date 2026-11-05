@@ -42,7 +42,7 @@ export default function PropertyCard({ propiedad, className = "" }) {
                     </span>
                 </div>
 
-                <a href="#" className='PropertyCard__detalle'>
+                <a href="/public-property" className='PropertyCard__detalle'>
                     <span className='PropertyCard__detalle-icono'><img src={ojoIcono} alt="" /></span>
                     Ver detalle
                 </a>

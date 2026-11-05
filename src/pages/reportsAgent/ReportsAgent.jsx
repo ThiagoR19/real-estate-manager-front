@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import reportReference from "../../assets/reports-reference.png";
+import ReportModal from "../../components/report/ReportModal";
 import "./ReportsAgent.css";
 
 const initialReports = [
@@ -39,21 +40,26 @@ function ReportPhoto({ className = "", label = "Foto del reporte", src }) {
   }
 
   return (
-    <div
+    <svg
       className={`reports__photo ${className}`}
-      style={{ "--report-photo": `url(${reportReference})` }}
+      viewBox="547 301 317 247"
+      preserveAspectRatio="xMidYMid slice"
       role="img"
       aria-label={label}
-    />
+    ><image href={reportReference} width="1521" height="751" /></svg>
   );
 }
 
-export default function ReportsAgent() {
-  const [reportItems] = useState(initialReports);
+export default function ReportsAgent({ allowCreate = false }) {
+  const [reportItems, setReportItems] = useState(initialReports);
+  const [createOpen, setCreateOpen] = useState(false);
   const [activeReportId, setActiveReportId] = useState(initialReports[0].id);
   const [query, setQuery] = useState("");
   const [selectedPhotos, setSelectedPhotos] = useState({});
   const thumbnailsRef = useRef(null);
+  const uploadedUrls = useRef([]);
+
+  useEffect(() => () => uploadedUrls.current.forEach((url) => URL.revokeObjectURL(url)), []);
 
   const visibleReports = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -79,13 +85,23 @@ export default function ReportsAgent() {
     setSelectedPhotos((current) => ({ ...current, [activeReport.id]: index }));
   }
 
+  function createReport(form) {
+    const id = Date.now();
+    const photos = form.photos.map((file) => ({ url: URL.createObjectURL(file) }));
+    uploadedUrls.current.push(...photos.map(({ url }) => url));
+    setReportItems((current) => [...current, { id, title: form.name || "Nuevo reporte", type: form.type, description: form.description, location: initialReports[0].location, date: new Date().toLocaleDateString("es-AR"), photos }]);
+    setActiveReportId(id);
+    setCreateOpen(false);
+  }
+
   return (
     <main id="reports-agent">
       <section className="reports__hero" aria-labelledby="reports-title">
         <div>
           <h1 id="reports-title">Reportes</h1>
-          <p>Gestiona la información de todos los inquilinos, sus contratos, pagos y estados.</p>
+          <p>Gestiona los reportes de tus propiedades</p>
         </div>
+        {allowCreate && <button className="reports__create-button" type="button" onClick={() => setCreateOpen(true)}>＋ Nuevo reporte</button>}
       </section>
 
       <div className="reports__workspace">
@@ -101,11 +117,11 @@ export default function ReportsAgent() {
             />
           </label>
 
-          <button className="reports__property-filter" type="button">
+          {!allowCreate && <button className="reports__property-filter" type="button">
             <span className="reports__property-icon"><DrawnIcon name="house" /></span>
             <span>Propiedad</span>
             <span className="reports__property-chevron" aria-hidden="true" />
-          </button>
+          </button>}
 
           <div className="reports__list">
             {visibleReports.map((report, index) => (
@@ -183,6 +199,7 @@ export default function ReportsAgent() {
           </div>
         </section>
       </div>
+      {createOpen && <ReportModal isOpen onClose={() => setCreateOpen(false)} onSubmit={createReport} />}
     </main>
   );
 }

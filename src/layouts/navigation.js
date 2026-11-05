@@ -44,8 +44,10 @@ export const secondaryItems = [
 export const allItems = [...primaryItems, ...secondaryItems];
 
 export const pageLabels = {
+  "/super-admin-dashboard": "Panel administrativo",
   "/property": "Propiedad",
   "/reports-agent": "Reportes",
+  "/reports": "Reportes",
   "/payments": "Pagos",
   "/collections": "Zona de cobro",
   "/payments-collections": "Pagos",
@@ -54,6 +56,14 @@ export const pageLabels = {
   "/super-admin": "Panel administrativo",
   "/about-us": "Acerca de nosotros",
 };
+
+export function accountRoleFor(pathname) {
+  if (pathname.startsWith("/super-admin")) return "Super admin";
+  if (["/dashboard", "/admin-dashboard", "/indec", "/chat", "/agency", "/agents"].includes(pathname)) return "Administrador";
+  if (["/owner-dashboard", "/my-properties", "/collections"].includes(pathname)) return "Propietario";
+  if (["/payments", "/tenant-dashboard", "/reports"].includes(pathname)) return "Inquilino";
+  return "Agente";
+}
 
 export function isItemActive(pathname, href) {
   return pathname === href || pathname.startsWith(`${href}/`);

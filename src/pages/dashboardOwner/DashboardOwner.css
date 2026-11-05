@@ -445,25 +445,33 @@
   }
 
   .owner-dashboard__content {
-    padding: 18px 12px 20px;
+    padding: 16px 10px 20px;
   }
 
   .owner-dashboard__welcome {
-    min-height: 90px;
+    min-height: 68px;
+    padding: 11px 16px;
+    border-radius: 12px;
+    background: linear-gradient(90deg, #edf5ffed, #edf5ff30), url("../../assets/fondoCasa.png") center 46% / cover;
   }
 
   .owner-dashboard__welcome h1 {
-    font-size: 27px;
+    margin-bottom: 2px;
+    color: #17235e;
+    font-size: 21px;
   }
 
   .owner-dashboard__welcome p {
     margin-left: 0;
+    color: #17235e;
     font-size: 14px;
+    line-height: 1.2;
   }
 
   .owner-dashboard__grid {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
 
   .owner-dashboard__status-card,
@@ -473,24 +481,54 @@
   }
 
   .owner-dashboard__status-content {
-    padding-right: 18px;
-    padding-left: 18px;
+    padding: 6px 18px 14px 39px;
   }
 
   .owner-dashboard__properties-title {
-    margin-top: 34px !important;
+    margin-top: 18px !important;
+  }
+
+  .owner-dashboard__properties-list {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding-inline: 11px 32px;
+  }
+
+  .owner-dashboard__property {
+    background: #f8f9fa;
+  }
+
+  .owner-dashboard__property h4 {
+    white-space: normal;
+  }
+
+  .owner-dashboard__chat-card {
+    order: 3;
+    min-height: 320px;
+  }
+
+  .owner-dashboard__reports-card {
+    min-height: 380px;
   }
 
   .owner-dashboard__reports-body {
-    min-height: 150px;
-    padding-top: 18px;
+    min-height: 210px;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    gap: 32px;
+    padding-top: 45px;
+  }
+
+  .owner-dashboard__smile {
+    flex: 0 0 49px;
+    margin-top: 0;
   }
 }
 
 @media (max-width: 460px) {
   .owner-dashboard__card-header {
-    padding-right: 13px;
-    padding-left: 13px;
+    padding-right: 24px;
+    padding-left: 24px;
   }
 
   .owner-dashboard__messages {
@@ -508,6 +546,11 @@
   }
 
   .owner-dashboard__property h4 {
-    font-size: 16px;
+    font-size: 17px;
   }
+}
+
+@media (max-width: 370px) {
+  .owner-dashboard__status-content { padding-inline: 20px; }
+  .owner-dashboard__properties-list { padding-inline: 0; }
 }

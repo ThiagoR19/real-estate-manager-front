@@ -180,7 +180,7 @@ export default function Tenant() {
         <section className="tenant__overview" aria-labelledby="tenant-title">
           <div className="tenant__hero">
             <h1 id="tenant-title">Inquilinos</h1>
-            <p>Gestiona la información de todos los inquilinos, sus contratos, pagos y estados.</p>
+            <p>Gestiona la información de todos los inquilinos</p>
           </div>
           <div className="tenant__summary" aria-label="Resumen de inquilinos">
             {summaryCards.map((card) => (

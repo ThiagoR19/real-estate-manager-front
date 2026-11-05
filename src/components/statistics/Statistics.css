@@ -43,8 +43,8 @@
     .Statistics__lista {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         row-gap: 8px;
-        max-width: 340px;
-        padding: 6px 12px 8px;
+        max-width: 260px;
+        padding: 10px 12px;
     }
 
     .Statistics__valor {

@@ -383,37 +383,61 @@ body:has(#tenant) .navbar__search { display: none; }
 }
 
 @media (max-width: 560px) {
-  .tenant__page { width: calc(100% - 20px); }
-  .tenant__hero { padding: 17px 18px; border-radius: 15px; }
+  .tenant__page { width: calc(100% - 20px); margin-top: 14px; }
+  .tenant__overview { gap: 6px; }
+  .tenant__hero { min-height: 68px; padding: 12px 16px; border-radius: 11px; }
   .tenant__hero::after { opacity: 0.4; }
-  .tenant__hero h1 { font-size: 26px; }
-  .tenant__hero p { font-size: 14px; }
+  .tenant__hero h1 { font-size: 20px; }
+  .tenant__hero p { font-size: 12px; }
   .tenant__summary { grid-template-columns: repeat(2, 1fr); }
   .tenant__toolbar { grid-template-columns: 1fr; }
   .tenant__search,
   .tenant__new-button { grid-column: auto; }
   .tenant__new-button { width: 100%; }
-  .tenant__table-card { border-radius: 10px; }
+  .tenant__toolbar { margin: 10px 0 18px; gap: 8px; }
+  .tenant__search, .tenant__filter, .tenant__new-button { height: 41px; }
+  .tenant__filter-chevron { width: 22px; height: 22px; }
+  .tenant__new-button { font-size: 14px; }
+  .tenant__table-card { overflow: visible; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
   .tenant__table-card table,
   .tenant__table-card thead,
   .tenant__table-card tbody,
   .tenant__table-card tr,
   .tenant__table-card th,
   .tenant__table-card td { display: block; }
-  .tenant__table-card { padding: 0 13px; }
+  .tenant__table-card { padding: 0; }
+  .tenant__table-wrap { overflow: visible; }
   .tenant__table-card thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   .tenant__table-card table { min-width: 0; }
-  .tenant__table-card tr { padding: 14px 0; border-bottom: 1px solid #eef2f6; }
-  .tenant__table-card tbody tr:last-child { border-bottom: 0; }
+  .tenant__table-card tr { display: flex; flex-direction: column; margin-bottom: 8px; padding: 10px 17px; border: 2px solid #f0f6fc; border-radius: 11px; background: #fff; }
+  .tenant__table-card tbody tr:last-child { border-bottom: 2px solid #f0f6fc; }
   .tenant__table-card td,
   .tenant__table-card th:first-child,
   .tenant__table-card td:first-child,
   .tenant__table-card th:last-child,
-  .tenant__table-card td:last-child { position: relative; display: grid; grid-template-columns: 135px minmax(0, 1fr); align-items: center; width: 100%; height: auto; min-height: 42px; padding: 7px 0; border: 0; }
-  .tenant__table-card td::before { color: #7e8aa6; content: attr(data-label); font-size: 11px; font-weight: 700; text-transform: uppercase; }
-  .tenant__actions-cell { grid-template-columns: 135px minmax(0, 1fr) !important; text-align: left !important; }
+  .tenant__table-card td:last-child { position: relative; display: grid; grid-template-columns: 104px minmax(0, 1fr); align-items: center; width: 100%; height: auto; min-height: 41px; padding: 7px 0; border: 0; }
+  .tenant__table-card td::before { color: #142057; content: attr(data-label); font-size: 13px; font-weight: 500; }
+  .tenant__table-card td:nth-child(2) { min-height: 58px; }
+  .tenant__table-card td:nth-child(3) { min-height: 76px; }
+  .tenant__table-card td:nth-child(4) { min-height: 65px; }
+  .tenant__table-card td:nth-child(5) { order: 6; }
+  .tenant__table-card td:nth-child(6) { order: 5; }
+  .tenant__table-card td:nth-child(7) { order: 7; }
+  .tenant__actions-cell { grid-template-columns: 104px minmax(0, 1fr) !important; text-align: left !important; }
   .tenant__person { gap: 9px; }
-  .tenant__property-image { width: 52px; height: 44px; }
+  .tenant__property { gap: 13px; }
+  .tenant__property-image { width: 60px; height: 50px; }
+  .tenant__contact { display: flex; }
+  .tenant__contact span { gap: 14px; white-space: normal; overflow-wrap: anywhere; font-size: 12px; }
+  .tenant__status { width: 100%; height: 26px; }
+  .tenant__property strong, .tenant__contract small { white-space: normal; }
+}
+
+@media (max-width: 360px) {
+  .tenant__table-card td, .tenant__table-card td:first-child, .tenant__table-card td:last-child { grid-template-columns: 90px minmax(0, 1fr); }
+  .tenant__actions-cell { grid-template-columns: 90px minmax(0, 1fr) !important; }
+  .tenant__property { gap: 8px; }
+  .tenant__property-image { width: 46px; height: 44px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

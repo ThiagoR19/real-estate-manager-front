@@ -145,7 +145,7 @@ export default function Agency() {
             <SectionHeading
               icon={imageIcon}
               title="Imágenes"
-              description="Cambia tu periódicamente para mantener tu cuenta segura"
+              description="Actualiza las imágenes que identifican a tu inmobiliaria en la plataforma"
             />
             <div className="agency__uploads">
               <UploadField label="Banner" name="banner" value={images.banner} onChange={updateImage} wide />

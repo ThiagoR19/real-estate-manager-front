@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { angleDownIcon, calendarIcon, chartColumnIcon, clockIcon, fileLinesIcon, houseIcon, peopleIcon, penIcon, plusIconWhite, tagIcon } from "../../assets/icons";
+import { angleDownIcon, calendarIcon, chartColumnIcon, clockIcon, fileLinesIcon, houseIcon, peopleIcon, penIcon, plusIconWhite, tagIcon, userIcon } from "../../assets/icons";
+import keyIcon from "../../assets/icons/llaveNosotrosIcon.svg";
 import "./Dashboard.css";
 
 const agents = [
@@ -25,11 +26,16 @@ function Icon({ src, className = "" }) {
 
 function chartPath(values, width = 560, height = 160) {
   const step = width / (values.length - 1);
-  return values.map((value, index) => {
-    const x = index * step;
-    const y = height - (value / 20) * height;
-    return `${index === 0 ? "M" : "L"} ${x.toFixed(1)} ${y.toFixed(1)}`;
-  }).join(" ");
+  const points = values.map((value, index) => [index * step, height - (value / 20) * height]);
+  return points.reduce((path, point, index) => {
+    if (!index) return `M ${point.join(" ")}`;
+    const previous = points[index - 1];
+    const before = points[index - 2] || previous;
+    const after = points[index + 1] || point;
+    const first = [previous[0] + (point[0] - before[0]) / 6, previous[1] + (point[1] - before[1]) / 6];
+    const second = [point[0] - (after[0] - previous[0]) / 6, point[1] - (after[1] - previous[1]) / 6];
+    return `${path} C ${first.join(" ")} ${second.join(" ")} ${point.join(" ")}`;
+  }, "");
 }
 
 function PerformanceChart() {
@@ -37,7 +43,7 @@ function PerformanceChart() {
   const yTicks = [0, 5, 10, 15, 20];
   return (
     <div className="dashboard-chart" aria-label="Gráfico de rendimiento semanal">
-      <svg viewBox="0 0 600 190" role="img">
+      <svg viewBox="0 0 600 190" preserveAspectRatio="none" role="img">
         <g className="dashboard-chart__grid">
           {yTicks.map((tick) => <line key={tick} x1="30" x2="590" y1={170 - (tick / 20) * 160} y2={170 - (tick / 20) * 160} />)}
         </g>
@@ -79,12 +85,12 @@ function PerformanceCard() {
   return (
     <section className="dashboard-card dashboard-performance-card">
       <div className="dashboard-performance-card__header">
-        <div><h2 className="dashboard-card__title"><Icon src={chartColumnIcon} />Rendimiento de la semana</h2><p>Visitas a la pagina, visitas a propiedades y contratos en los últimos 7 dias</p></div>
+        <div><h2 className="dashboard-card__title"><Icon src={chartColumnIcon} />Rendimiento de la semana</h2><p>Visitas a la pagina, visitas a propiedades y contratos<span className="dashboard-performance-period"> en los últimos 7 días</span></p></div>
         <label className="dashboard-period-select"><span className="visually-hidden">Período del gráfico</span><select value={period} onChange={(event) => setPeriod(event.target.value)}><option>Esta semana</option><option>Este mes</option><option>Este año</option></select><Icon src={angleDownIcon} /></label>
       </div>
       <PerformanceChart />
       <div className="dashboard-kpis">
-        <div className="dashboard-kpi dashboard-kpi--green"><span className="dashboard-kpi__icon">♙</span><span><small>inquilinos</small><b>18 <em>↑ +20%</em></b></span></div>
+        <div className="dashboard-kpi dashboard-kpi--green"><span className="dashboard-kpi__icon"><Icon src={userIcon} /></span><span><small>inquilinos</small><b>18 <em>↑ +20%</em></b></span></div>
         <div className="dashboard-kpi dashboard-kpi--red"><Icon src={fileLinesIcon} /><span><small>Reportes</small><b>3 <em>↑ +10%</em></b></span></div>
         <div className="dashboard-kpi dashboard-kpi--orange"><span className="dashboard-kpi__symbol">$</span><span><small>Cobros P.</small><b>3 <em>↑ +20%</em></b></span></div>
         <div className="dashboard-kpi dashboard-kpi--purple"><Icon src={fileLinesIcon} /><span><small>Contratos</small><b>6 <em>↑ +20%</em></b></span></div>
@@ -96,7 +102,7 @@ function PerformanceCard() {
 function StatusCard() {
   const statusItems = [
     { label: "Total de propiedades:", value: "35", icon: houseIcon },
-    { label: "Total en alquiler:", value: "10", icon: "key" },
+    { label: "Total en alquiler:", value: "10", icon: keyIcon },
     { label: "Propiedades vendidas:", value: "10", icon: houseIcon },
     { label: "Propiedades vacias:", value: "25", icon: tagIcon },
   ];
@@ -105,7 +111,7 @@ function StatusCard() {
       <div className="dashboard-status-card__heading"><h2 className="dashboard-card__title"><Icon src={penIcon} />Estados</h2><Link href="/properties" aria-label="Ver propiedades">›</Link></div>
       <div className="dashboard-status-list">
         {statusItems.map((item) => <div className="dashboard-status-item" key={item.label}>
-          <strong>{item.label}</strong><b>{item.value}</b>{item.icon === "key" ? <span className="dashboard-status-key" aria-hidden="true">⚿</span> : <Icon src={item.icon} />}
+          <strong>{item.label}</strong><b>{item.value}</b><Icon src={item.icon} />
         </div>)}
       </div>
     </section>
@@ -131,7 +137,7 @@ export default function Dashboard() {
   return (
     <main className="dashboard-page">
       <div className="dashboard-page__background" aria-hidden="true" />
-      <header className="dashboard-hero"><div><h1>¡Hola, Thiago!</h1><p>Aquí tienes un resumen de la actividad de la inmobiliaria</p></div><button className="dashboard-appointment-button" type="button" onClick={() => setShowAppointmentMessage((visible) => !visible)}><img src={plusIconWhite} alt="" aria-hidden="true" />Agendar cita</button>{showAppointmentMessage && <span className="dashboard-appointment-toast" role="status">Nueva cita lista para agendar</span>}</header>
+      <header className="dashboard-hero"><div><h1>¡Hola, Thiago!</h1><p><span className="dashboard-hero__desktop-copy">Aquí tienes un resumen de la actividad de la inmobiliaria</span><span className="dashboard-hero__mobile-copy">Aquí tienes un resumen de tu inmobiliaria</span></p></div><button className="dashboard-appointment-button" type="button" onClick={() => setShowAppointmentMessage((visible) => !visible)}><img src={plusIconWhite} alt="" aria-hidden="true" />Agendar cita</button>{showAppointmentMessage && <span className="dashboard-appointment-toast" role="status">Nueva cita lista para agendar</span>}</header>
       <div className="dashboard-content"><AgentsCard /><PerformanceCard /><StatusCard /><ActivityCard /></div>
     </main>
   );

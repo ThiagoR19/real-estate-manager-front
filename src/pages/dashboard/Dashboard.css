@@ -4,6 +4,7 @@
 .dashboard-hero { display: flex; align-items: flex-start; justify-content: space-between; min-height: 100px; padding-top: 17px; }
 .dashboard-hero h1 { margin: 0; color: #11192e; font-size: clamp(27px, 2.15vw, 32px); font-weight: 700; letter-spacing: -.8px; line-height: 1.2; }
 .dashboard-hero p { margin: 10px 0 0 20px; color: #65748e; font-size: 15px; }
+.dashboard-hero__mobile-copy { display: none; }
 .dashboard-appointment-button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-width: 190px; height: 44px; margin-top: 13px; padding: 0 18px; border: 0; border-radius: 8px; background: #2c63e4; box-shadow: 0 5px 12px rgb(33 87 214 / 25%); color: #fff; cursor: pointer; font-size: 15px; font-weight: 700; transition: transform 140ms ease, background-color 140ms ease; }
 .dashboard-appointment-button:hover { background: #1c50cf; transform: translateY(-1px); }
 .dashboard-appointment-button img { width: 18px; height: 18px; }
@@ -80,11 +81,53 @@
   .dashboard-agent { grid-template-columns: 58px 1fr 105px; } .dashboard-kpis { gap: 5px; } .dashboard-kpi { padding: 5px; gap: 5px; } .dashboard-kpi b { gap: 4px; }
 }
 @media (max-width: 760px) {
-  .dashboard-hero, .dashboard-content { width: calc(100% - 24px); } .dashboard-hero { min-height: 130px; } .dashboard-hero p { margin-left: 0; max-width: 270px; line-height: 1.35; }
-  .dashboard-appointment-button { min-width: 44px; width: 44px; padding: 0; font-size: 0; } .dashboard-appointment-button img { width: 20px; height: 20px; }
-  .dashboard-content { display: flex; flex-direction: column; gap: 12px; } .dashboard-card { flex: none; } .dashboard-agents-card { min-height: 470px; } .dashboard-performance-card { min-height: 420px; } .dashboard-status-card { min-height: 340px; } .dashboard-activity-card { min-height: 225px; }
-  .dashboard-activity-list { grid-template-columns: 1fr 1fr; padding-right: 0; padding-left: 0; } .dashboard-kpis { gap: 5px; } .dashboard-kpi { flex-direction: column; justify-content: center; height: 75px; padding: 4px; text-align: center; } .dashboard-kpi > span:last-child { align-items: center; } .dashboard-kpi__icon, .dashboard-kpi__symbol { width: 30px; height: 30px; font-size: 20px; } .dashboard-kpi small { font-size: 9px; } .dashboard-kpi b { font-size: 14px; } .dashboard-kpi em { display: none; }
+  .dashboard-page { background: #f8f9fa; }
+  .dashboard-page__background { display: none; }
+  .dashboard-hero, .dashboard-content { width: calc(100% - 20px); }
+  .dashboard-hero { align-items: center; min-height: 68px; margin-top: 16px; margin-bottom: 0; padding: 11px 16px; border-radius: 12px; background: linear-gradient(90deg, #edf5ffed, #edf5ff30), url("../../assets/fondoCasa.png") center 46% / cover; }
+  .dashboard-hero h1 { color: #17235e; font-size: 21px; letter-spacing: 0; }
+  .dashboard-hero p { margin: 2px 0 0; color: #17235e; font-size: 14px; line-height: 1.2; }
+  .dashboard-hero__desktop-copy { display: none; }
+  .dashboard-hero__mobile-copy { display: inline; }
+  .dashboard-appointment-button { position: absolute; top: 8px; right: 14px; min-width: 28px; width: 28px; height: 28px; margin: 0; padding: 0; font-size: 0; }
+  .dashboard-appointment-button img { width: 17px; height: 17px; }
+  .dashboard-content { display: flex; flex-direction: column; gap: 20px; padding-bottom: 20px; }
+  .dashboard-card { flex: none; }
+  .dashboard-performance-card { order: -1; min-height: 402px; margin-inline: -10px; padding: 9px 10px 13px; }
+  .dashboard-performance-card__header { position: relative; min-height: 60px; }
+  .dashboard-performance-card__header p { margin-left: 22px; font-size: 11px; }
+  .dashboard-performance-period { display: none; }
+  .dashboard-period-select { position: absolute; right: 0; bottom: 0; width: 112px; }
+  .dashboard-chart { height: 217px; flex: none; }
+  .dashboard-chart svg { height: 190px; }
+  .dashboard-chart__legend { gap: 13px; margin-top: 2px; font-size: 10px; }
+  .dashboard-kpis { grid-template-columns: repeat(2, minmax(0, 140px)); justify-content: center; gap: 20px 24px; margin-top: 7px; }
+  .dashboard-kpi { flex-direction: row; height: 40px; padding: 0; gap: 5px; background: #f7f8fa; }
+  .dashboard-kpi > span:last-child { position: relative; padding-bottom: 13px; }
+  .dashboard-kpi small { font-size: 11px; }
+  .dashboard-kpi b { position: absolute; top: -3px; left: 59px; font-size: 17px; }
+  .dashboard-kpi em { position: absolute; top: 17px; right: -3px; width: 70px; font-size: 11px; }
+  .dashboard-kpi__icon, .dashboard-kpi__symbol { width: 37px; height: 37px; font-size: 25px; }
+  .dashboard-agents-card { min-height: 520px; padding: 16px 15px 13px; }
+  .dashboard-agent { grid-template-columns: 72px minmax(0, 1fr) 130px; min-height: 71px; padding-inline: 9px; }
+  .dashboard-agent strong { font-size: 15px; }
+  .dashboard-agent__stats { min-height: 56px; justify-content: center; font-size: 11px; }
+  .dashboard-status-card { min-height: 340px; padding: 20px 24px 25px; }
+  .dashboard-status-item:first-child { grid-template-columns: 1fr 80px; min-height: 83px; }
+  .dashboard-status-item:first-child strong { grid-column: 1; }
+  .dashboard-status-item:first-child b { grid-column: 1; }
+  .dashboard-status-item:first-child .dashboard-icon { grid-column: 2; grid-row: 1 / 3; width: 50px; height: 50px; }
+  .dashboard-activity-card { min-height: 225px; }
+  .dashboard-activity-list { grid-template-columns: 1fr 1fr; padding-right: 0; padding-left: 0; }
 }
 @media (max-width: 460px) {
-  .dashboard-hero h1 { font-size: 25px; } .dashboard-card__title { font-size: 15px; } .dashboard-performance-card { padding-right: 12px; padding-left: 12px; } .dashboard-performance-card__header { gap: 6px; } .dashboard-performance-card__header p { margin-left: 30px; font-size: 9px; } .dashboard-period-select { width: 98px; } .dashboard-chart__legend { gap: 8px; font-size: 8px; } .dashboard-agent { grid-template-columns: 58px 1fr 90px; } .dashboard-agent strong { font-size: 13px; } .dashboard-agent__stats { font-size: 10px; } .dashboard-activity-list { grid-template-columns: 1fr; }
+  .dashboard-card__title { font-size: 16px; }
+  .dashboard-agent { grid-template-columns: 72px minmax(0, 1fr) 130px; }
+  .dashboard-activity-list { grid-template-columns: 1fr; }
+}
+@media (max-width: 370px) {
+  .dashboard-agent { grid-template-columns: 62px minmax(0, 1fr) 85px; padding-inline: 0; }
+  .dashboard-status-card { padding-inline: 14px; }
+  .dashboard-status-item strong { font-size: 14px; }
+  .dashboard-chart__legend { gap: 7px; font-size: 9px; }
 }

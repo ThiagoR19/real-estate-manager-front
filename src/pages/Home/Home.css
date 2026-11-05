@@ -102,7 +102,7 @@
   .Propiedades {
     --tarjeta-imagen: 138px;
 
-    padding: 22px 0 30px;
+    padding: 10px 0 30px;
   }
 
   .Propiedades__lista {
@@ -120,5 +120,22 @@
   .Propiedades__lista>* {
     flex: 0 0 min(306px, 82%);
     scroll-snap-align: start;
+  }
+
+  .Propiedades .PropertyCard__cuerpo {
+    padding: 12px 18px 18px;
+  }
+
+  .Propiedades .PropertyCard__direccion {
+    margin-top: 6px;
+  }
+
+  .Propiedades .PropertyCard__datos {
+    margin-top: 8px;
+  }
+
+  .Propiedades .PropertyCard__detalle {
+    height: 44px;
+    margin-top: 8px;
   }
 }

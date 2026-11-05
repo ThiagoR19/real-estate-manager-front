@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   angleDownIcon as angleIcon,
   calendarIcon,
@@ -76,7 +76,7 @@ function ScheduleHeader({ view, onViewChange, onCreate }) {
     <div className="schedule__topbar">
       <header className="schedule__hero">
         <h1>Agenda</h1>
-        <p>Organiza tus visitas, gestiona tu tiempo y haz seguimiento de tus clientes</p>
+        <p><span className="schedule__desktop-copy">Organiza tus visitas, gestiona tu tiempo y haz seguimiento de tus clientes</span><span className="schedule__mobile-copy">Organiza tus visitas, tiempo y haz seguimiento de tus clientes</span></p>
       </header>
       <Button
         className="schedule__new-visit"
@@ -102,9 +102,9 @@ function ScheduleHeader({ view, onViewChange, onCreate }) {
   );
 }
 
-function UpcomingVisits({ visits, onEdit, onViewAll }) {
+function UpcomingVisits({ visits, onEdit, onViewAll, open, onClose }) {
   return (
-    <aside className="schedule__sidebar" aria-labelledby="upcoming-visits-title">
+    <aside className={`schedule__sidebar${open ? " is-open" : ""}`} id="upcoming-visits" aria-labelledby="upcoming-visits-title">
       <div className="schedule__sidebar-heading">
         <div>
           <img src={calendarIcon} alt="" />
@@ -130,6 +130,7 @@ function UpcomingVisits({ visits, onEdit, onViewAll }) {
           </button>
         ))}
       </div>
+      <button className="schedule__sidebar-close" type="button" onClick={onClose} aria-label="Cerrar próximas visitas">‹</button>
     </aside>
   );
 }
@@ -184,7 +185,7 @@ function WeekView({ visits, date, onEdit }) {
   return (
     <section className="schedule__panel schedule__week" aria-labelledby="week-title">
       <h2 id="week-title">
-        Semana del {start.toLocaleDateString("es-AR")} al {days.at(-1).toLocaleDateString("es-AR")}
+        Semana del {start.getDate()} al {days.at(-1).getDate()} de {days.at(-1).toLocaleDateString("es-AR", { month: "long", year: "numeric" })}
       </h2>
       <div className="schedule__week-head" aria-hidden="true">
         <span />
@@ -250,7 +251,7 @@ function MonthView({ visits, date, onEdit, onDateChange }) {
         aria-label={`Calendario de ${activeDate.toLocaleDateString("es-AR", { month: "long", year: "numeric" })}`}
       >
         {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"].map((day) => (
-          <strong className="schedule__weekday" key={day}>{day}</strong>
+          <strong className="schedule__weekday" key={day}><span>{day}</span><abbr title={day}>{day.slice(0, 3).toUpperCase()}</abbr></strong>
         ))}
         {days.map((day) => {
           const key = dateKey(day);
@@ -289,8 +290,19 @@ export default function Schedule() {
   const [visits, setVisits] = useState(initialVisits);
   const [modal, setModal] = useState(null);
   const [feedback, setFeedback] = useState("");
+  const [upcomingOpen, setUpcomingOpen] = useState(false);
+
+  useEffect(() => {
+    if (!upcomingOpen) return undefined;
+    function closeOnEscape(event) {
+      if (event.key === "Escape") setUpcomingOpen(false);
+    }
+    document.addEventListener("keydown", closeOnEscape);
+    return () => document.removeEventListener("keydown", closeOnEscape);
+  }, [upcomingOpen]);
 
   function editVisit(visit) {
+    setUpcomingOpen(false);
     setModal({ visit });
   }
 
@@ -326,7 +338,11 @@ export default function Schedule() {
           visits={sortedVisits.filter((visit) => visit.date >= date)}
           onEdit={editVisit}
           onViewAll={() => setView("month")}
+          open={upcomingOpen}
+          onClose={() => setUpcomingOpen(false)}
         />
+        <button className="schedule__upcoming-toggle" type="button" aria-label="Abrir próximas visitas" aria-controls="upcoming-visits" aria-expanded={upcomingOpen} onClick={() => setUpcomingOpen(true)}>›</button>
+        {upcomingOpen && <button className="schedule__sidebar-backdrop" type="button" aria-label="Cerrar próximas visitas" onClick={() => setUpcomingOpen(false)} />}
       </div>
       {feedback && <p className="schedule__feedback" role="status">{feedback}</p>}
       {modal && (

@@ -1,0 +1,62 @@
+.payment-mobile__toolbar, .payment-mobile__summary-toggle, .payment-mobile__close, .payment-mobile__open-receipt, .payment-mobile__chronology { display: none; }
+
+@media (max-width: 650px) {
+  :is(#payments, #collections, #payment-view) { position: relative; display: block; min-height: calc(100dvh - 40px); padding: 18px 5px 12px; border-top: 0; background: #f8f9fa; }
+  .payment-mobile__toolbar { display: flex; align-items: center; gap: 6px; margin: 0 5px 27px; }
+  .payment-mobile__toolbar label { display: flex; align-items: center; gap: 10px; flex: 1; height: 43px; padding: 0 8px; border: 2px solid #e3edf5; border-radius: 10px; background: #fff; }
+  .payment-mobile__toolbar label img { width: 28px; height: 30px; padding: 5px; }
+  .payment-mobile__toolbar select { width: 100%; min-width: 0; height: 100%; border: 0; background: #fff; color: #435679; font: inherit; font-size: 16px; }
+  .payment-mobile__toolbar > button, .payment-mobile__close { display: grid; place-items: center; width: 42px; height: 43px; padding: 7px; border: 2px solid #e3edf5; border-radius: 10px; background: #fff; color: #17235e; cursor: pointer; }
+  .payment-mobile__toolbar button img { width: 100%; height: 100%; }
+  .payment-mobile__close { position: fixed; z-index: 51; top: 58px; right: 6px; font-size: 32px !important; }
+  :is(.payments__sidebar, .collections__sidebar) { display: none; }
+  :is(.payments__sidebar, .collections__sidebar).is-open { display: block; position: fixed; z-index: 50; inset: 58px 54px auto 0; max-height: calc(100dvh - 70px); min-height: min(610px, calc(100dvh - 70px)); overflow-y: auto; border: 2px solid #e3edf5; border-radius: 0 20px 0 0; box-shadow: 0 1px 5px #17235e20; }
+  :is(#payments, #payment-view, #collections):has(.payments__sidebar.is-open, .collections__sidebar.is-open) :is(.payments__workspace, .collections__workspace, .payment-mobile__toolbar, .payment-mobile__summary-toggle) { visibility: hidden; }
+  .payment-mobile__desktop, :is(.payments__property-switcher, .collections__property-select) { display: none; }
+  .payment-mobile__chronology { display: inline; }
+  :is(.payments__years, .collections__years) { display: block; padding: 0 30px 15px; }
+  :is(.payments__year, .collections__year) { border-bottom: 1px solid #d8d8d8; }
+  :is(.payments__month, .collections__month) { grid-template-columns: minmax(0, 1fr) 124px; gap: 6px; padding-left: 20px; }
+  :is(.payments__month, .collections__month).is-selected { box-shadow: inset 6px 0 #17235e; }
+  :is(.payments__workspace, .collections__workspace) { padding: 0; background: transparent; }
+  :is(.payments__summary, .collections__summary) { display: none; }
+  :is(.payments__summary, .collections__summary).is-open { position: fixed; z-index: 40; top: 27vh; left: 0; display: grid; grid-template-columns: 1fr; gap: 12px; width: calc(100% - 26px); margin: 0; padding: 68px 10px 12px; border-radius: 9px; background: white; box-shadow: 0 25px 35px #17235e40; }
+  :is(.payments__summary-card, .collections__summary-card) { height: 43px; border-radius: 11px; padding: 0 16px; }
+  :is(.payments__summary-card, .collections__summary-card) strong { font-size: 14px; }
+  .payment-mobile__summary-toggle { position: fixed; top: calc(27vh + 13px); left: 0; z-index: 41; display: grid; place-items: center; width: 51px; height: 45px; padding: 0; border: 0; border-radius: 0 26px 26px 0; background: #213d8b; color: #fff; font-size: 34px !important; line-height: 1; cursor: pointer; }
+  .payment-mobile__summary-toggle.is-open { left: calc(100% - 77px); border-radius: 26px 0 0 26px; }
+  :is(.payments__content, .collections__content) { display: flex; flex-direction: column; gap: 0; padding: 12px 10px 10px; border: 2px solid #e3edf5; border-radius: 10px; background: #fff; box-shadow: 0 1px 5px #17235e14; }
+  :is(.payments__detail, .collections__detail) { display: contents; }
+  :is(.payments__detail-heading, .collections__detail-heading) { order: 0; display: flex; flex-wrap: nowrap; gap: 16px; margin: 0 6px 7px; }
+  :is(.payments__detail-heading h1, .collections__detail-heading h2) { font-size: 27px; white-space: nowrap; }
+  :is(.payments__detail-heading, .collections__detail-heading) .payments__status,
+  .collections__detail-heading .collections__status { padding: 0 17px; }
+  :is(.payments__receipt-column, .collections__receipt-column) { order: 1; width: 100%; max-width: none; margin: 0; padding: 12px 22px 14px; border-radius: 9px; background: #f8f9fa; }
+  .payment-mobile__open-receipt { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 47px; border: 1px solid #555; border-radius: 6px; background: #f7f7f7; color: #262626; font-size: 14px !important; font-weight: 700 !important; cursor: pointer; }
+  .payment-mobile__open-receipt img { width: 24px; height: 24px; }
+  :is(.payments__receipt-frame, .collections__receipt-frame) { display: none; }
+  :is(.payments__receipt-frame, .collections__receipt-frame).is-open { position: fixed; z-index: 61; inset: 65px 15px 25px; display: flex; height: auto; background: white; border-radius: 10px; box-shadow: 0 0 0 100vmax #0008; }
+  :is(.payments__uploaded, .collections__receipt-status) { margin: 10px 0 0; padding: 7px 12px; }
+  :is(.payments__facts, .collections__facts) { order: 2; margin: 18px -5px 0; padding: 0; }
+  :is(.payments__facts, .collections__facts) > div { grid-template-columns: 34px minmax(0, 1fr) auto; gap: 8px; min-height: 38px; }
+  :is(.payments__facts dt, .payments__facts dd, .collections__facts strong, .collections__facts b) { grid-column: auto; min-width: 0; margin: 0; font-size: 15px; }
+  :is(.payments__facts-total, .collections__facts-total) { margin-top: 20px; padding-top: 0; border: 0; }
+  :is(.payments__breakdown, .collections__breakdown) { position: static; order: 3; width: 100%; margin: 16px 0 0; padding: 0; border: 0; }
+  :is(.payments__breakdown, .collections__breakdown) h3 { margin: 0 0 15px; font-size: 18px; }
+  :is(.payments__breakdown, .collections__breakdown) > div { display: flex; justify-content: space-between; min-height: 30px; padding: 4px 7px; border: 0; font-size: 15px; font-weight: 600; }
+  :is(.payments__breakdown, .collections__breakdown) b { font-size: 16px; }
+  :is(.payments__admin-note, .collections__admin-note) { order: 4; min-height: 0; margin: 16px 0 0; }
+  :is(.payments__actions, .collections__download) { order: 5; margin-top: 20px; }
+  .payments__actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .payments__button { min-width: 0; gap: 8px; padding: 0 8px; font-size: 14px; }
+  .collections__download { width: 235px; margin-left: auto; }
+  :is(.payments__disclaimer, .collections__disclaimer) { order: 6; margin: 14px 3px 0; color: #657694; font-size: 13px; line-height: 1.3; text-align: left; }
+  :is(.payments__feedback, .collections__feedback) { order: 7; min-height: 0; margin: 0; }
+}
+
+@media (max-width: 370px) {
+  :is(.payments__detail-heading h1, .collections__detail-heading h2) { font-size: 22px; }
+  :is(.payments__detail-heading, .collections__detail-heading) { gap: 8px; margin-inline: 0; }
+  :is(.payments__facts dt, .payments__facts dd, .collections__facts strong, .collections__facts b) { font-size: 12px; }
+  :is(.payments__receipt-column, .collections__receipt-column) { padding-inline: 10px; }
+}

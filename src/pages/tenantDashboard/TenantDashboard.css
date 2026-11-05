@@ -491,26 +491,35 @@ body:has(#tenant-dashboard) .navbar__search {
   }
 
   #tenant-dashboard::before {
-    background-image: linear-gradient(90deg, rgb(255 255 255 / 95%), rgb(255 255 255 / 86%)), url("../../assets/fondoCasa.png");
+    z-index: 0;
+    background-image: linear-gradient(180deg, #fff, #ffffff20 40%, #f8f9fa 80%), url("../../assets/fondoCasa.png");
   }
 
   .tenant-dashboard__page {
-    width: calc(100% - 24px);
-    padding-top: 14px;
+    position: relative;
+    width: calc(100% - 20px);
+    padding-top: 16px;
+    padding-bottom: 16px;
   }
 
   .tenant-dashboard__intro {
     height: auto;
-    padding: 0 5px 18px;
+    min-height: 68px;
+    padding: 11px 16px;
+    border-radius: 12px;
+    background: linear-gradient(90deg, #edf5ffed, #edf5ff30), url("../../assets/fondoCasa.png") center 46% / cover;
   }
 
   .tenant-dashboard__intro h1 {
-    font-size: 27px;
+    color: #17235e;
+    font-size: 21px;
   }
 
   .tenant-dashboard__intro p {
-    margin-left: 0;
+    margin: 2px 0 0;
+    color: #17235e;
     font-size: 14px;
+    line-height: 1.2;
   }
 
   .tenant-dashboard__grid {
@@ -518,7 +527,7 @@ body:has(#tenant-dashboard) .navbar__search {
     min-height: 0;
     height: auto;
     flex-direction: column;
-    gap: 14px;
+    gap: 12px;
   }
 
   .tenant-dashboard__card {
@@ -526,29 +535,91 @@ body:has(#tenant-dashboard) .navbar__search {
   }
 
   .tenant-dashboard__status {
-    padding: 15px 18px 24px;
+    order: -2;
+    padding: 15px 8px 18px;
+  }
+
+  .tenant-dashboard__status-heading {
+    padding-inline: 15px;
   }
 
   .tenant-dashboard__status-content {
-    margin-top: 25px;
+    margin-top: 28px;
+    padding-inline: 30px 8px;
   }
 
   .tenant-dashboard__status h3 {
-    font-size: 19px;
+    margin-top: 9px;
+    font-size: 15px;
+    white-space: nowrap;
+  }
+
+  .tenant-dashboard__status h3 span {
+    padding-left: 7px;
+  }
+
+  .tenant-dashboard__progress {
+    margin-top: 17px;
+  }
+
+  .tenant-dashboard__progress span {
+    width: 50%;
   }
 
   .tenant-dashboard__contract-dates {
+    gap: 8px;
+    font-size: 15px;
+    white-space: nowrap;
+  }
+
+  .tenant-dashboard__status h4 {
+    margin: 10px 0 12px -20px;
+  }
+
+  .tenant-dashboard__payments {
+    width: calc(100% + 30px);
+    margin-left: -30px;
+    gap: 15px;
+  }
+
+  .tenant-dashboard__payment {
+    grid-template-columns: 68px minmax(0, 1fr) 46px;
+  }
+
+  .tenant-dashboard__payment strong {
+    color: #111b30;
     font-size: 14px;
   }
 
   .tenant-dashboard__reports {
-    min-height: 290px;
+    order: -1;
+    min-height: 420px;
+  }
+
+  .tenant-dashboard__reports-message {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 45px;
+    margin-top: 65px;
+  }
+
+  .tenant-dashboard__face {
+    margin-top: 0;
   }
 
   .tenant-dashboard__reports-button {
     padding-right: 20px;
     padding-left: 20px;
   }
+}
+
+@media (max-width: 370px) {
+  .tenant-dashboard__status-content { padding-inline: 12px; }
+  .tenant-dashboard__status h3 { white-space: normal; }
+  .tenant-dashboard__status h3 span { padding-left: 0; }
+  .tenant-dashboard__contract-dates { font-size: 13px; }
+  .tenant-dashboard__payments { width: 100%; margin-left: 0; }
+  .tenant-dashboard__status h4 { margin-left: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {

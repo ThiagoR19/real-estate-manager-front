@@ -1,6 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "wouter";
 import { Icon } from "../../components/home/HomeIcon";
+import kaikenLogo from "../../assets/icons/kaiken.svg";
+import filterIcon from "../../assets/icons/filter-solid-full.svg";
 import "./PublicProperties.css";
 
 const properties = [
@@ -18,8 +20,7 @@ const properties = [
 function Brand() {
   return (
     <Link href="/home" className="public-properties__brand" aria-label="Kaiken Propiedades, inicio">
-      <span className="public-properties__brand-mark" aria-hidden="true"><span /><span /></span>
-      <span className="public-properties__brand-copy"><strong>KAIKEN</strong><small>PROPIEDADES</small></span>
+      <img src={kaikenLogo} alt="Kaiken Propiedades" />
     </Link>
   );
 }
@@ -30,9 +31,9 @@ function PublicHeader({ operation, setOperation }) {
       <Brand />
       <nav className="public-properties__nav" aria-label="Navegación pública">
         <Link href="/home">Inicio</Link>
-        <Link className={operation === "buy" ? "is-active" : ""} href="/properties?filter=buy" onClick={() => setOperation("buy")}>Comprar</Link>
-        <Link className={operation === "rent" ? "is-active" : ""} href="/properties?filter=rent" onClick={() => setOperation("rent")}>Alquilar</Link>
-        <Link href="/home#nosotros">Nosotros</Link>
+        <Link className={operation === "buy" ? "is-active" : ""} href="/public-properties?filter=buy" onClick={() => setOperation("buy")}>Comprar</Link>
+        <Link className={operation === "rent" ? "is-active" : ""} href="/public-properties?filter=rent" onClick={() => setOperation("rent")}>Alquilar</Link>
+        <Link href="/about-us">Nosotros</Link>
         <Link href="/home#contacto">Contacto</Link>
       </nav>
       <div className="public-properties__header-actions">
@@ -47,7 +48,7 @@ function PublicHeader({ operation, setOperation }) {
   );
 }
 
-function FilterSidebar({ operation, setOperation }) {
+function FilterSidebar({ operation, setOperation, open, onClose }) {
   const [location, setLocation] = useState("");
   const [type, setType] = useState({ Casa: false, Departamento: false, Terreno: false });
   const [priceCurrency, setPriceCurrency] = useState("Pesos");
@@ -56,11 +57,12 @@ function FilterSidebar({ operation, setOperation }) {
   const toggleType = (name) => setType((current) => ({ ...current, [name]: !current[name] }));
 
   return (
-    <aside className="public-properties__filters" aria-label="Filtros de propiedades">
+    <aside id="public-property-filters" className={`public-properties__filters${open ? " is-open" : ""}`} role={open ? "dialog" : undefined} aria-modal={open || undefined} aria-label="Filtros de propiedades">
+      <button className="public-properties__filter-handle" type="button" aria-label="Cerrar filtros" onClick={onClose}><span /></button>
       <h2>Operación</h2>
       <div className="public-properties__operation-toggle" role="tablist" aria-label="Tipo de operación">
-        <Link className={operation === "buy" ? "is-active" : ""} href="/properties?filter=buy" role="tab" aria-selected={operation === "buy"} onClick={() => setOperation("buy")}>Venta</Link>
-        <Link className={operation === "rent" ? "is-active" : ""} href="/properties?filter=rent" role="tab" aria-selected={operation === "rent"} onClick={() => setOperation("rent")}>Alquiler</Link>
+        <Link className={operation === "buy" ? "is-active" : ""} href="/public-properties?filter=buy" role="tab" aria-selected={operation === "buy"} onClick={() => setOperation("buy")}>Venta</Link>
+        <Link className={operation === "rent" ? "is-active" : ""} href="/public-properties?filter=rent" role="tab" aria-selected={operation === "rent"} onClick={() => setOperation("rent")}>Alquiler</Link>
       </div>
 
       <label className="public-properties__field-label" htmlFor="public-location">Ubicación</label>
@@ -98,7 +100,7 @@ function FilterSidebar({ operation, setOperation }) {
         </div>
       </fieldset>
 
-      <button className="public-properties__apply" type="button">Aplicar filtros</button>
+      <button className="public-properties__apply" type="button" onClick={onClose}>Aplicar filtros</button>
       <button className="public-properties__clear" type="button" onClick={() => { setLocation(""); setType({ Casa: false, Departamento: false, Terreno: false }); setPriceCurrency("Pesos"); setBedrooms("Todos"); }}>Limpiar filtros</button>
     </aside>
   );
@@ -117,7 +119,7 @@ function PropertyCard({ property }) {
           <span><Icon name="ruler" />{property.area} m²</span>
           <em>{property.operation === "buy" ? "Venta" : "Alquiler"}</em>
         </div>
-        <Link className="public-properties__details" href="/property"><Icon name="eye" />Ver detalle</Link>
+        <Link className="public-properties__details" href="/public-property"><Icon name="eye" />Ver detalle</Link>
       </div>
     </article>
   );
@@ -126,18 +128,33 @@ function PropertyCard({ property }) {
 export default function PublicProperties() {
   const queryFilter = new URLSearchParams(window.location.search).get("filter");
   const [operation, setOperation] = useState(queryFilter === "rent" ? "rent" : "buy");
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const visibleProperties = useMemo(() => properties.filter((property) => property.operation === operation), [operation]);
+
+  useEffect(() => {
+    if (!filtersOpen) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKeyDown = (event) => { if (event.key === "Escape") setFiltersOpen(false); };
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [filtersOpen]);
 
   return (
     <main className="public-properties">
       <PublicHeader operation={operation} setOperation={setOperation} />
       <div className="public-properties__breadcrumb"><Link href="/home">Inicio</Link><span>&gt;</span><strong>Propiedades</strong></div>
       <div className="public-properties__layout">
-        <FilterSidebar operation={operation} setOperation={setOperation} />
+        {filtersOpen && <button className="public-properties__filter-backdrop" aria-label="Cerrar filtros" type="button" onClick={() => setFiltersOpen(false)} />}
+        <FilterSidebar operation={operation} setOperation={setOperation} open={filtersOpen} onClose={() => setFiltersOpen(false)} />
         <section className="public-properties__results" aria-labelledby="public-properties-title">
           <div className="public-properties__results-heading">
             <div><h1 id="public-properties-title">Propiedades en {operation === "buy" ? "venta" : "alquiler"}</h1><span>{visibleProperties.length === 0 ? 0 : 142} propiedades encontradas</span></div>
             <label>Ordenar por:<select defaultValue="recommended"><option value="recommended">Recomendados</option><option value="price-low">Menor precio</option><option value="price-high">Mayor precio</option></select></label>
+            <button className="public-properties__filter-toggle" type="button" aria-label="Abrir filtros" aria-expanded={filtersOpen} aria-controls="public-property-filters" onClick={() => setFiltersOpen(true)}><img src={filterIcon} alt="" /></button>
           </div>
           <div className="public-properties__grid">
             {visibleProperties.map((property) => <PropertyCard key={property.id} property={property} />)}

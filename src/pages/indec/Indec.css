@@ -5,3 +5,19 @@
 .indec__feedback { position: fixed; right: 22px; bottom: 22px; margin: 0; padding: 13px 18px; border: 1px solid #c8dff3; border-radius: 10px; background: #fff; box-shadow: 0 4px 18px #17235e24; color: #17235e; font-size: 14px; }.indec__modal-backdrop { position: fixed; z-index: 60; inset: 0; display: grid; place-items: center; padding: 20px; background: #07183b7a; }.indec__modal { position: relative; display: grid; gap: 10px; width: min(100%, 430px); padding: 30px; border-radius: 16px; background: #fff; box-shadow: 0 16px 40px #061b4a45; }.indec__modal h2 { margin: 0; font-size: 25px; }.indec__modal p { margin: 0 0 12px; color: #7e8aa6; font-size: 14px; }.indec__modal label { display: grid; gap: 6px; color: #17235e; font-size: 13px; font-weight: 650; }.indec__modal input, .indec__modal select { height: 42px; padding: 0 12px; border: 1px solid #dbe6f1; border-radius: 9px; color: #17235e; outline: 0; background: #fff; }.indec__modal-close { position: absolute; top: 11px; right: 13px; width: 32px; height: 32px; border: 0; border-radius: 50%; background: transparent; color: #17235e; cursor: pointer; font-size: 25px; }.indec__save { width: 100%; height: 43px; margin-top: 12px; border: 0; border-radius: 9px; cursor: pointer; font-weight: 700; }
 @media (max-width: 720px) { #indec { padding: 14px; }.indec__topbar { grid-template-columns: 1fr; gap: 14px; }.indec__hero { min-height: 120px; padding: 18px; }.indec__hero h1 { font-size: 27px; }.indec__actions { grid-template-columns: 1fr 1fr; }.indec__table-head, .indec__row { padding: 0 7%; } }
 @media (max-width: 470px) { .indec__actions { grid-template-columns: 1fr; }.indec__table-head, .indec__row { padding: 0 20px; } }
+
+@media (max-width: 720px) {
+  #indec { padding: 14px 10px 24px; }
+  .indec__topbar { gap: 10px; margin-bottom: 10px; }
+  .indec__hero { min-height: 68px; padding: 12px 16px; border-radius: 11px; }
+  .indec__hero h1 { font-size: 20px; }
+  .indec__hero p { margin-top: 2px; font-size: 12px; }
+  .indec__actions { grid-template-columns: 1fr; gap: 10px; }
+  #indec .indec__new-button { order: -1; height: 41px; font-size: 14px; }
+  .indec__year { height: 43px; }
+  .indec__year img { filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%); }
+  .indec__year img:last-child { width: 22px; height: 22px; }
+  .indec__table-card { padding-bottom: 15px; border: 2px solid #f0f6fc; border-radius: 11px; box-shadow: none; }
+  .indec__table-head, .indec__row { padding: 0 8%; text-align: center; }
+  .indec__row b { text-align: center; }
+}

@@ -74,6 +74,7 @@ export default function Chat() {
 
   return (
     <main id="chat" className="chat-page">
+      <label className="chat__mobile-select"><span className="sr-only">Conversación</span><select value={selectedId} onChange={(event) => selectConversation(event.target.value)}>{conversations.map((conversation) => <option key={conversation.id} value={conversation.id}>{conversation.name}</option>)}</select></label>
       <div className="chat__layout">
         <aside className="chat__conversations" aria-label="Conversaciones">
           <h1>Conversaciones</h1>

@@ -44,23 +44,40 @@
 
 @media (max-width: 650px) {
   .visit-modal__summary {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 12px;
-    padding: 12px;
+    align-items: center;
+    flex-direction: row;
+    gap: 8px;
+    min-height: 54px;
+    padding: 5px 10px;
   }
 
   .visit-modal__date {
-    width: 100%;
+    width: 155px;
+    min-width: 0;
   }
+
+  .visit-modal__date .management-modal__input-wrap { padding-inline: 9px; }
+  .visit-modal__date input { font-size: 12px; }
 
   .visit-modal__fields {
     grid-template-columns: 1fr;
-    gap: 12px;
-    padding: 12px;
+    gap: 5px;
+    min-height: 250px;
+    align-content: start;
+    padding: 3px 36px 40px;
+  }
+
+  .visit-modal__fields > :last-child {
+    order: -1;
   }
 
   .visit-modal .management-modal__actions {
-    padding-top: 20px;
+    padding-top: 26px;
   }
+}
+
+@media (max-width: 370px) {
+  .visit-modal__fields { padding-inline: 15px; }
+  .visit-modal__summary .visit-modal__section-title { gap: 7px; font-size: 15px; }
+  .visit-modal__date { width: 140px; }
 }

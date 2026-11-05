@@ -64,6 +64,10 @@
     transform: translate(-50%, -50%);
 }
 
+@media (max-width: 760px) {
+    .ModalOverlay__contenido--centro { max-width: calc(100% - 16px); max-height: calc(100dvh - 24px); overflow-y: auto; }
+}
+
 @media (prefers-reduced-motion: reduce) {
 
     .ModalOverlay,

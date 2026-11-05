@@ -46,3 +46,8 @@ body {
   white-space: nowrap;
   border: 0;
 }
+
+@media (max-width: 760px) {
+  html { scrollbar-width: none; }
+  html::-webkit-scrollbar { display: none; }
+}

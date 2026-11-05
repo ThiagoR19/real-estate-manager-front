@@ -32,7 +32,7 @@ export default function ConfirmRegister() {
       <section className="confirm-register__card" aria-labelledby="confirm-register-title">
         <form className="confirm-register__form" onSubmit={handleSubmit}>
           <header className="confirm-register__header">
-            <h1 id="confirm-register-title">Está a 1 paso de crear su cuenta</h1>
+            <h1 id="confirm-register-title">Verificación</h1>
             <p>Ingrese el DNI que está como titular en el contrato para poder acceder a administrar del inmueble</p>
           </header>
 

@@ -108,12 +108,12 @@
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    padding: 230px 12px 0;
-    background: var(--casiBlanc);
+    padding: 50px 12px 40px;
+    background: #0b3f88;
   }
 
   .confirm-register__background {
-    height: 280px;
+    height: 100%;
     padding: 14px 12px;
     background-position: 70% 30%;
   }
@@ -124,35 +124,42 @@
 
   .confirm-register__card {
     width: 100%;
-    min-height: calc(100dvh - 230px);
+    min-height: 414px;
     margin: 0;
-    padding: 17px 16px 18px;
-    border-radius: 12px 12px 0 0;
+    padding: 8px 14px 38px;
+    border-radius: 11px;
     box-shadow: 0 -4px 20px rgb(15 23 42 / 8%);
   }
 
   .confirm-register__form {
+    flex: initial;
     padding: 0;
   }
 
   .confirm-register__header h1 {
-    font-size: 23px;
+    font-size: 28px;
   }
 
   .confirm-register__header p {
-    font-size: 12px;
+    font-size: 14px;
     text-align: left;
   }
 
   .confirm-register__field {
-    margin-top: 46px;
+    margin-top: 16px;
+  }
+
+  .confirm-register .TextField__input {
+    border-width: 2px;
+    border-radius: 8px;
   }
 
   .confirm-register__submit {
-    margin-top: 58px;
+    margin-top: 24px;
   }
 
   .confirm-register__footer {
-    line-height: 1.6;
+    margin-top: 30px;
+    line-height: 2;
   }
 }

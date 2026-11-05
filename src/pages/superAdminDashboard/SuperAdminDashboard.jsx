@@ -3,6 +3,7 @@ import brandLogo from "../../assets/logoAGI.png";
 import bannerImage from "../../assets/fondoCasa.png";
 import { plusIconWhite, trashCanIcon } from "../../assets/icons";
 import AgencyModal from "../../components/agency/AgencyModal";
+import { Header, Navbar } from "../../layouts";
 import "./SuperAdminDashboard.css";
 
 const initialAgencies = [
@@ -115,6 +116,7 @@ function AgencyCard({ agency, onToggle, onAddAdmin, onEdit, onRemoveAdmin, onRol
 export default function SuperAdminDashboard() {
   const [agencies, setAgencies] = useState(initialAgencies);
   const [modal, setModal] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const activeAgencyCount = 24 + Math.max(0, agencies.length - initialAgencies.length);
 
@@ -164,6 +166,11 @@ export default function SuperAdminDashboard() {
   }
 
   return (
+    <>
+    <div className="superadmin__mobile-navigation">
+      <Header menuOpen={menuOpen} onToggleMenu={() => setMenuOpen((open) => !open)} />
+      <Navbar menuOpen={menuOpen} onClose={() => setMenuOpen(false)} />
+    </div>
     <main id="superadmin-dashboard">
       <header className="superadmin__topbar">
         <div className="superadmin__brand">
@@ -195,8 +202,8 @@ export default function SuperAdminDashboard() {
             <div className="superadmin__hero" style={{ backgroundImage: `url(${bannerImage})` }}>
               <div className="superadmin__hero-overlay" />
               <div className="superadmin__hero-copy">
-                <h1>Gestion de inmobiliarias</h1>
-                <p>Administra la creacion de inmobiliarias, a sus usuarios, etc</p>
+                <h1><span className="superadmin__desktop-copy">Gestión de inmobiliarias</span><span className="superadmin__mobile-copy">¡Hola, Thiago!</span></h1>
+                <p><span className="superadmin__desktop-copy">Administra la creación de inmobiliarias, a sus usuarios, etc.</span><span className="superadmin__mobile-copy">Gestiona las inmobiliarias</span></p>
               </div>
             </div>
             <div className="superadmin__summary-column">
@@ -230,5 +237,6 @@ export default function SuperAdminDashboard() {
         />
       )}
     </main>
+    </>
   );
 }

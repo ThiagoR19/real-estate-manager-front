@@ -310,36 +310,55 @@ body:has(#owners) .navbar__search { display: none; }
 }
 
 @media (max-width: 560px) {
-  .owners__page { width: calc(100% - 20px); }
-  .owners__hero { padding: 17px 18px; border-radius: 15px; }
+  .owners__page { width: calc(100% - 20px); margin-top: 14px; }
+  .owners__overview { gap: 6px; }
+  .owners__hero { min-height: 68px; padding: 12px 16px; border-radius: 11px; }
   .owners__hero::after { opacity: 0.4; }
-  .owners__hero h1 { font-size: 26px; }
-  .owners__hero p { font-size: 14px; }
+  .owners__hero h1 { font-size: 20px; }
+  .owners__hero p { font-size: 12px; }
   .owners__summary { grid-template-columns: repeat(2, 1fr); }
-  .owners__toolbar { align-items: stretch; flex-direction: column; gap: 10px; }
+  .owners__toolbar { align-items: stretch; flex-direction: column; gap: 8px; margin: 10px 0 14px; }
   .owners__search,
   .owners__new-button { width: 100%; }
-  .owners__table-card { border-radius: 10px; }
+  .owners__search, .owners__new-button { height: 41px; }
+  .owners__new-button { font-size: 14px; }
+  .owners__table-card { overflow: visible; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
   .owners__table-card table,
   .owners__table-card thead,
   .owners__table-card tbody,
   .owners__table-card tr,
   .owners__table-card th,
   .owners__table-card td { display: block; }
-  .owners__table-card { padding: 0 13px; }
+  .owners__table-card { padding: 0; }
+  .owners__table-wrap { overflow: visible; }
   .owners__table-card thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   .owners__table-card table { min-width: 0; }
-  .owners__table-card tr { padding: 14px 0; border-bottom: 1px solid #eef2f6; }
-  .owners__table-card tbody tr:last-child { border-bottom: 0; }
+  .owners__table-card tr { margin-bottom: 6px; padding: 10px 17px; border: 2px solid #f0f6fc; border-radius: 11px; background: #fff; }
+  .owners__table-card tbody tr:last-child { border-bottom: 2px solid #f0f6fc; }
   .owners__table-card td,
   .owners__table-card th:first-child,
   .owners__table-card td:first-child,
   .owners__table-card th:last-child,
-  .owners__table-card td:last-child { position: relative; display: grid; grid-template-columns: 135px minmax(0, 1fr); align-items: center; width: 100%; height: auto; min-height: 42px; padding: 7px 0; border: 0; }
-  .owners__table-card td::before { color: #7e8aa6; content: attr(data-label); font-size: 11px; font-weight: 700; text-transform: uppercase; }
-  .owners__actions-cell { grid-template-columns: 135px minmax(0, 1fr) !important; text-align: left !important; }
+  .owners__table-card td:last-child { position: relative; display: grid; grid-template-columns: 104px minmax(0, 1fr); align-items: center; width: 100%; height: auto; min-height: 41px; padding: 7px 0; border: 0; }
+  .owners__table-card td::before { color: #142057; content: attr(data-label); font-size: 13px; font-weight: 500; }
+  .owners__table-card td:nth-child(2) { min-height: 58px; }
+  .owners__table-card td:nth-child(3) { min-height: 76px; }
+  .owners__actions-cell { grid-template-columns: 104px minmax(0, 1fr) !important; text-align: left !important; }
   .owners__person { gap: 9px; }
-  .owners__property-image { width: 52px; height: 44px; }
+  .owners__property { gap: 13px; }
+  .owners__property-image { width: 60px; height: 50px; }
+  .owners__contact { display: flex; }
+  .owners__contact span { gap: 14px; white-space: normal; overflow-wrap: anywhere; font-size: 12px; }
+  .owners__muted-value { white-space: normal; overflow-wrap: anywhere; }
+  .owners__status { width: 100%; height: 26px; }
+  .owners__property strong { white-space: normal; }
+}
+
+@media (max-width: 360px) {
+  .owners__table-card td, .owners__table-card td:first-child, .owners__table-card td:last-child { grid-template-columns: 90px minmax(0, 1fr); }
+  .owners__actions-cell { grid-template-columns: 90px minmax(0, 1fr) !important; }
+  .owners__property { gap: 8px; }
+  .owners__property-image { width: 46px; height: 44px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

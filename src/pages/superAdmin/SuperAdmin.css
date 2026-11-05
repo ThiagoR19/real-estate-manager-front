@@ -7,3 +7,36 @@
 .super-admin__feedback { position: fixed; right: 22px; bottom: 22px; margin: 0; padding: 13px 18px; border: 1px solid #c8dff3; border-radius: 10px; background: #fff; box-shadow: 0 4px 18px #17235e24; color: #17235e; font-size: 14px; }.super-admin__modal-backdrop { position: fixed; z-index: 60; inset: 0; display: grid; place-items: center; padding: 20px; background: #07183b7a; }.super-admin__modal { position: relative; display: grid; gap: 10px; width: min(100%, 470px); padding: 30px; border-radius: 16px; background: #fff; box-shadow: 0 16px 40px #061b4a45; }.super-admin__modal h2 { margin: 0; font-size: 25px; }.super-admin__modal p { margin: 0 0 12px; color: #7e8aa6; font-size: 14px; }.super-admin__modal label { display: grid; gap: 6px; color: #17235e; font-size: 13px; font-weight: 650; }.super-admin__modal input { height: 42px; padding: 0 12px; border: 1px solid #dbe6f1; border-radius: 9px; outline: 0; }.super-admin__modal-close { position: absolute; top: 11px; right: 13px; width: 32px; height: 32px; border: 0; border-radius: 50%; background: transparent; color: #17235e; cursor: pointer; font-size: 25px; }.super-admin__save { width: 100%; height: 43px; margin-top: 12px; border: 0; border-radius: 9px; cursor: pointer; font-weight: 700; }
 @media (max-width: 1000px) { #super-admin { grid-template-columns: 210px minmax(0, 1fr); }.super-admin__topbar { grid-template-columns: 1fr; }.super-admin__actions { grid-template-columns: 1fr 230px; }.super-admin__agency-list { margin-top: 25px; } }
 @media (max-width: 700px) { #super-admin { grid-template-columns: 1fr; }.super-admin__sidebar { padding: 12px 8px; border-right: 0; border-bottom: 1px solid #dce6ef; }.super-admin__workspace { padding: 14px; }.super-admin__hero { min-height: 120px; padding: 18px; }.super-admin__hero h1 { font-size: 27px; }.super-admin__actions { grid-template-columns: 1fr; }.super-admin__agency-list { margin-right: 0; margin-left: 0; }.super-admin__agency > header { gap: 10px; }.super-admin__agency h2 { font-size: 18px; }.super-admin__admins { padding-right: 14px; padding-left: 14px; }.super-admin__admin { width: 100%; } }
+
+.super-admin__agency-controls button.super-admin__add-admin { width: auto; padding: 0 12px; background: #2563eb; color: #fff; }
+.super-admin__agency-controls .super-admin__edit { width: 36px; padding: 0; background: #ff992b; }
+
+@media (max-width: 760px) {
+  #super-admin { display: block; }
+  .super-admin__sidebar { display: none; }
+  .super-admin__workspace { display: flex; flex-direction: column; padding: 16px 12px 24px; }
+  .super-admin__topbar { display: contents; }
+  .super-admin__hero { min-height: 68px; padding: 11px 16px; border-radius: 12px; }
+  .super-admin__hero h1 { font-size: 21px; }
+  .super-admin__hero p { font-size: 12px; }
+  .super-admin__actions { order: 2; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+  .super-admin__new { height: 44px; font-size: 12px; }
+  .super-admin__agency-list { margin: 17px 0 0; }
+  .super-admin__agency > header { position: relative; display: block; min-height: 91px; padding: 7px 10px 10px; }
+  .super-admin__agency h2 { font-size: 25px; text-align: center; }
+  .super-admin__agency-logo { position: absolute; left: 15px; bottom: 9px; width: 45px; height: 40px; }
+  .super-admin__agency-controls { justify-content: flex-end; gap: 9px; margin-top: 9px; }
+  .super-admin__agency-controls button { padding-inline: 10px; font-size: 12px; }
+  .super-admin__agency-controls .super-admin__add-admin { min-height: 35px; font-weight: 500; }
+  .super-admin__admins { justify-content: center; gap: 21px; padding: 12px 16px 30px; background: #fff; }
+  .super-admin__admin { flex: 0 1 278px; min-height: 178px; padding: 17px 16px; }
+  .super-admin__role-label { position: absolute; right: 17px; bottom: 57px; }
+}
+
+@media (max-width: 370px) {
+  .super-admin__agency-controls { gap: 6px; }
+  .super-admin__agency-logo { left: 9px; width: 34px; height: 34px; }
+  .super-admin__agency-controls button { padding-inline: 7px; font-size: 11px; }
+  .super-admin__agency-controls button.super-admin__add-admin { padding-inline: 7px; }
+  .super-admin__actions { grid-template-columns: 1fr; }
+}

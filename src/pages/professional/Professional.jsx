@@ -3,8 +3,10 @@ import {
   envelopeIcon,
   peopleIcon,
   phoneIcon,
+  penIcon,
   plusIcon,
   starIcon,
+  trashCanIcon,
 } from "../../assets/icons";
 import DropdownSelect from "../../components/select/DropdownSelect";
 import ProfessionalModal from "../../components/professional/ProfessionalModal";
@@ -110,7 +112,7 @@ export default function Professional() {
       <section className="professional__top" aria-label="Encabezado y filtros de profesionales">
         <div className="professional__intro">
           <h1>Profesionales</h1>
-          <p>Gestiona la información de todos los inquilinos, sus contratos, pagos y estados.</p>
+          <p>Gestiona la información de todos los profesionales</p>
         </div>
 
         <div className="professional__toolbar">
@@ -154,7 +156,7 @@ export default function Professional() {
             <tbody>
               {visibleProfessionals.map((professional) => (
                 <tr key={professional.id}>
-                  <th scope="row">
+                  <th scope="row" data-label="Profesional">
                     <div className="professional__identity">
                       <span className="professional__avatar" aria-hidden="true">
                         {professional.name.split(" ").map((part) => part[0]).join("").slice(0, 2)}
@@ -165,20 +167,20 @@ export default function Professional() {
                       </span>
                     </div>
                   </th>
-                  <td>
+                  <td data-label="Contacto">
                     <span className="professional__contact">
                       <img src={envelopeIcon} alt="" />
                       <span>{professional.email}</span>
                     </span>
                   </td>
-                  <td>
+                  <td data-label="Teléfono">
                     <span className="professional__contact">
                       <img src={phoneIcon} alt="" />
                       <span>{professional.phone}</span>
                     </span>
                   </td>
-                  <td><Rating rating={professional.rating} reviews={professional.reviews} /></td>
-                  <td>
+                  <td data-label="Rating"><Rating rating={professional.rating} reviews={professional.reviews} /></td>
+                  <td data-label="Acciones">
                     <div className="professional__actions">
                       <Button
                         className="professional__rate"
@@ -192,6 +194,8 @@ export default function Professional() {
                         onEdit={() => editProfessional(professional)}
                         onDelete={() => setPendingDelete(professional)}
                       />
+                      <button className="professional__mobile-action professional__mobile-action--edit" type="button" aria-label={`Editar profesional: ${professional.name}`} onClick={() => editProfessional(professional)}><img src={penIcon} alt="" /></button>
+                      <button className="professional__mobile-action professional__mobile-action--delete" type="button" aria-label={`Eliminar profesional: ${professional.name}`} onClick={() => setPendingDelete(professional)}><img src={trashCanIcon} alt="" /></button>
                     </div>
                   </td>
                 </tr>

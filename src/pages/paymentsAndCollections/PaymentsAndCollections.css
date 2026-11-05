@@ -1,4 +1,10 @@
 #agent-payments { min-height: calc(100dvh - 61px); padding: 24px; background: #f7f9fc; color: #17235e; font-family: "Inter", "Segoe UI", Arial, sans-serif; }
+.agent-payments__people-toggle { display: none; }
+#agent-payments .agent-payments__decision { font-size: 12px; font-weight: 700; }
+.agent-payments__period { display: flex; gap: 4px; }
+.agent-payments__period > label { min-width: 0; flex: 1; }
+.agent-payments__period select { padding-inline: 2px; font-size: 11px; }
+.agent-payments__people h3 button { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; cursor: pointer; }
 #agent-payments, #agent-payments * { box-sizing: border-box; }
 #agent-payments button, #agent-payments input, #agent-payments select { font: inherit; }
 #agent-payments button:focus-visible, #agent-payments input:focus-visible, #agent-payments select:focus-visible { outline: 2px solid #2178c4; outline-offset: 3px; }
@@ -17,3 +23,43 @@
 @media (max-width: 1260px) { .agent-payments__record-header { grid-template-columns: 115px minmax(130px, 1fr) 85px 155px auto auto; gap: 8px; }.agent-payments__record-header h2 { font-size: 22px; }.agent-payments__record-grid { grid-template-columns: minmax(340px, 1fr) 245px; }.agent-payments__total { grid-column: 1 / -1; min-height: 190px; }.agent-payments__total strong { margin-top: 10px; } }
 @media (max-width: 850px) { #agent-payments { padding: 14px; }.agent-payments__layout { grid-template-columns: 1fr; margin: 14px -14px -14px; }.agent-payments__people { min-height: 0; border-right: 0; border-bottom: 1px solid #dce6ef; }.agent-payments__person { display: inline-grid; width: calc(50% - 2px); vertical-align: top; }.agent-payments__workspace { padding: 16px; }.agent-payments__record-header { grid-template-columns: 1fr 1fr; }.agent-payments__record-header h2 { grid-column: 1 / -1; }.agent-payments__record-header output { grid-column: 1 / -1; }.agent-payments__decision { width: 100%; }.agent-payments__record-grid { grid-template-columns: 1fr; }.agent-payments__total { grid-column: auto; } }
 @media (max-width: 540px) { .agent-payments__hero h1 { font-size: 26px; }.agent-payments__hero p { font-size: 13px; }.agent-payments__person { width: 100%; }.agent-payments__concept { grid-template-columns: 22px minmax(0, 1fr) 100px 20px; font-size: 13px; }.agent-payments__concept-actions .button { width: 100%; }.agent-payments__total { min-height: 250px; } }
+
+@media (max-width: 760px) {
+  #agent-payments { min-height: calc(100dvh - 40px); padding: 14px 10px 24px; }
+  .agent-payments__hero { min-height: 68px; padding: 10px 16px; border-radius: 12px; }
+  .agent-payments__hero h1 { font-size: 28px; }
+  .agent-payments__hero p { font-size: 12px; line-height: 1.2; }
+  .agent-payments__layout { display: block; margin: 14px 0 0; border: 0; background: transparent; }
+  .agent-payments__people { display: none; }
+  .agent-payments__people.is-open { display: block; position: fixed; z-index: 50; inset: 105px 26px auto 0; min-height: min(590px, calc(100dvh - 130px)); max-height: calc(100dvh - 130px); padding: 10px 15px; overflow-y: auto; border: 1px solid #e3edf5; border-radius: 0 9px 9px 0; box-shadow: 0 12px 40px #17235e40; }
+  .agent-payments__people-toggle { position: fixed; z-index: 51; top: 140px; left: 0; display: grid; place-items: center; width: 26px; height: 40px; border: 0; border-radius: 0 20px 20px 0; background: #213d8b; color: white; font-size: 24px !important; cursor: pointer; }
+  .agent-payments__person { padding-inline: 12px; }
+  .agent-payments__workspace { padding: 0; }
+  .agent-payments__record-header { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px 5px; padding: 12px; border: 1px solid #e3edf5; border-radius: 9px; background: white; box-shadow: 0 1px 4px #17235e18; }
+  .agent-payments__record-header h2 { grid-column: 1; grid-row: 1; font-size: clamp(18px, 5.5vw, 25px); white-space: nowrap; }
+  .agent-payments__period { grid-column: 2; grid-row: 1; }
+  #agent-payments .agent-payments__period select { height: 29px; padding-inline: 2px; font-size: 12px; }
+  .agent-payments__rent { grid-column: 1; grid-row: 2; font-size: 20px; }
+  .agent-payments__record-header output { grid-column: 2; grid-row: 2; }
+  #agent-payments .agent-payments__decision { margin-top: 14px; padding: 0 5px; white-space: normal; font-size: 11px; }
+  .agent-payments__record-grid { grid-template-columns: 1fr; gap: 14px; margin-top: 14px; }
+  .agent-payments__property-card { padding: 15px 13px; }
+  .agent-payments__property-copy h3 { font-size: 26px; }
+  .agent-payments__concepts { margin-top: 17px; }
+  .agent-payments__concept { grid-template-columns: 20px minmax(0, 1fr) minmax(95px, 1.2fr) 20px; gap: 7px; font-size: 15px; }
+  .agent-payments__concept-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 17px; }
+  #agent-payments .agent-payments__concept-actions .button { min-height: 35px; padding: 0 5px; font-size: 13px; }
+  .agent-payments__receipt { width: min(320px, 100%); justify-self: center; }
+  .agent-payments__total { min-height: 0; }
+}
+
+@media (min-width: 761px) and (max-width: 1260px) {
+  .agent-payments__record-header { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .agent-payments__record-header h2 { grid-column: 1; grid-row: 1; }
+  .agent-payments__period { grid-column: 2; grid-row: 1; }
+}
+
+@media (min-width: 761px) and (max-width: 1100px) {
+  .agent-payments__record-grid { grid-template-columns: minmax(0, 1fr); }
+  .agent-payments__total { grid-column: auto; }
+}

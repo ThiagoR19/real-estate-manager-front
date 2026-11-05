@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { xIcon as closeIcon } from "../../assets/icons";
 import brandLogo from "../../assets/logoAGI.png";
-import { isItemActive, primaryItems, secondaryItems } from "../navigation";
+import { accountRoleFor, allItems, isItemActive, primaryItems, secondaryItems } from "../navigation";
 import "./Navbar.css";
 
 function NavigationItem({ item, pathname, onNavigate }) {
@@ -18,6 +18,19 @@ function NavigationItem({ item, pathname, onNavigate }) {
 
 export default function Navbar({ menuOpen = false, onClose = () => { } }) {
   const [pathname] = useLocation();
+  const role = accountRoleFor(pathname);
+  const mobilePaths = role === "Propietario"
+    ? ["/owner-dashboard", "/my-properties", "/collections", "/reports-agent", "/chat"]
+    : role === "Inquilino"
+      ? ["/tenant-dashboard", "/payments", "/reports", "/chat"]
+      : role === "Super admin"
+        ? ["/super-admin"]
+        : [role === "Agente" ? "/agent-dashboard" : "/dashboard", "/owners", "/tenant", "/professional", "/schedule", "/chat", "/properties", "/reports-agent"];
+  const mobilePrimary = mobilePaths.map((href) => {
+    const item = allItems.find((entry) => entry.href === href) ?? allItems.find((entry) => entry.href === "/reports-agent");
+    return { ...item, href, label: href.endsWith("dashboard") ? "Dashboard" : item.label };
+  });
+  const mobileSecondary = secondaryItems.filter(({ href }) => ["/profile", "/terms", ...(["Agente", "Administrador"].includes(role) ? ["/agents", "/agency"] : [])].includes(href));
 
   useEffect(() => {
     if (!menuOpen) return undefined;
@@ -51,7 +64,7 @@ export default function Navbar({ menuOpen = false, onClose = () => { } }) {
           </button>
         </div>
 
-        <nav className="navbar__drawer-nav">
+        <nav className="navbar__drawer-nav navbar__drawer-nav--desktop">
           {primaryItems.map((item) => (
             <NavigationItem key={item.href} item={item} pathname={pathname} onNavigate={onClose} />
           ))}
@@ -60,6 +73,15 @@ export default function Navbar({ menuOpen = false, onClose = () => { } }) {
             <NavigationItem key={item.href} item={item} pathname={pathname} onNavigate={onClose} />
           ))}
         </nav>
+        <nav className="navbar__drawer-nav navbar__drawer-nav--mobile">
+          {mobilePrimary.map((item) => <NavigationItem key={item.href} item={item} pathname={pathname} onNavigate={onClose} />)}
+          <span className="navbar__drawer-divider" aria-hidden="true" />
+          {mobileSecondary.map((item) => <NavigationItem key={item.href} item={item} pathname={pathname} onNavigate={onClose} />)}
+        </nav>
+        <Link href="/profile" className="navbar__drawer-account" onClick={onClose}>
+          <span className="navbar__drawer-avatar" aria-hidden="true">JP</span>
+          <span><strong>Juan Pérez</strong><small>{accountRoleFor(pathname)}</small></span>
+        </Link>
       </aside>
     </>
   );

@@ -103,12 +103,12 @@
     .PropertySearch {
         --filtro-fuente: clamp(11px, 3.3vw, 14px);
 
-        padding: 8px clamp(8px, 9vw, 36px) 10px;
+        padding: 8px clamp(8px, 9vw, 36px) 6px;
     }
 
     .PropertySearch__pestanas {
         justify-content: center;
-        margin: 0 calc(-1 * clamp(8px, 9vw, 36px)) 10px;
+        margin: 0 calc(-1 * clamp(8px, 9vw, 36px)) 6px;
     }
 
     .PropertySearch__pestana,
@@ -123,7 +123,7 @@
 
     .PropertySearch__campos {
         grid-template-columns: 1fr 1fr;
-        gap: 9px 14px;
+        gap: 6px 14px;
     }
 
     .PropertySearch__boton {

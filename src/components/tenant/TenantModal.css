@@ -282,16 +282,18 @@
 
 @media (max-width: 650px) {
   .tenant-modal__overlay {
-    padding: 12px;
+    padding: 12px 8px;
+    overflow-y: auto;
+    background: rgb(0 0 0 / 50%);
   }
 
   .tenant-modal {
     max-height: calc(100dvh - 24px);
-    padding: 20px 15px 22px;
+    padding: 17px 11px 14px;
   }
 
   .tenant-modal__header h2 {
-    font-size: 25px;
+    font-size: 31px;
   }
 
   .tenant-modal__fields {
@@ -301,14 +303,27 @@
     padding-left: 11px;
   }
 
+  .tenant-modal__field:nth-child(-n+3) { order: 1; }
+  .tenant-modal__field:nth-child(4) { order: 6; }
+  .tenant-modal__field:nth-child(5) { order: 4; }
+  .tenant-modal__field:nth-child(6) { order: 7; }
+  .tenant-modal__field:nth-child(7) { order: 5; }
+  .tenant-modal__field:nth-child(8) { order: 8; }
+
   .tenant-modal__actions {
-    flex-direction: column-reverse;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 13px;
+    padding-top: 14px;
   }
 
-  .tenant-modal__actions button {
+  .tenant-modal .tenant-modal__actions button {
     width: 100%;
+    min-width: 0;
+    padding: 0 6px;
+    font-size: 14px;
   }
+  .tenant-modal__select-arrow { width: 22px; height: 22px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

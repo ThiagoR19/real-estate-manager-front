@@ -197,7 +197,10 @@
         display: flex;
         flex-direction: column;
         position: relative;
-        padding: 6px 12px clamp(6px, 6.6vh, 52px);
+        height: auto;
+        min-height: 100dvh;
+        overflow: visible;
+        padding: 6px 12px 134px;
         background-color: var(--casiBlanc);
     }
 
@@ -205,10 +208,10 @@
 
     .Registration__imagen {
         position: absolute;
-        top: calc(100% - clamp(60px, 28vh, 220px));
+        top: 0;
         left: 0;
         right: 0;
-        height: clamp(60px, 28vh, 220px);
+        height: 100%;
         padding: 0;
         background-position: right 30%;
     }
@@ -222,7 +225,8 @@
     .Registration__panel {
         position: relative;
         z-index: 1;
-        flex: 1;
+        flex: initial;
+        min-height: 646px;
         padding: clamp(4px, .8vh, 6px) 14px clamp(6px, 2.4vh, 18px);
         border-radius: 10px;
         background-color: var(--blanc);
@@ -259,9 +263,14 @@
 
     .Registration__campos {
         grid-template-columns: 1fr;
-        gap: clamp(4px, 2.6vh, 20px);
+        gap: clamp(8px, 1.5vh, 12px);
         margin-top: clamp(6px, 2.8vh, 22px);
         padding: 0;
+    }
+
+    .Registration .TextField__input {
+        border-width: 2px;
+        border-radius: 8px;
     }
 
     .Registration__boton {

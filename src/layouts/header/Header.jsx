@@ -1,23 +1,25 @@
+import { useState } from "react";
 import { Link, useLocation } from "wouter";
+import ModalOverlay from "../../components/modalOverlay/ModalOverlay";
+import NotificationPanel from "../../components/notificationPanel/NotificationPanel";
+import notifications from "../../data/notifications";
 import { barsIcon as menuIcon, bellIcon, magnifyingGlassIcon as searchIcon, xIcon as closeIcon, } from "../../assets/icons";
 import referenceImage from "../../assets/terms-reference.png";
 import brandLogo from "../../assets/logoAGI.png";
-import { allItems, isItemActive, pageLabels } from "../navigation";
+import { accountRoleFor, allItems, isItemActive, pageLabels } from "../navigation";
 import "./Header.css";
 
 export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
   const [pathname] = useLocation();
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const currentItem = allItems.find(({ href }) => isItemActive(pathname, href));
   const isPayments = pathname === "/payments" || pathname.startsWith("/payments/");
   const isProperties = pathname === "/properties" || pathname.startsWith("/properties/") || pathname === "/property" || pathname.startsWith("/property/");
-  const isTenantDashboard = pathname === "/tenant-dashboard";
   const isOwnerDashboard = pathname === "/owner-dashboard" || pathname === "/my-properties" || pathname === "/collections";
   const isAdminDashboard = pathname === "/admin-dashboard" || pathname === "/super-admin" || pathname === "/indec";
   const isChat = pathname === "/chat";
-  const isTenantContext = isPayments || isTenantDashboard;
-  const isSuperAdmin = pathname === "/super-admin";
-  const accountRole = isSuperAdmin ? "Super admin" : isAdminDashboard || isChat ? "Administrador" : isOwnerDashboard ? "Propietario" : isTenantContext ? "Inquilino" : "Agente";
-  const currentLabel = isChat ? "Perfil" : isPayments ? "Pagos" : currentItem?.breadcrumbLabel ?? currentItem?.label ?? pageLabels[pathname] ?? "Dashboard";
+  const accountRole = accountRoleFor(pathname);
+  const currentLabel = isPayments ? "Zona de pago" : currentItem?.breadcrumbLabel ?? currentItem?.label ?? pageLabels[pathname] ?? "Dashboard";
   const searchPlaceholder = isProperties ? "Buscar propiedades..." : "Buscar contacto...";
   const showSearch = isProperties || pathname === "/professional";
 
@@ -37,6 +39,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
       <Link href="/dashboard" className="navbar__brand" aria-label="AGI, inicio">
         <img className="navbar__brand-icon" src={brandLogo} alt="" />
         <strong>AGI</strong>
+        <small className="navbar__brand-caption">Propiedades</small>
       </Link>
 
       <nav className="navbar__breadcrumb" aria-label="Ubicación actual">
@@ -50,12 +53,11 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
       </label>}
 
       <aside className="navbar__account" aria-label="Cuenta de usuario">
-        <details className="navbar__notifications">
-          <summary aria-label="Notificationes">
+        <div className="navbar__notifications">
+          <button type="button" aria-label="Notificaciones" onClick={() => setNotificationsOpen(true)}>
             <img src={bellIcon} alt="" />
-          </summary>
-          <p>No tenés notificaciones nuevas.</p>
-        </details>
+          </button>
+        </div>
         <Link href="/profile" className="navbar__account-link">
           <span>
             Juan Pérez
@@ -68,6 +70,9 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
           />
         </Link>
       </aside>
+      <ModalOverlay abierto={notificationsOpen} onCerrar={() => setNotificationsOpen(false)} posicion="derecha" etiqueta="Notificaciones">
+        <NotificationPanel notificaciones={notifications} onCerrar={() => setNotificationsOpen(false)} />
+      </ModalOverlay>
     </header>
   );
 }

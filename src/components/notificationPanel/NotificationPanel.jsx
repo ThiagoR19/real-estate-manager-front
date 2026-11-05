@@ -48,7 +48,7 @@ export default function NotificationPanel({ notificaciones: iniciales = [], onCe
             <header className='NotificationPanel__encabezado'>
                 <h2 className='NotificationPanel__titulo' id="notificaciones-titulo">
                     <span className='NotificationPanel__campana'><img src={campanaIcono} alt="" /></span>
-                    Notificationes
+                    Notificaciones
                 </h2>
 
                 <button type="button" className='NotificationPanel__cerrar' onClick={onCerrar} aria-label="Cerrar notificaciones">
@@ -57,7 +57,7 @@ export default function NotificationPanel({ notificaciones: iniciales = [], onCe
             </header>
 
             <button type="button" className='NotificationPanel__marcar' onClick={marcarTodas}>
-                Brandr todo como leído
+                Marcar todo como leído
             </button>
 
             <div className='NotificationPanel__filtros' role="group" aria-label="Filtrar notificaciones">

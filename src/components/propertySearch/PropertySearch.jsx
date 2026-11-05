@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, useState } from 'react';
+import { useLocation } from 'wouter';
 
 import './PropertySearch.css';
 
@@ -22,6 +23,7 @@ const filtrosDe = (operacion) => [
 ];
 
 export default function PropertySearch({ className = "" }) {
+    const [, navegar] = useLocation();
     const [operacion, setOperacion] = useState(operaciones[0]);
     const [direccion, setDireccion] = useState("derecha");
     // null hasta la primera medición: así no se anima desde 0 al cargar
@@ -54,6 +56,7 @@ export default function PropertySearch({ className = "" }) {
 
     const buscar = (e) => {
         e.preventDefault();
+        navegar(`/public-properties?filter=${operacion === "Alquilar" ? "rent" : "buy"}`);
     };
 
     return (

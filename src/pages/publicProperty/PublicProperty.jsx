@@ -12,6 +12,7 @@ import {
 } from "../../assets/icons";
 import { Icon } from "../../components/home/HomeIcon";
 import propertyImage from "../../assets/fondoCasa.png";
+import kaikenLogo from "../../assets/icons/kaiken.svg";
 import "./PublicProperty.css";
 
 const galleryImages = [
@@ -37,8 +38,7 @@ const stats = [
 function Brand() {
   return (
     <Link href="/home" className="public-property__brand" aria-label="Kaiken Propiedades, inicio">
-      <span className="public-property__brand-mark" aria-hidden="true"><span /><span /></span>
-      <span className="public-property__brand-copy"><strong>KAIKEN</strong><small>PROPIEDADES</small></span>
+      <img src={kaikenLogo} alt="Kaiken Propiedades" />
     </Link>
   );
 }
@@ -49,9 +49,9 @@ function PublicHeader() {
       <Brand />
       <nav className="public-property__nav" aria-label="Navegación pública">
         <Link href="/home">Inicio</Link>
-        <Link className="is-active" href="/properties?filter=buy">Comprar</Link>
-        <Link href="/properties?filter=rent">Alquilar</Link>
-        <Link href="/home#nosotros">Nosotros</Link>
+        <Link className="is-active" href="/public-properties?filter=buy">Comprar</Link>
+        <Link href="/public-properties?filter=rent">Alquilar</Link>
+        <Link href="/about-us">Nosotros</Link>
         <Link href="/home#contacto">Contacto</Link>
       </nav>
       <div className="public-property__header-actions">
@@ -127,7 +127,9 @@ export default function PublicProperty() {
           <section className="public-property__info-card" aria-labelledby="public-property-description">
             <div className="public-property__info-heading">
               <strong>USD 10.00</strong>
+              <small>Casa · Alquiler</small>
               <button type="button" onClick={contactAgent}>Alquiler / Venta</button>
+              <button className="public-property__mobile-contact" type="button" onClick={contactAgent}><span aria-hidden="true">◔</span> Contactar</button>
             </div>
             <h2 id="public-property-description">Descripción</h2>
             <p className="public-property__description">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using &quot;Content here, content here&quot;, making it look like</p>

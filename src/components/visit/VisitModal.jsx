@@ -47,7 +47,7 @@ export default function VisitModal({ visit, defaultDate, onClose, onSubmit }) {
             </ModalField>
           </div>
         </div>
-        <ModalActions onClose={onClose} submitText={editing ? "Modificar" : "Crear"} />
+        <ModalActions onClose={onClose} submitText={editing ? "Modificar" : "Guardar cambios"} />
       </form>
     </ManagementModal>
   );

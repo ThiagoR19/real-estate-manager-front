@@ -65,6 +65,7 @@ export default function PersonModal({ kind, mode, person, onClose, onSubmit }) {
       onClose={onClose}
       title={`${isEditing ? "Editar" : "Crear"} ${noun}`}
       subtitle={`Actualiza la información principal del ${noun}`}
+      variant={isOwner ? "person-owner" : "person-agent"}
     >
       <form onSubmit={submit}>
         <div className="management-modal__card">
