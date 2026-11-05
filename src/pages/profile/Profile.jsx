@@ -1,16 +1,5 @@
 import { useState } from "react";
-import {
-  addressCardIcon,
-  cameraIcon,
-  checkIcon,
-  envelopeIcon,
-  eyeIcon,
-  eyeSlashIcon,
-  locationDotIcon,
-  lockIcon,
-  phoneIcon,
-  userIcon,
-} from "../../assets/icons";
+import { addressCardIcon, cameraIcon, checkIcon, envelopeIcon, eyeIcon, eyeSlashIcon, locationDotIcon, lockIcon, phoneIcon, userIcon, } from "../../assets/icons";
 import "./Profile.css";
 import Button from "../../components/button/Button";
 
