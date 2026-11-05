@@ -130,56 +130,57 @@ body:has(#agent-dashboard) .navbar__search { display: none; }
 
 @media (max-width: 760px) {
   #agent-dashboard { overflow: visible; }
-  #agent-dashboard::before { z-index: 0; background-image: linear-gradient(180deg, #fff 30%, #ffffff20 40%, #f8f9fa 80%), url("../../assets/fondoCasa.png"); }
-  .agent-dashboard__page { position: relative; width: calc(100% - 20px); padding-top: 14px; padding-bottom: 14px; }
-  .agent-dashboard__intro { align-items: center; height: auto; min-height: 68px; gap: 8px; margin-bottom: 12px; padding: 11px 16px; border-radius: 12px; background: linear-gradient(90deg, #edf5ffed, #edf5ff30), url("../../assets/fondoCasa.png") center 46% / cover; }
-  .agent-dashboard__intro h1 { color: #17235e; font-size: 21px; }
-  .agent-dashboard__intro { position: relative; }
-  .agent-dashboard__intro p { margin: 2px 0 0; color: #17235e; font-size: 11px; }
-  .agent-dashboard__schedule-button { position: absolute; top: 8px; right: 14px; width: 28px; height: 28px; margin-top: 0; font-size: 0; }
-  .agent-dashboard__schedule-button img { width: 15px; height: 15px; }
-  .agent-dashboard__grid { display: flex; min-height: 0; height: auto; flex-direction: column; gap: 18px; }
+  #agent-dashboard::before { background-image: linear-gradient(90deg, rgb(255 255 255 / 95%), rgb(255 255 255 / 86%)), url("../../assets/fondoCasa.png"); }
+  .agent-dashboard__page { width: calc(100% - 24px); padding-top: 14px; }
+  .agent-dashboard__intro { height: auto; flex-direction: column; gap: 16px; padding: 0 5px 18px; }
+  .agent-dashboard__intro h1 { font-size: 27px; }
+  .agent-dashboard__intro p { margin-left: 0; font-size: 14px; }
+  .agent-dashboard__schedule-button { width: 100%; margin-top: 0; }
+  .agent-dashboard__grid { display: flex; min-height: 0; height: auto; flex-direction: column; gap: 14px; }
   .agent-dashboard__card { min-height: 0; }
-  .agent-dashboard__agenda-card { min-height: 512px; padding: 16px 14px 10px; }
-  .agent-dashboard__agenda-item { min-height: 70px; grid-template-columns: 45px 27px 42px minmax(0, 1fr); }
-  .agent-dashboard__agenda-list::before { left: 53px; }
-  .agent-dashboard__agenda-card .agent-dashboard__section-heading > img { margin-right: 10px; }
-  .agent-dashboard__agenda-card .agent-dashboard__section-heading time { font-size: 10px; }
-  .agent-dashboard__performance-card { order: -1; min-height: 402px; margin-inline: -10px; padding: 8px 10px 13px; }
-  .agent-dashboard__performance-heading { position: relative; min-height: 48px; gap: 0; }
-  .agent-dashboard__performance-heading > img { width: 20px; height: 20px; margin-right: 4px; }
-  .agent-dashboard__performance-heading p { font-size: 11px; white-space: normal; }
-  .agent-dashboard__performance-period { display: none; }
-  .agent-dashboard__period-select { position: absolute; right: 0; bottom: -12px; z-index: 1; }
-  .agent-dashboard__period-select select { width: 112px; }
-  .agent-dashboard__chart-wrap { grid-template-columns: 14px minmax(0, 1fr); grid-template-rows: 180px 26px; margin-top: 5px; }
-  .agent-dashboard__chart { height: 180px; }
-  .agent-dashboard__chart-x-labels span { max-width: 24px; text-align: center; }
-  .agent-dashboard__chart-legend { justify-content: center; gap: 14px; font-size: 10px; }
-  .agent-dashboard__stats { grid-template-columns: repeat(2, minmax(0, 140px)); justify-content: center; gap: 20px 24px; margin-top: 10px; }
-  .agent-dashboard__stat { position: relative; height: 40px; padding: 0; background: #f7f8fa; }
-  .agent-dashboard__stat-icon { width: 37px; height: 37px; margin-right: 5px; }
-  .agent-dashboard__stat-copy { flex-direction: row; align-items: baseline; gap: 4px; padding-bottom: 13px; }
-  .agent-dashboard__stat-change { position: absolute; bottom: 4px; left: 59px; margin: 0; font-size: 11px; }
-  .agent-dashboard__reports-card { min-height: 366px; }
-  .agent-dashboard__reports-card .agent-dashboard__section-heading > img { margin-right: 10px; }
-  .agent-dashboard__reports-card .agent-dashboard__section-heading h2 { font-size: 15px; }
-  .agent-dashboard__pending { padding: 5px 8px; font-size: 11px; }
-  .agent-dashboard__report-item { position: relative; grid-template-columns: 60px minmax(0, 1fr) 9px; min-height: 78px; gap: 14px; }
-  .agent-dashboard__report-item > img { width: 60px; height: 60px; }
-  .agent-dashboard__report-item > small { position: absolute; top: 8px; right: 32px; display: block; padding: 0; }
-  .agent-dashboard__report-copy strong { max-width: calc(100% - 65px); }
-  .agent-dashboard__report-copy { gap: 7px; }
+  .agent-dashboard__agenda-card { min-height: 468px; }
+  .agent-dashboard__performance-card { min-height: 430px; padding: 15px 12px; }
+  .agent-dashboard__performance-heading p { white-space: normal; }
+  .agent-dashboard__period-select select { width: 96px; }
+  .agent-dashboard__chart-legend { flex-wrap: wrap; gap: 10px 14px; }
+  .agent-dashboard__stats { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 18px; }
+  .agent-dashboard__reports-card { min-height: 380px; }
+  .agent-dashboard__report-item { grid-template-columns: 62px minmax(0, 1fr) 9px; }
+  .agent-dashboard__report-item > small { display: none; }
   .agent-dashboard__activity-card { min-height: 240px; }
   .agent-dashboard__activity-grid { grid-template-columns: 1fr; grid-auto-rows: 42px; }
 }
 
-@media (max-width: 370px) {
-  .agent-dashboard__agenda-card .agent-dashboard__section-heading { flex-wrap: wrap; row-gap: 6px; }
-  .agent-dashboard__agenda-card .agent-dashboard__section-heading time { margin-left: 32px; }
-  .agent-dashboard__reports-card { padding-inline: 10px; }
-  .agent-dashboard__reports-card .agent-dashboard__section-heading { flex-wrap: wrap; }
-  .agent-dashboard__chart-legend { gap: 7px; font-size: 9px; }
+/* Match the mobile dashboard composition: chart, agenda, reports. */
+#agent-dashboard::before {
+  background-image: none;
+}
+
+.agent-dashboard__intro {
+  min-height: 100px;
+  height: auto;
+  padding: 16px 24px;
+  border-radius: 20px;
+  background:
+    linear-gradient(90deg, rgb(255 255 255 / 98%) 0%, rgb(255 255 255 / 88%) 42%, rgb(255 255 255 / 20%) 100%),
+    url("../../assets/fondoCasa.png") center / cover no-repeat;
+}
+
+@media (max-width: 760px) {
+  .agent-dashboard__intro {
+    min-height: 112px;
+    padding: 18px;
+    background:
+      linear-gradient(90deg, rgb(255 255 255 / 97%) 0%, rgb(255 255 255 / 88%) 52%, rgb(255 255 255 / 25%) 100%),
+      url("../../assets/fondoCasa.png") center / cover no-repeat;
+  }
+
+  .agent-dashboard__grid .agent-dashboard__performance-card { order: 1; }
+  .agent-dashboard__grid .agent-dashboard__agenda-card { order: 2; }
+  .agent-dashboard__grid .agent-dashboard__reports-card { order: 3; }
+  .agent-dashboard__grid .agent-dashboard__activity-card {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) { #agent-dashboard * { scroll-behavior: auto; } }

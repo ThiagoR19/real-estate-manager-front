@@ -46,6 +46,8 @@ function YearButton({ year, expanded, onClick }) {
 
 export default function Payments() {
   const [openYears, setOpenYears] = useState({ 2024: true });
+  const [timelineOpen, setTimelineOpen] = useState(false);
+  const [summaryOpen, setSummaryOpen] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState("Febrero");
   const [uploadedFile, setUploadedFile] = useState(null);
   const [feedback, setFeedback] = useState("");
@@ -75,10 +77,18 @@ export default function Payments() {
     <main id="payments">
       <aside className="payments__sidebar" aria-label="Propiedades y períodos">
         <h1>Propiedades</h1>
-        <Button className="payments__property-switcher" aria-label="Cambiar propiedad">
-          <span aria-hidden="true">‹</span><strong>Bielke 454</strong><span aria-hidden="true">›</span>
-        </Button>
-        <div className="payments__years">
+        <div className="payments__property-row">
+          <label className="payments__property-switcher">
+            <span className="sr-only">Seleccionar propiedad</span>
+            <select defaultValue="Bielke 454">
+              <option>Bielke 454</option>
+              <option>Casa de San Isidro</option>
+              <option>Belgrano 123</option>
+            </select>
+          </label>
+          <button className="payments__timeline-toggle" type="button" onClick={() => setTimelineOpen((open) => !open)} aria-expanded={timelineOpen} aria-label="Mostrar cronología"><span aria-hidden="true">☷</span></button>
+        </div>
+        <div className={`payments__years${timelineOpen ? " is-open" : ""}`}>
           <section className="payments__year">
             <YearButton year="2026" expanded={Boolean(openYears[2026])} onClick={() => toggleYear(2026)} />
             {openYears[2026] && <p className="payments__year-empty">No hay períodos disponibles</p>}
@@ -101,7 +111,10 @@ export default function Payments() {
       </aside>
 
       <section className="payments__workspace">
-        <section className="payments__summary" aria-label="Resumen de pagos">
+        <button className="payments__summary-toggle" type="button" onClick={() => setSummaryOpen((open) => !open)} aria-expanded={summaryOpen}>
+          <span aria-hidden="true">‹</span>
+        </button>
+        <section className={`payments__summary${summaryOpen ? " is-open" : ""}`} aria-label="Resumen de pagos">
           <article className="payments__summary-card payments__summary-card--blue"><span className="payments__metric-icon"><Icon src={fileLinesIcon} /></span><strong>Comprobantes enviados</strong><b>5/9</b></article>
           <article className="payments__summary-card payments__summary-card--green"><span className="payments__metric-icon"><Icon src={checkIcon} /></span><strong>Pagos aprobados</strong><b>5/9</b></article>
           <article className="payments__summary-card payments__summary-card--red"><span className="payments__metric-icon"><Icon src={xIcon} /></span><strong>Pagos rechazados</strong><b>5/9</b></article>

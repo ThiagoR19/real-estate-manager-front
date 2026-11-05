@@ -55,3 +55,185 @@
 @media (max-width: 1100px) { #collections { grid-template-columns: 280px minmax(0, 1fr); } .collections__workspace { padding: 20px; } .collections__summary { gap: 14px; }.collections__content { grid-template-columns: 310px minmax(0, 1fr); }.collections__facts { padding-right: 230px; }.collections__breakdown { width: 215px; } }
 @media (max-width: 850px) { #collections { grid-template-columns: 1fr; }.collections__sidebar { border-right: 0; border-bottom: 1px solid #dae5ee; }.collections__years { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 14px; padding-bottom: 12px; }.collections__year { border-bottom: 0; }.collections__month { grid-template-columns: 1fr; gap: 4px; padding-left: 8px; }.collections__month .collections__status { width: max-content; } }
 @media (max-width: 650px) { .collections__workspace { padding: 14px; }.collections__summary { grid-template-columns: 1fr; margin: 0 0 20px; }.collections__content { grid-template-columns: 1fr; }.collections__receipt-column { max-width: 369px; margin: 0 auto; padding-left: 0; }.collections__receipt-status { margin-left: 0; }.collections__detail-heading { flex-wrap: wrap; gap: 10px; }.collections__detail-heading h2 { font-size: 24px; }.collections__facts { padding-right: 0; }.collections__facts > div { grid-template-columns: 34px minmax(0, 1fr); }.collections__facts b { grid-column: 2; }.collections__breakdown { position: static; width: auto; margin-top: 20px; padding: 15px 0 0; border-top: 1px solid #17235e; border-left: 0; }.collections__download { width: 100%; }.collections__feedback { text-align: left; } }
+
+.collections__property-row {
+  display: flex;
+  align-items: center;
+}
+
+.collections__property-select {
+  position: relative;
+  min-width: 0;
+  flex: 1;
+}
+
+.collections__property-select::after {
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  width: 9px;
+  height: 9px;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  pointer-events: none;
+  content: "";
+  transform: translateY(-65%) rotate(45deg);
+}
+
+.collections__property-select select {
+  width: 100%;
+  height: 51px;
+  padding: 0 14px;
+  border: 0;
+  appearance: none;
+  background: #17235e;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 17px;
+}
+
+.collections__timeline-toggle {
+  display: none;
+  flex: 0 0 43px;
+  width: 43px;
+  height: 43px;
+  margin-left: 7px;
+  border: 1px solid #dce7f1;
+  border-radius: 10px;
+  background: #fff;
+  color: #17235e;
+  cursor: pointer;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.collections__summary-toggle {
+  display: none;
+}
+
+.collections__facts-total {
+  border-top: 0;
+}
+
+.collections__breakdown div {
+  border-bottom: 0;
+}
+
+@media (max-width: 650px) {
+  #collections {
+    border-top: 0;
+  }
+
+  .collections__sidebar h1 {
+    display: none;
+  }
+
+  .collections__sidebar {
+    padding: 13px 14px;
+  }
+
+  .collections__property-select select {
+    border: 2px solid #e3edf5;
+    border-radius: 10px;
+    background: #fff;
+    color: #17235e;
+    font-size: 16px;
+  }
+
+  .collections__property-select::after {
+    border-color: #17235e;
+  }
+
+  .collections__property-row {
+    gap: 0;
+  }
+
+  .collections__timeline-toggle {
+    display: block;
+  }
+
+  .collections__years {
+    display: none;
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: 12px 0 0;
+  }
+
+  .collections__years.is-open {
+    display: grid;
+  }
+
+  .collections__year {
+    border-bottom: 1px solid #d8d8d8;
+  }
+
+  .collections__month {
+    grid-template-columns: 125px minmax(0, 1fr);
+    gap: 8px;
+    padding-left: 18px;
+  }
+
+  .collections__month .collections__status {
+    width: auto;
+  }
+
+  .collections__workspace {
+    position: relative;
+  }
+
+  .collections__summary-toggle {
+    position: absolute;
+    z-index: 2;
+    top: 14px;
+    right: 0;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 12px 0 0 12px;
+    background: #223d91;
+    color: #fff;
+    cursor: pointer;
+    font-size: 30px;
+    line-height: 1;
+  }
+
+  .collections__summary-toggle[aria-expanded="true"] span {
+    transform: rotate(180deg);
+  }
+
+  .collections__summary {
+    display: none;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin: 0 0 18px;
+    padding-right: 38px;
+  }
+
+  .collections__summary.is-open {
+    display: grid;
+  }
+
+  .collections__summary-card {
+    min-height: 51px;
+  }
+
+  .collections__breakdown {
+    border-top: 0;
+  }
+}
+
+@media (max-width: 420px) {
+  .collections__month {
+    grid-template-columns: 105px minmax(0, 1fr);
+  }
+
+  .collections__month .collections__status {
+    padding-right: 6px;
+    padding-left: 6px;
+    font-size: 11px;
+  }
+}

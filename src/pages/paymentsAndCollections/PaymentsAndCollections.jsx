@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { checkIcon, fileLinesIcon, magnifyingGlassIcon, paperPlaneIcon, xIcon } from "../../assets/icons";
 import Button from "../../components/button/Button";
 import "./PaymentsAndCollections.css";
@@ -27,31 +27,19 @@ function StatusButton({ type, children, onClick }) {
 
 export default function PaymentsAndCollections() {
   const [query, setQuery] = useState("");
+  const [peopleOpen, setPeopleOpen] = useState(false);
   const [selectedPerson, setSelectedPerson] = useState(people[0]);
   const [decision, setDecision] = useState("");
   const [concepts, setConcepts] = useState(initialConcepts.map((concept) => ({ ...concept, checked: concept.tone !== "muted" })));
   const [feedback, setFeedback] = useState("");
-  const [peopleOpen, setPeopleOpen] = useState(false);
-  const [openGroups, setOpenGroups] = useState({ tenant: true, owner: true });
-
-  useEffect(() => {
-    if (!peopleOpen) return undefined;
-    const closeOnEscape = (event) => { if (event.key === "Escape") setPeopleOpen(false); };
-    document.addEventListener("keydown", closeOnEscape);
-    return () => document.removeEventListener("keydown", closeOnEscape);
-  }, [peopleOpen]);
 
   const visiblePeople = people.filter((person) => person.name.toLowerCase().includes(query.trim().toLowerCase()));
-  const total = concepts.reduce((sum, concept) => {
-    const amount = concept.amount.includes(",") ? concept.amount.replaceAll(".", "").replace(",", ".") : concept.amount;
-    return sum + (concept.checked ? Number(amount) || 0 : 0);
-  }, 0);
+  const total = concepts.reduce((sum, concept) => sum + (concept.checked ? Number(concept.amount.replaceAll(".", "").replace(",", ".")) || 0 : 0), 0);
 
   function choosePerson(person) {
     setSelectedPerson(person);
     setDecision("");
     setFeedback("");
-    setPeopleOpen(false);
   }
 
   function toggleConcept(label) {
@@ -67,23 +55,23 @@ export default function PaymentsAndCollections() {
     <main id="agent-payments">
       <header className="agent-payments__hero">
         <h1>Pagos y cobros</h1>
-        <p>Gestiona los pagos y cobros de tus propiedades</p>
+        <p>Estos pagos/cobros podrán ser visto desde la sección pagos de los propietarios o locatarios.</p>
       </header>
 
       <div className="agent-payments__layout">
-        <button className="agent-payments__people-toggle" type="button" aria-label={peopleOpen ? "Cerrar personas" : "Seleccionar persona"} aria-expanded={peopleOpen} onClick={() => setPeopleOpen(!peopleOpen)}>{peopleOpen ? "‹" : "›"}</button>
         <aside className={`agent-payments__people${peopleOpen ? " is-open" : ""}`} aria-label="Personas">
+          <button className="agent-payments__people-toggle" type="button" onClick={() => setPeopleOpen((open) => !open)} aria-expanded={peopleOpen} aria-label="Mostrar locatarios y propietarios"><span aria-hidden="true">›</span></button>
           <h2>Personas</h2>
           <label className="agent-payments__search"><Icon src={magnifyingGlassIcon} /><input type="search" placeholder="Buscar persona..." value={query} onChange={(event) => setQuery(event.target.value)} aria-label="Buscar persona" /></label>
-          <h3><button type="button" aria-expanded={openGroups.tenant} onClick={() => setOpenGroups((current) => ({...current, tenant: !current.tenant}))}>Locatarios <span>{openGroups.tenant ? "⌄" : "‹"}</span></button></h3>
-          {openGroups.tenant && visiblePeople.filter((person) => person.type === "Inquilino").map((person) => <button className={`agent-payments__person${selectedPerson.name === person.name ? " is-selected" : ""}`} type="button" key={person.name} onClick={() => choosePerson(person)}><span className="agent-payments__avatar">{person.name.split(" ").map((word) => word[0]).join("")}</span><span><strong>{person.name}</strong><small>{person.property}</small></span><b>{person.status}</b></button>)}
-          <h3><button type="button" aria-expanded={openGroups.owner} onClick={() => setOpenGroups((current) => ({...current, owner: !current.owner}))}>Propietarios <span>{openGroups.owner ? "⌄" : "‹"}</span></button></h3>
-          {openGroups.owner && visiblePeople.filter((person) => person.type === "Propietario").map((person) => <button className={`agent-payments__person${selectedPerson.name === person.name ? " is-selected" : ""}`} type="button" key={person.name} onClick={() => choosePerson(person)}><span className="agent-payments__avatar">JP</span><span><strong>{person.name}</strong><small>{person.property}</small></span><b>{person.status}</b></button>)}
+          <h3>Locatarios <span>‹</span></h3>
+          {visiblePeople.filter((person) => person.type === "Inquilino").map((person) => <button className={`agent-payments__person${selectedPerson.name === person.name ? " is-selected" : ""}`} type="button" key={person.name} onClick={() => choosePerson(person)}><span className="agent-payments__avatar">{person.name.split(" ").map((word) => word[0]).join("")}</span><span><strong>{person.name}</strong><small>{person.property}</small></span><b>{person.status}</b></button>)}
+          <h3>Propietarios <span>‹</span></h3>
+          {visiblePeople.filter((person) => person.type === "Propietario").map((person) => <button className={`agent-payments__person${selectedPerson.name === person.name ? " is-selected" : ""}`} type="button" key={person.name} onClick={() => choosePerson(person)}><span className="agent-payments__avatar">JP</span><span><strong>{person.name}</strong><small>{person.property}</small></span><b>{person.status}</b></button>)}
         </aside>
 
         <section className="agent-payments__workspace">
           <header className="agent-payments__record-header">
-            <div className="agent-payments__period"><label className="agent-payments__month"><span className="sr-only">Año</span><select defaultValue="2026"><option>2026</option><option>2025</option><option>2024</option></select></label><label className="agent-payments__month"><span className="sr-only">Mes</span><select defaultValue="Noviembre"><option>Noviembre</option><option>Octubre</option><option>Septiembre</option></select></label></div>
+            <label className="agent-payments__month"><span className="sr-only">Mes</span><select defaultValue="Noviembre"><option>Noviembre</option><option>Octubre</option><option>Septiembre</option></select></label>
             <h2>{selectedPerson.name}</h2><span className="agent-payments__rent">Alquiler</span><output>{selectedPerson.amount}</output>
             <StatusButton type="rejected" onClick={() => decide("rejected")}>Marcar como no pagado</StatusButton>
             <StatusButton type="approved" onClick={() => decide("approved")}>Marcar como pagado</StatusButton>

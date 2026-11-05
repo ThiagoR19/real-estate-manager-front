@@ -1,9 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
-import { buildingColumnsIcon, calendarIcon, checkIcon, downloadIcon, fileLinesIcon, filterIcon, xIcon } from "../../assets/icons";
+import { useMemo, useState } from "react";
+import { calendarIcon, checkIcon, downloadIcon, fileLinesIcon, xIcon } from "../../assets/icons";
 import paymentReference from "../../assets/pagos.png";
 import Button from "../../components/button/Button";
 import "./Collections.css";
-import "../payments/PaymentsMobile.css";
 
 const properties = ["Bielke 454", "Casa de San Isidro", "Belgrano 123"];
 const periods = [
@@ -40,21 +39,11 @@ export default function Collections() {
   const [property, setProperty] = useState(properties[0]);
   const [selectedMonth, setSelectedMonth] = useState("Febrero");
   const [openYears, setOpenYears] = useState({ 2024: true });
-  const [feedback, setFeedback] = useState("");
   const [timelineOpen, setTimelineOpen] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
-  const [receiptOpen, setReceiptOpen] = useState(false);
+  const [feedback, setFeedback] = useState("");
   const detail = useMemo(() => collectionData[selectedMonth], [selectedMonth]);
   const hasReceipt = detail.status === "Cobrado";
-
-  useEffect(() => {
-    if (!timelineOpen && !summaryOpen && !receiptOpen) return undefined;
-    const closeOnEscape = (event) => {
-      if (event.key === "Escape") { setTimelineOpen(false); setSummaryOpen(false); setReceiptOpen(false); }
-    };
-    document.addEventListener("keydown", closeOnEscape);
-    return () => document.removeEventListener("keydown", closeOnEscape);
-  }, [timelineOpen, summaryOpen, receiptOpen]);
 
   function toggleYear(year) {
     setOpenYears((current) => ({ ...current, [year]: !current[year] }));
@@ -67,18 +56,20 @@ export default function Collections() {
 
   return (
     <main id="collections">
-      <div className="payment-mobile__toolbar"><label><Icon src={buildingColumnsIcon} /><select aria-label="Propiedad" value={property} onChange={(event) => setProperty(event.target.value)}>{properties.map((name) => <option key={name}>{name}</option>)}</select></label><button type="button" aria-label="Abrir cronología" aria-expanded={timelineOpen} onClick={() => setTimelineOpen(true)}><Icon src={filterIcon} /></button></div>
-      {timelineOpen && <button className="payment-mobile__close" type="button" aria-label="Cerrar cronología" onClick={() => setTimelineOpen(false)}>×</button>}
-      <button className={`payment-mobile__summary-toggle${summaryOpen ? " is-open" : ""}`} type="button" aria-label={summaryOpen ? "Cerrar resumen" : "Abrir resumen de cobros"} aria-expanded={summaryOpen} onClick={() => setSummaryOpen(!summaryOpen)}>{summaryOpen ? "‹" : "›"}</button>
-      <aside className={`collections__sidebar${timelineOpen ? " is-open" : ""}`} aria-label="Propiedades y períodos de cobro">
-        <h1><span className="payment-mobile__desktop">Propiedades</span><span className="payment-mobile__chronology">Cronología</span></h1>
-        <label className="collections__property-select">
-          <span className="sr-only">Seleccionar propiedad</span>
-          <button type="button" onClick={() => setProperty(properties[(properties.indexOf(property) + 1) % properties.length])} aria-label="Cambiar propiedad">
-            <span aria-hidden="true">‹</span><strong>{property}</strong><span aria-hidden="true">›</span>
+      <aside className="collections__sidebar" aria-label="Propiedades y períodos de cobro">
+        <h1>Propiedades</h1>
+        <div className="collections__property-row">
+          <label className="collections__property-select">
+            <span className="sr-only">Seleccionar propiedad</span>
+            <select value={property} onChange={(event) => setProperty(event.target.value)}>
+              {properties.map((item) => <option value={item} key={item}>{item}</option>)}
+            </select>
+          </label>
+          <button className="collections__timeline-toggle" type="button" onClick={() => setTimelineOpen((open) => !open)} aria-expanded={timelineOpen} aria-label="Mostrar cronología">
+            <span aria-hidden="true">☷</span>
           </button>
-        </label>
-        <div className="collections__years">
+        </div>
+        <div className={`collections__years${timelineOpen ? " is-open" : ""}`}>
           {["2026", "2025"].map((year) => (
             <section className="collections__year" key={year}>
               <button className="collections__year-toggle" type="button" onClick={() => toggleYear(year)} aria-expanded={Boolean(openYears[year])}>
@@ -94,7 +85,7 @@ export default function Collections() {
             {openYears[2024] && (
               <div className="collections__months">
                 {periods.map((period) => (
-                  <button className={`collections__month${selectedMonth === period.month ? " is-selected" : ""}`} type="button" key={period.month} onClick={() => { setSelectedMonth(period.month); setTimelineOpen(false); }}>
+                  <button className={`collections__month${selectedMonth === period.month ? " is-selected" : ""}`} type="button" key={period.month} onClick={() => setSelectedMonth(period.month)}>
                     <strong>{period.month}</strong><span className={`collections__status collections__status--${period.tone}`}>{period.status}</span>
                   </button>
                 ))}
@@ -105,6 +96,9 @@ export default function Collections() {
       </aside>
 
       <section className="collections__workspace">
+        <button className="collections__summary-toggle" type="button" onClick={() => setSummaryOpen((open) => !open)} aria-expanded={summaryOpen}>
+          <span aria-hidden="true">‹</span>
+        </button>
         <section className={`collections__summary${summaryOpen ? " is-open" : ""}`} aria-label="Resumen de cobros">
           <SummaryCard icon={fileLinesIcon} label="Total revisado este mes" value="550.000,10" tone="blue" />
           <SummaryCard icon={checkIcon} label="Pagos recibidos" value="5/9" tone="green" />
@@ -113,9 +107,7 @@ export default function Collections() {
 
         <div className="collections__content">
           <article className="collections__receipt-column">
-            <button className="payment-mobile__open-receipt" type="button" onClick={() => setReceiptOpen(true)}><Icon src={fileLinesIcon} />{hasReceipt ? "Abrir comprobante" : "Ver comprobante"}</button>
-            <div className={`collections__receipt-frame${hasReceipt ? "" : " is-empty"}${receiptOpen ? " is-open" : ""}`}>
-              {receiptOpen && <button className="payment-mobile__close" type="button" aria-label="Cerrar comprobante" onClick={() => setReceiptOpen(false)}>×</button>}
+            <div className={`collections__receipt-frame${hasReceipt ? "" : " is-empty"}`}>
               {hasReceipt ? <div className="collections__receipt" style={{ "--payment-reference": `url(${paymentReference})` }} role="img" aria-label="Comprobante de transferencia BBVA"><span className="collections__zoom">⌕</span></div> : <div className="collections__empty-receipt"><Icon src={fileLinesIcon} />Sin comprobante</div>}
             </div>
             <div className={`collections__receipt-status${hasReceipt ? " is-approved" : ""}`}><Icon src={fileLinesIcon} /><span><strong>{hasReceipt ? "Comprobante cargado" : "Sin comprobante cargado"}</strong><small>{hasReceipt ? `${detail.date} · 14:32 hs` : "Esperando comprobante del inquilino"}</small></span></div>
@@ -137,7 +129,6 @@ export default function Collections() {
             </section>
             <aside className="collections__admin-note"><span><Icon src={fileLinesIcon} /></span><div><strong>Detalle de administración</strong><p>Se le informa la transferencia del dinero correspondiente al mes de {selectedMonth.toLowerCase()} 2023.</p></div></aside>
             <Button className="collections__download" icon={downloadIcon} text="Descargar comprobante" onClick={downloadReceipt} disabled={!hasReceipt} />
-            <p className="collections__disclaimer">Nota: una vez liquidado el periodo, la información queda disponible para consultas y descarga</p>
             <p className="collections__feedback" aria-live="polite">{feedback}</p>
           </article>
         </div>

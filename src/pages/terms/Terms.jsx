@@ -82,14 +82,6 @@ export default function Terms() {
     if (!section || !content) return;
 
     setActiveSection(id);
-    if (window.matchMedia("(max-width: 760px)").matches) {
-      section.scrollIntoView({
-        block: "start",
-        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
-      });
-      section.focus({ preventScroll: true });
-      return;
-    }
     content.scrollTo({
       top: Math.min(section.offsetTop, content.scrollHeight - content.clientHeight),
       behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
@@ -138,13 +130,11 @@ export default function Terms() {
             <p className="terms__section-header-p">Condiciones de uso, responsabilidad y uso de la plataforma</p>
           </header>
 
-          <label className="terms__mobile-navigation">
+          <button className="terms__mobile-documentation" type="button" onClick={() => contentRef.current?.focus()}>
             <img src={fileIcon} alt="" />
-            <span className="sr-only">Documentación</span>
-            <select value={activeSection} onChange={(event) => navigateToSection(event, event.target.value)} aria-label="Documentación">
-              {sections.map(({ id, title }, index) => <option key={id} value={id}>{index === 0 ? "Documentación" : title}</option>)}
-            </select>
-          </label>
+            <span>Documentación</span>
+            <span aria-hidden="true">⌄</span>
+          </button>
 
           <div
             className="terms__div-section-div"

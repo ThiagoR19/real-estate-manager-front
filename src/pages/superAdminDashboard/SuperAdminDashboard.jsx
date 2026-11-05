@@ -28,14 +28,6 @@ const initialAgencies = [
   },
 ];
 
-function BuildingIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M5 21V4.5A1.5 1.5 0 0 1 6.5 3H16a1 1 0 0 1 1 1v17M3 21h18M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2M11 21v-3h3v3" />
-    </svg>
-  );
-}
-
 function PencilIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -118,8 +110,6 @@ export default function SuperAdminDashboard() {
   const [modal, setModal] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const activeAgencyCount = 24 + Math.max(0, agencies.length - initialAgencies.length);
-
   function toggleAgency(agencyId) {
     setAgencies((current) => current.map((agency) => agency.id === agencyId ? { ...agency, expanded: !agency.expanded } : agency));
   }
@@ -190,13 +180,6 @@ export default function SuperAdminDashboard() {
       </header>
 
       <div className="superadmin__body">
-        <aside className="superadmin__sidebar">
-          <button className="superadmin__sidebar-link is-active" type="button" aria-current="page">
-            <BuildingIcon />
-            <span>Inmobiliarias</span>
-          </button>
-        </aside>
-
         <section className="superadmin__content">
           <div className="superadmin__intro-row">
             <div className="superadmin__hero" style={{ backgroundImage: `url(${bannerImage})` }}>
@@ -207,11 +190,6 @@ export default function SuperAdminDashboard() {
               </div>
             </div>
             <div className="superadmin__summary-column">
-              <div className="superadmin__active-count">
-                <span className="superadmin__active-icon"><BuildingIcon /></span>
-                <span>Inmobiliarias activas</span>
-                <strong>{activeAgencyCount}</strong>
-              </div>
               <button className="superadmin__new-agency" type="button" onClick={openNewAgency}>
                 <img src={plusIconWhite} alt="" />
                 <span>Nueva inmobiliaria</span>
