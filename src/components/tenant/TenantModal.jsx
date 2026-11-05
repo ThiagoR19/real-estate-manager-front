@@ -8,8 +8,7 @@ import {
   phoneIcon,
   userIcon,
 } from "../../assets/icons";
-import DropdownSelect from "../select/DropdownSelect";
-import Button from "../button/Button";
+import { DropdownSelect, Button } from "../index";
 import "./TenantModal.css";
 
 const propertyOptions = ["Propiedad", "Av. San Martín 1250", "Av. Santa Fe 850"];

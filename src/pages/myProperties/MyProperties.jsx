@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { buildingColumnsIcon, clockIcon, fileLinesIcon, houseIcon, locationDotIcon, peopleIcon, tagIcon, toolboxIcon, userIcon, xIcon } from "../../assets/icons";
-import SummaryPill from "../../components/summaryPill/SummaryPill";
+import { SummaryPill } from "../../components";
 import referenceDocument from "../../assets/reports-reference.png";
 import "./MyProperties.css";
 

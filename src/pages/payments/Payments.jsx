@@ -9,7 +9,7 @@ import {
   xIcon,
 } from "../../assets/icons";
 import paymentReference from "../../assets/cobros.png";
-import Button from "../../components/button/Button";
+import { Button } from "../../components";
 import "./Payments.css";
 
 const months = [

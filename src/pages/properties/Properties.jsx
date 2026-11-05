@@ -1,20 +1,12 @@
 import { useMemo, useState } from "react";
 import { useLocation } from "wouter";
 import {
-  bathIcon,
-  bedIcon,
-  eyeIcon,
   houseIcon,
   locationDotIcon as locationIcon,
   plusIcon,
-  rulerCombinedIcon as rulerIcon,
   tagIcon,
 } from "../../assets/icons";
-import PropertyModal from "../../components/property/PropertyModal";
-import PropertyActions from "../../components/property/PropertyActions";
-import ConfirmDeleteModal from "../../components/confirmDelete/ConfirmDeleteModal";
-import DropdownSelect from "../../components/select/DropdownSelect";
-import Button from "../../components/button/Button";
+import { PropertyModal, ConfirmDeleteModal, DropdownSelect, Button, PropertyCardSimple } from "../../components";
 import propertyImage from "/images (1).jpg";
 import "./Properties.css";
 
@@ -61,71 +53,6 @@ function FilterSelect({ filter, value, onChange }) {
       valueClassName="properties__filter-label"
       chevronClassName="properties__filter-chevron properties__icon"
     />
-  );
-}
-
-function PropertyCard({ property, onEdit, onDelete, onOpen }) {
-  function openProperty() {
-    onOpen(property);
-  }
-
-  function handleCardKeyDown(event) {
-    if (event.target !== event.currentTarget) return;
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      openProperty();
-    }
-  }
-
-  return (
-    <article
-      className="properties__card"
-      role="link"
-      tabIndex={0}
-      onClick={openProperty}
-      onKeyDown={handleCardKeyDown}
-      aria-label={`Ver detalle de ${property.title}`}
-    >
-      <img className="properties__card-image" src={property.photos?.[0]?.src || propertyImage} alt="Interior de la propiedad" />
-      <div className="properties__card-content">
-        <h2 className="properties__card-title">{property.title}</h2>
-        <p className="properties__card-location">
-          <img className="properties__icon" src={locationIcon} alt="" aria-hidden="true" />
-          <span>{property.location}</span>
-        </p>
-
-        <div className="properties__card-metrics" aria-label="Características de la propiedad">
-          <span className="properties__metric">
-            <img className="properties__icon" src={bedIcon} alt="" aria-hidden="true" />
-            <span>{property.bedrooms}</span>
-          </span>
-          <span className="properties__metric">
-            <img className="properties__icon" src={bathIcon} alt="" aria-hidden="true" />
-            <span>{property.bathrooms}</span>
-          </span>
-          <span className="properties__metric">
-            <img className="properties__icon" src={rulerIcon} alt="" aria-hidden="true" />
-            <span>{property.area} m²</span>
-          </span>
-          <span className="properties__status">{property.status}</span>
-        </div>
-
-        <div className="properties__card-actions">
-          <button
-            className="properties__details-button"
-            type="button"
-            onClick={(event) => {
-              event.stopPropagation();
-              openProperty();
-            }}
-          >
-            <img className="properties__icon" src={eyeIcon} alt="" aria-hidden="true" />
-            <span>Ver detalle</span>
-          </button>
-          <PropertyActions name={property.title} onEdit={() => onEdit(property)} onDelete={() => onDelete(property)} />
-        </div>
-      </div>
-    </article>
   );
 }
 
@@ -230,7 +157,7 @@ export default function Properties() {
 
       <section className="properties__grid" aria-label="Listado de propiedades">
         {visibleProperties.length > 0 ? (
-          visibleProperties.map((property) => <PropertyCard key={property.id} property={property} onEdit={openEditModal} onDelete={setPendingDelete} onOpen={openProperty} />)
+          visibleProperties.map((property) => <PropertyCardSimple key={property.id} property={property} onEdit={openEditModal} onDelete={setPendingDelete} onOpen={openProperty} />)
         ) : (
           <p className="properties__empty">No hay propiedades que coincidan con los filtros seleccionados.</p>
         )}

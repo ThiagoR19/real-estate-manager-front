@@ -1,7 +1,6 @@
 import { useEffect, useId, useRef } from "react";
 import { createPortal } from "react-dom";
-import Button from "../button/Button";
-import DropdownSelect from "../select/DropdownSelect";
+import { Button, DropdownSelect } from "../index";
 import "./ManagementModal.css";
 
 export default function ManagementModal({ isOpen = true, onClose, title, subtitle, variant = "", children }) {

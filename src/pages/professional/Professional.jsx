@@ -8,12 +8,8 @@ import {
   starIcon,
   trashCanIcon,
 } from "../../assets/icons";
-import DropdownSelect from "../../components/select/DropdownSelect";
-import ProfessionalModal from "../../components/professional/ProfessionalModal";
-import ConfirmDeleteModal from "../../components/confirmDelete/ConfirmDeleteModal";
-import EntityActions from "../../components/entityActions/EntityActions";
+import { DropdownSelect, ProfessionalModal, ConfirmDeleteModal, EntityActions, Button } from "../../components";
 import "./Professional.css";
-import Button from "../../components/button/Button";
 
 const initialProfessionals = Array.from({ length: 9 }, (_, index) => ({
   id: index + 1,

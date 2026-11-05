@@ -1,17 +1,4 @@
-import {
-  briefcaseIcon,
-  buildingColumnsIcon,
-  calendarIcon,
-  chartColumnIcon,
-  circleInfoIcon,
-  commentsIcon,
-  fileLinesIcon,
-  houseIcon,
-  houseUserIcon,
-  peopleIcon,
-  walletIcon,
-  userIcon,
-} from "../assets/icons";
+import { briefcaseIcon, buildingColumnsIcon, calendarIcon, chartColumnIcon, circleInfoIcon, commentsIcon, fileLinesIcon, houseIcon, houseUserIcon, peopleIcon, walletIcon, userIcon, } from "../assets/icons";
 
 export const primaryItems = [
   { href: "/dashboard", label: "Dashboard", icon: chartColumnIcon },

@@ -52,3 +52,4 @@ export { default as userIcon } from "./user-solid-full.svg";
 export { default as xIcon } from "./x-solid-full.svg";
 export { default as walletIcon } from "./wallet.svg";
 export { default as starIcon } from "./star.svg";
+export { default as whatsappIcon } from "./whatsapp.svg";

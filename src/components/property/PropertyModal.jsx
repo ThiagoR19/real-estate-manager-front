@@ -16,8 +16,7 @@ import {
   userIcon,
   xIcon,
 } from "../../assets/icons";
-import DropdownSelect from "../select/DropdownSelect";
-import Button from "../button/Button";
+import { DropdownSelect, Button } from "../index";
 import propertyImage from "/images (1).jpg";
 import terraceImage from "/images.jpg";
 import villaImage from "/ly-villa-costa-blanca-1_b02f5d33_900x900.jpg";

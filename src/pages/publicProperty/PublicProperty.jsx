@@ -9,11 +9,14 @@ import {
   locationDotIcon as locationIcon,
   rulerCombinedIcon as rulerIcon,
   userIcon,
+  whatsappIcon
 } from "../../assets/icons";
-import { Icon } from "../../components/home/HomeIcon";
+import { Footer, Icon } from "../../components";
 import propertyImage from "../../assets/fondoCasa.png";
 import kaikenLogo from "../../assets/icons/kaiken.svg";
 import "./PublicProperty.css";
+
+
 
 const galleryImages = [
   { src: propertyImage, alt: "Vista exterior de la propiedad Valdez" },
@@ -129,7 +132,6 @@ export default function PublicProperty() {
               <strong>USD 10.00</strong>
               <small>Casa · Alquiler</small>
               <button type="button" onClick={contactAgent}>Alquiler / Venta</button>
-              <button className="public-property__mobile-contact" type="button" onClick={contactAgent}><span aria-hidden="true">◔</span> Contactar</button>
             </div>
             <h2 id="public-property-description">Descripción</h2>
             <p className="public-property__description">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using &quot;Content here, content here&quot;, making it look like</p>
@@ -142,12 +144,15 @@ export default function PublicProperty() {
                 </div>
               ))}
             </div>
+
           </section>
         </div>
 
-        <button className="public-property__contact" type="button" onClick={contactAgent}><span aria-hidden="true">◔</span>Contactar</button>
+        <button className="public-property__contact" type="button" onClick={contactAgent}><img src={whatsappIcon} alt="" />Contactar</button>
         <p className="public-property__contact-message" role="status" aria-live="polite">{contactMessage}</p>
       </div>
+      <Footer />
     </main>
+
   );
 }

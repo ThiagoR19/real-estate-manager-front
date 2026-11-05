@@ -2,7 +2,7 @@ import { useState } from "react";
 import brandLogo from "../../assets/logoAGI.png";
 import bannerImage from "../../assets/fondoCasa.png";
 import { plusIconWhite, trashCanIcon } from "../../assets/icons";
-import AgencyModal from "../../components/agency/AgencyModal";
+import { AgencyModal } from "../../components";
 import { Header, Navbar } from "../../layouts";
 import "./SuperAdminDashboard.css";
 

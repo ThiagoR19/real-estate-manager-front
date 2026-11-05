@@ -9,7 +9,7 @@ import {
   userIcon,
 } from "../../assets/icons";
 import brandLogo from "../../assets/logoAGI.png";
-import Button from "../../components/button/Button";
+import { Button } from "../../components";
 import "./Agency.css";
 
 const initialAgency = {

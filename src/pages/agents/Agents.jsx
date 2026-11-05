@@ -10,12 +10,7 @@ import {
   plusIcon,
   xIcon,
 } from "../../assets/icons";
-import DropdownSelect from "../../components/select/DropdownSelect";
-import Button from "../../components/button/Button";
-import SummaryPill from "../../components/summaryPill/SummaryPill";
-import PersonModal from "../../components/person/PersonModal";
-import ConfirmDeleteModal from "../../components/confirmDelete/ConfirmDeleteModal";
-import EntityActions from "../../components/entityActions/EntityActions";
+import { DropdownSelect, Button, SummaryPill, PersonModal, ConfirmDeleteModal, EntityActions } from "../../components";
 import "./Agents.css";
 
 const initialAgents = [

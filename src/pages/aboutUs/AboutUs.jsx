@@ -1,8 +1,4 @@
-import Skeleton from '../../components/skeleton/Skeleton';
-import LandingNav from '../../components/landingNav/LandingNav';
-import Statistics from '../../components/statistics/Statistics';
-import SectionTitle from '../../components/sectionTitle/SectionTitle';
-import Footer from '../../components/footer/Footer';
+import { Skeleton, LandingNav, Statistics, SectionTitle, Footer } from "../../components";
 
 
 import fondoPortada from '../../assets/nosotrosHero.png';

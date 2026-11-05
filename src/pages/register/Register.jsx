@@ -2,13 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, useLocation } from 'wouter';
 
-import Skeleton from '../../components/skeleton/Skeleton';
-import Brand from '../../components/brand/Brand';
-import ImagePanel from '../../components/imagePanel/ImagePanel';
-import TextField from '../../components/textField/TextField';
-import PrimaryButton from '../../components/primaryButton/PrimaryButton';
-import GoogleSignIn from '../../components/googleSignIn/GoogleSignIn';
-import LegalText from '../../components/legalText/LegalText';
+import { Skeleton, Brand, ImagePanel, TextField, PrimaryButton, GoogleSignIn, LegalText } from "../../components";
 import Login from '../login/Login';
 
 import useSubmit from '../../hooks/useSubmit';

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { calendarIcon, clockIcon, houseIcon, peopleIcon } from "../../assets/icons";
-import ManagementModal, { ModalActions, ModalField, ModalInput, ModalSelect } from "../managementModal/ManagementModal";
+import { ManagementModal, ModalActions, ModalField, ModalInput, ModalSelect } from "../index";
 import "./VisitModal.css";
 
 const properties = ["Av. San Martín 12", "Casa de San Isidro", "Av. Santa Fe 850"];

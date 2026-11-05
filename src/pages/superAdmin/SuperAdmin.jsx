@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { buildingColumnsIcon, penIcon, plusIcon, trashCanIcon } from "../../assets/icons";
-import SummaryPill from "../../components/summaryPill/SummaryPill";
-import Button from "../../components/button/Button";
-import AgencyModal from "../../components/agency/AgencyModal";
+import { SummaryPill, Button, AgencyModal } from "../../components";
 import "./SuperAdmin.css";
 
 const initialAgencies = [

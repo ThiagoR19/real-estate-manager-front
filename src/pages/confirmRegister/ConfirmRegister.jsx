@@ -1,10 +1,6 @@
 import { useLocation } from "wouter";
 
-import Skeleton from "../../components/skeleton/Skeleton";
-import ImagePanel from "../../components/imagePanel/ImagePanel";
-import TextField from "../../components/textField/TextField";
-import PrimaryButton from "../../components/primaryButton/PrimaryButton";
-import LegalText from "../../components/legalText/LegalText";
+import { Skeleton, ImagePanel, TextField, PrimaryButton, LegalText } from "../../components";
 import useSubmit from "../../hooks/useSubmit";
 import wait from "../../utils/wait";
 

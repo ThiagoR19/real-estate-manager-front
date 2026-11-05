@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { buildingColumnsIcon, calendarIcon, checkIcon, downloadIcon, fileLinesIcon, filterIcon, magnifyingGlassIcon, paperPlaneIcon, xIcon } from "../../assets/icons";
 import paymentReference from "../../assets/pagos.png";
-import Button from "../../components/button/Button";
+import { Button } from "../../components";
 import "./PaymentsReference.css";
 import "./PaymentsMobile.css";
 

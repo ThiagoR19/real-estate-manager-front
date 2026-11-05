@@ -1,6 +1,6 @@
 import './ImagePanel.css';
 
-import Brand from '../brand/Brand';
+import { Brand } from "../index";
 
 export default function ImagePanel({ conBrand = false, className = "" }) {
     return (

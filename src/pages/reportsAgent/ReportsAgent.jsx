@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import reportReference from "../../assets/reports-reference.png";
-import ReportModal from "../../components/report/ReportModal";
+import { ReportModal } from "../../components";
 import "./ReportsAgent.css";
 
 const initialReports = [

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import ModalOverlay from "../../components/modalOverlay/ModalOverlay";
-import NotificationPanel from "../../components/notificationPanel/NotificationPanel";
+import { ModalOverlay, NotificationPanel } from "../../components";
 import notifications from "../../data/notifications";
 import { barsIcon as menuIcon, bellIcon, magnifyingGlassIcon as searchIcon, xIcon as closeIcon, } from "../../assets/icons";
 import referenceImage from "../../assets/terms-reference.png";

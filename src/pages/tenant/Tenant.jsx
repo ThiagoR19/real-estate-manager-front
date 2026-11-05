@@ -12,12 +12,7 @@ import {
   plusIcon,
   xIcon,
 } from "../../assets/icons";
-import DropdownSelect from "../../components/select/DropdownSelect";
-import TenantModal from "../../components/tenant/TenantModal";
-import ConfirmDeleteModal from "../../components/confirmDelete/ConfirmDeleteModal";
-import EntityActions from "../../components/entityActions/EntityActions";
-import Button from "../../components/button/Button";
-import SummaryPill from "../../components/summaryPill/SummaryPill";
+import { DropdownSelect, TenantModal, ConfirmDeleteModal, EntityActions, Button, SummaryPill } from "../../components";
 import propertyImage from "/images.jpg";
 import "./Tenant.css";
 

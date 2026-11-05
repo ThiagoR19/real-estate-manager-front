@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import { angleDownIcon, clockIcon, plusIcon } from "../../assets/icons";
-import Button from "../../components/button/Button";
-import IncreaseModal from "../../components/increase/IncreaseModal";
+import { Button, IncreaseModal } from "../../components";
 import "./Indec.css";
 
 const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];

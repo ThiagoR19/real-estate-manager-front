@@ -1,4 +1,4 @@
-import ManagementModal, { ModalActions } from "../managementModal/ManagementModal";
+import { ManagementModal, ModalActions } from "../index";
 
 export default function ConfirmDeleteModal({ isOpen, onClose, onConfirm, title }) {
   return (

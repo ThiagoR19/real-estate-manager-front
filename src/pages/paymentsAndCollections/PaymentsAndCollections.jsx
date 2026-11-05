@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { checkIcon, fileLinesIcon, magnifyingGlassIcon, paperPlaneIcon, xIcon } from "../../assets/icons";
-import Button from "../../components/button/Button";
+import { Button } from "../../components";
 import "./PaymentsAndCollections.css";
 
 const people = [

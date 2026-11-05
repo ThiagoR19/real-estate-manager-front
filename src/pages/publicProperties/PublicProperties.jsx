@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "wouter";
-import { Icon } from "../../components/home/HomeIcon";
+import { Icon, PropertyCardSimple } from "../../components";
 import kaikenLogo from "../../assets/icons/kaiken.svg";
 import filterIcon from "../../assets/icons/options.svg";
 import "./PublicProperties.css";
@@ -58,7 +58,6 @@ function FilterSidebar({ operation, setOperation, open, onClose }) {
 
   return (
     <aside id="public-property-filters" className={`public-properties__filters${open ? " is-open" : ""}`} role={open ? "dialog" : undefined} aria-modal={open || undefined} aria-label="Filtros de propiedades">
-      <button className="public-properties__filter-handle" type="button" aria-label="Cerrar filtros" onClick={onClose}><span /></button>
       <h2>Operación</h2>
       <div className="public-properties__operation-toggle" role="tablist" aria-label="Tipo de operación">
         <Link className={operation === "buy" ? "is-active" : ""} href="/public-properties?filter=buy" role="tab" aria-selected={operation === "buy"} onClick={() => setOperation("buy")}>Venta</Link>
@@ -106,25 +105,6 @@ function FilterSidebar({ operation, setOperation, open, onClose }) {
   );
 }
 
-function PropertyCard({ property }) {
-  return (
-    <article className="public-properties__card">
-      <img src={property.image} alt={property.title} />
-      <div className="public-properties__card-body">
-        <h2>{property.title}</h2>
-        <p className="public-properties__location"><Icon name="location" />{property.location}</p>
-        <div className="public-properties__meta">
-          <span><Icon name="bed" />{property.rooms}</span>
-          <span><Icon name="bath" />{property.baths}</span>
-          <span><Icon name="ruler" />{property.area} m²</span>
-          <em>{property.operation === "buy" ? "Venta" : "Alquiler"}</em>
-        </div>
-        <Link className="public-properties__details" href="/public-property"><Icon name="eye" />Ver detalle</Link>
-      </div>
-    </article>
-  );
-}
-
 export default function PublicProperties() {
   const queryFilter = new URLSearchParams(window.location.search).get("filter");
   const [operation, setOperation] = useState(queryFilter === "rent" ? "rent" : "buy");
@@ -156,7 +136,7 @@ export default function PublicProperties() {
             <button className="public-properties__filter-toggle" type="button" aria-label="Abrir filtros" aria-expanded={filtersOpen} aria-controls="public-property-filters" onClick={() => setFiltersOpen(true)}><img src={filterIcon} alt="" /></button>
           </div>
           <div className="public-properties__grid">
-            {visibleProperties.map((property) => <PropertyCard key={property.id} property={property} />)}
+            {visibleProperties.map((property) => <PropertyCardSimple key={property.id} property={property} variant="public" />)}
           </div>
         </section>
       </div>

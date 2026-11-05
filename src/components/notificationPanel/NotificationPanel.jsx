@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 import './NotificationPanel.css';
 
-import Notification from '../notification/Notification';
+import { Notification } from "../index";
 
 import campanaIcono from '../../assets/icons/campanaNoti.svg';
 import cerrarIcono from '../../assets/icons/closeNotis.svg';

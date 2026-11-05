@@ -9,12 +9,7 @@ import {
   phoneIcon,
   userIcon,
 } from "../../assets/icons";
-import ManagementModal, {
-  ModalActions,
-  ModalField,
-  ModalInput,
-  ModalSelect,
-} from "../managementModal/ManagementModal";
+import { ManagementModal, ModalActions, ModalField, ModalInput, ModalSelect } from "../index";
 
 const propertyOptions = ["Av. San Martín 1250", "Av. Santa Fe 850"];
 const zoneOptions = ["Palermo", "Belgrano", "Recoleta"];

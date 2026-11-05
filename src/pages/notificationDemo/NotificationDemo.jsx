@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
-import ModalOverlay from '../../components/modalOverlay/ModalOverlay';
-import NotificationPanel from '../../components/notificationPanel/NotificationPanel';
+import { ModalOverlay, NotificationPanel } from "../../components";
 
 import './NotificationDemo.css';
 

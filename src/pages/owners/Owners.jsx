@@ -10,11 +10,7 @@ import {
   xIcon,
 } from "../../assets/icons";
 import propertyImage from "/images.jpg";
-import Button from "../../components/button/Button";
-import SummaryPill from "../../components/summaryPill/SummaryPill";
-import PersonModal from "../../components/person/PersonModal";
-import ConfirmDeleteModal from "../../components/confirmDelete/ConfirmDeleteModal";
-import EntityActions from "../../components/entityActions/EntityActions";
+import { Button, SummaryPill, PersonModal, ConfirmDeleteModal, EntityActions } from "../../components";
 import "./Owners.css";
 
 const initialOwners = Array.from({ length: 6 }, (_, index) => ({

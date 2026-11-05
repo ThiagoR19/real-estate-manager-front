@@ -1,10 +1,6 @@
 import { useState } from "react";
 import { addressCardIcon, buildingColumnsIcon } from "../../assets/icons";
-import ManagementModal, {
-  ModalActions,
-  ModalField,
-  ModalInput,
-} from "../managementModal/ManagementModal";
+import { ManagementModal, ModalActions, ModalField, ModalInput } from "../index";
 import "./AgencyModal.css";
 
 export default function AgencyModal({ mode = "create", agency, onClose, onSubmit }) {

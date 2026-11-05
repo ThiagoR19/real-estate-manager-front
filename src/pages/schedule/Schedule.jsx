@@ -5,8 +5,7 @@ import {
   plusIcon,
   userIcon,
 } from "../../assets/icons";
-import Button from "../../components/button/Button";
-import VisitModal from "../../components/visit/VisitModal";
+import { Button, VisitModal } from "../../components";
 import propertyImage from "/images (1).jpg";
 import "./Schedule.css";
 

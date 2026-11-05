@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { calendarIcon, checkIcon, downloadIcon, fileLinesIcon, xIcon } from "../../assets/icons";
 import paymentReference from "../../assets/pagos.png";
-import Button from "../../components/button/Button";
+import { Button } from "../../components";
 import "./Collections.css";
 
 const properties = ["Bielke 454", "Casa de San Isidro", "Belgrano 123"];
