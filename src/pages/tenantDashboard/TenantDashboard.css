@@ -551,6 +551,45 @@ body:has(#tenant-dashboard) .navbar__search {
   }
 }
 
+/* The reference puts the photo behind the welcome copy, not behind the cards. */
+#tenant-dashboard::before {
+  background-image: none;
+}
+
+.tenant-dashboard__intro {
+  min-height: 100px;
+  height: auto;
+  padding: 16px 24px;
+  border-radius: 20px;
+  background:
+    linear-gradient(90deg, rgb(255 255 255 / 98%) 0%, rgb(255 255 255 / 88%) 42%, rgb(255 255 255 / 20%) 100%),
+    url("../../assets/fondoCasa.png") center / cover no-repeat;
+}
+
+@media (max-width: 760px) {
+  body:has(#tenant-dashboard) .navbar__account-link {
+    display: none;
+  }
+
+  body:has(#tenant-dashboard) .navbar__account {
+    margin-left: auto;
+  }
+
+  body:has(#tenant-dashboard) .navbar__notifications {
+    display: block;
+    padding-right: 0;
+    border-right: 0;
+  }
+
+  .tenant-dashboard__intro {
+    min-height: 112px;
+    padding: 18px;
+    background:
+      linear-gradient(90deg, rgb(255 255 255 / 97%) 0%, rgb(255 255 255 / 88%) 52%, rgb(255 255 255 / 25%) 100%),
+      url("../../assets/fondoCasa.png") center / cover no-repeat;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   #tenant-dashboard * {
     scroll-behavior: auto;

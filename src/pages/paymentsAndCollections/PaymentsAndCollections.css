@@ -17,3 +17,77 @@
 @media (max-width: 1260px) { .agent-payments__record-header { grid-template-columns: 115px minmax(130px, 1fr) 85px 155px auto auto; gap: 8px; }.agent-payments__record-header h2 { font-size: 22px; }.agent-payments__record-grid { grid-template-columns: minmax(340px, 1fr) 245px; }.agent-payments__total { grid-column: 1 / -1; min-height: 190px; }.agent-payments__total strong { margin-top: 10px; } }
 @media (max-width: 850px) { #agent-payments { padding: 14px; }.agent-payments__layout { grid-template-columns: 1fr; margin: 14px -14px -14px; }.agent-payments__people { min-height: 0; border-right: 0; border-bottom: 1px solid #dce6ef; }.agent-payments__person { display: inline-grid; width: calc(50% - 2px); vertical-align: top; }.agent-payments__workspace { padding: 16px; }.agent-payments__record-header { grid-template-columns: 1fr 1fr; }.agent-payments__record-header h2 { grid-column: 1 / -1; }.agent-payments__record-header output { grid-column: 1 / -1; }.agent-payments__decision { width: 100%; }.agent-payments__record-grid { grid-template-columns: 1fr; }.agent-payments__total { grid-column: auto; } }
 @media (max-width: 540px) { .agent-payments__hero h1 { font-size: 26px; }.agent-payments__hero p { font-size: 13px; }.agent-payments__person { width: 100%; }.agent-payments__concept { grid-template-columns: 22px minmax(0, 1fr) 100px 20px; font-size: 13px; }.agent-payments__concept-actions .button { width: 100%; }.agent-payments__total { min-height: 250px; } }
+
+.agent-payments__people-toggle {
+  display: none;
+}
+
+@media (max-width: 850px) {
+  .agent-payments__people {
+    position: relative;
+    max-height: 58px;
+    overflow: visible;
+    border-bottom: 0;
+    transition: max-height 180ms ease;
+  }
+
+  .agent-payments__people.is-open {
+    max-height: 1000px;
+    overflow: visible;
+  }
+
+  .agent-payments__people:not(.is-open) {
+    overflow: hidden;
+  }
+
+  .agent-payments__people-toggle {
+    position: absolute;
+    z-index: 2;
+    top: 12px;
+    right: 0;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 42px;
+    padding: 0;
+    border: 0;
+    border-radius: 0 10px 10px 0;
+    background: #223d91;
+    color: #fff;
+    cursor: pointer;
+    font-size: 28px;
+    line-height: 1;
+  }
+
+  .agent-payments__people-toggle[aria-expanded="true"] span {
+    transform: rotate(180deg);
+  }
+
+  .agent-payments__people h2 {
+    margin-top: 10px;
+    margin-bottom: 8px;
+  }
+
+  .agent-payments__workspace {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 540px) {
+  .agent-payments__record-header {
+    gap: 9px;
+  }
+
+  .agent-payments__record-header h2 {
+    font-size: 22px;
+  }
+
+  .agent-payments__property-card {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .agent-payments__concept {
+    grid-template-columns: 22px minmax(0, 1fr) 90px 20px;
+  }
+}

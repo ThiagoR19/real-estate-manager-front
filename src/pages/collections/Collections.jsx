@@ -39,6 +39,8 @@ export default function Collections() {
   const [property, setProperty] = useState(properties[0]);
   const [selectedMonth, setSelectedMonth] = useState("Febrero");
   const [openYears, setOpenYears] = useState({ 2024: true });
+  const [timelineOpen, setTimelineOpen] = useState(false);
+  const [summaryOpen, setSummaryOpen] = useState(false);
   const [feedback, setFeedback] = useState("");
   const detail = useMemo(() => collectionData[selectedMonth], [selectedMonth]);
   const hasReceipt = detail.status === "Cobrado";
@@ -56,13 +58,18 @@ export default function Collections() {
     <main id="collections">
       <aside className="collections__sidebar" aria-label="Propiedades y períodos de cobro">
         <h1>Propiedades</h1>
-        <label className="collections__property-select">
-          <span className="sr-only">Seleccionar propiedad</span>
-          <button type="button" onClick={() => setProperty(properties[(properties.indexOf(property) + 1) % properties.length])} aria-label="Cambiar propiedad">
-            <span aria-hidden="true">‹</span><strong>{property}</strong><span aria-hidden="true">›</span>
+        <div className="collections__property-row">
+          <label className="collections__property-select">
+            <span className="sr-only">Seleccionar propiedad</span>
+            <select value={property} onChange={(event) => setProperty(event.target.value)}>
+              {properties.map((item) => <option value={item} key={item}>{item}</option>)}
+            </select>
+          </label>
+          <button className="collections__timeline-toggle" type="button" onClick={() => setTimelineOpen((open) => !open)} aria-expanded={timelineOpen} aria-label="Mostrar cronología">
+            <span aria-hidden="true">☷</span>
           </button>
-        </label>
-        <div className="collections__years">
+        </div>
+        <div className={`collections__years${timelineOpen ? " is-open" : ""}`}>
           {["2026", "2025"].map((year) => (
             <section className="collections__year" key={year}>
               <button className="collections__year-toggle" type="button" onClick={() => toggleYear(year)} aria-expanded={Boolean(openYears[year])}>
@@ -89,7 +96,10 @@ export default function Collections() {
       </aside>
 
       <section className="collections__workspace">
-        <section className="collections__summary" aria-label="Resumen de cobros">
+        <button className="collections__summary-toggle" type="button" onClick={() => setSummaryOpen((open) => !open)} aria-expanded={summaryOpen}>
+          <span aria-hidden="true">‹</span>
+        </button>
+        <section className={`collections__summary${summaryOpen ? " is-open" : ""}`} aria-label="Resumen de cobros">
           <SummaryCard icon={fileLinesIcon} label="Total revisado este mes" value="550.000,10" tone="blue" />
           <SummaryCard icon={checkIcon} label="Pagos recibidos" value="5/9" tone="green" />
           <SummaryCard icon={xIcon} label="Meses impagos" value="5/9" tone="red" />

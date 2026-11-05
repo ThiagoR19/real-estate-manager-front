@@ -448,3 +448,27 @@
     transition: none;
   }
 }
+
+@media (min-width: 561px) and (max-width: 1050px) {
+  .properties__toolbar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(2, 43px);
+  }
+
+  .properties__new-button {
+    grid-column: 2;
+    grid-row: 2;
+  }
+}
+
+@media (max-width: 560px) {
+  .properties__toolbar {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+
+  .properties__new-button {
+    grid-column: auto;
+    grid-row: auto;
+  }
+}

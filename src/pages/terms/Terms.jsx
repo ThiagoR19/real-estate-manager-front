@@ -130,6 +130,12 @@ export default function Terms() {
             <p className="terms__section-header-p">Condiciones de uso, responsabilidad y uso de la plataforma</p>
           </header>
 
+          <button className="terms__mobile-documentation" type="button" onClick={() => contentRef.current?.focus()}>
+            <img src={fileIcon} alt="" />
+            <span>Documentación</span>
+            <span aria-hidden="true">⌄</span>
+          </button>
+
           <div
             className="terms__div-section-div"
             ref={contentRef}

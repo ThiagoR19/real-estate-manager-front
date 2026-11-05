@@ -1046,3 +1046,37 @@ body:has(#reports-agent) {
     transition: none;
   }
 }
+
+@media (max-width: 760px) {
+  .reports__gallery,
+  .reports__main-photo-frame,
+  .reports__main-photo {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .reports__main-photo {
+    aspect-ratio: 4 / 3;
+    max-height: none;
+  }
+
+  .reports__thumbnails {
+    width: 100%;
+    min-width: 0;
+    gap: 8px;
+    padding-bottom: 7px;
+  }
+
+  .reports__thumbnail-button,
+  .reports__thumbnail,
+  .reports__uploaded-thumbnails img {
+    flex: 0 0 clamp(76px, 22vw, 100px);
+    width: clamp(76px, 22vw, 100px);
+    height: clamp(72px, 20vw, 94px);
+  }
+
+  .reports__gallery-arrow {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}

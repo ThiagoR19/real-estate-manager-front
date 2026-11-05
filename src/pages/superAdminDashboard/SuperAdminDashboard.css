@@ -908,3 +908,40 @@ body:has(#superadmin-dashboard) {
     order: 3;
   }
 }
+
+/* The super-admin view is a single management surface; the extra navigation/count bubbles are not part of it. */
+.superadmin__sidebar,
+.superadmin__active-count {
+  display: none;
+}
+
+#superadmin-dashboard {
+  overflow-x: hidden;
+}
+
+.superadmin__content {
+  padding-right: 24px;
+  padding-left: 24px;
+}
+
+.superadmin__body {
+  display: block;
+}
+
+.superadmin__summary-column {
+  justify-content: flex-start;
+}
+
+@media (max-width: 760px) {
+  .superadmin__content {
+    padding: 14px 12px 28px;
+  }
+
+  .superadmin__summary-column {
+    display: block;
+  }
+
+  .superadmin__new-agency {
+    width: 100%;
+  }
+}

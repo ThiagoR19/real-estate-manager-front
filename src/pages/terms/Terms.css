@@ -571,3 +571,139 @@ body:has(#terms) {
     transition: none;
   }
 }
+
+.terms__mobile-documentation {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  body:has(#terms) .navbar__account {
+    display: none;
+  }
+
+  body:has(#terms) .navbar__brand::after {
+    content: "Propiedades";
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  body:has(#terms) .navbar__breadcrumb {
+    margin-left: auto;
+  }
+
+  body:has(#terms) .navbar__breadcrumb a {
+    display: none;
+  }
+
+  body:has(#terms) .navbar__breadcrumb span:last-child {
+    display: block;
+    font-size: 0;
+  }
+
+  body:has(#terms) .navbar__breadcrumb span:last-child::after {
+    content: "Agenda";
+    font-size: 16px;
+  }
+
+  .terms__div {
+    display: block;
+    height: auto;
+    min-height: calc(100dvh - 89px);
+    margin: 14px 10px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .terms__div-aside {
+    display: none;
+  }
+
+  .terms__div-section {
+    gap: 14px;
+    min-height: calc(100dvh - 89px);
+  }
+
+  .terms__div-section-header {
+    min-height: 68px;
+    padding: 12px 16px;
+    border-radius: 14px;
+    gap: 2px;
+  }
+
+  .terms__div-section-header::before {
+    opacity: .42;
+  }
+
+  .terms__section-header-h1 {
+    font-size: 22px;
+  }
+
+  .terms__section-header-p {
+    max-width: none;
+    font-size: 12px;
+    line-height: 1.25;
+  }
+
+  .terms__mobile-documentation {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 43px;
+    padding: 0 14px;
+    border: 2px solid #e3edf5;
+    border-radius: 10px;
+    background: #fff;
+    color: #526485;
+    cursor: pointer;
+    font: inherit;
+    font-size: 14px;
+    text-align: left;
+  }
+
+  .terms__mobile-documentation img {
+    width: 20px;
+    height: 20px;
+  }
+
+  .terms__mobile-documentation span:last-child {
+    margin-left: auto;
+    color: #0b285e;
+    font-size: 25px;
+    line-height: 1;
+  }
+
+  .terms__div-section-div {
+    flex: 1;
+    gap: 10px;
+    min-height: 0;
+  }
+
+  .terms__section-div-section,
+  .terms__section-div-section:first-child,
+  .terms__section-div-section:nth-child(4) {
+    gap: 12px;
+    min-height: 0;
+    padding: 10px 8px;
+    border-width: 2px;
+  }
+
+  .terms__div-section-span {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+  }
+
+  .terms__section-article-h2 {
+    margin-bottom: 2px;
+    font-size: 18px;
+  }
+
+  .terms__section-article-p {
+    font-size: 14px;
+    line-height: 1.18;
+  }
+}

@@ -27,6 +27,7 @@ function StatusButton({ type, children, onClick }) {
 
 export default function PaymentsAndCollections() {
   const [query, setQuery] = useState("");
+  const [peopleOpen, setPeopleOpen] = useState(false);
   const [selectedPerson, setSelectedPerson] = useState(people[0]);
   const [decision, setDecision] = useState("");
   const [concepts, setConcepts] = useState(initialConcepts.map((concept) => ({ ...concept, checked: concept.tone !== "muted" })));
@@ -58,7 +59,8 @@ export default function PaymentsAndCollections() {
       </header>
 
       <div className="agent-payments__layout">
-        <aside className="agent-payments__people" aria-label="Personas">
+        <aside className={`agent-payments__people${peopleOpen ? " is-open" : ""}`} aria-label="Personas">
+          <button className="agent-payments__people-toggle" type="button" onClick={() => setPeopleOpen((open) => !open)} aria-expanded={peopleOpen} aria-label="Mostrar locatarios y propietarios"><span aria-hidden="true">›</span></button>
           <h2>Personas</h2>
           <label className="agent-payments__search"><Icon src={magnifyingGlassIcon} /><input type="search" placeholder="Buscar persona..." value={query} onChange={(event) => setQuery(event.target.value)} aria-label="Buscar persona" /></label>
           <h3>Locatarios <span>‹</span></h3>
