@@ -58,6 +58,7 @@ function FilterSidebar({ operation, setOperation, open, onClose }) {
 
   return (
     <aside id="public-property-filters" className={`public-properties__filters${open ? " is-open" : ""}`} role={open ? "dialog" : undefined} aria-modal={open || undefined} aria-label="Filtros de propiedades">
+      <button className="public-properties__filter-handle" type="button" aria-label="Cerrar filtros" onClick={onClose}><span /></button>
       <h2>Operación</h2>
       <div className="public-properties__operation-toggle" role="tablist" aria-label="Tipo de operación">
         <Link className={operation === "buy" ? "is-active" : ""} href="/public-properties?filter=buy" role="tab" aria-selected={operation === "buy"} onClick={() => setOperation("buy")}>Venta</Link>

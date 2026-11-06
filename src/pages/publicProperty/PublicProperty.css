@@ -275,6 +275,18 @@
   padding: 0 0 5px 1px;
 }
 
+.public-property__gallery-arrow--previous img {
+  height: 25px;
+  width: 25px;
+  transform: rotate(90deg)translate(3px, 1px);
+}
+
+.public-property__gallery-arrow--next img {
+  height: 25px;
+  width: 25px;
+  transform: rotate(-90deg)translate(-3px, 1px);
+}
+
 .public-property__gallery-arrow--next {
   right: 12px;
   padding: 0 0 5px 1px;

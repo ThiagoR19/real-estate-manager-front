@@ -9,7 +9,8 @@ import {
   locationDotIcon as locationIcon,
   rulerCombinedIcon as rulerIcon,
   userIcon,
-  whatsappIcon
+  whatsappIcon,
+  angleDownIcon
 } from "../../assets/icons";
 import { Footer, Icon } from "../../components";
 import propertyImage from "../../assets/fondoCasa.png";
@@ -103,8 +104,8 @@ export default function PublicProperty() {
             <section className="public-property__gallery" aria-label="Galería de fotos de la propiedad">
               <div className="public-property__gallery-main">
                 <img src={galleryImages[activeImage].src} alt={galleryImages[activeImage].alt} />
-                <button className="public-property__gallery-arrow public-property__gallery-arrow--previous" type="button" aria-label="Imagen anterior" onClick={() => changeImage(-1)}><span aria-hidden="true">‹</span></button>
-                <button className="public-property__gallery-arrow public-property__gallery-arrow--next" type="button" aria-label="Imagen siguiente" onClick={() => changeImage(1)}><span aria-hidden="true">›</span></button>
+                <button className="public-property__gallery-arrow public-property__gallery-arrow--previous" type="button" aria-label="Imagen anterior" onClick={() => changeImage(-1)}><img className="izquierda" src={angleDownIcon} alt="" /></button>
+                <button className="public-property__gallery-arrow public-property__gallery-arrow--next" type="button" aria-label="Imagen siguiente" onClick={() => changeImage(1)}><img className="derecha" src={angleDownIcon} alt="" /></button>
                 <span className="public-property__gallery-counter"><PropertyIcon src={cameraIcon} />{activeImage + 1}/{galleryImages.length}</span>
               </div>
               <div className="public-property__thumbnails" role="list" aria-label="Seleccionar foto">
