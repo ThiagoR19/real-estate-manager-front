@@ -133,11 +133,10 @@ function ActivityCard() {
 }
 
 export default function Dashboard() {
-  const [showAppointmentMessage, setShowAppointmentMessage] = useState(false);
   return (
     <main className="dashboard-page">
       <div className="dashboard-page__background" aria-hidden="true" />
-      <header className="dashboard-hero"><div><h1>¡Hola, Thiago!</h1><p><span className="dashboard-hero__desktop-copy">Aquí tienes un resumen de la actividad de la inmobiliaria</span><span className="dashboard-hero__mobile-copy">Aquí tienes un resumen de tu inmobiliaria</span></p></div><button className="dashboard-appointment-button" type="button" onClick={() => setShowAppointmentMessage((visible) => !visible)}><img src={plusIconWhite} alt="" aria-hidden="true" />Agendar cita</button>{showAppointmentMessage && <span className="dashboard-appointment-toast" role="status">Nueva cita lista para agendar</span>}</header>
+      <header className="dashboard-hero"><div><h1>¡Hola, Thiago!</h1><p><span className="dashboard-hero__desktop-copy">Aquí tienes un resumen de la actividad de la inmobiliaria</span><span className="dashboard-hero__mobile-copy">Aquí tienes un resumen de tu inmobiliaria</span></p></div><Link className="dashboard-appointment-button" href="/schedule"><img src={plusIconWhite} alt="" aria-hidden="true" />Agendar cita</Link></header>
       <div className="dashboard-content"><AgentsCard /><PerformanceCard /><StatusCard /><ActivityCard /></div>
     </main>
   );

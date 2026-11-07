@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "wouter";
-import { Icon, PropertyCardSimple } from "../../components";
+import { Footer, Icon, PropertyCardSimple } from "../../components";
 import kaikenLogo from "../../assets/icons/kaiken.svg";
 import filterIcon from "../../assets/icons/options.svg";
 import "./PublicProperties.css";
+
+
 
 const properties = [
   { id: 1, image: "/images.jpg", title: "Departamento en Belgrano", location: "Av. Cabildo 2450, CABA", operation: "rent", type: "Departamento", rooms: 2, baths: 2, area: 80 },
@@ -141,6 +143,7 @@ export default function PublicProperties() {
           </div>
         </section>
       </div>
+      <Footer />
     </main>
   );
 }

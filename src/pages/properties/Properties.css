@@ -153,7 +153,7 @@
 .properties__grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 26px 30px;
+  gap: 26px 15px;
   padding: 0 38px 40px;
 }
 
@@ -383,7 +383,7 @@
   }
 }
 
-@media (max-width: 780px) {
+@media (max-width: 900px) {
   .properties__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 20px;
@@ -442,6 +442,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .properties__details-button,
   .properties__more-button,
   .properties__new-button {
