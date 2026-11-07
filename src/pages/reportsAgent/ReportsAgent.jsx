@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import reportReference from "../../assets/reports-reference.png";
 import { ReportModal } from "../../components";
+import { houseIcon, relojHomeIcon } from "../../assets/icons";
 import "./ReportsAgent.css";
 
 const initialReports = [
@@ -55,6 +56,7 @@ export default function ReportsAgent({ allowCreate = false }) {
   const [createOpen, setCreateOpen] = useState(false);
   const [activeReportId, setActiveReportId] = useState(initialReports[0].id);
   const [query, setQuery] = useState("");
+  const [selectedProperty, setSelectedProperty] = useState("Todas las propiedades");
   const [selectedPhotos, setSelectedPhotos] = useState({});
   const thumbnailsRef = useRef(null);
   const uploadedUrls = useRef([]);
@@ -64,14 +66,16 @@ export default function ReportsAgent({ allowCreate = false }) {
   const visibleReports = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
 
-    if (!normalizedQuery) return reportItems;
+    return reportItems.filter(({ title, location }) => {
+      const matchesQuery = !normalizedQuery || `${title} ${location}`.toLowerCase().includes(normalizedQuery);
+      const matchesProperty = selectedProperty === "Todas las propiedades" || location === selectedProperty;
+      return matchesQuery && matchesProperty;
+    });
+  }, [query, reportItems, selectedProperty]);
 
-    return reportItems.filter(({ title, location }) =>
-      `${title} ${location}`.toLowerCase().includes(normalizedQuery),
-    );
-  }, [query, reportItems]);
+  const properties = [...new Set(reportItems.map(({ location }) => location))];
 
-  const activeReport = reportItems.find(({ id }) => id === activeReportId) ?? reportItems[0];
+  const activeReport = visibleReports.find(({ id }) => id === activeReportId) ?? visibleReports[0] ?? reportItems[0];
   const photos = activeReport.photos?.length ? activeReport.photos : [{}, {}, {}];
   const selectedPhoto = Math.min(selectedPhotos[activeReport.id] ?? 0, photos.length - 1);
 
@@ -117,11 +121,14 @@ export default function ReportsAgent({ allowCreate = false }) {
             />
           </label>
 
-          {!allowCreate && <button className="reports__property-filter" type="button">
-            <span className="reports__property-icon"><DrawnIcon name="house" /></span>
-            <span>Propiedad</span>
+          {!allowCreate && <label className="reports__property-filter">
+            <span className="reports__property-icon"><img src={houseIcon} alt="" aria-hidden="true" /></span>
+            <select value={selectedProperty} onChange={(event) => setSelectedProperty(event.target.value)} aria-label="Filtrar reportes por propiedad">
+              <option>Todas las propiedades</option>
+              {properties.map((property) => <option key={property} value={property}>{property}</option>)}
+            </select>
             <span className="reports__property-chevron" aria-hidden="true" />
-          </button>}
+          </label>}
 
           <div className="reports__list">
             {visibleReports.map((report, index) => (
@@ -194,7 +201,7 @@ export default function ReportsAgent({ allowCreate = false }) {
           </div>
 
           <div className="reports__status" aria-label="Estado del reporte">
-            <span className="reports__status-icon" aria-hidden="true">◉</span>
+            <img className="reports__status-icon" src={relojHomeIcon} alt="" aria-hidden="true" />
             En proceso
           </div>
         </section>

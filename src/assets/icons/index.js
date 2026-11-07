@@ -44,6 +44,7 @@ export { default as phoneIcon } from "./phone-solid-full.svg";
 export { default as plusIcon } from "./plus-solid-full.svg";
 export { default as plusIconWhite } from "./plus-solid-full-white.svg";
 export { default as rulerCombinedIcon } from "./ruler-combined-solid-full.svg";
+export { default as relojHomeIcon } from "./relojHomeIcon.svg";
 export { default as shieldHalvedIcon } from "./shield-halved-solid-full.svg";
 export { default as tagIcon } from "./tag-solid-full.svg";
 export { default as toolboxIcon } from "./toolbox-solid-full.svg";

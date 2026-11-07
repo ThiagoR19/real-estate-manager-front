@@ -298,6 +298,7 @@ body:has(#reports-agent) {
 }
 
 .reports__property-filter {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 9px;
@@ -323,9 +324,27 @@ body:has(#reports-agent) {
   background: #e7f3ff;
 }
 
-.reports__property-icon .reports__drawn-icon--house {
-  width: 13px;
-  height: 11px;
+#reports-agent .reports__property-icon img {
+  width: 14px;
+  height: 14px;
+  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%);
+}
+
+.reports__property-filter select {
+  min-width: 0;
+  flex: 1;
+  appearance: none;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.reports__property-filter:focus-within {
+  outline: 2px solid #2178c4;
+  outline-offset: 3px;
 }
 
 .reports__property-chevron {
@@ -479,15 +498,83 @@ body:has(#reports-agent) {
   min-width: 0;
 }
 
-.reports__main-photo-frame { position: relative; }
-.reports__gallery-arrow { position: absolute; top: 45%; display: grid; place-items: center; width: 30px; height: 36px; padding: 0; border: 0; border-radius: 7px; background: #fffE; color: #17235e; cursor: pointer; font-size: 26px !important; }
-.reports__gallery-arrow--previous { left: 8px; }.reports__gallery-arrow--next { right: 8px; }
-.reports__photo-count { position: absolute; right: 10px; bottom: 10px; padding: 4px 8px; border-radius: 6px; background: #000b; color: #fff; font-size: 12px; }
-.reports__thumbnails { position: relative; max-width: 100%; flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; padding-bottom: 8px; scrollbar-width: thin; scrollbar-color: #17235e #d7e8f6; }
-.reports__thumbnail-button { flex: 0 0 100px; width: 100px; height: 94px; padding: 0; overflow: hidden; border: 2px solid transparent; border-radius: 10px; background: #edf4fc; cursor: pointer; }
-.reports__thumbnail-button.is-selected { border-color: #147bdf; }
-.reports__thumbnail-button .reports__thumbnail { display: block; width: 100%; height: 100%; border: 0; }
-.reports__main-photo.reports__photo--uploaded { display: block; object-fit: cover; }
+.reports__main-photo-frame {
+  position: relative;
+}
+
+.reports__gallery-arrow {
+  position: absolute;
+  top: 45%;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: #fffE;
+  color: #17235e;
+  cursor: pointer;
+  font-size: 26px !important;
+}
+
+.reports__gallery-arrow--previous {
+  left: 8px;
+}
+
+.reports__gallery-arrow--next {
+  right: 8px;
+}
+
+.reports__photo-count {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: #000b;
+  color: #fff;
+  font-size: 12px;
+}
+
+.reports__thumbnails {
+  position: relative;
+  max-width: 100%;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: #17235e #d7e8f6;
+}
+
+.reports__thumbnail-button {
+  flex: 0 0 100px;
+  width: 100px;
+  height: 94px;
+  padding: 0;
+  overflow: hidden;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  background: #edf4fc;
+  cursor: pointer;
+}
+
+.reports__thumbnail-button.is-selected {
+  border-color: #147bdf;
+}
+
+.reports__thumbnail-button .reports__thumbnail {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.reports__main-photo.reports__photo--uploaded {
+  display: block;
+  object-fit: cover;
+}
 
 .reports__main-photo {
   width: 100%;
@@ -614,7 +701,7 @@ body:has(#reports-agent) {
   gap: 10px;
 }
 
-.reports__facts p > span {
+.reports__facts p>span {
   font-size: 16px;
 }
 
@@ -667,9 +754,10 @@ body:has(#reports-agent) {
   font-weight: 700;
 }
 
-.reports__status-icon {
-  font-size: 18px;
-  line-height: 1;
+#reports-agent .reports__status-icon {
+  width: 18px;
+  height: 18px;
+  filter: brightness(0) saturate(100%) invert(53%) sepia(95%) saturate(1397%) hue-rotate(346deg) brightness(102%) contrast(101%);
 }
 
 .reports__drawn-icon--house {
@@ -1066,6 +1154,7 @@ body:has(#reports-agent) {
 }
 
 @media (max-width: 760px) {
+
   .reports__gallery,
   .reports__main-photo-frame,
   .reports__main-photo {

@@ -171,8 +171,8 @@ body:has(#schedule) {
   padding: 23px 11px 0;
 }
 
-.schedule__day > h2,
-.schedule__week > h2 {
+.schedule__day>h2,
+.schedule__week>h2 {
   padding: 0 2px 13px;
 }
 
@@ -258,8 +258,8 @@ body:has(#schedule) {
   min-height: 57px;
 }
 
-.schedule__day-events > p,
-.schedule__week-events > p {
+.schedule__day-events>p,
+.schedule__week-events>p {
   grid-column: 1 / -1;
   margin: 0;
   padding-left: 4px;
@@ -550,7 +550,7 @@ body:has(#schedule) {
   padding: 13px 17px 9px;
 }
 
-.schedule__sidebar-heading > div {
+.schedule__sidebar-heading>div {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -600,7 +600,7 @@ body:has(#schedule) {
   text-align: left;
 }
 
-.schedule__upcoming-item > img {
+.schedule__upcoming-item>img {
   flex: 0 0 42px;
   width: 42px;
   height: 38px;
@@ -608,7 +608,7 @@ body:has(#schedule) {
   object-fit: cover;
 }
 
-.schedule__upcoming-item > div {
+.schedule__upcoming-item>div {
   display: flex;
   min-width: 0;
   flex-direction: column;
@@ -638,7 +638,7 @@ body:has(#schedule) {
   height: 12px;
 }
 
-.schedule__upcoming-item > .schedule__upcoming-copy {
+.schedule__upcoming-item>.schedule__upcoming-copy {
   display: flex;
   min-width: 0;
   flex-direction: column;
@@ -726,71 +726,346 @@ body:has(#schedule) {
 }
 
 @media (max-width: 760px) {
-  #schedule { position: relative; min-height: calc(100dvh - 40px); }
-  .schedule__content { position: relative; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto; align-content: start; gap: 0; min-height: calc(100dvh - 40px); padding: 16px 0 70px; }
-  .schedule__topbar { grid-template-columns: minmax(0, 142fr) minmax(0, 223fr); align-items: center; gap: 24px 19px; padding-inline: 5px 14px; }
-  .schedule__hero { grid-column: 1 / -1; min-height: 68px; padding: 11px 21px; border-radius: 12px; }
-  .schedule__hero::before { opacity: 1; background-image: linear-gradient(90deg, #edf5ffed, #edf5ff30), url("../../assets/fondoCasa.png"); background-position: center 46%; }
-  .schedule__hero h1 { font-size: 21px; }
-  .schedule__hero p { max-width: 340px; color: #17235e; font-size: 11px; line-height: 1.2; }
-  .schedule__desktop-copy { display: none; }
-  .schedule__mobile-copy { display: inline; }
-  .schedule__new-visit { grid-column: 1; width: 100%; min-width: 0; height: 27px; gap: 6px; margin: 0; padding-inline: 6px; font-size: 12px; }
-  .schedule__new-visit img { width: 15px; height: 15px; }
-  .schedule__view-toggle { grid-column: 2; width: 100%; height: 42px; }
-  .schedule__view-toggle button { min-width: 0; padding-inline: 4px; font-size: 12px; }
-  .schedule__panel { grid-column: 1; grid-row: 2; min-height: 497px; margin-top: 0; }
-  .schedule__sidebar { position: absolute; z-index: 32; top: 150px; left: 0; width: min(257px, 80vw); min-height: 560px; padding-bottom: 46px; border: 0; border-radius: 0 8px 8px 8px; box-shadow: 15px 15px 30px #17235e20; visibility: hidden; transform: translateX(-105%); transition: transform 160ms ease, visibility 160ms; }
-  .schedule__sidebar.is-open { visibility: visible; transform: translateX(0); }
-  .schedule__sidebar-heading { padding: 13px 16px 8px; }
-  .schedule__sidebar-heading button { display: none; }
-  .schedule__upcoming-copy small { display: none; }
-  .schedule__upcoming-item { min-height: 59px; }
-  .schedule__sidebar-backdrop { position: absolute; z-index: 31; inset: 150px 0 0; display: block; width: 100%; border: 0; background: #17235e10; }
+  #schedule {
+    position: relative;
+    min-height: calc(100dvh - 40px);
+  }
+
+  .schedule__content {
+    position: relative;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    align-content: start;
+    gap: 0;
+    min-height: calc(100dvh - 40px);
+    padding: 16px 0 70px;
+  }
+
+  .schedule__topbar {
+    grid-template-columns: minmax(0, 142fr) minmax(0, 223fr);
+    align-items: center;
+    gap: 24px 19px;
+    padding-inline: 5px 14px;
+  }
+
+  .schedule__hero {
+    grid-column: 1 / -1;
+    min-height: 68px;
+    padding: 11px 21px;
+    border-radius: 12px;
+  }
+
+  .schedule__hero::before {
+    opacity: 1;
+    background-image: linear-gradient(90deg, #edf5ffed, #edf5ff30), url("../../assets/fondoCasa.png");
+    background-position: center 46%;
+  }
+
+  .schedule__hero h1 {
+    font-size: 21px;
+  }
+
+  .schedule__hero p {
+    max-width: 340px;
+    color: #17235e;
+    font-size: 11px;
+    line-height: 1.2;
+  }
+
+  .schedule__desktop-copy {
+    display: none;
+  }
+
+  .schedule__mobile-copy {
+    display: inline;
+  }
+
+  .schedule__new-visit {
+    grid-column: 1;
+    width: 100%;
+    min-width: 0;
+    height: 27px;
+    gap: 6px;
+    margin: 0;
+    padding-inline: 6px;
+    font-size: 12px;
+  }
+
+  .schedule__new-visit img {
+    width: 15px;
+    height: 15px;
+  }
+
+  .schedule__view-toggle {
+    grid-column: 2;
+    width: 100%;
+    height: 42px;
+  }
+
+  .schedule__view-toggle button {
+    min-width: 0;
+    padding-inline: 4px;
+    font-size: 12px;
+  }
+
+  .schedule__panel {
+    grid-column: 1;
+    grid-row: 2;
+    min-height: 497px;
+    margin-top: 0;
+  }
+
+  .schedule__sidebar {
+    position: absolute;
+    z-index: 32;
+    top: 150px;
+    left: 0;
+    width: min(257px, 80vw);
+    min-height: 560px;
+    padding-bottom: 46px;
+    border: 0;
+    border-radius: 0 8px 8px 8px;
+    box-shadow: 15px 15px 30px #17235e20;
+    visibility: hidden;
+    transform: translateX(-105%);
+    transition: transform 160ms ease, visibility 160ms;
+  }
+
+  .schedule__sidebar.is-open {
+    visibility: visible;
+    transform: translateX(0);
+  }
+
+  .schedule__sidebar-heading {
+    padding: 13px 16px 8px;
+  }
+
+  .schedule__sidebar-heading button {
+    display: none;
+  }
+
+  .schedule__upcoming-copy small {
+    display: none;
+  }
+
+  .schedule__upcoming-item {
+    min-height: 59px;
+  }
+
+  .schedule__sidebar-backdrop {
+    position: absolute;
+    z-index: 31;
+    inset: 150px 0 0;
+    display: block;
+    width: 100%;
+    border: 0;
+    background: #17235e10;
+  }
+
   #schedule button.schedule__upcoming-toggle,
-  #schedule button.schedule__sidebar-close { display: grid; place-items: center; width: 51px; height: 45px; padding: 0; border: 0; background: #243f91; color: #fff; font-size: 34px; line-height: 1; }
-  .schedule__upcoming-toggle { position: relative; grid-column: 1; grid-row: 3; margin-top: 16px; border-radius: 0 24px 24px 0; }
-  .schedule__sidebar-close { position: absolute; bottom: 0; right: 0; border-radius: 24px 0 0 24px; }
+  #schedule button.schedule__sidebar-close {
+    display: grid;
+    place-items: center;
+    width: 51px;
+    height: 45px;
+    padding: 0;
+    border: 0;
+    background: #243f91;
+    color: #fff;
+    font-size: 34px;
+    line-height: 1;
+  }
+
+  .schedule__upcoming-toggle {
+    position: relative;
+    grid-column: 1;
+    grid-row: 3;
+    margin-top: 16px;
+    border-radius: 0 24px 24px 0;
+  }
+
+  .schedule__sidebar-close {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    border-radius: 24px 0 0 24px;
+  }
+
   .schedule__day,
-  .schedule__week { overflow: hidden; min-height: 497px; padding: 14px 8px 0; }
+  .schedule__week {
+    overflow: hidden;
+    min-height: 497px;
+    padding: 14px 8px 0;
+  }
+
   .schedule__day-head,
-  .schedule__week-head { z-index: 1; top: 43px; right: 0; width: 52px; font-size: 9px; grid-template-columns: 1fr; }
+  .schedule__week-head {
+    z-index: 1;
+    top: 43px;
+    right: 0;
+    width: 52px;
+    font-size: 9px;
+    grid-template-columns: 1fr;
+  }
+
   .schedule__day-head strong,
-  .schedule__week-head strong { grid-column: 1; }
+  .schedule__week-head strong {
+    grid-column: 1;
+  }
+
   .schedule__day-head,
-  .schedule__week-head { line-height: 1.1; }
+  .schedule__week-head {
+    line-height: 1.1;
+  }
+
   .schedule__day-list,
-  .schedule__week-list { margin-top: 13px; }
+  .schedule__week-list {
+    margin-top: 13px;
+  }
+
   .schedule__day-row,
-  .schedule__week-row { position: relative; grid-template-columns: 52px minmax(0, 1fr) 42px; min-width: 0; gap: 12px; min-height: 71px; }
+  .schedule__week-row {
+    position: relative;
+    grid-template-columns: 52px minmax(0, 1fr) 42px;
+    min-width: 0;
+    gap: 12px;
+    min-height: 71px;
+  }
+
   .schedule__day-events,
-  .schedule__week-events { display: flex; overflow-x: auto; scrollbar-width: none; padding-bottom: 3px; }
+  .schedule__week-events {
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 3px;
+  }
+
   .schedule__day-events::-webkit-scrollbar,
-  .schedule__week-events::-webkit-scrollbar { display: none; }
-  .schedule__visit-card { flex: 0 0 272px; min-height: 54px; }
-  .schedule__visit-status { display: block; position: absolute; top: 5px; right: 47px; margin: 0; padding: 2px 8px; font-size: 11px; }
-  .schedule__visit-copy { padding-right: 0; }
-  .schedule__visit-image { margin-left: 5px; }
-  .schedule__count { background: #fff; }
-  .schedule__day-events > p,
-  .schedule__week-events > p { flex: 0 0 100%; font-size: 12px; }
-  .schedule__month { position: relative; display: flex; flex-direction: column-reverse; justify-content: space-between; overflow: hidden; padding: 18px 18px 20px; }
-  .schedule__month-heading { position: relative; flex-direction: row; align-items: center; justify-content: center; min-height: 35px; padding: 0; margin-top: 24px; }
-  .schedule__month-heading h2 { z-index: 1; padding: 7px 10px; border: 1px solid #e4edf4; border-radius: 5px; background: #f8f9fa; font-size: 16px; }
-  .schedule__month-controls { position: absolute; inset: 0; justify-content: space-between; }
-  .schedule__month-controls button:last-child { display: none; }
-  .schedule__calendar { min-width: 0; grid-template-rows: 27px; grid-auto-rows: minmax(76px, auto); gap: 0; margin-top: 0; }
-  .schedule__weekday span { display: none; }
-  .schedule__weekday abbr { display: block; font-size: 13px; text-decoration: none; }
-  .schedule__month-cell { min-height: 76px; padding: 3px 2px; border-radius: 0; box-shadow: none; }
-  .schedule__month-number { font-size: 13px; }
-  .schedule__month-events { margin-top: 7px; }
-  .schedule__month-event { padding: 4px 2px; border-left-width: 4px !important; font-size: 9px; }
-  .schedule__panel h2 { font-size: 20px; }
-  .schedule__month-heading h2 { font-size: 16px; }
+  .schedule__week-events::-webkit-scrollbar {
+    display: none;
+  }
+
+  .schedule__visit-card {
+    flex: 0 0 272px;
+    min-height: 54px;
+  }
+
+  .schedule__visit-status {
+    display: block;
+    position: absolute;
+    top: 5px;
+    right: 47px;
+    margin: 0;
+    padding: 2px 8px;
+    font-size: 11px;
+  }
+
+  .schedule__visit-copy {
+    padding-right: 0;
+  }
+
+  .schedule__visit-image {
+    margin-left: 5px;
+  }
+
+  .schedule__count {
+    background: #fff;
+  }
+
+  .schedule__day-events>p,
+  .schedule__week-events>p {
+    flex: 0 0 100%;
+    font-size: 12px;
+  }
+
+  .schedule__month {
+    position: relative;
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: space-between;
+    overflow: hidden;
+    padding: 18px 18px 20px;
+  }
+
+  .schedule__month-heading {
+    position: relative;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    min-height: 35px;
+    padding: 0;
+    margin-top: 24px;
+  }
+
+  .schedule__month-heading h2 {
+    z-index: 1;
+    padding: 7px 10px;
+    border: 1px solid #e4edf4;
+    border-radius: 5px;
+    background: #f8f9fa;
+    font-size: 16px;
+  }
+
+  .schedule__month-controls {
+    position: absolute;
+    inset: 0;
+    justify-content: space-between;
+  }
+
+  .schedule__month-controls button:last-child {
+    display: none;
+  }
+
+  .schedule__calendar {
+    min-width: 0;
+    grid-template-rows: 27px;
+    grid-auto-rows: minmax(76px, auto);
+    gap: 0;
+    margin-top: 0;
+  }
+
+  .schedule__weekday span {
+    display: none;
+  }
+
+  .schedule__weekday abbr {
+    display: block;
+    font-size: 13px;
+    text-decoration: none;
+  }
+
+  .schedule__month-cell {
+    min-height: 76px;
+    padding: 3px 2px;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .schedule__month-number {
+    font-size: 13px;
+  }
+
+  .schedule__month-events {
+    margin-top: 7px;
+  }
+
+  .schedule__month-event {
+    padding: 4px 2px;
+    border-left-width: 4px !important;
+    font-size: 9px;
+  }
+
+  .schedule__panel h2 {
+    font-size: 20px;
+  }
+
+  .schedule__month-heading h2 {
+    font-size: 16px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .schedule__new-visit,
   .schedule__view-toggle button {
     transition: none;

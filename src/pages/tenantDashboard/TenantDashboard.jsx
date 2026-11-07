@@ -123,8 +123,10 @@ export default function TenantDashboard() {
     <main id="tenant-dashboard">
       <div className="tenant-dashboard__page">
         <header className="tenant-dashboard__intro">
-          <h1>¡Hola, Thiago!</h1>
-          <p>Aquí tienes un resumen de la actividad del alquiler</p>
+          <div>
+            <h1>¡Hola, Thiago!</h1>
+            <p>Aquí tienes un resumen de la actividad del alquiler</p>
+          </div>
         </header>
 
         <div className="tenant-dashboard__grid">

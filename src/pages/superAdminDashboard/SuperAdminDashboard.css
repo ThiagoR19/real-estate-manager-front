@@ -884,6 +884,64 @@ body:has(#superadmin-dashboard) {
   }
 }
 
+#superadmin-dashboard {
+  display: flex;
+  height: 100dvh;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.superadmin__body {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.superadmin__content {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+@media (max-width: 760px) {
+  #superadmin-dashboard {
+    overflow-y: auto;
+  }
+
+  .superadmin__body {
+    flex: 0 0 auto;
+    overflow: visible;
+  }
+}
+
+#superadmin-dashboard {
+  height: 100dvh;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.superadmin__body {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.superadmin__content {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+@media (max-width: 760px) {
+  #superadmin-dashboard {
+    overflow-y: auto;
+  }
+
+  .superadmin__body {
+    flex: 0 0 auto;
+    overflow: visible;
+  }
+}
+
 @media (max-width: 420px) {
   .superadmin__brand span {
     display: none;
@@ -951,5 +1009,36 @@ body:has(#superadmin-dashboard) {
 
   .superadmin__new-agency {
     width: 100%;
+  }
+}
+
+#superadmin-dashboard {
+  display: flex;
+  height: 100dvh;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.superadmin__body {
+  display: flex;
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.superadmin__content {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+@media (max-width: 760px) {
+  #superadmin-dashboard {
+    overflow-y: auto;
+  }
+
+  .superadmin__body {
+    display: block;
+    flex: 0 0 auto;
+    overflow: visible;
   }
 }
