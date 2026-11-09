@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { checkIcon, circleInfoIcon, fileLinesIcon, imageIcon, magnifyingGlassIcon, paperPlaneIcon, plusIconWhite, xIcon } from "../../assets/icons";
+import { angleDownIcon, checkIcon, circleInfoIcon, fileLinesIcon, imageIcon, magnifyingGlassIcon, paperPlaneIcon, plusIconWhite, xIcon } from "../../assets/icons";
 import "./PaymentsAndCollections.css";
 
 const people = [
@@ -127,7 +127,7 @@ export default function PaymentsAndCollections() {
             <div className="agent-payments__record">
               <label className="agent-payments__year"><span className="sr-only">Año</span><select value={year} onChange={(event) => setYear(event.target.value)}>{["2025", "2026", "2027"].map((value) => <option key={value}>{value}</option>)}</select></label>
               <label className="agent-payments__month"><span className="sr-only">Mes</span><select value={month} onChange={(event) => setMonth(event.target.value)}>{months.map((value) => <option key={value}>{value}</option>)}</select></label>
-              <button className="agent-payments__selected-person" type="button" onClick={() => { setPeopleOpen(true); setOpenGroup(selectedPerson.type); }} aria-label={`Seleccionar persona. Actual: ${selectedPerson.name}`}>{selectedPerson.name}<span aria-hidden="true">⌄</span></button>
+              <button className="agent-payments__selected-person" type="button" onClick={() => { setPeopleOpen(true); setOpenGroup(selectedPerson.type); }} aria-label={`Seleccionar persona. Actual: ${selectedPerson.name}`}>{selectedPerson.name}<Icon src={angleDownIcon} /></button>
               <span className="agent-payments__rent">Alquiler</span>
               <output className="agent-payments__rent-amount" aria-label="Importe del alquiler">{selectedPerson.amount}</output>
             </div>
