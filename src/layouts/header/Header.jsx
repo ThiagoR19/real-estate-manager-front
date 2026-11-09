@@ -14,14 +14,15 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
   const currentItem = allItems.find(({ href }) => isItemActive(pathname, href));
   const isPayments = pathname === "/payments" || pathname.startsWith("/payments/");
   const isProperties = pathname === "/properties" || pathname.startsWith("/properties/") || pathname === "/property" || pathname.startsWith("/property/");
+  const isPaymentsAndCollections = pathname === "/payments-collections" || pathname.startsWith("/payments-collections/");
   const isOwnerDashboard = pathname === "/owner-dashboard" || pathname === "/my-properties" || pathname === "/collections";
   const isAdminDashboard = pathname === "/admin-dashboard" || pathname === "/super-admin" || pathname === "/indec";
   const isSuperAdmin = pathname === "/super-admin";
   const isChat = pathname === "/chat";
   const accountRole = accountRoleFor(pathname);
   const currentLabel = isPayments ? "Zona de pago" : currentItem?.breadcrumbLabel ?? currentItem?.label ?? pageLabels[pathname] ?? "Dashboard";
-  const searchPlaceholder = isProperties ? "Buscar propiedades..." : "Buscar contacto...";
-  const showSearch = isProperties || pathname === "/professional";
+  const searchPlaceholder = isPaymentsAndCollections ? "Buscar propietario/locatario" : isProperties ? "Buscar propiedades..." : "Buscar contacto...";
+  const showSearch = isPaymentsAndCollections || isProperties || pathname === "/professional";
 
   return (
     <header className={`navbar__header${isPayments ? " navbar__header--payments" : ""}${isOwnerDashboard ? " navbar__header--dashboard-owner" : ""}${isAdminDashboard ? " navbar__header--dashboard" : ""}${isChat ? " navbar__header--chat" : ""}${isSuperAdmin ? " navbar__header--super-admin" : ""}`}>

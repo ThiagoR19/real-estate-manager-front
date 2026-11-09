@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
-import { buildingColumnsIcon, calendarIcon, checkIcon, downloadIcon, fileLinesIcon, filterIcon, magnifyingGlassIcon, paperPlaneIcon, xIcon } from "../../assets/icons";
+import { buildingColumnsIcon, calendarIcon, checkIcon, downloadIcon, fileLinesIcon, magnifyingGlassIcon, optionsIcon, paperPlaneIcon, xIcon } from "../../assets/icons";
 import paymentReference from "../../assets/pagos.png";
 import { Button } from "../../components";
+import DropdownSelect from "../../components/select/DropdownSelect";
 import "./PaymentsReference.css";
 import "./PaymentsMobile.css";
 
 const months = [["Mayo", "Sin comprobante", "neutral"], ["Marzo", "Impago", "danger"], ["Abril", "Aprobado", "success"], ["Febrero", "En proceso", "info"], ["Enero", "Rechazado", "danger"]];
+const properties = ["Bielke 454", "Casa de San Isidro", "Belgrano 123"];
 const details = {
   Mayo: ["Mayo 2023", "Sin comprobante", "—", "—", "600.000,10", "Subí el comprobante de pago para que podamos revisarlo.", "Sin comprobante cargado"],
   Marzo: ["Marzo 2023", "Impago", "—", "—", "600.000,10", "Todavía no registramos un pago para este período.", "Sin comprobante cargado"],
@@ -19,6 +21,7 @@ function Icon({ src }) { return <img className="payment-view__icon" src={src} al
 export default function PaymentsReference() {
   const [openYears, setOpenYears] = useState({ 2024: true });
   const [selectedMonth, setSelectedMonth] = useState("Febrero");
+  const [property, setProperty] = useState(properties[0]);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [feedback, setFeedback] = useState("");
   const [timelineOpen, setTimelineOpen] = useState(false);
@@ -29,6 +32,7 @@ export default function PaymentsReference() {
   const tone = status === "Aprobado" ? "approved" : status === "Rechazado" ? "rejected" : "info";
 
   function toggleYear(year) { setOpenYears((current) => ({ ...current, [year]: !current[year] })); }
+  function changeProperty(direction) { setProperty((current) => properties[(properties.indexOf(current) + direction + properties.length) % properties.length]); }
   useEffect(() => {
     if (!timelineOpen && !summaryOpen && !receiptOpen) return undefined;
     function closeOnEscape(event) {
@@ -48,14 +52,18 @@ export default function PaymentsReference() {
   return (
     <main id="payment-view">
       <div className="payment-mobile__toolbar">
-        <label><Icon src={buildingColumnsIcon} /><select aria-label="Propiedad"><option>Bielke 454</option></select></label>
-        <button type="button" aria-label="Abrir cronología" aria-controls="payment-view-chronology" aria-expanded={timelineOpen} onClick={() => { setTimelineOpen(true); setSummaryOpen(false); }}><Icon src={filterIcon} /></button>
+        <DropdownSelect label="Propiedad" placeholder={property} value={property} options={properties} onChange={setProperty} icon={buildingColumnsIcon} className="payment-view__mobile-property-select" triggerClassName="payment-view__mobile-property-trigger" iconClassName="payment-view__mobile-property-icon" valueClassName="payment-view__mobile-property-value" chevronClassName="payment-view__mobile-property-chevron" blurOnSelect />
+        <button type="button" aria-label="Abrir cronología" aria-controls="payment-view-chronology" aria-expanded={timelineOpen} onClick={() => { setTimelineOpen(true); setSummaryOpen(false); }}><Icon src={optionsIcon} /></button>
       </div>
       {timelineOpen && <button className="payment-mobile__close" type="button" aria-label="Cerrar cronología" onClick={() => setTimelineOpen(false)}>×</button>}
       <button className={`payment-mobile__summary-toggle${summaryOpen ? " is-open" : ""}`} type="button" aria-label={summaryOpen ? "Cerrar resumen" : "Abrir resumen de pagos"} aria-controls="payment-view-summary" aria-expanded={summaryOpen} onClick={() => { setSummaryOpen(!summaryOpen); setTimelineOpen(false); }}>{summaryOpen ? "‹" : "›"}</button>
       <aside className={`payment-view__sidebar payments__sidebar${timelineOpen ? " is-open" : ""}`} id="payment-view-chronology" aria-label="Propiedades y períodos">
         <h1><span className="payment-mobile__desktop">Propiedades</span><span className="payment-mobile__chronology">Cronología</span></h1>
-        <Button className="payment-view__property payments__property-switcher" aria-label="Cambiar propiedad"><span aria-hidden="true">‹</span><strong>Bielke 454</strong><span aria-hidden="true">›</span></Button>
+        <div className="payment-view__property-row">
+          <button type="button" aria-label="Propiedad anterior" onClick={() => changeProperty(-1)}>‹</button>
+          <DropdownSelect label="Seleccionar propiedad" placeholder={property} value={property} options={properties} onChange={setProperty} className="payment-view__property-select" triggerClassName="payment-view__property-trigger" valueClassName="payment-view__property-value" blurOnSelect showChevron={false} />
+          <button type="button" aria-label="Propiedad siguiente" onClick={() => changeProperty(1)}>›</button>
+        </div>
         <div className="payment-view__years payments__years">
           {["2026", "2025"].map((year) => <section className="payment-view__year payments__year" key={year}>
             <button className="payment-view__year-button" type="button" onClick={() => toggleYear(year)} aria-expanded={Boolean(openYears[year])}><strong>{year}</strong><span className={`payment-view__chevron${openYears[year] ? " is-open" : ""}`} /></button>
@@ -63,7 +71,7 @@ export default function PaymentsReference() {
           </section>)}
           <section className="payment-view__year payments__year">
             <button className="payment-view__year-button" type="button" onClick={() => toggleYear("2024")} aria-expanded={Boolean(openYears[2024])}><strong>2024</strong><span className={`payment-view__chevron${openYears[2024] ? " is-open" : ""}`} /></button>
-            {openYears[2024] && <div className="payment-view__months">{months.map(([month, monthStatus, monthTone]) => <button key={month} className={`payment-view__month payments__month${month === selectedMonth ? " is-selected" : ""}`} type="button" onClick={() => chooseMonth(month)} aria-pressed={month === selectedMonth}><strong>{month}</strong><span className={`payment-view__status payment-view__status--${monthTone}`}>{monthStatus}</span></button>)}</div>}
+            {openYears[2024] && <div className="payment-view__months">{months.map(([month, monthStatus, monthTone]) => <button key={month} className={`payment-view__month payment-view__month--${monthTone} payments__month${month === selectedMonth ? " is-selected" : ""}`} type="button" onClick={() => chooseMonth(month)} aria-pressed={month === selectedMonth}><strong>{month}</strong><span className={`payment-view__status payment-view__status--${monthTone}`}>{monthStatus}</span></button>)}</div>}
           </section>
         </div>
       </aside>
@@ -86,7 +94,7 @@ export default function PaymentsReference() {
             <header className="payments__detail-heading"><h1 id="payment-view-title">{title}</h1><span className={`payment-view__status payments__status payment-view__status--${tone}`}>{status === "Aprobado" && <Icon src={checkIcon} />}{status}</span></header>
             <dl className="payments__facts"><div><Icon src={calendarIcon} /><dt>Fecha de pago:</dt><dd>{paid}</dd></div><div><Icon src={calendarIcon} /><dt>Fecha de aprobación:</dt><dd>{approved}</dd></div><div><span className="payment-view__coin">$</span><dt>Monto abonado:</dt><dd>{amount}</dd></div><div className="payment-view__mobile-only payments__facts-total"><span className="payment-view__coin">$</span><dt>Monto total:</dt><dd>{amount}</dd></div></dl>
             <section className="payment-view__mobile-only payments__breakdown" aria-label="Detalle del pago"><h3>Detalle del pago</h3><div><span>Pago del período:</span><b>{amount}</b></div><p className="payment-view__breakdown-note">No hay un desglose por concepto disponible para este período.</p></section>
-            <aside className={`payments__admin-note${status === "Rechazado" ? " is-rejected" : ""}`}><span><Icon src={fileLinesIcon} /></span><div><strong>Observaciones de administración</strong><p>{note}</p></div></aside>
+            <aside className="payments__admin-note"><span><Icon src={fileLinesIcon} /></span><div><strong>Observaciones de administración</strong><p>{note}</p></div></aside>
             <div className="payment-view__actions payments__actions"><label className="payments__button"><Icon src={downloadIcon} /><span>{uploadedFile ? "Cambiar comprobante" : "Subir comprobante"}</span><input type="file" accept="image/*,.pdf" onChange={upload} /></label><Button className="payments__button" icon={paperPlaneIcon} text={feedback ? "Enviado para revisión" : "Enviar para revisión"} onClick={() => setFeedback("Solicitud de revisión enviada")} /></div>
             <p className="payment-view__note payments__disclaimer">Nota: Cuando un comprobante es aprobado, ya no puede modificarse.</p><p className="payment-view__feedback payments__feedback" aria-live="polite">{feedback}</p>
           </section>

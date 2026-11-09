@@ -125,7 +125,7 @@
   }
 
   :is(.payments__month, .collections__month).is-selected {
-    box-shadow: inset 6px 0 #17235e;
+    box-shadow: inset 6px 0 currentColor;
   }
 
   :is(.payments__workspace, .collections__workspace) {
