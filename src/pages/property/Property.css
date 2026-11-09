@@ -432,6 +432,17 @@ body:has(#property) {
   font-size: 14px;
 }
 
+.property__due-item button {
+  max-width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #0960ce;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+
 .property__due-badge {
   display: block;
   min-width: 206px;

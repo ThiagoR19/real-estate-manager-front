@@ -552,9 +552,16 @@
 
 .property-modal__document-row {
   display: grid;
-  grid-template-columns: 155px minmax(220px, 263px) auto;
-  align-items: end;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
   gap: 22px;
+}
+
+.property-modal__document-row > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .property-modal__file-picker {
@@ -622,6 +629,18 @@
   justify-content: flex-end;
   gap: 18px;
   padding-top: 19px;
+}
+
+.property-modal__error {
+  margin: 12px 0 0;
+  color: #b42318;
+  font-size: 13px;
+}
+
+.property-modal__plain-input:disabled,
+.property-modal__actions button:disabled {
+  cursor: not-allowed;
+  opacity: .65;
 }
 
 .property-modal__actions button {

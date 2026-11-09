@@ -1,54 +1,23 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "wouter";
+import { Link, useLocation, useParams } from "wouter";
 import {
   bathIcon,
   bedIcon,
   calendarIcon,
   cameraIcon,
   clockIcon,
-  envelopeIcon,
   houseIcon,
   locationDotIcon as locationIcon,
-  phoneIcon,
   rulerCombinedIcon as rulerIcon,
   userIcon,
 } from "../../assets/icons";
 import { PropertyModal, PropertyActions, ConfirmDeleteModal } from "../../components";
-import villaImage from "/ly-villa-costa-blanca-1_b02f5d33_900x900.jpg";
-import terraceImage from "/images.jpg";
 import houseImage from "/images (1).jpg";
+import { api } from "../../services/api";
+import { getProperty, persistProperty } from "../../services/properties";
 import "./Property.css";
 
-const galleryImages = [
-  { src: villaImage, alt: "Casa moderna con jardín y piscina" },
-  { src: terraceImage, alt: "Terraza exterior de la propiedad" },
-  { src: houseImage, alt: "Casa familiar rodeada de árboles" },
-];
-
-const initialProperty = {
-  name: "Propiedad Valdez",
-  type: "Casa",
-  location: "Av. Libertador 2450, Vicente López, buenos Aires",
-  owner: "Martin Valdez",
-  agent: "Martin Valdez",
-  age: 5,
-  bedrooms: 10,
-  bathrooms: 10,
-  area: 120,
-  description: "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.",
-  photos: galleryImages,
-  services: { water: true, gas: true, electricity: true, parking: true },
-  operation: "Compra",
-  contractStatus: "Activo",
-  documents: [{ name: "Contrato de alquiler", fileName: "" }],
-};
-
-const dueDates = [
-  { name: "Expensas", date: "Abril 2024" },
-  { name: "Expensas", date: "Abril 2024" },
-  { name: "Expensas", date: "Abril 2024" },
-  { name: "Expensas", date: "Abril 2024" },
-];
+const emptyImage = [{ src: houseImage, alt: "Propiedad sin fotos" }];
 
 function Icon({ src, className = "" }) {
   return <img className={`property__icon ${className}`} src={src} alt="" aria-hidden="true" />;
@@ -60,31 +29,32 @@ function DetailRow({ detail }) {
       <Icon src={detail.icon} className="property__detail-icon" />
       <strong>{detail.label}</strong>
       <span className="property__detail-value">{detail.value}</span>
-      {detail.contact && (
-        <div className="property__detail-contact">
-          <span>
-            <Icon src={envelopeIcon} />
-            {detail.contact.email}
-          </span>
-          <span>
-            <Icon src={phoneIcon} />
-            {detail.contact.phone}
-          </span>
-        </div>
-      )}
     </div>
   );
 }
 
 export default function Property() {
+  const { id } = useParams();
+  const [, navigate] = useLocation();
   const [activeImage, setActiveImage] = useState(0);
-  const [deleted, setDeleted] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const thumbnailsRef = useRef(null);
-  const [propertyData, setPropertyData] = useState(initialProperty);
+  const [propertyData, setPropertyData] = useState(null);
+  const [catalogs, setCatalogs] = useState({ tipos: [], estados: [], agentes: [] });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
   const [propertyModalOpen, setPropertyModalOpen] = useState(false);
-  const currentGalleryImages = propertyData.photos?.length ? propertyData.photos : galleryImages;
+  const currentGalleryImages = propertyData?.photos?.length ? propertyData.photos : emptyImage;
   const safeActiveImage = Math.min(activeImage, currentGalleryImages.length - 1);
+
+  useEffect(() => {
+    let active = true;
+    Promise.all([getProperty(id), api.propertyCatalogs()]).then(([property, lists]) => {
+      if (active) { setPropertyData(property); setCatalogs(lists); }
+    }).catch((cause) => { if (active) setError(cause.message); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [id]);
 
   useEffect(() => {
     const track = thumbnailsRef.current;
@@ -94,41 +64,52 @@ export default function Property() {
   }, [safeActiveImage]);
 
   const propertyDetails = [
-    { label: "Tipo", value: propertyData.type, icon: houseIcon },
-    { label: "Ubicación", value: propertyData.location, icon: locationIcon },
-    { label: "Dueño / Propietario", value: propertyData.owner, icon: userIcon },
-    {
-      label: "Agente asignado",
-      value: propertyData.agent,
-      icon: userIcon,
-      contact: { email: "lucia.m@gmail.com", phone: "11 2345- 6789" },
-    },
-    { label: "Ultima actualización", value: "28 de Abril de 2026", icon: clockIcon },
-    { label: "Fecha de alta", value: "12 de Marzo de 2026", icon: calendarIcon },
+    { label: "Tipo", value: propertyData?.type, icon: houseIcon },
+    { label: "Ubicación", value: propertyData?.location, icon: locationIcon },
+    { label: "Estado comercial", value: propertyData?.status, icon: clockIcon },
+    { label: "Agente asignado", value: catalogs.agentes.find((agent) => agent.id === propertyData?.agentId)?.nombre || "Sin asignar", icon: userIcon },
+    { label: "Fecha de alta", value: propertyData?.createdAt ? new Date(propertyData.createdAt).toLocaleDateString("es-AR") : "—", icon: calendarIcon },
   ];
 
   const propertyStats = [
-    { label: "Habitaciones", value: propertyData.bedrooms, icon: bedIcon },
-    { label: "Antigüedad (años)", value: propertyData.age, icon: calendarIcon },
-    { label: "Baños", value: propertyData.bathrooms, icon: bathIcon },
-    { label: "Superficie (m²)", value: propertyData.area, icon: rulerIcon },
+    { label: "Habitaciones", value: propertyData?.bedrooms ?? 0, icon: bedIcon },
+    { label: "Antigüedad (años)", value: propertyData?.age ?? 0, icon: calendarIcon },
+    { label: "Baños", value: propertyData?.bathrooms ?? 0, icon: bathIcon },
+    { label: "Superficie (m²)", value: propertyData?.area ?? 0, icon: rulerIcon },
   ];
 
   function changeImage(direction) {
     setActiveImage((current) => (current + direction + currentGalleryImages.length) % currentGalleryImages.length);
   }
 
-  function saveProperty(form) {
-    setPropertyData((current) => ({ ...current, ...form, name: form.name || current.name }));
-    setActiveImage(0);
-    setPropertyModalOpen(false);
+  async function saveProperty(form) {
+    try {
+      setPropertyData(await persistProperty(form, propertyData));
+      setActiveImage(0);
+      setPropertyModalOpen(false);
+    } catch (cause) {
+      if (cause.propertyId) {
+        setPropertyData(await getProperty(id));
+        setPropertyModalOpen(false);
+        setError(`La propiedad se guardó, pero hubo un problema con sus archivos: ${cause.message}`);
+        return;
+      }
+      throw cause;
+    }
   }
 
-  if (deleted) return <main id="property"><div className="property__page"><h1>Propiedad eliminada</h1><Link href="/properties">Volver a propiedades</Link></div></main>;
+  async function remove() {
+    try { await api.deleteProperty(id); navigate("/properties"); }
+    catch (cause) { setError(cause.message); setDeleteModalOpen(false); }
+  }
+
+  if (loading) return <main id="property"><div className="property__page">Cargando propiedad...</div></main>;
+  if (!propertyData) return <main id="property"><div className="property__page"><h1>Propiedad no disponible</h1><p role="alert">{error}</p><Link href="/properties">Volver a propiedades</Link></div></main>;
 
   return (
     <main id="property">
       <div className="property__page">
+        {error && <p role="alert">{error}</p>}
         <header className="property__title-row">
           <h1>{propertyData.name}</h1>
           <PropertyActions className="property-actions--header" name={propertyData.name} onEdit={() => setPropertyModalOpen(true)} onDelete={() => setDeleteModalOpen(true)} />
@@ -205,30 +186,29 @@ export default function Property() {
             </section>
 
             <section className="property__due-card" aria-labelledby="property-due-title">
-              <h2 id="property-due-title"><Icon src={calendarIcon} />Vencimientos</h2>
+              <h2 id="property-due-title"><Icon src={calendarIcon} />Datos comerciales y documentos</h2>
               <div className="property__due-grid">
-                {dueDates.map((dueDate, index) => (
-                  <article className="property__due-item" key={`${dueDate.name}-${index}`}>
-                    <div>
-                      <strong>{dueDate.name}</strong>
-                      <span>{dueDate.date}</span>
-                    </div>
-                    <span className="property__due-badge">Vence en 5 días</span>
-                  </article>
-                ))}
+                <article className="property__due-item"><div><strong>Precio</strong><span>{propertyData.price === "" ? "Sin especificar" : `${propertyData.currency} ${Number(propertyData.price).toLocaleString("es-AR")}`}</span></div></article>
+                <article className="property__due-item"><div><strong>Publicación</strong><span>{propertyData.published ? "Publicada" : "No publicada"}</span></div></article>
+                {propertyData.documents.length === 0 && <p>No hay documentos adjuntos.</p>}
+                {propertyData.documents.map((document) => <article className="property__due-item" key={document.id}><div><strong>PDF</strong><button type="button" onClick={async () => {
+                  try { await api.downloadPropertyDocument(id, document); }
+                  catch (cause) { setError(cause.message); }
+                }}>{document.fileName}</button></div></article>)}
               </div>
             </section>
           </div>
         </div>
       </div>
 
-      <ConfirmDeleteModal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} onConfirm={() => { setDeleteModalOpen(false); setDeleted(true); }} title="¿Seguro que desea eliminar esta propiedad?" />
+      <ConfirmDeleteModal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} onConfirm={remove} title="¿Seguro que desea eliminar esta propiedad?" />
 
       {propertyModalOpen && (
         <PropertyModal
           isOpen={propertyModalOpen}
           mode="edit"
           property={propertyData}
+          catalogs={catalogs}
           onClose={() => setPropertyModalOpen(false)}
           onSubmit={saveProperty}
         />

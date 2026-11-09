@@ -1,181 +1,108 @@
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation } from "wouter";
-import {
-  houseIcon,
-  locationDotIcon as locationIcon,
-  plusIcon,
-  tagIcon,
-} from "../../assets/icons";
+import { houseIcon, locationDotIcon as locationIcon, plusIcon, tagIcon } from "../../assets/icons";
 import { PropertyModal, ConfirmDeleteModal, DropdownSelect, Button, PropertyCardSimple } from "../../components";
-import propertyImage from "/images (1).jpg";
+import { api } from "../../services/api";
+import { getProperty, persistProperty, toProperty } from "../../services/properties";
 import "./Properties.css";
 
-const initialProperties = Array.from({ length: 12 }, (_, index) => ({
-  id: index + 1,
-  title: "Departamento en Belgrano",
-  name: "Departamento en Belgrano",
-  location: "Av. Cabildo 2450, CABA",
-  neighborhood: "Belgrano",
-  type: "Departamento",
-  status: "Alquiler",
-  bedrooms: 2,
-  bathrooms: 2,
-  area: 80,
-  age: 5,
-  description: "Departamento luminoso con excelente ubicación.",
-  owner: "Juan Carlos",
-  agent: "Lucía Martínez",
-  services: { water: true, gas: true, electricity: true, parking: false },
-  photos: [{ src: propertyImage, alt: "Interior de la propiedad" }],
-  operation: "Alquiler",
-  contractStatus: "Activo",
-  documents: [{ name: "Contrato de alquiler", fileName: "" }],
-}));
-
-const filters = [
-  { id: "type", label: "Tipo", icon: houseIcon, options: ["Todos", "Departamento", "Casa"] },
-  { id: "location", label: "Ubicación", icon: locationIcon, options: ["Todas", "Belgrano", "Palermo"] },
-  { id: "status", label: "Estado", icon: tagIcon, options: ["Todos", "Alquiler", "Venta"] },
-];
-
 function FilterSelect({ filter, value, onChange }) {
-  return (
-    <DropdownSelect
-      label={filter.label}
-      placeholder={filter.label}
-      value={value}
-      options={filter.options}
-      onChange={onChange}
-      icon={filter.icon}
-      className="properties__filter"
-      triggerClassName="properties__filter-trigger"
-      iconClassName="properties__filter-icon"
-      valueClassName="properties__filter-label"
-      chevronClassName="properties__filter-chevron properties__icon"
-    />
-  );
+  return <DropdownSelect label={filter.label} placeholder={filter.label} value={value} options={filter.options} onChange={onChange} icon={filter.icon} className="properties__filter" triggerClassName="properties__filter-trigger" iconClassName="properties__filter-icon" valueClassName="properties__filter-label" chevronClassName="properties__filter-chevron properties__icon" />;
 }
 
 export default function Properties() {
   const [, navigate] = useLocation();
-  const [properties, setProperties] = useState(initialProperties);
-  const [selectedFilters, setSelectedFilters] = useState({
-    type: "Todos",
-    status: "Todos",
-    location: "Todas",
-  });
-  const [modal, setModal] = useState({ isOpen: false, mode: "create", property: null });
-  const [feedback, setFeedback] = useState("");
+  const [properties, setProperties] = useState([]);
+  const [catalogs, setCatalogs] = useState({ tipos: [], estados: [], agentes: [] });
+  const [filters, setFilters] = useState({ type: "Todos", status: "Todos", location: "Todas" });
+  const [modal, setModal] = useState(null);
   const [pendingDelete, setPendingDelete] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [feedback, setFeedback] = useState("");
+  const [search, setSearch] = useState("");
 
-  function updateFilter(id, value) {
-    setSelectedFilters((current) => ({ ...current, [id]: value }));
+  useEffect(() => {
+    const onSearch = (event) => setSearch(event.detail.toLocaleLowerCase("es-AR"));
+    window.addEventListener("property-search", onSearch);
+    return () => window.removeEventListener("property-search", onSearch);
+  }, []);
+
+  const refresh = useCallback(async () => {
+    const rows = await api.properties();
+    setProperties(rows.map((row) => toProperty(row)));
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    Promise.all([api.properties(), api.propertyCatalogs()]).then(([rows, lists]) => {
+      if (!active) return;
+      setProperties(rows.map((row) => toProperty(row)));
+      setCatalogs(lists);
+    }).catch((cause) => { if (active) setError(cause.message); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, []);
+
+  async function openEdit(property) {
+    try { setModal({ mode: "edit", property: await getProperty(property.id) }); }
+    catch (cause) { setError(cause.message); }
   }
 
-  function openCreateModal() {
-    setModal({ isOpen: true, mode: "create", property: null });
-  }
-
-  function openEditModal(property) {
-    setModal({ isOpen: true, mode: "edit", property });
-  }
-
-  function openProperty() {
-    navigate("/property");
-  }
-
-  function closePropertyModal() {
-    setModal((current) => ({ ...current, isOpen: false }));
-  }
-
-  function deleteProperty(property) {
-    setProperties((current) => current.filter((item) => item.id !== property.id));
-    setFeedback(`Se eliminó ${property.title}.`);
-    setPendingDelete(null);
-  }
-
-  function saveProperty(form) {
-    const property = {
-      ...form,
-      title: form.name || "Propiedad sin nombre",
-      neighborhood: form.location?.split(",")[1]?.trim() || "Sin zona",
-      status: form.operation === "Alquiler" ? "Alquiler" : "Venta",
-    };
-
-    if (modal.mode === "edit") {
-      setProperties((current) => current.map((item) => (
-        item.id === modal.property.id ? { ...item, ...property } : item
-      )));
-      setFeedback(`Se actualizó ${property.title}.`);
-    } else {
-      setProperties((current) => [
-        {
-          ...property,
-          id: Date.now(),
-          title: property.title,
-          name: property.name,
-          location: property.location || "Ubicación pendiente",
-          neighborhood: property.neighborhood || "Sin zona",
-          type: property.type === "Tipo" ? "Propiedad" : property.type,
-          status: property.status === "Operación" ? "Venta" : property.status,
-        },
-        ...current,
-      ]);
-      setFeedback(`Se agregó ${property.title} a la lista.`);
+  async function save(form) {
+    try {
+      const property = await persistProperty(form, modal.property);
+      await refresh();
+      setModal(null);
+      setFeedback(`${property.name} se guardó correctamente.`);
+    } catch (cause) {
+      if (cause.propertyId) {
+        await refresh();
+        setModal(null);
+        setError(`La propiedad se guardó, pero hubo un problema con sus archivos: ${cause.message}`);
+        return;
+      }
+      throw cause;
     }
-
-    closePropertyModal();
-    window.setTimeout(() => setFeedback(""), 2600);
   }
 
-  const visibleProperties = useMemo(() => properties.filter((property) => (
-    (selectedFilters.type === "Todos" || property.type === selectedFilters.type)
-    && (selectedFilters.status === "Todos" || property.status === selectedFilters.status)
-    && (selectedFilters.location === "Todas" || property.neighborhood === selectedFilters.location)
-  )), [properties, selectedFilters]);
+  async function remove() {
+    if (!pendingDelete) return;
+    try {
+      await api.deleteProperty(pendingDelete.id);
+      setProperties((current) => current.filter((item) => item.id !== pendingDelete.id));
+      setFeedback(`${pendingDelete.name} se eliminó.`);
+      setPendingDelete(null);
+    } catch (cause) { setError(cause.message); setPendingDelete(null); }
+  }
 
-  return (
-    <main id="properties">
-      <section className="properties__top" aria-label="Encabezado y filtros de propiedades">
-        <div className="properties__intro">
-          <h1>Propiedades</h1>
-          <p>Gestiona la información de todas las propiedades</p>
-        </div>
+  const filterItems = useMemo(() => [
+    { id: "type", label: "Tipo", icon: houseIcon, options: ["Todos", ...catalogs.tipos.map((item) => item.nombre)] },
+    { id: "location", label: "Ubicación", icon: locationIcon, options: ["Todas", ...new Set(properties.map((item) => item.location))] },
+    { id: "status", label: "Estado", icon: tagIcon, options: ["Todos", ...catalogs.estados.map((item) => item.nombre)] },
+  ], [catalogs, properties]);
+  const visible = useMemo(() => properties.filter((item) =>
+    (filters.type === "Todos" || item.type === filters.type)
+    && (filters.location === "Todas" || item.location === filters.location)
+    && (filters.status === "Todos" || item.status === filters.status)
+    && (!search || `${item.name} ${item.location} ${item.description}`.toLocaleLowerCase("es-AR").includes(search))
+  ), [properties, filters, search]);
 
-        <div className="properties__toolbar" aria-label="Filtros de propiedades">
-          {filters.map((filter) => (
-            <FilterSelect
-              key={filter.id}
-              filter={filter}
-              value={selectedFilters[filter.id]}
-              onChange={(value) => updateFilter(filter.id, value)}
-            />
-          ))}
-          <Button className="properties__new-button" onClick={openCreateModal} icon={plusIcon} text="Nueva Propiedad" />
-        </div>
-      </section>
-
-      <section className="properties__grid" aria-label="Listado de propiedades">
-        {visibleProperties.length > 0 ? (
-          visibleProperties.map((property) => <PropertyCardSimple key={property.id} property={property} onEdit={openEditModal} onDelete={setPendingDelete} onOpen={openProperty} />)
-        ) : (
-          <p className="properties__empty">No hay propiedades que coincidan con los filtros seleccionados.</p>
-        )}
-      </section>
-
-      <p className="properties__feedback" aria-live="polite">{feedback}</p>
-
-      <ConfirmDeleteModal isOpen={Boolean(pendingDelete)} onClose={() => setPendingDelete(null)} onConfirm={() => deleteProperty(pendingDelete)} title="¿Seguro que desea eliminar esta propiedad?" />
-
-      {modal.isOpen && (
-        <PropertyModal
-          isOpen={modal.isOpen}
-          mode={modal.mode}
-          property={modal.property}
-          onClose={closePropertyModal}
-          onSubmit={saveProperty}
-        />
-      )}
-    </main>
-  );
+  return <main id="properties">
+    <section className="properties__top" aria-label="Encabezado y filtros de propiedades">
+      <div className="properties__intro"><h1>Propiedades</h1><p>Gestiona la información de todas las propiedades</p></div>
+      <div className="properties__toolbar" aria-label="Filtros de propiedades">
+        {filterItems.map((filter) => <FilterSelect key={filter.id} filter={filter} value={filters[filter.id]} onChange={(value) => setFilters((current) => ({ ...current, [filter.id]: value }))} />)}
+        <Button className="properties__new-button" onClick={() => setModal({ mode: "create", property: null })} disabled={!catalogs.tipos.length || !catalogs.estados.length} icon={plusIcon} text="Nueva Propiedad" />
+      </div>
+    </section>
+    {error && <p className="properties__feedback" role="alert">{error}</p>}
+    {!loading && !error && (!catalogs.tipos.length || !catalogs.estados.length) && <p className="properties__feedback" role="alert">Faltan tipos o estados comerciales en la base de datos para crear propiedades.</p>}
+    {loading ? <p className="properties__empty">Cargando propiedades...</p> : <section className="properties__grid" aria-label="Listado de propiedades">
+      {visible.length ? visible.map((property) => <PropertyCardSimple key={property.id} property={property} onEdit={openEdit} onDelete={setPendingDelete} onOpen={() => navigate(`/property/${property.id}`)} />) : <p className="properties__empty">No hay propiedades que coincidan con los filtros seleccionados.</p>}
+    </section>}
+    <p className="properties__feedback" role="status">{feedback}</p>
+    <ConfirmDeleteModal isOpen={Boolean(pendingDelete)} onClose={() => setPendingDelete(null)} onConfirm={remove} title="¿Seguro que desea eliminar esta propiedad?" />
+    {modal && <PropertyModal isOpen mode={modal.mode} property={modal.property} catalogs={catalogs} onClose={() => setModal(null)} onSubmit={save} />}
+  </main>;
 }

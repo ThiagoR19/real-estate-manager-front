@@ -1,13 +1,17 @@
 import { useState } from "react";
-import { Route, Switch } from "wouter";
+import { Redirect, Route, Switch } from "wouter";
 import { AboutUs, Agency, Agents, AgentDashboard, Chat, Collections, ConfirmRegister, Dashboard, DashboardOwner, Home, Indec, Login, MyProperties, Owners, Payments, PaymentsAndCollections, Professional, Profile, Properties, Property, PublicProperties, PublicProperty, Register, ReportsAgent, Schedule, SuperAdmin, SuperAdminDashboard, Tenant, TenantDashboard, Terms } from "./pages/index.js";
 
 import { Header, Navbar } from "./layouts/index.js";
+import { getSession } from "./services/api.js";
 
 import "./App.css";
 
 function AuthenticatedApp() {
   const [menuOpen, setMenuOpen] = useState(false);
+  if (!getSession()?.token) {
+    return <Redirect to="/home" replace />;
+  }
 
   return (
     <div id="app-layout">
@@ -21,7 +25,7 @@ function AuthenticatedApp() {
         <Route path="/owner-dashboard" component={DashboardOwner} />
         <Route path="/agents" component={Agents} />
         <Route path="/tenant" component={Tenant} />
-        <Route path="/property" component={Property} />
+        <Route path="/property/:id" component={Property} />
         <Route path="/properties" component={Properties} />
         <Route path="/owners" component={Owners} />
         <Route path="/profile" component={Profile} />

@@ -6,6 +6,7 @@ import { barsIcon as menuIcon, bellIcon, magnifyingGlassIcon as searchIcon, xIco
 import referenceImage from "../../assets/terms-reference.png";
 import brandLogo from "../../assets/logoAGI.png";
 import { accountRoleFor, allItems, isItemActive, pageLabels } from "../navigation";
+import { getSession } from "../../services/api";
 import "./Header.css";
 
 export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
@@ -20,9 +21,11 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
   const isSuperAdmin = pathname === "/super-admin";
   const isChat = pathname === "/chat";
   const accountRole = accountRoleFor(pathname);
-  const currentLabel = isPayments ? "Zona de pago" : currentItem?.breadcrumbLabel ?? currentItem?.label ?? pageLabels[pathname] ?? "Dashboard";
+  const user = getSession()?.usuario;
+  const roleName = { 1: "Super admin", 2: "Administrador", 3: "Agente", 4: "Propietario", 5: "Inquilino" }[user?.rol] || accountRole;
+  const currentLabel = isPayments ? "Zona de pago" : pathname.startsWith("/property/") ? "Propiedad" : currentItem?.breadcrumbLabel ?? currentItem?.label ?? pageLabels[pathname] ?? "Dashboard";
   const searchPlaceholder = isPaymentsAndCollections ? "Buscar propietario/locatario" : isProperties ? "Buscar propiedades..." : "Buscar contacto...";
-  const showSearch = isPaymentsAndCollections || isProperties || pathname === "/professional";
+  const showSearch = isPaymentsAndCollections || pathname === "/properties" || pathname === "/professional";
 
   return (
     <header className={`navbar__header${isPayments ? " navbar__header--payments" : ""}${isOwnerDashboard ? " navbar__header--dashboard-owner" : ""}${isAdminDashboard ? " navbar__header--dashboard" : ""}${isChat ? " navbar__header--chat" : ""}${isSuperAdmin ? " navbar__header--super-admin" : ""}`}>
@@ -50,7 +53,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
 
       {showSearch && <label className="navbar__search">
         <img src={searchIcon} alt="" />
-        <input type="search" placeholder={searchPlaceholder} aria-label={searchPlaceholder.replace("...", "")} />
+        <input type="search" placeholder={searchPlaceholder} aria-label={searchPlaceholder.replace("...", "")} onChange={isProperties ? (event) => window.dispatchEvent(new CustomEvent("property-search", { detail: event.target.value })) : undefined} />
       </label>}
 
       <aside className="navbar__account" aria-label="Cuenta de usuario">
@@ -61,14 +64,14 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
         </div>}
         <Link href="/profile" className="navbar__account-link">
           <span>
-            {isSuperAdmin ? "Nahuel GM" : "Juan Pérez"}
-            <small>{accountRole}</small>
+            {user ? `${user.nombre} ${user.apellido}` : "Cuenta"}
+            <small>{roleName}</small>
           </span>
           {isSuperAdmin ? <i className="navbar__account-avatar navbar__account-avatar--super-admin" aria-hidden="true" /> : <i
-              className="navbar__account-avatar"
-              style={{ backgroundImage: `url(${referenceImage})` }}
-              aria-hidden="true"
-            />}
+            className="navbar__account-avatar"
+            style={{ backgroundImage: `url(${referenceImage})` }}
+            aria-hidden="true"
+          />}
         </Link>
       </aside>
       <ModalOverlay abierto={notificationsOpen} onCerrar={() => setNotificationsOpen(false)} posicion="derecha" etiqueta="Notificaciones">

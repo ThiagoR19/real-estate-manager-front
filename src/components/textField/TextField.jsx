@@ -27,6 +27,7 @@ export default function TextField({
 
                 <input
                     id={id}
+                    name={id}
                     type={conOjo && mostrar ? "text" : tipo}
                     className={`TextField__input ${conOjo ? "TextField__input--ojo" : ""}`}
                     placeholder={placeholder}

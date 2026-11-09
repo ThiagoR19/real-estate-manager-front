@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 import { xIcon as closeIcon } from "../../assets/icons";
 import brandLogo from "../../assets/logoAGI.png";
 import { accountRoleFor, allItems, isItemActive, primaryItems, secondaryItems } from "../navigation";
+import { clearSession, getSession } from "../../services/api";
 import "./Navbar.css";
 
 function NavigationItem({ item, pathname, onNavigate }) {
@@ -19,6 +20,7 @@ function NavigationItem({ item, pathname, onNavigate }) {
 export default function Navbar({ menuOpen = false, onClose = () => { } }) {
   const [pathname] = useLocation();
   const role = accountRoleFor(pathname);
+  const user = getSession()?.usuario;
   const mobilePaths = role === "Propietario"
     ? ["/owner-dashboard", "/my-properties", "/collections", "/reports-agent", "/chat"]
     : role === "Inquilino"
@@ -79,9 +81,10 @@ export default function Navbar({ menuOpen = false, onClose = () => { } }) {
           {mobileSecondary.map((item) => <NavigationItem key={item.href} item={item} pathname={pathname} onNavigate={onClose} />)}
         </nav>
         <Link href="/profile" className="navbar__drawer-account" onClick={onClose}>
-          <span className="navbar__drawer-avatar" aria-hidden="true">JP</span>
-          <span><strong>Juan Pérez</strong><small>{accountRoleFor(pathname)}</small></span>
+          <span className="navbar__drawer-avatar" aria-hidden="true">{user?.nombre?.[0]}{user?.apellido?.[0]}</span>
+          <span><strong>{user ? `${user.nombre} ${user.apellido}` : "Cuenta"}</strong><small>{role}</small></span>
         </Link>
+        <Link href="/login" className="navbar__drawer-account" onClick={() => { clearSession(); onClose(); }}>Cerrar sesión</Link>
       </aside>
     </>
   );
