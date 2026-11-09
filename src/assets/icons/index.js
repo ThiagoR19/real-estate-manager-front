@@ -36,6 +36,7 @@ export { default as imageIcon } from "./image-regular-full.svg";
 export { default as locationDotIcon } from "./location-dot-solid-full.svg";
 export { default as lockIcon } from "./lock-solid-full.svg";
 export { default as magnifyingGlassIcon } from "./magnifying-glass-solid-full.svg";
+export { default as optionsIcon } from "./options.svg";
 export { default as paperPlaneIcon } from "./paper-plane-regular-full.svg";
 export { default as penIcon } from "./pen-solid-full.svg";
 export { default as peopleIcon } from "./people.svg";

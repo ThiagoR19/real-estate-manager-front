@@ -20,6 +20,8 @@ export default function DropdownSelect({
   chevronClassName,
   optionsClassName,
   optionClassName,
+  blurOnSelect = false,
+  showChevron = true,
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [placement, setPlacement] = useState({ side: "below", maxHeight: 240 });
@@ -63,7 +65,8 @@ export default function DropdownSelect({
   function handleOptionSelect(option) {
     setIsOpen(false);
     onChange(option);
-    triggerRef.current?.focus();
+    if (blurOnSelect) triggerRef.current?.blur();
+    else triggerRef.current?.focus();
   }
 
   const selectedLabel = value === options[0] ? placeholder : value;
@@ -117,12 +120,14 @@ export default function DropdownSelect({
           </span>
         )}
         <span className={joinClassNames("select-control__value", valueClassName)}>{selectedLabel}</span>
-        <img
-          className={joinClassNames("select-control__chevron", chevronClassName)}
-          src={angleDownIcon}
-          alt=""
-          aria-hidden="true"
-        />
+        {showChevron && (
+          <img
+            className={joinClassNames("select-control__chevron", chevronClassName)}
+            src={angleDownIcon}
+            alt=""
+            aria-hidden="true"
+          />
+        )}
       </button>
 
       {isOpen && (

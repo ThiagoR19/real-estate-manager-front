@@ -432,18 +432,32 @@ body:has(#chat) {
 
   .chat__mobile-select {
     display: block;
-  }
-
-  .chat__mobile-select select {
     width: 100%;
     height: 43px;
-    padding: 0 14px;
     border: 2px solid #e3edf5;
     border-radius: 10px;
+    background: #fff;
+  }
+
+  .chat__mobile-select-trigger {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    height: 100%;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 8px;
     background: #fff;
     color: #435679;
     font: inherit;
     font-size: 14px;
+    cursor: pointer;
+  }
+
+  .chat__mobile-select-chevron {
+    width: 15px;
+    height: 15px;
   }
 
   .chat__layout {
@@ -627,16 +641,6 @@ body:has(#chat) {
   margin-top: 2px;
 }
 
-.chat__online-dot {
-  display: inline-block;
-  flex: 0 0 auto;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #45b98a;
-  box-shadow: 0 0 0 3px #e5f6ef;
-}
-
 .chat__thread-header {
   gap: 12px;
 }
@@ -661,12 +665,6 @@ body:has(#chat) {
   color: #7887a3;
   font-size: 12px;
   white-space: nowrap;
-}
-
-.chat__presence .chat__online-dot {
-  width: 7px;
-  height: 7px;
-  box-shadow: none;
 }
 
 .chat__messages {
@@ -771,17 +769,6 @@ body:has(#chat) {
   width: 14px;
   height: 14px;
   opacity: .55;
-}
-
-@media (max-width: 900px) {
-  .chat__presence {
-    font-size: 0;
-  }
-
-  .chat__presence .chat__online-dot {
-    width: 8px;
-    height: 8px;
-  }
 }
 
 @media (max-width: 650px) {

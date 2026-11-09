@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { buildingColumnsIcon, magnifyingGlassIcon, paperPlaneIcon, userIcon } from "../../assets/icons";
+import DropdownSelect from "../../components/select/DropdownSelect";
 import agiLogo from "../../assets/icons/agiLogo.svg";
 import "./Chat.css";
 
@@ -74,6 +75,7 @@ export default function Chat() {
   const [sentMessages, setSentMessages] = useState({});
 
   const selectedConversation = conversations.find(({ id }) => id === selectedId) ?? conversations[0];
+  const conversationOptions = conversations.map(({ name }) => name);
   const filteredConversations = useMemo(() => {
     const normalizedSearch = search.trim().toLocaleLowerCase();
     if (!normalizedSearch) return conversations;
@@ -104,7 +106,16 @@ export default function Chat() {
 
   return (
     <main id="chat" className="chat-page">
-      <label className="chat__mobile-select"><span className="sr-only">Conversación</span><select value={selectedId} onChange={(event) => selectConversation(event.target.value)}>{conversations.map((conversation) => <option key={conversation.id} value={conversation.id}>{conversation.name}</option>)}</select></label>
+      <DropdownSelect
+        label="Conversación"
+        value={selectedConversation.name}
+        options={conversationOptions}
+        onChange={(name) => selectConversation(conversations.find((conversation) => conversation.name === name)?.id ?? selectedId)}
+        className="chat__mobile-select"
+        triggerClassName="chat__mobile-select-trigger"
+        chevronClassName="chat__mobile-select-chevron"
+        blurOnSelect
+      />
       <div className="chat__layout">
         <aside className="chat__conversations" aria-label="Conversaciones">
           <div className="chat__sidebar-heading">
@@ -130,7 +141,6 @@ export default function Chat() {
                   <span className="chat__conversation-name">{conversation.name}</span>
                   <span className="chat__conversation-preview">{getLastMessage(conversation)}</span>
                 </span>
-                <span className="chat__online-dot" aria-label={conversation.status} title={conversation.status} />
               </button>
             ))}
             {filteredConversations.length === 0 && <p className="chat__empty-list">No se encontraron conversaciones.</p>}
@@ -145,7 +155,6 @@ export default function Chat() {
               <h2 id="chat-thread-title">{selectedConversation.name}</h2>
               <p>{selectedConversation.detail}</p>
             </div>
-            <span className="chat__presence"><span className="chat__online-dot" />{selectedConversation.status}</span>
           </header>
 
           <div className="chat__messages" aria-live="polite" aria-label={`Mensajes con ${selectedConversation.name}`}>

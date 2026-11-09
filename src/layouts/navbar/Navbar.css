@@ -524,3 +524,50 @@
     animation: none;
   }
 }
+
+@media (min-width: 761px) {
+  .navbar__header--super-admin {
+    height: 60px;
+    gap: 0;
+    padding: 0 20px;
+  }
+
+  .navbar__header--super-admin .navbar__menu-button,
+  .navbar__header--super-admin .navbar__notifications { display: none; }
+
+  .navbar__header--super-admin .navbar__brand { gap: 15px; }
+  .navbar__header--super-admin .navbar__brand-icon { width: 35px; height: 35px; }
+  .navbar__header--super-admin .navbar__brand strong { font-size: 31px; }
+  .navbar__header--super-admin .navbar__brand-caption {
+    display: inline;
+    margin: 0 0 0 5px;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .navbar__header--super-admin .navbar__breadcrumb {
+    height: 36px;
+    gap: 0;
+    margin-left: 43px;
+    padding-left: 14px;
+    border-left: 1px solid #d7d9dc;
+    font-size: 20px;
+  }
+
+  .navbar__header--super-admin .navbar__breadcrumb a { display: none; }
+  .navbar__header--super-admin .navbar__breadcrumb span:last-child { font-weight: 500; }
+  .navbar__header--super-admin .navbar__account { padding-left: 16px; border-left: 1px solid #d7d9dc; }
+  .navbar__header--super-admin .navbar__account-link { gap: 14px; }
+  .navbar__header--super-admin .navbar__account-link > span { align-items: flex-end; font-size: 14px; }
+  .navbar__header--super-admin .navbar__account-link small { font-size: 10px; }
+  .navbar__header--super-admin .navbar__account-avatar--super-admin {
+    background-image: url("../../assets/superAdminReference.png");
+    background-position: -1460px -9px;
+    background-size: 1521px 692px;
+    border: 1px solid #d9dfe8;
+  }
+}
+
+@media (max-width: 760px) {
+  .navbar__header--super-admin .navbar__account { display: none; }
+}

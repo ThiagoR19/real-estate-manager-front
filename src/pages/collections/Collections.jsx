@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { buildingColumnsIcon, calendarIcon, checkIcon, downloadIcon, fileLinesIcon, filterIcon, magnifyingGlassIcon, xIcon } from "../../assets/icons";
+import { buildingColumnsIcon, calendarIcon, checkIcon, downloadIcon, fileLinesIcon, magnifyingGlassIcon, optionsIcon, xIcon } from "../../assets/icons";
 import paymentReference from "../../assets/pagos.png";
 import { Button } from "../../components";
+import DropdownSelect from "../../components/select/DropdownSelect";
+import "../payments/PaymentsMobile.css";
 import "./Collections.css";
 
 const properties = ["Bielke 454", "Casa de San Isidro", "Belgrano 123"];
@@ -81,8 +83,8 @@ export default function Collections() {
   return (
     <main id="collections">
       <div className="payment-mobile__toolbar">
-        <label><Icon src={buildingColumnsIcon} /><select aria-label="Propiedad" value={property} onChange={(event) => setProperty(event.target.value)}>{properties.map((item) => <option key={item}>{item}</option>)}</select></label>
-        <button type="button" aria-label="Abrir cronología" aria-controls="collections-chronology" aria-expanded={timelineOpen} onClick={() => { setTimelineOpen(true); setSummaryOpen(false); }}><Icon src={filterIcon} /></button>
+        <DropdownSelect label="Propiedad" placeholder={property} value={property} options={properties} onChange={setProperty} icon={buildingColumnsIcon} className="collections__mobile-property-select" triggerClassName="collections__mobile-property-trigger" iconClassName="collections__mobile-property-icon" valueClassName="collections__mobile-property-value" chevronClassName="collections__mobile-property-chevron" blurOnSelect />
+        <button type="button" aria-label="Abrir cronología" aria-controls="collections-chronology" aria-expanded={timelineOpen} onClick={() => { setTimelineOpen(true); setSummaryOpen(false); }}><Icon src={optionsIcon} /></button>
       </div>
       {timelineOpen && <button className="payment-mobile__close" type="button" aria-label="Cerrar cronología" onClick={() => setTimelineOpen(false)}>×</button>}
       <button className={`payment-mobile__summary-toggle${summaryOpen ? " is-open" : ""}`} type="button" aria-label={summaryOpen ? "Cerrar resumen" : "Abrir resumen de cobros"} aria-controls="collections-summary" aria-expanded={summaryOpen} onClick={() => { setSummaryOpen(!summaryOpen); setTimelineOpen(false); }}>{summaryOpen ? "‹" : "›"}</button>
@@ -90,12 +92,7 @@ export default function Collections() {
         <h1><span className="payment-mobile__desktop">Propiedades</span><span className="payment-mobile__chronology">Cronología</span></h1>
         <div className="collections__property-row">
           <button type="button" aria-label="Propiedad anterior" onClick={() => changeProperty(-1)}>‹</button>
-          <label className="collections__property-select">
-            <span className="sr-only">Seleccionar propiedad</span>
-            <select value={property} onChange={(event) => setProperty(event.target.value)}>
-              {properties.map((item) => <option value={item} key={item}>{item}</option>)}
-            </select>
-          </label>
+          <DropdownSelect label="Seleccionar propiedad" placeholder={property} value={property} options={properties} onChange={setProperty} className="collections__property-select" triggerClassName="collections__property-trigger" valueClassName="collections__property-value" showChevron={false} blurOnSelect />
           <button type="button" aria-label="Propiedad siguiente" onClick={() => changeProperty(1)}>›</button>
         </div>
         <div className="collections__years">
@@ -114,7 +111,7 @@ export default function Collections() {
             {openYears[2024] && (
               <div className="collections__months">
                 {periods.map((period) => (
-                  <button className={`collections__month${selectedMonth === period.month ? " is-selected" : ""}`} type="button" key={period.month} onClick={() => chooseMonth(period.month)} aria-pressed={selectedMonth === period.month}>
+                  <button className={`collections__month collections__month--${period.tone}${selectedMonth === period.month ? " is-selected" : ""}`} type="button" key={period.month} onClick={() => chooseMonth(period.month)} aria-pressed={selectedMonth === period.month}>
                     <strong>{period.month}</strong><span className={`collections__status collections__status--${period.tone}`}>{period.status}</span>
                   </button>
                 ))}
