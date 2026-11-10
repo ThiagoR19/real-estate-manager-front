@@ -1,4 +1,7 @@
+import axios from "axios";
+
 const apiBase = (import.meta.env.VITE_API_URL || "/api").replace(/\/$/, "");
+const http = axios.create({ baseURL: apiBase });
 
 export function assetUrl(path) {
   if (!path) return null;
@@ -25,27 +28,24 @@ async function request(path, { method = "GET", body, auth = true } = {}) {
     const token = getSession()?.token;
     if (token) headers.Authorization = `Bearer ${token}`;
   }
-  if (body && !(body instanceof FormData)) headers["Content-Type"] = "application/json";
-  let response;
   try {
-    response = await fetch(`${apiBase}${path}`, {
-      method, headers, body: body instanceof FormData ? body : body ? JSON.stringify(body) : undefined,
-    });
-  } catch {
-    throw new Error("No se pudo conectar con el servidor.");
-  }
-  let result;
-  try { result = await response.json(); }
-  catch { throw new Error(`El servidor respondió con HTTP ${response.status}.`); }
-  if (!response.ok || result.status !== "success") {
-    if (response.status === 401 && auth) {
+    const { data: result } = await http.request({ url: path, method, data: body, headers });
+    if (result.status !== "success") {
+      const details = result.error?.detalles?.map(({ campo, problema }) => `${campo}: ${problema}`).join("; ");
+      throw new Error(details || result.error?.mensaje || "La API devolvió una respuesta inválida.");
+    }
+    return result;
+  } catch (error) {
+    const status = error.response?.status;
+    if (status === 401 && auth) {
       clearSession();
       window.location.assign("/login");
     }
-    const details = result.error?.detalles?.map(({ campo, problema }) => `${campo}: ${problema}`).join("; ");
-    throw new Error(details || result.error?.mensaje || `Error HTTP ${response.status}`);
+    if (error instanceof Error && !axios.isAxiosError(error)) throw error;
+    const payload = error.response?.data;
+    const details = payload?.error?.detalles?.map(({ campo, problema }) => `${campo}: ${problema}`).join("; ");
+    throw new Error(details || payload?.error?.mensaje || (status ? `Error HTTP ${status}` : "No se pudo conectar con el servidor."), { cause: error });
   }
-  return result;
 }
 
 export const api = {
@@ -79,20 +79,29 @@ export const api = {
   },
   deletePropertyFile: (id, kind, fileId) => request(`/propiedades/${id}/archivos/${kind}/${fileId}`, { method: "DELETE" }),
   downloadPropertyDocument: async (id, file) => {
-    const response = await fetch(`${apiBase}/propiedades/${id}/archivos/documentos/${file.id}`, {
-      headers: { Authorization: `Bearer ${getSession()?.token || ""}` },
-    });
-    if (response.status === 401) {
-      clearSession();
-      window.location.assign("/login");
-      return;
+    try {
+      const { data } = await http.get(`/propiedades/${id}/archivos/documentos/${file.id}`, {
+        headers: { Authorization: `Bearer ${getSession()?.token || ""}` },
+        responseType: "blob",
+      });
+      const url = URL.createObjectURL(data);
+      const link = window.document.createElement("a");
+      link.href = url;
+      link.download = file.fileName;
+      link.click();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (error) {
+      const status = error.response?.status;
+      if (status === 401) {
+        clearSession();
+        window.location.assign("/login");
+      }
+      let payload = error.response?.data;
+      if (payload instanceof Blob) {
+        try { payload = JSON.parse(await payload.text()); }
+        catch (e) { console.log(e) }
+      }
+      throw new Error(payload?.error?.mensaje || (status ? `Error HTTP ${status}` : "No se pudo conectar con el servidor."), { cause: error });
     }
-    if (!response.ok) throw new Error("No se pudo descargar el documento.");
-    const url = URL.createObjectURL(await response.blob());
-    const link = window.document.createElement("a");
-    link.href = url;
-    link.download = file.fileName;
-    link.click();
-    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   },
 };
