@@ -50,6 +50,10 @@ async function request(path, { method = "GET", body, auth = true } = {}) {
 
 export const api = {
   login: (usuario, password) => request("/auth/login", { method: "POST", body: { usuario, password }, auth: false }).then(({ data }) => data),
+  logout: async () => {
+    await request("/auth/logout", { method: "POST" });
+    clearSession();
+  },
   propertyCatalogs: () => request("/propiedades/catalogos").then(({ data }) => data),
   properties: async () => {
     const items = [];

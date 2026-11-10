@@ -1,9 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { xIcon as closeIcon } from "../../assets/icons";
 import brandLogo from "../../assets/logoAGI.png";
 import { accountRoleFor, allItems, isItemActive, primaryItems, secondaryItems } from "../navigation";
-import { clearSession, getSession } from "../../services/api";
+import { api, getSession } from "../../services/api";
 import "./Navbar.css";
 
 function NavigationItem({ item, pathname, onNavigate }) {
@@ -19,8 +19,19 @@ function NavigationItem({ item, pathname, onNavigate }) {
 
 export default function Navbar({ menuOpen = false, onClose = () => { } }) {
   const [pathname] = useLocation();
+  const [logoutError, setLogoutError] = useState("");
   const role = accountRoleFor(pathname);
   const user = getSession()?.usuario;
+
+  async function closeSession(event) {
+    event.preventDefault();
+    setLogoutError("");
+    try {
+      await api.logout();
+      onClose();
+      window.location.assign("/login");
+    } catch (error) { setLogoutError(error.message); }
+  }
   const mobilePaths = role === "Propietario"
     ? ["/owner-dashboard", "/my-properties", "/collections", "/reports-agent", "/chat"]
     : role === "Inquilino"
@@ -84,7 +95,8 @@ export default function Navbar({ menuOpen = false, onClose = () => { } }) {
           <span className="navbar__drawer-avatar" aria-hidden="true">{user?.nombre?.[0]}{user?.apellido?.[0]}</span>
           <span><strong>{user ? `${user.nombre} ${user.apellido}` : "Cuenta"}</strong><small>{role}</small></span>
         </Link>
-        <Link href="/login" className="navbar__drawer-account" onClick={() => { clearSession(); onClose(); }}>Cerrar sesión</Link>
+        {logoutError && <p className="navbar__logout-error" role="alert">{logoutError}</p>}
+        <button type="button" className="navbar__drawer-account navbar__drawer-logout" onClick={closeSession}>Cerrar sesión</button>
       </aside>
     </>
   );

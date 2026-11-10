@@ -98,6 +98,8 @@
 .navbar__drawer-account { display: none; align-items: center; gap: 12px; margin-top: auto; padding: 20px 17px 0; border-top: 1px solid #c8dff3; }
 .navbar__drawer-account > span:last-child { display: flex; flex-direction: column; gap: 4px; }
 .navbar__drawer-account small { color: #7a849b; }
+.navbar__drawer-logout { display: none; width: 100%; justify-content: center; border: 1px solid #fecaca; border-radius: 10px; background: #fee2e2; color: #991b1b; font: inherit; font-weight: 700; cursor: pointer; }
+.navbar__logout-error { margin: 8px 0 0; color: #991b1b; font-size: 12px; }
 .navbar__drawer-avatar { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: #bed9eb; }
 
 .navbar__breadcrumb {
@@ -488,6 +490,7 @@
   .navbar__drawer-link { gap: 22px; }
   .navbar__drawer-link.is-active { font-weight: 500; }
   .navbar__drawer-account { display: flex; flex-shrink: 0; }
+  .navbar__drawer-logout { display: flex; margin-top: 8px; padding: 12px; border-top: 1px solid #fecaca; }
 }
 
 @media (min-width: 761px) and (max-width: 900px) {

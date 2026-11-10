@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { addressCardIcon, cameraIcon, checkIcon, envelopeIcon, eyeIcon, eyeSlashIcon, locationDotIcon, lockIcon, phoneIcon, userIcon, } from "../../assets/icons";
+import { useLocation } from "wouter";
+import { addressCardIcon, cameraIcon, checkIcon, envelopeIcon, eyeIcon, eyeSlashIcon, locationDotIcon, lockIcon, phoneIcon, trashCanIcon, userIcon, } from "../../assets/icons";
 import "./Profile.css";
 import { Button } from "../../components";
+import { api } from "../../services/api";
 
 const personalFields = [
   { id: "name", label: "Nombre", placeholder: "Juan", icon: userIcon },
@@ -55,9 +57,24 @@ function PasswordField({ field, visible, onToggle }) {
 
 export default function Profile() {
   const [visiblePasswords, setVisiblePasswords] = useState({});
+  const [logoutError, setLogoutError] = useState("");
+  const [loggingOut, setLoggingOut] = useState(false);
+  const [, navigate] = useLocation();
 
   function togglePassword(id) {
     setVisiblePasswords((current) => ({ ...current, [id]: !current[id] }));
+  }
+
+  async function closeSession() {
+    setLoggingOut(true);
+    setLogoutError("");
+    try {
+      await api.logout();
+      navigate("/login");
+    } catch (error) {
+      setLogoutError(error.message);
+      setLoggingOut(false);
+    }
   }
 
   return (
@@ -132,7 +149,11 @@ export default function Profile() {
         </form>
       </div>
 
-      <Button className="profile__save-button" icon={checkIcon} text="Guardar cambios" />
+      <div className="profile__actions">
+        <Button className="profile__save-button" icon={checkIcon} text="Guardar cambios" />
+        <Button className="profile__logout-button" icon={trashCanIcon} text={loggingOut ? "Cerrando sesión..." : "Cerrar sesión"} onClick={closeSession} disabled={loggingOut} />
+        {logoutError && <p className="profile__logout-error" role="alert">{logoutError}</p>}
+      </div>
     </main>
   );
 }

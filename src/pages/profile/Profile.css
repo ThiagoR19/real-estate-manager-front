@@ -479,22 +479,61 @@ body:has(#profile) {
   filter: brightness(0) saturate(100%) invert(56%) sepia(12%) saturate(798%) hue-rotate(184deg) brightness(88%) contrast(86%) !important;
 }
 
-.profile__save-button {
+.profile__actions {
   position: fixed;
   right: 22px;
   bottom: 24px;
   z-index: 3;
   display: flex;
   align-items: center;
+  gap: 10px;
+}
+
+.profile__save-button,
+.profile__logout-button {
+  display: flex;
+  align-items: center;
   justify-content: center;
-  gap: 20px;
-  width: 262px;
+  gap: 12px;
   height: 48px;
-  border: 0;
   border-radius: 15px;
-  box-shadow: 0 3px 4px #17235e4a;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
+}
+
+.profile__save-button {
+  width: 262px;
+  border: 0;
+  box-shadow: 0 3px 4px #17235e4a;
+}
+
+.profile__logout-button {
+  width: 190px;
+  border: 1px solid #fecaca;
+  background: #fee2e2;
+  color: #991b1b;
+  box-shadow: 0 2px 4px #991b1b1a;
+}
+
+.profile__logout-button:hover {
+  background: #fecaca;
+}
+
+.profile__logout-button img {
+  width: 17px;
+  height: 17px;
+  filter: brightness(0) saturate(100%) invert(20%) sepia(91%) saturate(2031%) hue-rotate(341deg) brightness(88%) contrast(101%) !important;
+}
+
+.profile__logout-error {
+  position: absolute;
+  right: 0;
+  bottom: 55px;
+  width: min(420px, 90vw);
+  margin: 0;
+  color: #991b1b;
+  font-size: 13px;
+  text-align: right;
 }
 
 .profile__save-button img {
@@ -603,10 +642,9 @@ body:has(#profile) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .profile__save-button {
+  .profile__actions {
     right: 14px;
     bottom: 14px;
-    width: calc(100% - 28px);
   }
 }
 
@@ -674,7 +712,8 @@ body:has(#profile) {
 
 @media (prefers-reduced-motion: reduce) {
   .profile__field-control,
-  .profile__save-button {
+  .profile__save-button,
+  .profile__logout-button {
     transition: none;
   }
 }
@@ -711,7 +750,10 @@ body:has(#profile) {
   .profile__fields--passwords { gap: 14px; margin-top: 22px; padding: 0 3px; }
   .profile__fields--passwords .profile__field { gap: 8px; }
   .profile__fields--passwords .profile__field-label { padding: 0; font-size: 16px; font-weight: 400; }
-  .profile__save-button { position: static; order: 3; align-self: flex-end; width: min(262px, calc(100% - 32px)); margin: 20px 16px 18px; }
+  .profile__actions { position: static; order: 3; align-self: stretch; margin: 20px 16px 18px; }
+  .profile__actions { justify-content: stretch; }
+  .profile__actions .profile__save-button, .profile__actions .profile__logout-button { width: auto; flex: 1; padding: 10px 8px; font-size: 13px; }
+  .profile__logout-error { position: fixed; right: 16px; bottom: 72px; }
   .profile__password-hint { order: 4; min-height: 0; margin: 0 16px 18px; padding: 14px 16px; }
   .profile__password-hint h2 { margin-top: 0; font-size: 16px; }
   .profile__password-hint ul { font-size: 14px; line-height: 1.3; }
