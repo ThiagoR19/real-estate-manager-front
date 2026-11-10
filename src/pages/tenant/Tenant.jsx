@@ -1,29 +1,10 @@
-import { useMemo, useState } from "react";
-import {
-  calendarIcon,
-  clockIcon,
-  envelopeIcon,
-  fileLinesIcon as fileIcon,
-  houseIcon,
-  locationDotIcon as locationIcon,
-  magnifyingGlassIcon,
-  peopleIcon,
-  phoneIcon,
-  plusIcon,
-  xIcon,
-} from "../../assets/icons";
+import { useEffect, useMemo, useState } from "react";
+import { calendarIcon, clockIcon, envelopeIcon, fileLinesIcon as fileIcon, houseIcon, locationDotIcon as locationIcon, magnifyingGlassIcon, peopleIcon, phoneIcon, plusIcon, xIcon } from "../../assets/icons";
 import { DropdownSelect, TenantModal, ConfirmDeleteModal, EntityActions, Button, SummaryPill } from "../../components";
 import propertyImage from "/images.jpg";
 import "./Tenant.css";
+import { tenants as FetchTenants, toTenant } from "../../services/tenants";
 
-const initialTenants = [
-  { initials: "LM", name: "Lucía Martínez", dni: "41.234.567", email: "lucia.m@gmail.com", phone: "11 2345- 6789", address: "Av. San Martín 1250", unit: "Depto. 3B", contract: "Alquiler", dates: "01/03/2024 - 28/02/2026", status: "Activo", due: "28/02/2026" },
-  { initials: "LM", name: "Lucía Martínez", dni: "41.234.567", email: "lucia.m@gmail.com", phone: "11 2345- 6789", address: "Av. San Martín 1250", unit: "Depto. 3B", contract: "Alquiler", dates: "01/03/2024 - 28/02/2026", status: "Activo", due: "28/02/2026" },
-  { initials: "LM", name: "Lucía Martínez", dni: "41.234.567", email: "lucia.m@gmail.com", phone: "11 2345- 6789", address: "Av. San Martín 1250", unit: "Depto. 3B", contract: "Alquiler", dates: "01/03/2024 - 28/02/2026", status: "Activo", due: "28/02/2026" },
-  { initials: "LM", name: "Lucía Martínez", dni: "41.234.567", email: "lucia.m@gmail.com", phone: "11 2345- 6789", address: "Av. San Martín 1250", unit: "Depto. 3B", contract: "Alquiler", dates: "01/03/2024 - 28/02/2026", status: "Activo", due: "28/02/2026" },
-  { initials: "LM", name: "Lucía Martínez", dni: "41.234.567", email: "lucia.m@gmail.com", phone: "11 2345- 6789", address: "Av. San Martín 1250", unit: "Depto. 3B", contract: "Alquiler", dates: "01/03/2024 - 28/02/2026", status: "Activo", due: "28/02/2026" },
-  { initials: "LM", name: "Lucía Martínez", dni: "41.234.567", email: "lucia.m@gmail.com", phone: "11 2345- 6789", address: "Av. San Martín 1250", unit: "Depto. 3B", contract: "Alquiler", dates: "01/03/2024 - 28/02/2026", status: "Activo", due: "28/02/2026" },
-];
 
 const filters = [
   { label: "Propiedad", icon: houseIcon, options: ["Todas las propiedades", "Av. San Martín 1250", "Av. Santa Fe 850"] },
@@ -95,18 +76,23 @@ function TenantRow({ tenant, onEdit, onDelete }) {
 }
 
 export default function Tenant() {
-  const [tenants, setTenants] = useState(initialTenants);
+  const [tenants, setTenants] = useState([]);
   const [query, setQuery] = useState("");
-  const [filterValues, setFilterValues] = useState(filters.map(({ options }) => options[0]));
-  const [modal, setModal] = useState({ isOpen: false, mode: "create", tenant: null });
+  const [filterValues, setFilterValues] = ({ property: 'Todas', state: 'Activo', date: 'Todos los estados' });
+  const [modal, setModal] = useState([]);
   const [notice, setNotice] = useState("");
   const [pendingDelete, setPendingDelete] = useState(null);
 
-  function deleteTenant() {
+  useEffect(async () => {
+    const rows = await FetchTenants();
+    setTenants(rows.map((row) => toTenant(row)));
+  }, []);
+
+  function deleteTenant(id) {
     setTenants((current) => current.filter((tenant) => tenant !== pendingDelete));
+    deleteTenant(id)
     setNotice(`${pendingDelete.name} fue eliminado de la lista.`);
     setPendingDelete(null);
-    window.setTimeout(() => setNotice(""), 2800);
   }
 
   const visibleTenants = useMemo(() => {
