@@ -1,3 +1,4 @@
+import * as dashboardService from "./dashboard.js";
 import * as loginService from "./login.js";
 import * as propertyService from "./properties.js";
 
@@ -30,4 +31,5 @@ export const api = {
   uploadPropertyFiles: propertyService.uploadPropertyFiles,
   deletePropertyFile: propertyService.deletePropertyFile,
   downloadPropertyDocument: propertyService.downloadPropertyDocument,
+  dashboard: dashboardService.getDashboard,
 };

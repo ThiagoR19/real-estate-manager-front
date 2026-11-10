@@ -158,6 +158,10 @@
   letter-spacing: -.3px;
 }
 
+.dashboard-avatar--foto {
+  object-fit: cover;
+}
+
 .dashboard-avatar--violet {
   background: radial-gradient(circle at 70% 25%, #f3e4ec 0 13%, transparent 14%), linear-gradient(135deg, #e6dce3, #816e85);
 }
