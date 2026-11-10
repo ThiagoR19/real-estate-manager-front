@@ -2,8 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation } from "wouter";
 import { houseIcon, locationDotIcon as locationIcon, plusIcon, tagIcon } from "../../assets/icons";
 import { PropertyModal, ConfirmDeleteModal, DropdownSelect, Button, PropertyCardSimple } from "../../components";
-import { api } from "../../services/api";
-import { getProperty, persistProperty, toProperty } from "../../services/properties";
+import { deleteProperty, getProperty, persistProperty, properties as fetchProperties, propertyCatalogs, toProperty } from "../../services/properties.js";
 import "./Properties.css";
 
 function FilterSelect({ filter, value, onChange }) {
@@ -29,13 +28,13 @@ export default function Properties() {
   }, []);
 
   const refresh = useCallback(async () => {
-    const rows = await api.properties();
+    const rows = await fetchProperties();
     setProperties(rows.map((row) => toProperty(row)));
   }, []);
 
   useEffect(() => {
     let active = true;
-    Promise.all([api.properties(), api.propertyCatalogs()]).then(([rows, lists]) => {
+    Promise.all([fetchProperties(), propertyCatalogs()]).then(([rows, lists]) => {
       if (!active) return;
       setProperties(rows.map((row) => toProperty(row)));
       setCatalogs(lists);
@@ -69,7 +68,7 @@ export default function Properties() {
   async function remove() {
     if (!pendingDelete) return;
     try {
-      await api.deleteProperty(pendingDelete.id);
+      await deleteProperty(pendingDelete.id);
       setProperties((current) => current.filter((item) => item.id !== pendingDelete.id));
       setFeedback(`${pendingDelete.name} se eliminó.`);
       setPendingDelete(null);

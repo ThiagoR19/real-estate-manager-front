@@ -6,7 +6,7 @@ import { barsIcon as menuIcon, bellIcon, magnifyingGlassIcon as searchIcon, xIco
 import referenceImage from "../../assets/terms-reference.png";
 import brandLogo from "../../assets/logoAGI.png";
 import { accountRoleFor, allItems, isItemActive, pageLabels } from "../navigation";
-import { getSession } from "../../services/api";
+import { getSession } from "../../services/login.js";
 import "./Header.css";
 
 export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {

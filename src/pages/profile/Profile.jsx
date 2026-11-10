@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { addressCardIcon, cameraIcon, checkIcon, envelopeIcon, eyeIcon, eyeSlashIcon, locationDotIcon, lockIcon, phoneIcon, trashCanIcon, userIcon, } from "../../assets/icons";
 import "./Profile.css";
 import { Button } from "../../components";
-import { api } from "../../services/api";
+import { logout } from "../../services/login.js";
 
 const personalFields = [
   { id: "name", label: "Nombre", placeholder: "Juan", icon: userIcon },
@@ -69,7 +69,7 @@ export default function Profile() {
     setLoggingOut(true);
     setLogoutError("");
     try {
-      await api.logout();
+      await logout();
       navigate("/login");
     } catch (error) {
       setLogoutError(error.message);

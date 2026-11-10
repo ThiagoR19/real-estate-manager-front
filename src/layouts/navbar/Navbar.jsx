@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import { xIcon as closeIcon } from "../../assets/icons";
 import brandLogo from "../../assets/logoAGI.png";
 import { accountRoleFor, allItems, isItemActive, primaryItems, secondaryItems } from "../navigation";
-import { api, getSession } from "../../services/api";
+import { getSession, logout } from "../../services/login.js";
 import "./Navbar.css";
 
 function NavigationItem({ item, pathname, onNavigate }) {
@@ -27,7 +27,7 @@ export default function Navbar({ menuOpen = false, onClose = () => { } }) {
     event.preventDefault();
     setLogoutError("");
     try {
-      await api.logout();
+      await logout();
       onClose();
       window.location.assign("/login");
     } catch (error) { setLogoutError(error.message); }

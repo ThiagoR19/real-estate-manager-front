@@ -1,7 +1,8 @@
 import axios from "axios";
-import { getSession, clearSession } from "../services/api";
-const apiBase = (import.meta.env.VITE_API_URL || "/api").replace(/\/$/, "");
-const http = axios.create({ baseURL: apiBase });
+import { clearSession, getSession } from "../services/login.js";
+
+export const apiBase = (import.meta.env.VITE_API_URL || "/api").replace(/\/$/, "");
+export const http = axios.create({ baseURL: apiBase });
 
 
 export async function request(path, { method = "GET", body, auth = true } = {}) {
