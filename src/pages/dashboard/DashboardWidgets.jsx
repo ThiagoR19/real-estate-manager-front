@@ -61,15 +61,37 @@ export function PerformanceCard({ className = "" }) {
   return (
     <section className={`dashboard-card dashboard-performance-card ${className}`}>
       <div className="dashboard-performance-card__header">
-        <div><h2 className="dashboard-card__title"><Icon src={chartColumnIcon} />Rendimiento de la semana</h2><p>Visitas a la pagina, visitas a propiedades y contratos<span className="dashboard-performance-period"> en los últimos 7 días</span></p></div>
-        <label className="dashboard-period-select"><span className="visually-hidden">Período del gráfico</span><select value={period} onChange={(event) => setPeriod(event.target.value)}><option>Esta semana</option><option>Este mes</option><option>Este año</option></select><Icon src={angleDownIcon} /></label>
+        <div>
+          <h2 className="dashboard-card__title"><Icon src={chartColumnIcon} />Rendimiento de la semana</h2>
+          <p>Visitas a la pagina, visitas a propiedades y contratos<span className="dashboard-performance-period"> en los últimos 7 días</span></p>
+        </div>
+        <label className="dashboard-period-select">
+          <span className="visually-hidden">Período del gráfico</span>
+          <select value={period} onChange={(event) => setPeriod(event.target.value)}>
+            <option>Esta semana</option>
+            <option>Este mes</option>
+            <option>Este año</option>
+          </select><Icon src={angleDownIcon} />
+        </label>
       </div>
       <PerformanceChart />
       <div className="dashboard-kpis">
-        <div className="dashboard-kpi dashboard-kpi--green"><span className="dashboard-kpi__icon"><Icon src={userIcon} /></span><span><small>inquilinos</small><b>18 <em>↑ +20%</em></b></span></div>
-        <div className="dashboard-kpi dashboard-kpi--red"><Icon src={fileLinesIcon} /><span><small>Reportes</small><b>3 <em>↑ +10%</em></b></span></div>
-        <div className="dashboard-kpi dashboard-kpi--orange"><span className="dashboard-kpi__symbol">$</span><span><small>Cobros P.</small><b>3 <em>↑ +20%</em></b></span></div>
-        <div className="dashboard-kpi dashboard-kpi--purple"><Icon src={fileLinesIcon} /><span><small>Contratos</small><b>6 <em>↑ +20%</em></b></span></div>
+        <div className="dashboard-kpi dashboard-kpi--green">
+          <span className="dashboard-kpi__icon"><Icon src={userIcon} /></span>
+          <span><small>inquilinos</small><b>18 <em>↑ +20%</em></b></span>
+        </div>
+        <div className="dashboard-kpi dashboard-kpi--red">
+          <Icon src={fileLinesIcon} />
+          <span><small>Reportes</small><b>3 <em>↑ +10%</em></b></span>
+        </div>
+        <div className="dashboard-kpi dashboard-kpi--orange">
+          <span className="dashboard-kpi__symbol">$</span>
+          <span><small>Cobros P.</small><b>3 <em>↑ +20%</em></b></span>
+        </div>
+        <div className="dashboard-kpi dashboard-kpi--purple">
+          <Icon src={fileLinesIcon} />
+          <span><small>Contratos</small><b>6 <em>↑ +20%</em></b></span>
+        </div>
       </div>
     </section>
   );

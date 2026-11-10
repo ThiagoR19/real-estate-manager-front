@@ -27,8 +27,8 @@ function AgentsCard({ agents }) {
             {agent.urlFotoPerfil
               ? <img className="dashboard-avatar dashboard-avatar--foto" src={assetUrl(agent.urlFotoPerfil)} alt="" aria-hidden="true" />
               : <div className={`dashboard-avatar ${avatar(agent.nombre, agent.apellido)}`} aria-hidden="true">
-                  {initials(agent.nombre, agent.apellido)}
-                </div>}
+                {initials(agent.nombre, agent.apellido)}
+              </div>}
 
             <strong>{agent.nombre}</strong>
             <div className="dashboard-agent__stats">
@@ -41,20 +41,27 @@ function AgentsCard({ agents }) {
   );
 }
 
-function StatusCard() {
-  const statusItems = [
-    { label: "Total de propiedades:", value: "35", icon: houseIcon },
-    { label: "Total en alquiler:", value: "10", icon: keyIcon },
-    { label: "Propiedades vendidas:", value: "10", icon: houseIcon },
-    { label: "Propiedades vacias:", value: "25", icon: tagIcon },
+function StatusCard({ valores }) {
+  console.log(valores)
+  let statusItems = [
+    { label: "Total de propiedades:", value: valores["total"], icon: houseIcon },
+    { label: "Total en alquiler:", value: valores.enAlquiler, icon: keyIcon },
+    { label: "Propiedades vendidas:", value: valores.vendidas, icon: houseIcon },
+    { label: "Propiedades vacias:", value: valores.vacias, icon: tagIcon },
   ];
+  console.log(statusItems)
   return (
     <section className="dashboard-card dashboard-status-card">
-      <div className="dashboard-status-card__heading"><h2 className="dashboard-card__title"><Icon src={penIcon} />Estados</h2><Link href="/properties" aria-label="Ver propiedades">›</Link></div>
+      <div className="dashboard-status-card__heading">
+        <h2 className="dashboard-card__title"><Icon src={penIcon} />Estados</h2>
+        <Link href="/properties" aria-label="Ver propiedades"></Link>
+      </div>
       <div className="dashboard-status-list">
-        {statusItems.map((item) => <div className="dashboard-status-item" key={item.label}>
-          <strong>{item.label}</strong><b>{item.value}</b><Icon src={item.icon} />
-        </div>)}
+        {statusItems.map((item) =>
+          <div className="dashboard-status-item" key={item.label}>
+            <strong>{item.label}</strong><b>{item.value}</b><Icon src={item.icon} />
+          </div>
+        )}
       </div>
     </section>
   );
@@ -71,6 +78,7 @@ export default function Dashboard() {
       .catch((causa) => setError(causa.message))
       .finally(() => setLoading(false));
   }, []);
+  console.error(error)
   if (!loading) {
     return (
       <main className="dashboard-page">
@@ -90,7 +98,9 @@ export default function Dashboard() {
             agents={datos.topAgentes}
           />
           <SharedPerformanceCard />
-          <StatusCard />
+          <StatusCard
+            valores={datos.estadosPropiedades}
+          />
           <SharedActivityCard className="dashboard-shared-activity" />
         </div>
       </main>
