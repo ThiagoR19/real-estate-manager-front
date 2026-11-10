@@ -1,23 +1,54 @@
 import { useEffect, useMemo, useState } from "react";
-import { calendarIcon, clockIcon, envelopeIcon, fileLinesIcon as fileIcon, houseIcon, locationDotIcon as locationIcon, magnifyingGlassIcon, peopleIcon, phoneIcon, plusIcon, xIcon } from "../../assets/icons";
+import { calendarIcon, clockIcon, envelopeIcon, fileLinesIcon as fileIcon, houseIcon, locationDotIcon as locationIcon, magnifyingGlassIcon, peopleIcon, phoneIcon, plusIcon } from "../../assets/icons";
 import { DropdownSelect, TenantModal, ConfirmDeleteModal, EntityActions, Button, SummaryPill } from "../../components";
 import propertyImage from "/images.jpg";
 import "./Tenant.css";
-import { tenants as FetchTenants, toTenant } from "../../services/tenants";
+import { deleteTenant as removeTenant, persistTenant, tenants as fetchTenants, toTenant } from "../../services/tenants";
 
 
-const filters = [
-  { label: "Propiedad", icon: houseIcon, options: ["Todas las propiedades", "Av. San Martín 1250", "Av. Santa Fe 850"] },
-  { label: "Estado", icon: locationIcon, options: ["Todos los estados", "Activo", "Pendiente", "Finalizado"] },
-  { label: "Vencimiento", icon: calendarIcon, options: ["Todos los vencimientos", "Este mes", "Próximos 30 días"] },
+const filterDefinitions = [
+  { label: "Propiedad", icon: houseIcon, all: "Todas las propiedades" },
+  { label: "Estado", icon: locationIcon, all: "Todos los estados" },
+  { label: "Vencimiento", icon: calendarIcon, all: "Todos los vencimientos" },
 ];
 
-const summaryCards = [
-  { label: "Pagos pendientes", value: "2", icon: xIcon, tone: "danger" },
-  { label: "Contratos por vencer", value: "10", icon: clockIcon, tone: "warning" },
-  { label: "Inquilinos activos", value: "24", icon: peopleIcon, tone: "success" },
-  { label: "Contratos vigentes", value: "18", icon: fileIcon, tone: "info" },
-];
+const statusOptions = ["Todos los estados", "Activo", "Inactivo", "Pendiente"];
+const dueDateOptions = ["Todos los vencimientos", "Este mes", "Próximos 30 días"];
+
+function parseDate(value) {
+  if (!value) return null;
+  const match = String(value).match(/^(\d{4})-(\d{2})-(\d{2})/);
+  const date = match
+    ? new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]))
+    : new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function formatDate(value) {
+  const date = parseDate(value);
+  return date ? date.toLocaleDateString("es-AR", { day: "2-digit", month: "short", year: "numeric" }) : "—";
+}
+
+function expiresWithin(value, days, today = new Date()) {
+  const date = parseDate(value);
+  if (!date) return false;
+  const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const end = new Date(start);
+  end.setDate(end.getDate() + days);
+  return date >= start && date <= end;
+}
+
+function matchesDueDate(tenant, selected, today) {
+  if (selected === dueDateOptions[0]) return true;
+  if (tenant.contractStatus !== "Vigente") return false;
+  const date = parseDate(tenant.contractEndDate);
+  if (!date) return false;
+  const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  if (selected === dueDateOptions[1]) {
+    return date >= start && date.getFullYear() === start.getFullYear() && date.getMonth() === start.getMonth();
+  }
+  return expiresWithin(date, 30, start);
+}
 
 
 function FilterControl({ filter, value, onChange }) {
@@ -48,21 +79,24 @@ function TenantRow({ tenant, onEdit, onDelete }) {
       </td>
       <td data-label="Contacto">
         <div className="tenant__contact">
-          <span><img src={envelopeIcon} alt="" />{tenant.email}</span>
-          <span><img src={phoneIcon} alt="" />{tenant.phone}</span>
+          <span><img src={envelopeIcon} alt="" />{tenant.email || "Correo sin especificar"}</span>
+          <span><img src={phoneIcon} alt="" />{tenant.phone || "Teléfono sin especificar"}</span>
         </div>
       </td>
       <td data-label="Propiedad">
         <div className="tenant__property">
           <img className="tenant__property-image" src={propertyImage} alt="" />
-          <span><strong>{tenant.address}</strong><small>{tenant.unit}</small></span>
+          <span><strong>{tenant.propertyName}</strong><small>{tenant.propertyAddress || "Sin ubicación de propiedad"}</small></span>
         </div>
       </td>
       <td data-label="Contrato">
-        <span className="tenant__contract"><strong>{tenant.contract}</strong><small>{tenant.dates}</small></span>
+        <span className="tenant__contract">
+          <strong>{tenant.contractId ? `Contrato #${tenant.contractId}` : "Sin contrato"}</strong>
+          <small>{tenant.contractId ? `${formatDate(tenant.contractStartDate)} – ${formatDate(tenant.contractEndDate)}` : "Sin contrato vigente"}</small>
+        </span>
       </td>
-      <td data-label="Estado"><span className="tenant__status">{tenant.status}</span></td>
-      <td data-label="Próximo vencimiento"><strong className="tenant__due">{tenant.due}</strong></td>
+      <td data-label="Estado"><span className={`tenant__status tenant__status--${tenant.statusClass}`}>{tenant.status}</span></td>
+      <td data-label="Próximo vencimiento"><strong className="tenant__due">{tenant.contractStatus === "Vigente" ? formatDate(tenant.contractEndDate) : "—"}</strong></td>
       <td data-label="Acciones" className="tenant__actions-cell">
         <EntityActions
           entity="inquilino"
@@ -78,42 +112,87 @@ function TenantRow({ tenant, onEdit, onDelete }) {
 export default function Tenant() {
   const [tenants, setTenants] = useState([]);
   const [query, setQuery] = useState("");
-  const [filterValues, setFilterValues] = ({ property: 'Todas', state: 'Activo', date: 'Todos los estados' });
-  const [modal, setModal] = useState([]);
+  const [filterValues, setFilterValues] = useState(filterDefinitions.map((filter) => filter.all));
+  const [modal, setModal] = useState({ isOpen: false, mode: "create", tenant: null });
   const [notice, setNotice] = useState("");
+  const [activationUrl, setActivationUrl] = useState("");
+  const [loadError, setLoadError] = useState("");
+  const [actionError, setActionError] = useState("");
+  const [loading, setLoading] = useState(true);
   const [pendingDelete, setPendingDelete] = useState(null);
 
-  useEffect(async () => {
-    const rows = await FetchTenants();
-    setTenants(rows.map((row) => toTenant(row)));
+  useEffect(() => {
+    let mounted = true;
+    async function loadTenants() {
+      setLoading(true);
+      setLoadError("");
+      try {
+        const rows = await fetchTenants();
+        if (mounted) setTenants(rows.map((row) => toTenant(row)));
+      } catch (error) {
+        if (mounted) setLoadError(error.message || "No se pudieron cargar los inquilinos.");
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    }
+    loadTenants();
+    return () => { mounted = false; };
   }, []);
 
-  function deleteTenant(id) {
-    setTenants((current) => current.filter((tenant) => tenant !== pendingDelete));
-    deleteTenant(id)
-    setNotice(`${pendingDelete.name} fue eliminado de la lista.`);
-    setPendingDelete(null);
-  }
+  const filterControls = useMemo(() => {
+    const propertyOptions = [...new Set(tenants.map((tenant) => tenant.propertyName).filter(Boolean))]
+      .sort((first, second) => first.localeCompare(second, "es"));
+    return [
+      { ...filterDefinitions[0], options: [filterDefinitions[0].all, ...propertyOptions] },
+      { ...filterDefinitions[1], options: statusOptions },
+      { ...filterDefinitions[2], options: dueDateOptions },
+    ];
+  }, [tenants]);
+
+  const summaryCards = useMemo(() => [
+    { label: "Inquilinos activos", value: tenants.filter((tenant) => tenant.status === "Activo").length, icon: peopleIcon, tone: "success" },
+    { label: "Pendientes", value: tenants.filter((tenant) => tenant.status === "Pendiente").length, icon: clockIcon, tone: "warning" },
+    { label: "Contratos vigentes", value: tenants.filter((tenant) => tenant.contractStatus === "Vigente").length, icon: fileIcon, tone: "info" },
+    { label: "Vencen en 30 días", value: tenants.filter((tenant) => tenant.contractStatus === "Vigente" && expiresWithin(tenant.contractEndDate, 30)).length, icon: calendarIcon, tone: "danger" },
+  ], [tenants]);
 
   const visibleTenants = useMemo(() => {
-    const normalizedQuery = query.trim().toLowerCase();
+    const normalizedQuery = query.trim().toLocaleLowerCase("es");
+    const today = new Date();
     return tenants.filter((tenant) => {
-      const matchesQuery = !normalizedQuery || [tenant.name, tenant.dni, tenant.email, tenant.address].some((value) => value.toLowerCase().includes(normalizedQuery));
-      const matchesProperty = filterValues[0] === filters[0].options[0] || tenant.address === filterValues[0];
-      const matchesStatus = filterValues[1] === filters[1].options[0] || tenant.status === filterValues[1];
-      return matchesQuery && matchesProperty && matchesStatus;
+      const searchable = [tenant.name, tenant.dni, tenant.email, tenant.phone, tenant.address, tenant.propertyName, tenant.propertyAddress]
+        .some((value) => String(value ?? "").toLocaleLowerCase("es").includes(normalizedQuery));
+      const matchesQuery = !normalizedQuery || searchable;
+      const matchesProperty = filterValues[0] === filterDefinitions[0].all || tenant.propertyName === filterValues[0];
+      const matchesStatus = filterValues[1] === statusOptions[0] || tenant.status === filterValues[1];
+      const matchesDate = matchesDueDate(tenant, filterValues[2], today);
+      return matchesQuery && matchesProperty && matchesStatus && matchesDate;
     });
   }, [filterValues, query, tenants]);
 
-  function updateFilter(index, value) {
-    setFilterValues((current) => current.map((item, itemIndex) => itemIndex === index ? value : item));
+  async function confirmDeleteTenant() {
+    if (!pendingDelete) return;
+    setActionError("");
+    try {
+      await removeTenant(pendingDelete.id);
+      setTenants((current) => current.filter((tenant) => tenant.id !== pendingDelete.id));
+      setNotice(`${pendingDelete.name} fue eliminado.`);
+      setActivationUrl("");
+      window.setTimeout(() => setNotice(""), 2800);
+    } catch (error) {
+      setActionError(error.message || "No se pudo eliminar el inquilino.");
+    } finally {
+      setPendingDelete(null);
+    }
   }
 
   function openCreateModal() {
+    setActionError("");
     setModal({ isOpen: true, mode: "create", tenant: null });
   }
 
   function editTenant(tenant) {
+    setActionError("");
     setModal({ isOpen: true, mode: "edit", tenant });
   }
 
@@ -121,38 +200,21 @@ export default function Tenant() {
     setModal((current) => ({ ...current, isOpen: false }));
   }
 
-  function saveTenant(form) {
-    const tenantData = {
-      name: form.name,
-      initials: form.name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join("").toUpperCase(),
-      dni: form.dni,
-      email: form.email,
-      phone: form.phone,
-      address: form.address || form.property,
-      status: form.status,
-    };
-
-    if (modal.mode === "edit") {
-      setTenants((current) => current.map((tenant) => (
-        tenant === modal.tenant ? { ...tenant, ...tenantData } : tenant
-      )));
-      setNotice(`Se actualizó la información de ${form.name}.`);
-    } else {
-      setTenants((current) => [
-        ...current,
-        {
-          ...tenantData,
-          unit: "Sin asignar",
-          contract: "Sin contrato",
-          dates: "Sin contrato",
-          due: "—",
-        },
-      ]);
-      setNotice(`Se agregó a ${form.name} a la lista.`);
-    }
-
-    window.setTimeout(() => setNotice(""), 2800);
+  async function saveTenant(form) {
+    setActionError("");
+    const existing = modal.mode === "edit" ? modal.tenant : null;
+    const result = await persistTenant(form, existing);
+    setTenants((current) => existing
+      ? current.map((tenant) => tenant.id === existing.id ? result.tenant : tenant)
+      : [result.tenant, ...current]);
+    setNotice(existing ? `Se actualizó la información de ${result.tenant.name}.` : `Se creó el acceso de ${result.tenant.name}.`);
+    setActivationUrl(result.activationUrl || "");
+    if (!result.activationUrl) window.setTimeout(() => setNotice(""), 2800);
     closeTenantModal();
+  }
+
+  function updateFilter(index, value) {
+    setFilterValues((current) => current.map((item, itemIndex) => itemIndex === index ? value : item));
   }
 
   return (
@@ -175,7 +237,7 @@ export default function Tenant() {
             <img src={magnifyingGlassIcon} alt="" />
             <input type="search" placeholder="Buscar contacto..." aria-label="Buscar contacto" value={query} onChange={(event) => setQuery(event.target.value)} />
           </label>
-          {filters.map((filter, index) => <FilterControl key={filter.label} filter={filter} value={filterValues[index]} onChange={(value) => updateFilter(index, value)} />)}
+          {filterControls.map((filter, index) => <FilterControl key={filter.label} filter={filter} value={filterValues[index] || filter.options[0]} onChange={(value) => updateFilter(index, value)} />)}
           <Button className="tenant__new-button" onClick={openCreateModal} icon={plusIcon} text="Nuevo inquilino" />
         </section>
 
@@ -183,16 +245,22 @@ export default function Tenant() {
           <div className="tenant__table-wrap">
             <table>
               <thead><tr><th>Inquilino</th><th>Contacto</th><th>Propiedad</th><th>Contrato</th><th>Estado</th><th>Próximo vencimiento</th><th>Acciones</th></tr></thead>
-              <tbody>{visibleTenants.map((tenant, index) => <TenantRow key={`${tenant.name}-${index}`} tenant={tenant} onEdit={editTenant} onDelete={setPendingDelete} />)}</tbody>
+              <tbody>{visibleTenants.map((tenant) => <TenantRow key={tenant.id} tenant={tenant} onEdit={editTenant} onDelete={setPendingDelete} />)}</tbody>
             </table>
           </div>
-          {!visibleTenants.length && <p className="tenant__empty">No encontramos inquilinos con esos criterios.</p>}
+          {loading && <p className="tenant__empty">Cargando inquilinos...</p>}
+          {!loading && loadError && <p className="tenant__empty" role="alert">{loadError}</p>}
+          {!loading && !loadError && !visibleTenants.length && <p className="tenant__empty">No encontramos inquilinos con esos criterios.</p>}
         </section>
       </div>
 
-      {notice && <p className="tenant__notice" role="status">{notice}</p>}
+      {actionError && <p className="tenant__notice" role="alert">{actionError}</p>}
+      {notice && <p className="tenant__notice" role="status">
+        {notice}
+        {activationUrl && <> <a href={activationUrl}>Abrir enlace de activación</a></>}
+      </p>}
 
-      <ConfirmDeleteModal isOpen={Boolean(pendingDelete)} onClose={() => setPendingDelete(null)} onConfirm={deleteTenant} title="¿Seguro que desea eliminar este inquilino?" />
+      <ConfirmDeleteModal isOpen={Boolean(pendingDelete)} onClose={() => setPendingDelete(null)} onConfirm={confirmDeleteTenant} title="¿Seguro que desea eliminar este inquilino?" />
 
       {modal.isOpen && (
         <TenantModal

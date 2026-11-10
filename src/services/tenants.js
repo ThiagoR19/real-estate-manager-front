@@ -13,7 +13,7 @@ export async function tenants() {
   let hasNext = true;
   while (hasNext) {
     const result = await request(`/inquilinos?page=${page}&limit=100`);
-    items.push(...result.data);
+    items.push(...(Array.isArray(result.data) ? result.data : []));
     hasNext = page < (result.paginacion?.paginas || 1);
     page++;
   }
@@ -63,34 +63,56 @@ export async function downloadTenantDocument(id, file) {
 
 
 export function toTenant(raw, files = {}) {
+  const nombre = [raw.nombre, raw.apellido].filter(Boolean).join(" ").trim();
+  const estado = !raw.activo
+    ? "Inactivo"
+    : raw.estadoCuenta === "PENDIENTE_ACTIVACION"
+      ? "Pendiente"
+      : "Activo";
+  const initials = nombre
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase();
+
   return {
     id: raw.id,
     idInmobiliaria: raw.idInmobiliaria,
     idPersona: raw.idPersona,
-    activo: Boolean(raw.activo),
-    nombre: raw.nombre,
-    apellido: raw.apellido,
-    correo: raw.correo || "Correo sin especificar..",
-    dni: raw.dni,
-    telefono: raw.telefono || "Teléfono sin especificar.",
-    direccion: raw.direccion || "Dirección Sin especificar.",
+    activo: Boolean(Number(raw.activo)),
+    name: nombre || "Nombre sin especificar",
+    initials: initials || "IN",
+    email: raw.correo || "",
+    dni: raw.dni == null ? "" : String(raw.dni),
+    phone: raw.telefono || "",
+    address: raw.direccion || "",
+    status: estado,
+    statusClass: estado === "Activo" ? "active" : estado === "Inactivo" ? "inactive" : "pending",
+    propertyName: raw.propiedad || "Sin propiedad asignada",
+    propertyAddress: raw.propiedadUbicacion || "",
+    contractId: raw.idContrato ?? null,
+    contractStatus: raw.estadoContrato || "",
+    contractStartDate: raw.fechaInicio || null,
+    contractEndDate: raw.fechaFin || null,
     idUsuario: raw.idUsuario,
     usuario: raw.usuario,
     fotoPerfil: (files.imagenes || raw.imagenes || []).map((image) => ({
-      id: image.id, src: assetUrl(image.url), alt: `Foto de ${raw.nombre}`,
+      id: image.id, src: assetUrl(image.url), alt: `Foto de ${nombre}`,
     })),
   };
 }
 
 export function tenantPayload(form) {
   return {
-    nombre: form.name.trim(),
-    apellido: form.apellido.trim(),
-    dni: Number(form.dni),
-    correo: form.correo.trim(),
-    telefono: form.telefono.trim(),
-    idInmobiliaria: Number(form.idInmobiliaria).trim(),
-    activo: Boolean(form.activo),
+    nombre: String(form.firstName ?? "").trim(),
+    apellido: String(form.lastName ?? "").trim(),
+    dni: String(form.dni ?? "").trim() || null,
+    correo: String(form.email ?? "").trim() || null,
+    telefono: String(form.phone ?? "").trim() || null,
+    direccion: String(form.address ?? "").trim() || null,
+    activo: Boolean(form.active),
   };
 }
 
@@ -100,26 +122,26 @@ export async function getTenant(id) {
 }
 
 export async function persistTenant(form, existing) {
-  const raw = existing ? await updateTenant(existing.id, tenantPayload(form)) : await createTenant(tenantPayload(form));
-  const id = raw.id;
-  try {
-    const photos = form.photos.filter((photo) => photo.file).map((photo) => photo.file);
-    const documents = form.documents.filter((document) => document.file).map((document) => document.file);
-    for (let i = 0; i < photos.length; i += 10) await uploadTenantFiles(id, "imagenes", photos.slice(i, i + 10));
-    for (let i = 0; i < documents.length; i += 5) await uploadTenantFiles(id, "documentos", documents.slice(i, i + 5));
-    if (existing) {
-      const keptPhotos = new Set(form.photos.map((photo) => photo.id));
-      const keptDocuments = new Set(form.documents.map((document) => document.id));
-      for (const photo of existing.photos) {
-        if (photo.id && !keptPhotos.has(photo.id)) await deleteTenantFile(id, "imagenes", photo.id);
-      }
-      for (const document of existing.documents) {
-        if (document.id && !keptDocuments.has(document.id)) await deleteTenantFile(id, "documentos", document.id);
-      }
-    }
-    return await getTenant(id);
-  } catch (error) {
-    error.tenantId = id;
-    throw error;
+  const body = tenantPayload(form);
+  if (existing) {
+    const raw = await updateTenant(existing.id, body);
+    if (!raw) throw new Error("El inquilino ya no existe o no está disponible.");
+    return { tenant: toTenant(raw), activationUrl: null };
   }
+
+  const datos = { ...body };
+  delete datos.activo;
+  const raw = await createTenant({
+    ...datos,
+    usuario: String(form.email ?? "").trim().toLowerCase(),
+    // La cuenta queda pendiente hasta que el inquilino use el enlace de activación.
+    password: temporaryPassword(),
+  });
+  return { tenant: toTenant(raw), activationUrl: raw.activacion?.enlace || null };
+}
+
+function temporaryPassword() {
+  const bytes = new Uint8Array(32);
+  window.crypto.getRandomValues(bytes);
+  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
 }

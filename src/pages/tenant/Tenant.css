@@ -354,11 +354,14 @@ body:has(#tenant) {
 .tenant__contract small { color: #7e8aa6; font-size: 12px; white-space: nowrap; }
 .tenant__property-image { width: 60px; height: 50px; flex-shrink: 0; border-radius: 10px; object-fit: cover !important; filter: none !important; }
 .tenant__status { display: inline-flex; align-items: center; justify-content: center; min-width: 76px; height: 27px; padding: 0 14px; border-radius: 99px; background: #d9fae6; box-shadow: 0 2px 4px #17235e26; color: #17613a; font-size: 11px; font-weight: 600; }
+.tenant__status--inactive { background: #edf1f5; color: #526485; }
+.tenant__status--pending { background: #fff2cf; color: #8e650e; }
 .tenant__due { font-size: 14px; white-space: nowrap; }
 .tenant__actions-cell { text-align: center !important; }
 .tenant__empty { margin: 0; padding: 34px; color: #7e8aa6; text-align: center; }
 
 .tenant__notice { position: fixed; z-index: 40; right: 22px; bottom: 22px; margin: 0; padding: 14px 18px; border: 1px solid #c8dff3; border-radius: 10px; background: #fff; box-shadow: 0 4px 18px #17235e24; color: #17235e; font-size: 14px; }
+.tenant__notice a { display: inline-block; margin-left: 6px; color: #1768a8; font-weight: 650; }
 
 body:has(#tenant) .navbar__search { display: none; }
 

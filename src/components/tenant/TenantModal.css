@@ -59,6 +59,12 @@
   line-height: 1.25;
 }
 
+.tenant-modal__error {
+  margin: 12px 2px 0;
+  color: #b32a2d;
+  font-size: 13px;
+}
+
 .tenant-modal__form-card {
   overflow: visible;
   border: 2px solid #edf2f6;

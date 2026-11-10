@@ -2,17 +2,14 @@ import { useEffect, useState } from "react";
 import {
   addressCardIcon,
   envelopeIcon,
-  houseIcon,
   locationDotIcon,
-  peopleIcon,
   phoneIcon,
   userIcon,
 } from "../../assets/icons";
 import { DropdownSelect, Button } from "../index";
 import "./TenantModal.css";
 
-const propertyOptions = ["Propiedad", "Av. San Martín 1250", "Av. Santa Fe 850"];
-const statusOptions = ["Estado", "Activo", "Pendiente", "Finalizado"];
+const statusOptions = ["Activo", "Inactivo"];
 
 function getInitialForm(tenant) {
   if (!tenant) {
@@ -23,8 +20,7 @@ function getInitialForm(tenant) {
       phone: "",
       address: "",
       dni: "",
-      property: propertyOptions[1],
-      status: statusOptions[1],
+      active: true,
     };
   }
 
@@ -37,8 +33,7 @@ function getInitialForm(tenant) {
     phone: tenant.phone || "",
     address: tenant.address || "",
     dni: tenant.dni || "",
-    property: tenant.address || propertyOptions[0],
-    status: tenant.status || statusOptions[1],
+    active: Boolean(tenant.activo),
   };
 }
 
@@ -75,9 +70,18 @@ function InputWithIcon({ icon, ...props }) {
 
 export default function TenantModal({ isOpen, mode, tenant, onClose, onSubmit }) {
   const [form, setForm] = useState(() => getInitialForm(tenant));
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
   const isEditing = mode === "edit";
   const displayName = isEditing ? tenant?.name || "Inquilino" : "Inquilino";
   const displayStatus = isEditing ? tenant?.status || "Estado" : "Estado";
+
+  useEffect(() => {
+    if (isOpen) {
+      setForm(getInitialForm(tenant));
+      setError("");
+    }
+  }, [isOpen, mode, tenant?.id]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -109,12 +113,20 @@ export default function TenantModal({ isOpen, mode, tenant, onClose, onSubmit })
     setForm((current) => ({ ...current, [name]: value }));
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-    onSubmit({
-      ...form,
-      name: `${form.firstName.trim()} ${form.lastName.trim()}`.trim(),
-    });
+    setError("");
+    setSaving(true);
+    try {
+      await onSubmit({
+        ...form,
+        name: `${form.firstName.trim()} ${form.lastName.trim()}`.trim(),
+      });
+    } catch (submitError) {
+      setError(submitError.message || "No se pudieron guardar los cambios.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -138,7 +150,9 @@ export default function TenantModal({ isOpen, mode, tenant, onClose, onSubmit })
           <h2 id="tenant-modal-title">
             {isEditing ? "Editar inquilino" : "Crear inquilino"}
           </h2>
-          <p>Actualiza la información principal del inquilino</p>
+          <p>{isEditing
+            ? "Actualiza la información de contacto y el estado del inquilino."
+            : "El correo será su usuario y se generará un enlace para activar la cuenta."}</p>
         </header>
 
         <form onSubmit={handleSubmit}>
@@ -187,7 +201,7 @@ export default function TenantModal({ isOpen, mode, tenant, onClose, onSubmit })
                   onChange={updateField}
                   placeholder="ejemplo@gmail.com"
                   autoComplete="email"
-                  required
+                  required={!isEditing}
                 />
               </Field>
 
@@ -200,7 +214,6 @@ export default function TenantModal({ isOpen, mode, tenant, onClose, onSubmit })
                   onChange={updateField}
                   placeholder="2133 123123"
                   autoComplete="tel"
-                  required
                 />
               </Field>
 
@@ -212,7 +225,6 @@ export default function TenantModal({ isOpen, mode, tenant, onClose, onSubmit })
                   onChange={updateField}
                   placeholder="Av. San Martín 12"
                   autoComplete="street-address"
-                  required
                 />
               </Field>
 
@@ -224,41 +236,16 @@ export default function TenantModal({ isOpen, mode, tenant, onClose, onSubmit })
                   onChange={updateField}
                   placeholder="12123123"
                   inputMode="numeric"
-                  required
-                />
-              </Field>
-
-              <Field label="Propiedad">
-                <DropdownSelect
-                  label="Propiedad"
-                  value={form.property}
-                  options={propertyOptions}
-                  onChange={(property) => {
-                    if (property !== propertyOptions[0]) {
-                      setForm((current) => ({ ...current, property, address: property }));
-                    }
-                  }}
-                  icon={houseIcon}
-                  className="tenant-modal__select"
-                  triggerClassName="tenant-modal__select-trigger"
-                  iconClassName="tenant-modal__select-icon"
-                  valueClassName="tenant-modal__select-value"
-                  chevronClassName="tenant-modal__select-arrow"
-                  optionsClassName="tenant-modal__select-options"
                 />
               </Field>
 
               <Field label="Estado">
                 <DropdownSelect
                   label="Estado"
-                  value={form.status}
+                  value={form.active ? statusOptions[0] : statusOptions[1]}
                   options={statusOptions}
-                  onChange={(status) => {
-                    if (status !== statusOptions[0]) {
-                      setForm((current) => ({ ...current, status }));
-                    }
-                  }}
-                  icon={peopleIcon}
+                  onChange={(status) => setForm((current) => ({ ...current, active: status === statusOptions[0] }))}
+                  icon={userIcon}
                   className="tenant-modal__select"
                   triggerClassName="tenant-modal__select-trigger"
                   iconClassName="tenant-modal__select-icon"
@@ -270,11 +257,13 @@ export default function TenantModal({ isOpen, mode, tenant, onClose, onSubmit })
             </div>
           </div>
 
+          {error && <p className="tenant-modal__error" role="alert">{error}</p>}
+
           <footer className="tenant-modal__actions">
-            <button className="tenant-modal__cancel" type="button" onClick={onClose}>
+            <button className="tenant-modal__cancel" type="button" onClick={onClose} disabled={saving}>
               Cancelar
             </button>
-            <Button className="tenant-modal__submit" type="submit" text="Guardar cambios" />
+            <Button className="tenant-modal__submit" type="submit" text={saving ? "Guardando..." : "Guardar cambios"} disabled={saving} />
           </footer>
         </form>
       </section>
