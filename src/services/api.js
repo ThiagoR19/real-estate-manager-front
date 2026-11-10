@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const apiBase = (import.meta.env.VITE_API_URL || "/api").replace(/\/$/, "");
-const http = axios.create({ baseURL: apiBase });
+export const http = axios.create({ baseURL: apiBase });
 
 export function assetUrl(path) {
   if (!path) return null;
@@ -22,33 +22,7 @@ export function clearSession() {
   localStorage.removeItem("agi-session");
 }
 
-async function request(path, { method = "GET", body, auth = true } = {}) {
-  const headers = {};
-  if (auth) {
-    const token = getSession()?.token;
-    if (token) headers.Authorization = `Bearer ${token}`;
-  }
-  try {
-    const { data: result } = await http.request({ url: path, method, data: body, headers });
-    if (result.status !== "success") {
-      const details = result.error?.detalles?.map(({ campo, problema }) => `${campo}: ${problema}`).join("; ");
-      throw new Error(details || result.error?.mensaje || "La API devolvió una respuesta inválida.");
-    }
-    return result;
-  } catch (error) {
-    const status = error.response?.status;
-    if (status === 401 && auth) {
-      clearSession();
-      window.location.assign("/login");
-    }
-    if (error instanceof Error && !axios.isAxiosError(error)) throw error;
-    const payload = error.response?.data;
-    const details = payload?.error?.detalles?.map(({ campo, problema }) => `${campo}: ${problema}`).join("; ");
-    throw new Error(details || payload?.error?.mensaje || (status ? `Error HTTP ${status}` : "No se pudo conectar con el servidor."), { cause: error });
-  }
-}
-
-export const api = {
+/*export const api = {
   login: (usuario, password) => request("/auth/login", { method: "POST", body: { usuario, password }, auth: false }).then(({ data }) => data),
   logout: async () => {
     await request("/auth/logout", { method: "POST" });
@@ -104,4 +78,4 @@ export const api = {
       throw new Error(payload?.error?.mensaje || (status ? `Error HTTP ${status}` : "No se pudo conectar con el servidor."), { cause: error });
     }
   },
-};
+};*/
