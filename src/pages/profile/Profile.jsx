@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { addressCardIcon, cameraIcon, checkIcon, envelopeIcon, eyeIcon, eyeSlashIcon, locationDotIcon, lockIcon, phoneIcon, trashCanIcon, userIcon, } from "../../assets/icons";
 import "./Profile.css";
 import { Button } from "../../components";
 import { api } from "../../services/api.js";
+import initials from "../../utils/initials.js";
+import avatarClass from "../../utils/avatarClass.js";
 
 const personalFields = [
   { id: "nombre", label: "Nombre", icon: userIcon },
@@ -20,7 +22,7 @@ const passwordFields = [
   { id: "confirm-password", label: "Confirmar nueva contraseña", placeholder: "Repite la nueva contraseña" },
 ];
 
-function Field({ field, placeholder }) {
+const Field = memo(function Field({ field, placeholder }) {
   return (
     <label className="profile__field" htmlFor={field.id}>
       <span className="profile__field-label">{field.label}</span>
@@ -30,9 +32,9 @@ function Field({ field, placeholder }) {
       </span>
     </label>
   );
-}
+});
 
-function PasswordField({ field, visible, onToggle }) {
+const PasswordField = memo(function PasswordField({ field, visible, onToggle }) {
   return (
     <label className="profile__field" htmlFor={field.id}>
       <span className="profile__field-label">
@@ -46,25 +48,29 @@ function PasswordField({ field, visible, onToggle }) {
           type="button"
           aria-label={visible ? "Ocultar contraseña" : "Mostrar contraseña"}
           aria-pressed={visible}
-          onClick={onToggle}
+          onClick={() => onToggle(field.id)}
         >
           <img src={visible ? eyeIcon : eyeSlashIcon} alt="" aria-hidden="true" />
         </button>
       </span>
     </label>
   );
-}
+});
 
 export default function Profile() {
   const [visiblePasswords, setVisiblePasswords] = useState({});
   const [logoutError, setLogoutError] = useState("");
   const [loggingOut, setLoggingOut] = useState(false);
-  const [profile, setProfile] = useState([]);
+  const [profile, setProfile] = useState({});
+  const [photoUploading, setPhotoUploading] = useState(false);
+  const [photoError, setPhotoError] = useState("");
+  const [photoNotice, setPhotoNotice] = useState("");
+  const [photoLoadError, setPhotoLoadError] = useState(false);
   const [, navigate] = useLocation();
 
-  function togglePassword(id) {
+  const togglePassword = useCallback((id) => {
     setVisiblePasswords((current) => ({ ...current, [id]: !current[id] }));
-  }
+  }, []);
 
   async function closeSession() {
     setLoggingOut(true);
@@ -83,14 +89,9 @@ export default function Profile() {
 
     const values = Object.fromEntries(new FormData(e.currentTarget));
 
-    const payload = {
-      nombre: String(values.nombre ?? "").trim(),
-      apellido: String(values.apellido ?? "").trim(),
-      telefono: String(values.telefono ?? "").trim(),
-      correo: String(values.correo ?? "").trim(),
-      direccion: String(values.direccion ?? "").trim(),
-      dni: String(values.dni ?? "").trim(),
-    };
+    const payload = Object.fromEntries(
+      personalFields.map(({ id }) => [id, String(values[id] ?? "").trim()]).filter(([, value]) => value !== "")
+    );
 
     const contraseñaActual = values["current-password"];
     const contraseñaNueva = values["new-password"];
@@ -106,36 +107,100 @@ export default function Profile() {
       await api.updatePassword(passwordPayload);
     }
 
-    await api.updateProfile(payload);
+    if (Object.keys(payload).length > 0) {
+      await api.updateProfile(payload);
+    }
   }
 
+  const handlePhotoChange = async (event) => {
+    const input = event.currentTarget;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    setPhotoError("");
+    setPhotoNotice("");
+
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      setPhotoError("Elegí una imagen JPEG, PNG o WebP.");
+      input.value = "";
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      setPhotoError("La imagen no puede superar los 2 MiB.");
+      input.value = "";
+      return;
+    }
+
+    setPhotoUploading(true);
+    try {
+      await api.updateProfilePhoto(file);
+
+      try {
+        setProfile((await api.profile()) ?? {});
+        setPhotoLoadError(false);
+        setPhotoNotice("Foto de perfil actualizada.");
+      } catch {
+        setPhotoError("La foto se subió, pero no se pudo actualizar la vista del perfil.");
+      }
+    } catch (error) {
+      setPhotoError(error.message || "No se pudo subir la foto de perfil.");
+    } finally {
+      setPhotoUploading(false);
+      input.value = "";
+    }
+  };
+
   useEffect(() => {
+    let mounted = true;
+
     async function cargarPerfil() {
       try {
-        setProfile(await api.profile())
-      } catch (e) {
-        console.error(e)
+        const loadedProfile = await api.profile();
+        if (mounted) setProfile(loadedProfile ?? {});
+      } catch (error) {
+        console.error(error);
       }
     }
-    cargarPerfil()
 
-  }, [])
+    cargarPerfil();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const iniciales = initials(profile.nombre, profile.apellido)
+  const profilePhotoUrl = profile.urlFotoPerfil && !photoLoadError ? api.assetUrl(profile.urlFotoPerfil) : "";
 
   return (
     <main id="profile">
       <div className="profile__layout">
         <aside className="profile__sidebar">
           <section className="profile__identity-card" aria-label="Resumen del perfil">
-            <div className="profile__avatar">
-              <span>TR</span>
-              <Button icon={cameraIcon} aria-label="Cambiar foto de perfil" />
+            <div className={`profile__avatar ${avatarClass(profile.nombre, profile.apellido)}`}>
+              {profilePhotoUrl
+                ? <img className="profile__avatar-photo" src={profilePhotoUrl} alt={`Foto de perfil de ${profile.nombre ?? ""} ${profile.apellido ?? ""}`.trim()} onError={() => setPhotoLoadError(true)} />
+                : <span>{iniciales}</span>}
+              <label className={`profile__avatar-upload${photoUploading ? " is-uploading" : ""}`}>
+                <img src={cameraIcon} alt="" />
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  aria-label={photoUploading ? "Subiendo foto de perfil" : "Cambiar foto de perfil"}
+                  disabled={photoUploading}
+                  onChange={handlePhotoChange}
+                />
+              </label>
             </div>
-            <h1>Thiago Riffo</h1>
+            <h1>{profile.nombre} {profile.apellido}</h1>
             <p className="profile__role">Administrador</p>
             <p className="profile__email">
               <img src={envelopeIcon} alt="" />
-              {"riffo"}thiago19@gmail.com
+              {profile.correo}
             </p>
+            {photoUploading && <p className="profile__photo-feedback" role="status">Subiendo foto...</p>}
+            {photoError && <p className="profile__photo-feedback profile__photo-feedback--error" role="alert">{photoError}</p>}
+            {photoNotice && <p className="profile__photo-feedback" role="status">{photoNotice}</p>}
           </section>
 
           <section className="profile__password-hint" aria-labelledby="password-hint-title">
@@ -185,7 +250,7 @@ export default function Profile() {
                   key={field.id}
                   field={field}
                   visible={Boolean(visiblePasswords[field.id])}
-                  onToggle={() => togglePassword(field.id)}
+                  onToggle={togglePassword}
                 />
               ))}
             </div>
@@ -198,6 +263,6 @@ export default function Profile() {
         <Button type="submit" form="profile-form" className="profile__save-button" icon={checkIcon} text="Guardar cambios" />
         {logoutError && <p className="profile__logout-error" role="alert">{logoutError}</p>}
       </div>
-    </main>
+    </main >
   );
 }

@@ -6,9 +6,7 @@ import propertyImage from "/images (1).jpg";
 export default function PropertyCardSimple({ property, onEdit, onDelete, onOpen, variant = "managed" }) {
   const isPublic = variant === "public";
   const image = property.photos?.[0]?.src || property.image || propertyImage;
-  const status = isPublic
-    ? property.operation === "buy" ? "Venta" : "Alquiler"
-    : property.status;
+  const status = isPublic ? property.operation === "buy" ? "Venta" : "Alquiler" : property.status;
 
   function openProperty() {
     onOpen?.(property);

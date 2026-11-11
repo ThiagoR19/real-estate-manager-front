@@ -29,6 +29,7 @@ export const api = {
   profile: profileService.profile,
   updateProfile: profileService.updateProfile,
   updatePassword: profileService.updatePassword,
+  updateProfilePhoto: profileService.updateProfilePhoto,
   tenants: tenantService.tenants,
   tenant: tenantService.tenant,
   tenantFiles: tenantService.tenantFiles,

@@ -1,13 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  envelopeIcon,
-  peopleIcon,
-  phoneIcon,
-  penIcon,
-  plusIcon,
-  starIcon,
-  trashCanIcon,
-} from "../../assets/icons";
+import { envelopeIcon, peopleIcon, phoneIcon, penIcon, plusIcon, starIcon, trashCanIcon, } from "../../assets/icons";
 import { DropdownSelect, ProfessionalModal, ConfirmDeleteModal, EntityActions, Button } from "../../components";
 import "./Professional.css";
 
@@ -57,7 +49,7 @@ export default function Professional() {
     return () => { mounted = false; };
   }, []);
 
-  
+
   const visibleProfessionals = useMemo(() => (
     selectedType === "Tipo" ? professionals : professionals.filter(({ profesion }) => profesion === selectedType)
   ), [professionals, selectedType]);

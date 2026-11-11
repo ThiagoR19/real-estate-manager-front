@@ -134,6 +134,32 @@
   padding-left: 25px;
 }
 
+.dashboard-avatar--foto {
+  object-fit: cover;
+}
+
+.dashboard-avatar--violet {
+  background: radial-gradient(circle at 70% 25%, #f3e4ec 0 13%, transparent 14%), linear-gradient(135deg, #e6dce3, #816e85);
+}
+
+.dashboard-avatar--blue {
+  background: linear-gradient(135deg, #cfdae1 0 22%, #30536c 23% 58%, #172b3e 59%);
+}
+
+.dashboard-avatar--sand {
+  background: linear-gradient(160deg, #ece3d9 0 28%, #b88964 29% 57%, #212226 58%);
+}
+
+.dashboard-avatar--peach {
+  background: linear-gradient(145deg, #f2d7c9 0 32%, #b17766 33% 66%, #e7b38a 67%);
+}
+
+.dashboard-avatar--silver {
+  background: radial-gradient(ellipse at 50% 68%, #172230 0 39%, transparent 40%), linear-gradient(160deg, #aeb6be, #273541);
+  color: transparent;
+}
+
+
 @media (min-width: 761px) {
   .terms__div {
     width: calc(100% - 50px);
