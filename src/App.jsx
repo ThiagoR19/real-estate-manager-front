@@ -3,13 +3,13 @@ import { Redirect, Route, Switch } from "wouter";
 import { AboutUs, Agency, Agents, AgentDashboard, Chat, Collections, ConfirmRegister, Dashboard, DashboardOwner, Home, Indec, Login, MyProperties, Owners, Payments, PaymentsAndCollections, Professional, Profile, Properties, Property, PublicProperties, PublicProperty, Register, ReportsAgent, Schedule, SuperAdmin, SuperAdminDashboard, Tenant, TenantDashboard, Terms } from "./pages/index.js";
 
 import { Header, Navbar } from "./layouts/index.js";
-import { getSession } from "./services/login.js";
+import { api } from "./services/api.js";
 
 import "./App.css";
 
 function AuthenticatedApp() {
   const [menuOpen, setMenuOpen] = useState(false);
-  if (!getSession()?.token) {
+  if (!api.getSession()?.token) {
     return <Redirect to="/home" replace />;
   }
 

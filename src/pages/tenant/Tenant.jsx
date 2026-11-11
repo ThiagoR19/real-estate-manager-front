@@ -3,7 +3,7 @@ import { calendarIcon, clockIcon, envelopeIcon, fileLinesIcon as fileIcon, house
 import { DropdownSelect, TenantModal, ConfirmDeleteModal, EntityActions, Button, SummaryPill } from "../../components";
 import propertyImage from "/images.jpg";
 import "./Tenant.css";
-import { deleteTenant as removeTenant, persistTenant, tenants as fetchTenants, toTenant } from "../../services/tenants";
+import { api } from "../../services/api.js";
 
 import avatarClass from '../../utils/avatarClass'
 
@@ -128,8 +128,8 @@ export default function Tenant() {
       setLoading(true);
       setLoadError("");
       try {
-        const rows = await fetchTenants();
-        if (mounted) setTenants(rows.map((row) => toTenant(row)));
+        const rows = await api.tenants();
+        if (mounted) setTenants(rows.map((row) => api.toTenant(row)));
       } catch (error) {
         if (mounted) setLoadError(error.message || "No se pudieron cargar los inquilinos.");
       } finally {
@@ -175,7 +175,7 @@ export default function Tenant() {
     if (!pendingDelete) return;
     setActionError("");
     try {
-      await removeTenant(pendingDelete.id);
+      await api.deleteTenant(pendingDelete.id);
       setTenants((current) => current.filter((tenant) => tenant.id !== pendingDelete.id));
       setNotice(`${pendingDelete.name} fue eliminado.`);
       setActivationUrl("");
@@ -204,7 +204,7 @@ export default function Tenant() {
   async function saveTenant(form) {
     setActionError("");
     const existing = modal.mode === "edit" ? modal.tenant : null;
-    const result = await persistTenant(form, existing);
+    const result = await api.persistTenant(form, existing);
     setTenants((current) => existing
       ? current.map((tenant) => tenant.id === existing.id ? result.tenant : tenant)
       : [result.tenant, ...current]);

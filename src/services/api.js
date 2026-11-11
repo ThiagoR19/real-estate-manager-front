@@ -1,26 +1,17 @@
 import * as dashboardService from "./dashboard.js";
 import * as loginService from "./login.js";
 import * as propertyService from "./properties.js";
-
-export { getSession, saveSession, clearSession, login, logout } from "./login.js";
-export {
-  assetUrl,
-  propertyCatalogs,
-  properties,
-  property,
-  propertyFiles,
-  createProperty,
-  updateProperty,
-  deleteProperty,
-  uploadPropertyFiles,
-  deletePropertyFile,
-  downloadPropertyDocument,
-} from "./properties.js";
-export { http, apiBase } from "../utils/request.js";
+import * as profileService from "./profile.js";
+import * as professionalService from "./professionals.js";
+import * as tenantService from "./tenants.js";
 
 export const api = {
+  getSession: loginService.getSession,
+  saveSession: loginService.saveSession,
+  clearSession: loginService.clearSession,
   login: loginService.login,
   logout: loginService.logout,
+  assetUrl: propertyService.assetUrl,
   propertyCatalogs: propertyService.propertyCatalogs,
   properties: propertyService.properties,
   property: propertyService.property,
@@ -31,5 +22,34 @@ export const api = {
   uploadPropertyFiles: propertyService.uploadPropertyFiles,
   deletePropertyFile: propertyService.deletePropertyFile,
   downloadPropertyDocument: propertyService.downloadPropertyDocument,
+  toProperty: propertyService.toProperty,
+  propertyPayload: propertyService.propertyPayload,
+  getProperty: propertyService.getProperty,
+  persistProperty: propertyService.persistProperty,
+  profile: profileService.profile,
+  updateProfile: profileService.updateProfile,
+  updatePassword: profileService.updatePassword,
+  tenants: tenantService.tenants,
+  tenant: tenantService.tenant,
+  tenantFiles: tenantService.tenantFiles,
+  createTenant: tenantService.createTenant,
+  updateTenant: tenantService.updateTenant,
+  deleteTenant: tenantService.deleteTenant,
+  uploadTenantFiles: tenantService.uploadTenantFiles,
+  deleteTenantFile: tenantService.deleteTenantFile,
+  downloadTenantDocument: tenantService.downloadTenantDocument,
+  toTenant: tenantService.toTenant,
+  tenantPayload: tenantService.tenantPayload,
+  getTenant: tenantService.getTenant,
+  persistTenant: tenantService.persistTenant,
+  professionals: professionalService.professionals,
+  professional: professionalService.professional,
+  createProfessional: professionalService.createProfessional,
+  updateProfessional: professionalService.updateProfessional,
+  deleteProfessional: professionalService.deleteProfessional,
+  toProfessional: professionalService.toProfessional,
+  professionalPayload: professionalService.professionalPayload,
+  getProfessional: professionalService.getProfessional,
+  persistProfessional: professionalService.persistProfessional,
   dashboard: dashboardService.getDashboard,
 };

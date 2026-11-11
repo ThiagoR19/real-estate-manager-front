@@ -1,32 +1,32 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { addressCardIcon, cameraIcon, checkIcon, envelopeIcon, eyeIcon, eyeSlashIcon, locationDotIcon, lockIcon, phoneIcon, trashCanIcon, userIcon, } from "../../assets/icons";
 import "./Profile.css";
 import { Button } from "../../components";
-import { logout } from "../../services/login.js";
+import { api } from "../../services/api.js";
 
 const personalFields = [
-  { id: "name", label: "Nombre", placeholder: "Juan", icon: userIcon },
-  { id: "last-name", label: "Apellido", placeholder: "Perez", icon: userIcon },
-  { id: "phone", label: "Teléfono", placeholder: "2133 123123", icon: phoneIcon },
-  { id: "email", label: "Correo", placeholder: "ejemplo@gmail.com", icon: envelopeIcon },
-  { id: "address", label: "Dirección", placeholder: "Av San Martin 12", icon: locationDotIcon },
-  { id: "dni", label: "DNI", placeholder: "12123123", icon: addressCardIcon },
+  { id: "nombre", label: "Nombre", icon: userIcon },
+  { id: "apellido", label: "Apellido", icon: userIcon },
+  { id: "telefono", label: "Teléfono", icon: phoneIcon },
+  { id: "correo", label: "Correo", icon: envelopeIcon },
+  { id: "direccion", label: "Dirección", icon: locationDotIcon },
+  { id: "dni", label: "DNI", icon: addressCardIcon },
 ];
 
 const passwordFields = [
-  { id: "current-password", label: "Contraseña actual", placeholder: "Ingresa tu contraseña actual", required: true },
-  { id: "new-password", label: "Nueva contraseña", placeholder: "Ingresa una nueva contraseña", required: true },
+  { id: "current-password", label: "Contraseña actual", placeholder: "Ingresa tu contraseña actual" },
+  { id: "new-password", label: "Nueva contraseña", placeholder: "Ingresa una nueva contraseña" },
   { id: "confirm-password", label: "Confirmar nueva contraseña", placeholder: "Repite la nueva contraseña" },
 ];
 
-function Field({ field }) {
+function Field({ field, placeholder }) {
   return (
     <label className="profile__field" htmlFor={field.id}>
       <span className="profile__field-label">{field.label}</span>
       <span className="profile__field-control">
         <img className="profile__field-icon" src={field.icon} alt="" />
-        <input id={field.id} name={field.id} placeholder={field.placeholder} required={field.required} />
+        <input id={field.id} name={field.id} placeholder={placeholder} required={field.required} />
       </span>
     </label>
   );
@@ -59,6 +59,7 @@ export default function Profile() {
   const [visiblePasswords, setVisiblePasswords] = useState({});
   const [logoutError, setLogoutError] = useState("");
   const [loggingOut, setLoggingOut] = useState(false);
+  const [profile, setProfile] = useState([]);
   const [, navigate] = useLocation();
 
   function togglePassword(id) {
@@ -69,13 +70,56 @@ export default function Profile() {
     setLoggingOut(true);
     setLogoutError("");
     try {
-      await logout();
+      await api.logout();
       navigate("/login");
     } catch (error) {
       setLogoutError(error.message);
       setLoggingOut(false);
     }
   }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    const values = Object.fromEntries(new FormData(e.currentTarget));
+
+    const payload = {
+      nombre: String(values.nombre ?? "").trim(),
+      apellido: String(values.apellido ?? "").trim(),
+      telefono: String(values.telefono ?? "").trim(),
+      correo: String(values.correo ?? "").trim(),
+      direccion: String(values.direccion ?? "").trim(),
+      dni: String(values.dni ?? "").trim(),
+    };
+
+    const contraseñaActual = values["current-password"];
+    const contraseñaNueva = values["new-password"];
+    const confirmarContraseña = values["confirm-password"];
+
+    if (contraseñaActual && contraseñaNueva && confirmarContraseña) {
+      const passwordPayload = {
+        actual: contraseñaActual,
+        nueva: contraseñaNueva,
+        confirmacion: confirmarContraseña
+      }
+      if (contraseñaNueva !== confirmarContraseña) return;
+      await api.updatePassword(passwordPayload);
+    }
+
+    await api.updateProfile(payload);
+  }
+
+  useEffect(() => {
+    async function cargarPerfil() {
+      try {
+        setProfile(await api.profile())
+      } catch (e) {
+        console.error(e)
+      }
+    }
+    cargarPerfil()
+
+  }, [])
 
   return (
     <main id="profile">
@@ -108,7 +152,7 @@ export default function Profile() {
           </section>
         </aside>
 
-        <form className="profile__content" onSubmit={(event) => event.preventDefault()}>
+        <form id="profile-form" className="profile__content" onSubmit={handleSubmit}>
           <header className="profile__content-header">
             <h2>Mi perfil</h2>
             <p>Administra tu información personal, seguridad y preferencias de cuenta</p>
@@ -123,7 +167,7 @@ export default function Profile() {
               </div>
             </div>
             <div className="profile__fields profile__fields--personal">
-              {personalFields.map((field) => <Field key={field.id} field={field} />)}
+              {personalFields.map((field) => <Field key={field.id} field={field} placeholder={profile[field.id] ? profile[field.id] : field.label} />)}
             </div>
           </section>
 
@@ -150,8 +194,8 @@ export default function Profile() {
       </div>
 
       <div className="profile__actions">
-        <Button className="profile__save-button" icon={checkIcon} text="Guardar cambios" />
         <Button className="profile__logout-button" icon={trashCanIcon} text={loggingOut ? "Cerrando sesión..." : "Cerrar sesión"} onClick={closeSession} disabled={loggingOut} />
+        <Button type="submit" form="profile-form" className="profile__save-button" icon={checkIcon} text="Guardar cambios" />
         {logoutError && <p className="profile__logout-error" role="alert">{logoutError}</p>}
       </div>
     </main>

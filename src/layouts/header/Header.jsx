@@ -6,7 +6,7 @@ import { barsIcon as menuIcon, bellIcon, magnifyingGlassIcon as searchIcon, xIco
 import referenceImage from "../../assets/terms-reference.png";
 import brandLogo from "../../assets/logoAGI.png";
 import { accountRoleFor, allItems, isItemActive, pageLabels } from "../navigation";
-import { getSession } from "../../services/login.js";
+import { api } from "../../services/api.js";
 import "./Header.css";
 
 export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
@@ -21,7 +21,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
   const isSuperAdmin = pathname === "/super-admin";
   const isChat = pathname === "/chat";
   const accountRole = accountRoleFor(pathname);
-  const user = getSession()?.usuario;
+  const user = api.getSession()?.usuario;
   const roleName = { 1: "Super admin", 2: "Administrador", 3: "Agente", 4: "Propietario", 5: "Inquilino" }[user?.rol] || accountRole;
   const currentLabel = isPayments ? "Zona de pago" : pathname.startsWith("/property/") ? "Propiedad" : currentItem?.breadcrumbLabel ?? currentItem?.label ?? pageLabels[pathname] ?? "Dashboard";
   const searchPlaceholder = isPaymentsAndCollections ? "Buscar propietario/locatario" : isProperties ? "Buscar propiedades..." : "Buscar contacto...";

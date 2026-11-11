@@ -3,7 +3,7 @@ import { Link } from "wouter";
 
 import { Skeleton, ImagePanel, TextField, PrimaryButton, LegalText } from "../../components";
 
-import { login, saveSession } from "../../services/login.js";
+import { api } from "../../services/api.js";
 
 import mailIcon from "../../assets/icons/loginMail.svg"
 import lockIcon from "../../assets/icons/loginLock.svg"
@@ -27,8 +27,8 @@ export default function Login() {
     setError("");
     const form = new FormData(e.currentTarget);
     try {
-      const session = await login(String(form.get("email") || "").trim(), String(form.get("password") || ""));
-      saveSession(session);
+      const session = await api.login(String(form.get("email") || "").trim(), String(form.get("password") || ""));
+      api.saveSession(session);
       setSubmitState("listo");
       const role = session.usuario.rol;
       window.location.assign(role === 1 ? "/super-admin" : role === 4 ? "/owner-dashboard" : role === 5 ? "/tenant-dashboard" : "/properties");

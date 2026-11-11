@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
-import { api, assetUrl } from "../../services/api";
+import { api } from "../../services/api.js";
 
 import { ActivityCard as SharedActivityCard, PerformanceCard as SharedPerformanceCard } from "./DashboardWidgets";
 import initials from "../../utils/initials"
@@ -25,7 +25,7 @@ function AgentsCard({ agents }) {
         {agents.map((agent) =>
           <div className="dashboard-agent" key={`AG${initials(agent.nombre, agent.apellido)}${agent.idAgente}`}>
             {agent.urlFotoPerfil
-              ? <img className="dashboard-avatar dashboard-avatar--foto" src={assetUrl(agent.urlFotoPerfil)} alt="" aria-hidden="true" />
+              ? <img className="dashboard-avatar dashboard-avatar--foto" src={api.assetUrl(agent.urlFotoPerfil)} alt="" aria-hidden="true" />
               : <div className={`dashboard-avatar ${avatar(agent.nombre, agent.apellido)}`} aria-hidden="true">
                 {initials(agent.nombre, agent.apellido)}
               </div>}

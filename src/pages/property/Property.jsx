@@ -13,8 +13,7 @@ import {
 } from "../../assets/icons";
 import { PropertyModal, PropertyActions, ConfirmDeleteModal } from "../../components";
 import houseImage from "/images (1).jpg";
-import { deleteProperty, downloadPropertyDocument, propertyCatalogs } from "../../services/properties.js";
-import { getProperty, persistProperty } from "../../services/properties";
+import { api } from "../../services/api.js";
 import "./Property.css";
 
 const emptyImage = [{ src: houseImage, alt: "Propiedad sin fotos" }];
@@ -49,7 +48,7 @@ export default function Property() {
 
   useEffect(() => {
     let active = true;
-    Promise.all([getProperty(id), propertyCatalogs()]).then(([property, lists]) => {
+    Promise.all([api.getProperty(id), api.propertyCatalogs()]).then(([property, lists]) => {
       if (active) { setPropertyData(property); setCatalogs(lists); }
     }).catch((cause) => { if (active) setError(cause.message); })
       .finally(() => { if (active) setLoading(false); });
@@ -84,12 +83,12 @@ export default function Property() {
 
   async function saveProperty(form) {
     try {
-      setPropertyData(await persistProperty(form, propertyData));
+      setPropertyData(await api.persistProperty(form, propertyData));
       setActiveImage(0);
       setPropertyModalOpen(false);
     } catch (cause) {
       if (cause.propertyId) {
-        setPropertyData(await getProperty(id));
+        setPropertyData(await api.getProperty(id));
         setPropertyModalOpen(false);
         setError(`La propiedad se guardó, pero hubo un problema con sus archivos: ${cause.message}`);
         return;
@@ -99,7 +98,7 @@ export default function Property() {
   }
 
   async function remove() {
-    try { await deleteProperty(id); navigate("/properties"); }
+    try { await api.deleteProperty(id); navigate("/properties"); }
     catch (cause) { setError(cause.message); setDeleteModalOpen(false); }
   }
 
@@ -192,7 +191,7 @@ export default function Property() {
                 <article className="property__due-item"><div><strong>Publicación</strong><span>{propertyData.published ? "Publicada" : "No publicada"}</span></div></article>
                 {propertyData.documents.length === 0 && <p>No hay documentos adjuntos.</p>}
                 {propertyData.documents.map((document) => <article className="property__due-item" key={document.id}><div><strong>PDF</strong><button type="button" onClick={async () => {
-                  try { await downloadPropertyDocument(id, document); }
+                  try { await api.downloadPropertyDocument(id, document); }
                   catch (cause) { setError(cause.message); }
                 }}>{document.fileName}</button></div></article>)}
               </div>

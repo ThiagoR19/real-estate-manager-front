@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import { xIcon as closeIcon } from "../../assets/icons";
 import brandLogo from "../../assets/logoAGI.png";
 import { accountRoleFor, allItems, isItemActive, primaryItems, secondaryItems } from "../navigation";
-import { getSession, logout } from "../../services/login.js";
+import { api } from "../../services/api.js";
 import "./Navbar.css";
 
 function NavigationItem({ item, pathname, onNavigate }) {
@@ -21,13 +21,13 @@ export default function Navbar({ menuOpen = false, onClose = () => { } }) {
   const [pathname] = useLocation();
   const [logoutError, setLogoutError] = useState("");
   const role = accountRoleFor(pathname);
-  const user = getSession()?.usuario;
+  const user = api.getSession()?.usuario;
 
   async function closeSession(event) {
     event.preventDefault();
     setLogoutError("");
     try {
-      await logout();
+      await api.logout();
       onClose();
       window.location.assign("/login");
     } catch (error) { setLogoutError(error.message); }

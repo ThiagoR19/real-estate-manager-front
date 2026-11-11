@@ -11,7 +11,7 @@ import {
 import { DropdownSelect, ProfessionalModal, ConfirmDeleteModal, EntityActions, Button } from "../../components";
 import "./Professional.css";
 
-import { professionals as fetchProfessionals, toProfessional } from "../../services/professionals";
+import { api } from "../../services/api.js";
 
 const filterOptions = ["Tipo", "Plomero", "Electricista", "Gasista"];
 
@@ -45,8 +45,8 @@ export default function Professional() {
       setLoading(true);
       setLoadError("");
       try {
-        const rows = await fetchProfessionals();
-        if (mounted) setProfessionals(rows.map((row) => toProfessional(row)));
+        const rows = await api.professionals();
+        if (mounted) setProfessionals(rows.map((row) => api.toProfessional(row)));
       } catch (error) {
         if (mounted) setLoadError(error.message || "No se pudieron cargar los inquilinos.");
       } finally {

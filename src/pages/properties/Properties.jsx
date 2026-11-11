@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation } from "wouter";
 import { houseIcon, locationDotIcon as locationIcon, plusIcon, tagIcon } from "../../assets/icons";
 import { PropertyModal, ConfirmDeleteModal, DropdownSelect, Button, PropertyCardSimple } from "../../components";
-import { deleteProperty, getProperty, persistProperty, properties as fetchProperties, propertyCatalogs, toProperty } from "../../services/properties.js";
+import { api } from "../../services/api.js";
 import "./Properties.css";
 
 function FilterSelect({ filter, value, onChange }) {
@@ -28,15 +28,15 @@ export default function Properties() {
   }, []);
 
   const refresh = useCallback(async () => {
-    const rows = await fetchProperties();
+    const rows = await api.properties();
     setProperties(rows.map((row) => toProperty(row)));
   }, []);
 
   useEffect(() => {
     let active = true;
-    Promise.all([fetchProperties(), propertyCatalogs()]).then(([rows, lists]) => {
+    Promise.all([api.properties(), api.propertyCatalogs()]).then(([rows, lists]) => {
       if (!active) return;
-      setProperties(rows.map((row) => toProperty(row)));
+      setProperties(rows.map((row) => api.toProperty(row)));
       setCatalogs(lists);
     }).catch((cause) => { if (active) setError(cause.message); })
       .finally(() => { if (active) setLoading(false); });
@@ -44,13 +44,13 @@ export default function Properties() {
   }, []);
 
   async function openEdit(property) {
-    try { setModal({ mode: "edit", property: await getProperty(property.id) }); }
+    try { setModal({ mode: "edit", property: await api.getProperty(property.id) }); }
     catch (cause) { setError(cause.message); }
   }
 
   async function save(form) {
     try {
-      const property = await persistProperty(form, modal.property);
+      const property = await api.persistProperty(form, modal.property);
       await refresh();
       setModal(null);
       setFeedback(`${property.name} se guardó correctamente.`);
@@ -68,7 +68,7 @@ export default function Properties() {
   async function remove() {
     if (!pendingDelete) return;
     try {
-      await deleteProperty(pendingDelete.id);
+      await api.deleteProperty(pendingDelete.id);
       setProperties((current) => current.filter((item) => item.id !== pendingDelete.id));
       setFeedback(`${pendingDelete.name} se eliminó.`);
       setPendingDelete(null);
