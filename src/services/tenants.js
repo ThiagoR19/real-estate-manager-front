@@ -1,5 +1,6 @@
 import { http, apiBase, request } from "../utils/request.js";
 import { clearSession, getSession } from "./login.js";
+import initials from "../utils/initials.js";
 
 export function assetUrl(path) {
   if (!path) return null;
@@ -69,13 +70,9 @@ export function toTenant(raw, files = {}) {
     : raw.estadoCuenta === "PENDIENTE_ACTIVACION"
       ? "Pendiente"
       : "Activo";
-  const initials = nombre
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join("")
-    .toUpperCase();
+
+  let iniciales = initials(raw.nombre, raw.apellido)
+  console.log(iniciales)
 
   return {
     id: raw.id,
@@ -83,7 +80,7 @@ export function toTenant(raw, files = {}) {
     idPersona: raw.idPersona,
     activo: Boolean(Number(raw.activo)),
     name: nombre || "Nombre sin especificar",
-    initials: initials || "IN",
+    initials: iniciales || "IN",
     email: raw.correo || "",
     dni: raw.dni == null ? "" : String(raw.dni),
     phone: raw.telefono || "",

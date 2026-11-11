@@ -1,5 +1,3 @@
-// Convierte un nombre de usuario en un color hexadecimal (#rrggbb)
-// El mismo usuario siempre da el mismo color
 export default function userColor(usuario = "") {
   let hash = 0;
   for (const letra of String(usuario ?? "")) {

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   envelopeIcon,
   peopleIcon,
@@ -11,15 +11,7 @@ import {
 import { DropdownSelect, ProfessionalModal, ConfirmDeleteModal, EntityActions, Button } from "../../components";
 import "./Professional.css";
 
-const initialProfessionals = Array.from({ length: 9 }, (_, index) => ({
-  id: index + 1,
-  name: "Carlos Méndez",
-  specialty: "Plomero",
-  email: "lucia.m@gmail.com",
-  phone: "11 2345-6789",
-  rating: "4.8",
-  reviews: 27,
-}));
+import { professionals as fetchProfessionals, toProfessional } from "../../services/professionals";
 
 const filterOptions = ["Tipo", "Plomero", "Electricista", "Gasista"];
 
@@ -38,14 +30,36 @@ function Rating({ rating, reviews }) {
 }
 
 export default function Professional() {
-  const [professionals, setProfessionals] = useState(initialProfessionals);
+  const [professionals, setProfessionals] = useState([]);
   const [selectedType, setSelectedType] = useState("Tipo");
   const [feedback, setFeedback] = useState("");
   const [modal, setModal] = useState({ isOpen: false, mode: "create", professional: null });
   const [pendingDelete, setPendingDelete] = useState(null);
+  const [loadError, setLoadError] = useState("");
+  const [actionError, setActionError] = useState("");
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    let mounted = true;
+    async function loadProfessionals() {
+      setLoading(true);
+      setLoadError("");
+      try {
+        const rows = await fetchProfessionals();
+        if (mounted) setProfessionals(rows.map((row) => toProfessional(row)));
+      } catch (error) {
+        if (mounted) setLoadError(error.message || "No se pudieron cargar los inquilinos.");
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    }
+    loadProfessionals();
+    return () => { mounted = false; };
+  }, []);
+
+  
   const visibleProfessionals = useMemo(() => (
-    selectedType === "Tipo" ? professionals : professionals.filter(({ specialty }) => specialty === selectedType)
+    selectedType === "Tipo" ? professionals : professionals.filter(({ profesion }) => profesion === selectedType)
   ), [professionals, selectedType]);
 
   function openCreateModal() {
@@ -67,7 +81,7 @@ export default function Professional() {
           ? {
             ...professional,
             name: form.name,
-            specialty: form.specialty,
+            profesion: form.profesion,
             email: form.email,
             phone: form.phone,
           }
@@ -80,7 +94,7 @@ export default function Professional() {
         {
           id: Date.now(),
           name: form.name,
-          specialty: form.specialty,
+          profesion: form.profesion,
           email: form.email,
           phone: form.phone,
           rating: "0.0",
@@ -159,7 +173,7 @@ export default function Professional() {
                       </span>
                       <span>
                         <strong>{professional.name}</strong>
-                        <small>{professional.specialty}</small>
+                        <small>{professional.profesion}</small>
                       </span>
                     </div>
                   </th>

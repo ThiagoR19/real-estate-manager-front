@@ -343,6 +343,7 @@ body:has(#tenant) {
 .tenant__contact span { align-items: center; gap: 11px; color: #7e8aa6; white-space: nowrap; }
 .tenant__contact img { width: 16px; height: 16px; filter: brightness(0) saturate(100%) invert(48%) sepia(13%) saturate(1012%) hue-rotate(187deg) brightness(92%) contrast(86%); }
 .tenant__avatar { display: grid; flex-shrink: 0; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: #bed9eb; color: #061b4a; font-size: 14px; font-weight: 500; }
+.tenant__avatar.dashboard-avatar--silver { color: #fff; }
 .tenant__person-copy,
 .tenant__property > span,
 .tenant__contract { gap: 5px; min-width: 0; }

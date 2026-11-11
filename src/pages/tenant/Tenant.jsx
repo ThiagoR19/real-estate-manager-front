@@ -5,6 +5,7 @@ import propertyImage from "/images.jpg";
 import "./Tenant.css";
 import { deleteTenant as removeTenant, persistTenant, tenants as fetchTenants, toTenant } from "../../services/tenants";
 
+import avatarClass from '../../utils/avatarClass'
 
 const filterDefinitions = [
   { label: "Propiedad", icon: houseIcon, all: "Todas las propiedades" },
@@ -73,7 +74,7 @@ function TenantRow({ tenant, onEdit, onDelete }) {
     <tr>
       <td data-label="Inquilino">
         <div className="tenant__person">
-          <span className="tenant__avatar">{tenant.initials}</span>
+          <span className={`tenant__avatar ${avatarClass(tenant.name, tenant.name)}`}>{tenant.initials}</span>
           <span className="tenant__person-copy"><strong>{tenant.name}</strong><small>DNI {tenant.dni}</small></span>
         </div>
       </td>
