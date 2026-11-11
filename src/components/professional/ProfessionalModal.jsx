@@ -5,10 +5,8 @@ import {
   phoneIcon,
   userIcon,
 } from "../../assets/icons";
-import { DropdownSelect, Button } from "../index";
+import { Button } from "../index";
 import "./ProfessionalModal.css";
-
-const specialtyOptions = ["Profesión", "Albañil", "Plomero", "Electricista", "Gasista"];
 
 function getInitialForm(professional) {
   if (!professional) {
@@ -17,7 +15,7 @@ function getInitialForm(professional) {
       lastName: "",
       email: "",
       phone: "",
-      specialty: specialtyOptions[1],
+      specialty: "",
     };
   }
 
@@ -26,9 +24,9 @@ function getInitialForm(professional) {
   return {
     firstName,
     lastName: lastNameParts.join(" "),
-    email: professional.email,
-    phone: professional.phone,
-    specialty: professional.specialty,
+    email: professional.email || "",
+    phone: professional.phone || "",
+    specialty: professional.specialty || "",
   };
 }
 
@@ -65,6 +63,7 @@ function InputWithIcon({ icon, ...props }) {
 
 export default function ProfessionalModal({ isOpen, mode, professional, onClose, onSubmit }) {
   const [form, setForm] = useState(() => getInitialForm(professional));
+  const [error, setError] = useState("");
   const isEditing = mode === "edit";
   const displayName = isEditing
     ? professional?.name || "Profesional"
@@ -92,7 +91,7 @@ export default function ProfessionalModal({ isOpen, mode, professional, onClose,
       document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", closeWithEscape);
     };
-  }, [isOpen, onClose, professional]);
+  }, [isOpen, onClose]);
 
   if (!isOpen) {
     return null;
@@ -103,12 +102,12 @@ export default function ProfessionalModal({ isOpen, mode, professional, onClose,
     setForm((current) => ({ ...current, [name]: value }));
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-    onSubmit({
-      ...form,
-      name: `${form.firstName.trim()} ${form.lastName.trim()}`.trim(),
-    });
+    try {
+      setError("");
+      await onSubmit({ ...form, name: `${form.firstName.trim()} ${form.lastName.trim()}`.trim() });
+    } catch (cause) { setError(cause.message); }
   }
 
   return (
@@ -160,7 +159,6 @@ export default function ProfessionalModal({ isOpen, mode, professional, onClose,
                   onChange={updateField}
                   placeholder="Nombre"
                   autoComplete="given-name"
-                  required
                 />
               </Field>
 
@@ -172,7 +170,6 @@ export default function ProfessionalModal({ isOpen, mode, professional, onClose,
                   onChange={updateField}
                   placeholder="Apellido"
                   autoComplete="family-name"
-                  required
                 />
               </Field>
 
@@ -180,12 +177,11 @@ export default function ProfessionalModal({ isOpen, mode, professional, onClose,
                 <InputWithIcon
                   icon={envelopeIcon}
                   name="email"
-                  type="email"
+                  type="text"
                   value={form.email}
                   onChange={updateField}
                   placeholder="ejemplo@gmail.com"
                   autoComplete="email"
-                  required
                 />
               </Field>
 
@@ -198,32 +194,22 @@ export default function ProfessionalModal({ isOpen, mode, professional, onClose,
                   onChange={updateField}
                   placeholder="1234 123123"
                   autoComplete="tel"
-                  required
                 />
               </Field>
 
               <Field label="Profesión">
-                <DropdownSelect
-                  label="Profesión"
-                  value={form.specialty}
-                  options={specialtyOptions}
-                  onChange={(specialty) => {
-                    if (specialty !== specialtyOptions[0]) {
-                      setForm((current) => ({ ...current, specialty }));
-                    }
-                  }}
+                <InputWithIcon
                   icon={briefcaseIcon}
-                  className="professional-modal__select"
-                  triggerClassName="professional-modal__select-trigger"
-                  iconClassName="professional-modal__select-icon"
-                  valueClassName="professional-modal__select-value"
-                  chevronClassName="professional-modal__select-arrow"
-                  optionsClassName="professional-modal__select-options"
+                  name="specialty"
+                  value={form.specialty}
+                  onChange={updateField}
+                  placeholder="Profesión"
                 />
               </Field>
             </div>
           </div>
 
+          {error && <p role="alert">{error}</p>}
           <footer className="professional-modal__actions">
             <button className="professional-modal__cancel" type="button" onClick={onClose}>
               Cancelar

@@ -3,7 +3,6 @@ import { useLocation } from "wouter";
 import { houseIcon, locationDotIcon as locationIcon, plusIcon, tagIcon } from "../../assets/icons";
 import { PropertyModal, ConfirmDeleteModal, DropdownSelect, Button, PropertyCardSimple } from "../../components";
 import { api } from "../../services/api.js";
-import { toProperty } from "../../services/properties.js";
 import "./Properties.css";
 
 function FilterSelect({ filter, value, onChange }) {
@@ -36,7 +35,7 @@ function buildFilterOptions(catalogs, properties) {
       id: "location",
       label: "Ubicación",
       icon: locationIcon,
-      options: ["Todas", ...new Set(properties.map((item) => item.location))],
+      options: ["Todas", ...new Set(properties.map((item) => item.ubicacion).filter(Boolean))],
     },
     {
       id: "status",
@@ -48,12 +47,12 @@ function buildFilterOptions(catalogs, properties) {
 }
 
 function matchesFilters(property, filters, search) {
-  const searchableText = [property.name, property.location, property.description].join(" ").toLocaleLowerCase("es-AR");
+  const searchableText = [property.nombre, property.ubicacion, property.descripcion].join(" ").toLocaleLowerCase("es-AR");
 
   return (
-    (filters.type === "Todos" || property.type === filters.type)
-    && (filters.location === "Todas" || property.location === filters.location)
-    && (filters.status === "Todos" || property.status === filters.status)
+    (filters.type === "Todos" || property.tipo === filters.type)
+    && (filters.location === "Todas" || property.ubicacion === filters.location)
+    && (filters.status === "Todos" || property.estadoComercial === filters.status)
     && (!search || searchableText.includes(search))
   );
 }
@@ -84,7 +83,7 @@ export default function Properties() {
     Promise.all([api.properties(), api.propertyCatalogs()])
       .then(([rows, lists]) => {
         if (!active) return;
-        setProperties(rows.map((row) => toProperty(row)));
+        setProperties(rows);
         setCatalogs(lists);
       })
       .catch((cause) => {
@@ -99,11 +98,6 @@ export default function Properties() {
     };
   }, []);
 
-  async function refreshProperties() {
-    const rows = await api.properties();
-    setProperties(rows.map((row) => toProperty(row)));
-  }
-
   async function openEdit(property) {
     try {
       setModal({ mode: "edit", property: await api.getProperty(property.id) });
@@ -112,21 +106,13 @@ export default function Properties() {
     }
   }
 
-  async function save(form) {
-    try {
-      const property = await api.persistProperty(form, modal.property);
-      await refreshProperties();
-      setModal(null);
-      setFeedback(property.name + " se guardó correctamente.");
-    } catch (cause) {
-      if (cause.propertyId) {
-        await refreshProperties();
-        setModal(null);
-        setError("La propiedad se guardó, pero hubo un problema con sus archivos: " + cause.message);
-        return;
-      }
-      throw cause;
-    }
+  function save(property, fileError) {
+    setProperties((current) => modal.mode === "edit"
+      ? current.map((item) => item.id === property.id ? property : item)
+      : [property, ...current]);
+    setModal(null);
+    if (fileError) setError("La propiedad se guardó, pero hubo un problema con sus archivos: " + fileError);
+    else setFeedback(property.nombre + " se guardó correctamente.");
   }
 
   async function remove() {
@@ -135,7 +121,7 @@ export default function Properties() {
     try {
       await api.deleteProperty(pendingDelete.id);
       setProperties((current) => current.filter((item) => item.id !== pendingDelete.id));
-      setFeedback(pendingDelete.name + " se eliminó.");
+      setFeedback(pendingDelete.nombre + " se eliminó.");
       setPendingDelete(null);
     } catch (cause) {
       setError(cause.message);

@@ -24,14 +24,12 @@ function getInitialForm(tenant) {
     };
   }
 
-  const [firstName = "", ...lastNameParts] = tenant.name.trim().split(/\s+/);
-
   return {
-    firstName,
-    lastName: lastNameParts.join(" "),
-    email: tenant.email || "",
-    phone: tenant.phone || "",
-    address: tenant.address || "",
+    firstName: tenant.nombre || "",
+    lastName: tenant.apellido || "",
+    email: tenant.correo || "",
+    phone: tenant.telefono || "",
+    address: tenant.direccion || "",
     dni: tenant.dni || "",
     active: Boolean(tenant.activo),
   };
@@ -73,15 +71,8 @@ export default function TenantModal({ isOpen, mode, tenant, onClose, onSubmit })
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const isEditing = mode === "edit";
-  const displayName = isEditing ? tenant?.name || "Inquilino" : "Inquilino";
-  const displayStatus = isEditing ? tenant?.status || "Estado" : "Estado";
-
-  useEffect(() => {
-    if (isOpen) {
-      setForm(getInitialForm(tenant));
-      setError("");
-    }
-  }, [isOpen, mode, tenant?.id]);
+  const displayName = isEditing ? `${tenant?.nombre || ""} ${tenant?.apellido || ""}`.trim() : "Inquilino";
+  const displayStatus = isEditing ? (!tenant?.activo ? "Inactivo" : tenant?.estadoCuenta === "PENDIENTE_ACTIVACION" ? "Pendiente" : "Activo") : "Estado";
 
   useEffect(() => {
     if (!isOpen) {
@@ -176,7 +167,6 @@ export default function TenantModal({ isOpen, mode, tenant, onClose, onSubmit })
                   onChange={updateField}
                   placeholder="Nombre"
                   autoComplete="given-name"
-                  required
                 />
               </Field>
 
@@ -188,7 +178,6 @@ export default function TenantModal({ isOpen, mode, tenant, onClose, onSubmit })
                   onChange={updateField}
                   placeholder="Apellido"
                   autoComplete="family-name"
-                  required
                 />
               </Field>
 
@@ -196,12 +185,11 @@ export default function TenantModal({ isOpen, mode, tenant, onClose, onSubmit })
                 <InputWithIcon
                   icon={envelopeIcon}
                   name="email"
-                  type="email"
+                  type="text"
                   value={form.email}
                   onChange={updateField}
                   placeholder="ejemplo@gmail.com"
                   autoComplete="email"
-                  required={!isEditing}
                 />
               </Field>
 

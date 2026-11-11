@@ -1,25 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
-import { envelopeIcon, peopleIcon, phoneIcon, penIcon, plusIcon, starIcon, trashCanIcon, } from "../../assets/icons";
+import { useEffect, useState } from "react";
+import { envelopeIcon, peopleIcon, phoneIcon, penIcon, plusIcon, trashCanIcon, } from "../../assets/icons";
 import { DropdownSelect, ProfessionalModal, ConfirmDeleteModal, EntityActions, Button } from "../../components";
 import "./Professional.css";
 
 import { api } from "../../services/api.js";
-
-const filterOptions = ["Tipo", "Plomero", "Electricista", "Gasista"];
-
-function Rating({ rating, reviews }) {
-  return (
-    <div className="professional__rating" aria-label={`${rating} de 5 estrellas, ${reviews} reseñas`}>
-      <div className="professional__rating-stars" aria-hidden="true">
-        {Array.from({ length: 5 }, (_, index) => (
-          <span key={index} className="professional__rating-star">★</span>
-        ))}
-      </div>
-      <strong>{rating}</strong>
-      <small>({reviews}) Reseñas</small>
-    </div>
-  );
-}
 
 export default function Professional() {
   const [professionals, setProfessionals] = useState([]);
@@ -27,32 +11,16 @@ export default function Professional() {
   const [feedback, setFeedback] = useState("");
   const [modal, setModal] = useState({ isOpen: false, mode: "create", professional: null });
   const [pendingDelete, setPendingDelete] = useState(null);
-  const [loadError, setLoadError] = useState("");
-  const [actionError, setActionError] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    let mounted = true;
-    async function loadProfessionals() {
-      setLoading(true);
-      setLoadError("");
-      try {
-        const rows = await api.professionals();
-        if (mounted) setProfessionals(rows.map((row) => api.toProfessional(row)));
-      } catch (error) {
-        if (mounted) setLoadError(error.message || "No se pudieron cargar los inquilinos.");
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    }
-    loadProfessionals();
-    return () => { mounted = false; };
+    api.professionals().then(setProfessionals).catch((cause) => setError(cause.message));
   }, []);
 
-
-  const visibleProfessionals = useMemo(() => (
+  const filterOptions = ["Tipo", ...new Set(professionals.map((item) => item.profesion).filter(Boolean))];
+  const visibleProfessionals = (
     selectedType === "Tipo" ? professionals : professionals.filter(({ profesion }) => profesion === selectedType)
-  ), [professionals, selectedType]);
+  );
 
   function openCreateModal() {
     setModal({ isOpen: true, mode: "create", professional: null });
@@ -66,47 +34,33 @@ export default function Professional() {
     setModal((current) => ({ ...current, isOpen: false }));
   }
 
-  function saveProfessional(form) {
+  async function saveProfessional(form) {
+    const body = {
+      nombre: form.firstName,
+      apellido: form.lastName,
+      correo: form.email || null,
+      telefono: form.phone || null,
+      profesion: form.specialty,
+    };
     if (modal.mode === "edit") {
-      setProfessionals((current) => current.map((professional) => (
-        professional.id === modal.professional.id
-          ? {
-            ...professional,
-            name: form.name,
-            profesion: form.profesion,
-            email: form.email,
-            phone: form.phone,
-          }
-          : professional
-      )));
+      const saved = await api.updateProfessional(modal.professional.id, body);
+      setProfessionals((current) => current.map((item) => item.id === saved.id ? saved : item));
       setFeedback(`Se actualizó la información de ${form.name}.`);
     } else {
-      setProfessionals((current) => [
-        ...current,
-        {
-          id: Date.now(),
-          name: form.name,
-          profesion: form.profesion,
-          email: form.email,
-          phone: form.phone,
-          rating: "0.0",
-          reviews: 0,
-        },
-      ]);
+      const saved = await api.createProfessional(body);
+      setProfessionals((current) => [...current, saved]);
       setFeedback(`Se agregó a ${form.name} a la lista.`);
     }
-
     closeProfessionalModal();
   }
 
-  function rateProfessional(professional) {
-    setFeedback(`Valorar a ${professional.name}.`);
-  }
-
-  function removeProfessional(professional) {
-    setProfessionals((current) => current.filter(({ id }) => id !== professional.id));
-    setFeedback(`${professional.name} fue eliminado de la lista.`);
-    setPendingDelete(null);
+  async function removeProfessional(professional) {
+    try {
+      await api.deleteProfessional(professional.id);
+      setProfessionals((current) => current.filter(({ id }) => id !== professional.id));
+      setFeedback(`${professional.nombre} ${professional.apellido} fue eliminado de la lista.`);
+      setPendingDelete(null);
+    } catch (cause) { setError(cause.message); }
   }
 
   return (
@@ -143,7 +97,6 @@ export default function Professional() {
               <col className="professional__column professional__column--professional" />
               <col className="professional__column professional__column--email" />
               <col className="professional__column professional__column--phone" />
-              <col className="professional__column professional__column--rating" />
               <col className="professional__column professional__column--actions" />
             </colgroup>
             <thead>
@@ -151,7 +104,6 @@ export default function Professional() {
                 <th scope="col">Profesional</th>
                 <th scope="col">Email</th>
                 <th scope="col">Teléfono</th>
-                <th scope="col">Rating</th>
                 <th scope="col">Acciones</th>
               </tr>
             </thead>
@@ -161,10 +113,10 @@ export default function Professional() {
                   <th scope="row" data-label="Profesional">
                     <div className="professional__identity">
                       <span className="professional__avatar" aria-hidden="true">
-                        {professional.name.split(" ").map((part) => part[0]).join("").slice(0, 2)}
+                        {professional.nombre?.[0]}{professional.apellido?.[0]}
                       </span>
                       <span>
-                        <strong>{professional.name}</strong>
+                        <strong>{professional.nombre} {professional.apellido}</strong>
                         <small>{professional.profesion}</small>
                       </span>
                     </div>
@@ -172,32 +124,25 @@ export default function Professional() {
                   <td data-label="Contacto">
                     <span className="professional__contact">
                       <img src={envelopeIcon} alt="" />
-                      <span>{professional.email}</span>
+                      <span>{professional.correo}</span>
                     </span>
                   </td>
                   <td data-label="Teléfono">
                     <span className="professional__contact">
                       <img src={phoneIcon} alt="" />
-                      <span>{professional.phone}</span>
+                      <span>{professional.telefono}</span>
                     </span>
                   </td>
-                  <td data-label="Rating"><Rating rating={professional.rating} reviews={professional.reviews} /></td>
                   <td data-label="Acciones">
                     <div className="professional__actions">
-                      <Button
-                        className="professional__rate"
-                        onClick={() => rateProfessional(professional)}
-                        icon={starIcon}
-                        text="Valorar"
-                      />
                       <EntityActions
                         entity="profesional"
-                        name={professional.name}
+                        name={`${professional.nombre} ${professional.apellido}`}
                         onEdit={() => editProfessional(professional)}
                         onDelete={() => setPendingDelete(professional)}
                       />
-                      <button className="professional__mobile-action professional__mobile-action--edit" type="button" aria-label={`Editar profesional: ${professional.name}`} onClick={() => editProfessional(professional)}><img src={penIcon} alt="" /></button>
-                      <button className="professional__mobile-action professional__mobile-action--delete" type="button" aria-label={`Eliminar profesional: ${professional.name}`} onClick={() => setPendingDelete(professional)}><img src={trashCanIcon} alt="" /></button>
+                      <button className="professional__mobile-action professional__mobile-action--edit" type="button" aria-label={`Editar profesional: ${professional.nombre} ${professional.apellido}`} onClick={() => editProfessional(professional)}><img src={penIcon} alt="" /></button>
+                      <button className="professional__mobile-action professional__mobile-action--delete" type="button" aria-label={`Eliminar profesional: ${professional.nombre} ${professional.apellido}`} onClick={() => setPendingDelete(professional)}><img src={trashCanIcon} alt="" /></button>
                     </div>
                   </td>
                 </tr>
@@ -211,6 +156,7 @@ export default function Professional() {
       </section>
 
       <p className="professional__feedback" aria-live="polite">{feedback}</p>
+      {error && <p className="professional__feedback" role="alert">{error}</p>}
 
       <ConfirmDeleteModal isOpen={Boolean(pendingDelete)} onClose={() => setPendingDelete(null)} onConfirm={() => removeProfessional(pendingDelete)} title="¿Seguro que desea eliminar este profesional?" />
 
@@ -218,7 +164,7 @@ export default function Professional() {
         <ProfessionalModal
           isOpen={modal.isOpen}
           mode={modal.mode}
-          professional={modal.professional}
+          professional={modal.professional && { ...modal.professional, name: `${modal.professional.nombre} ${modal.professional.apellido}`, email: modal.professional.correo, phone: modal.professional.telefono, specialty: modal.professional.profesion }}
           onClose={closeProfessionalModal}
           onSubmit={saveProfessional}
         />

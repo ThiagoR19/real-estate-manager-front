@@ -1,21 +1,23 @@
 import { useEffect, useRef, useState } from "react";
 import { bathIcon, bedIcon, calendarIcon, fileLinesIcon, locationDotIcon, plusIcon, rulerCombinedIcon, xIcon } from "../../assets/icons";
 import { Button } from "../index";
+import { api } from "../../services/api.js";
 import "./PropertyModal.css";
 
 function initialForm(property, catalogs) {
   return {
-    name: property?.name || "",
-    typeId: property?.typeId || catalogs.tipos[0]?.id || "",
-    statusId: property?.statusId || catalogs.estados[0]?.id || "",
-    agentId: property?.agentId || "",
-    description: property?.description === "Sin descripción." ? "" : property?.description || "",
-    location: property?.location === "Ubicación sin especificar" ? "" : property?.location || "",
-    age: property?.age ?? 0, bedrooms: property?.bedrooms ?? 0,
-    bathrooms: property?.bathrooms ?? 0, area: property?.area ?? "",
-    price: property?.price ?? "", currency: property?.currency || "ARS",
-    published: property?.published ?? false,
-    photos: property?.photos || [], documents: property?.documents || [],
+    name: property?.nombre || "",
+    typeId: property?.idTipo || catalogs.tipos[0]?.id || "",
+    statusId: property?.idEstadoComercial || catalogs.estados[0]?.id || "",
+    agentId: property?.idAgente || "",
+    description: property?.descripcion || "",
+    location: property?.ubicacion || "",
+    age: property?.antiguedad ?? 0, bedrooms: property?.habitaciones ?? 0,
+    bathrooms: property?.banos ?? 0, area: property?.tamano ?? "",
+    price: property?.precio ?? "", currency: property?.moneda || "ARS",
+    published: Boolean(property?.publicada),
+    photos: (property?.imagenes || []).map((image) => ({ ...image, src: api.assetUrl(image.url), alt: `Foto de ${property.nombre}` })),
+    documents: (property?.documentos || []).map((document) => ({ ...document, fileName: document.nombreArchivo })),
   };
 }
 
@@ -70,15 +72,44 @@ export default function PropertyModal({ isOpen, mode, property, catalogs, onClos
 
   async function submit(event) {
     event.preventDefault();
-    if (!form.name.trim() || !form.typeId || !form.statusId) {
-      setSection("information");
-      setError("Completá el nombre, tipo y estado comercial.");
-      return;
-    }
     setSaving(true);
     setError("");
-    try { await onSubmit(form); }
-    catch (cause) { setError(cause.message); }
+    let saved;
+    try {
+      const body = {
+        nombre: form.name.trim(),
+        idTipo: Number(form.typeId),
+        idEstadoComercial: Number(form.statusId),
+        idAgente: form.agentId ? Number(form.agentId) : null,
+        descripcion: form.description.trim() || null,
+        ubicacion: form.location.trim() || null,
+        habitaciones: Number(form.bedrooms),
+        banos: Number(form.bathrooms),
+        tamano: Number(form.area) > 0 ? Number(form.area) : null,
+        antiguedad: Number(form.age),
+        precio: form.price === "" ? null : Number(form.price),
+        moneda: form.currency,
+        publicada: form.published,
+      };
+      saved = property ? await api.updateProperty(property.id, body) : await api.createProperty(body);
+      const photos = form.photos.filter((photo) => photo.file).map((photo) => photo.file);
+      const documents = form.documents.filter((document) => document.file).map((document) => document.file);
+      for (let i = 0; i < photos.length; i += 10) await api.uploadPropertyFiles(saved.id, "imagenes", photos.slice(i, i + 10));
+      for (let i = 0; i < documents.length; i += 5) await api.uploadPropertyFiles(saved.id, "documentos", documents.slice(i, i + 5));
+      if (property) {
+        const keptPhotos = new Set(form.photos.map((photo) => photo.id));
+        const keptDocuments = new Set(form.documents.map((document) => document.id));
+        for (const photo of property.imagenes || []) if (!keptPhotos.has(photo.id)) await api.deletePropertyFile(saved.id, "imagenes", photo.id);
+        for (const document of property.documentos || []) if (!keptDocuments.has(document.id)) await api.deletePropertyFile(saved.id, "documentos", document.id);
+      }
+      await onSubmit(await api.getProperty(saved.id));
+    } catch (cause) {
+      if (saved) {
+        let current = saved;
+        try { current = await api.getProperty(saved.id); } catch { /* La propiedad ya se guardó. */ }
+        await onSubmit(current, cause.message);
+      } else setError(cause.message);
+    }
     finally { setSaving(false); }
   }
 
@@ -99,10 +130,10 @@ export default function PropertyModal({ isOpen, mode, property, catalogs, onClos
                 <section className="property-modal__card">
                   <div className="property-modal__card-heading"><span>1</span><h3>Datos principales</h3></div>
                   <div className="property-modal__card-body property-modal__main-fields">
-                    <Field label="Nombre"><input className="property-modal__plain-input" name="name" value={form.name} onChange={change} maxLength={255} /></Field>
+                    <Field label="Nombre"><input className="property-modal__plain-input" name="name" value={form.name} onChange={change} /></Field>
                     <Field label="Tipo"><select className="property-modal__plain-input" name="typeId" value={form.typeId} onChange={change}>{catalogs.tipos.map((type) => <option key={type.id} value={type.id}>{type.nombre}</option>)}</select></Field>
                     <Field label="Descripción" className="property-modal__field--full"><div className="property-modal__textarea-wrap"><textarea name="description" value={form.description} onChange={change} placeholder="Descripción de la propiedad" /><span>{form.description.length}</span></div></Field>
-                    <Field label="Ubicación"><span className="property-modal__input-wrap"><img src={locationDotIcon} alt="" /><input name="location" value={form.location} onChange={change} maxLength={255} /></span></Field>
+                    <Field label="Ubicación"><span className="property-modal__input-wrap"><img src={locationDotIcon} alt="" /><input name="location" value={form.location} onChange={change} /></span></Field>
                     <Field label="Agente"><select className="property-modal__plain-input" name="agentId" value={form.agentId} onChange={change}><option value="">Sin asignar</option>{catalogs.agentes.map((agent) => <option key={agent.id} value={agent.id}>{agent.nombre}</option>)}</select></Field>
                   </div>
                 </section>

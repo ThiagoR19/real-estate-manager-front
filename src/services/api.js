@@ -1,4 +1,5 @@
 import * as dashboardService from "./dashboard.js";
+import * as agentService from "./agents.js";
 import * as loginService from "./login.js";
 import * as propertyService from "./properties.js";
 import * as profileService from "./profile.js";
@@ -6,6 +7,11 @@ import * as professionalService from "./professionals.js";
 import * as tenantService from "./tenants.js";
 
 export const api = {
+  agents: agentService.agents,
+  createAgent: agentService.createAgent,
+  updateAgent: agentService.updateAgent,
+  deleteAgent: agentService.deleteAgent,
+  updateAgentPhoto: agentService.updateAgentPhoto,
   getSession: loginService.getSession,
   saveSession: loginService.saveSession,
   clearSession: loginService.clearSession,
@@ -22,10 +28,7 @@ export const api = {
   uploadPropertyFiles: propertyService.uploadPropertyFiles,
   deletePropertyFile: propertyService.deletePropertyFile,
   downloadPropertyDocument: propertyService.downloadPropertyDocument,
-  toProperty: propertyService.toProperty,
-  propertyPayload: propertyService.propertyPayload,
   getProperty: propertyService.getProperty,
-  persistProperty: propertyService.persistProperty,
   profile: profileService.profile,
   updateProfile: profileService.updateProfile,
   updatePassword: profileService.updatePassword,
@@ -39,18 +42,9 @@ export const api = {
   uploadTenantFiles: tenantService.uploadTenantFiles,
   deleteTenantFile: tenantService.deleteTenantFile,
   downloadTenantDocument: tenantService.downloadTenantDocument,
-  toTenant: tenantService.toTenant,
-  tenantPayload: tenantService.tenantPayload,
-  getTenant: tenantService.getTenant,
-  persistTenant: tenantService.persistTenant,
   professionals: professionalService.professionals,
-  professional: professionalService.professional,
   createProfessional: professionalService.createProfessional,
   updateProfessional: professionalService.updateProfessional,
   deleteProfessional: professionalService.deleteProfessional,
-  toProfessional: professionalService.toProfessional,
-  professionalPayload: professionalService.professionalPayload,
-  getProfessional: professionalService.getProfessional,
-  persistProfessional: professionalService.persistProfessional,
   dashboard: dashboardService.getDashboard,
 };

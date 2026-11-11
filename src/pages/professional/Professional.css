@@ -218,23 +218,19 @@ body:has(#professional) {
 }
 
 .professional__column--professional {
-  width: 18%;
+  width: 27%;
 }
 
 .professional__column--email {
-  width: 21%;
+  width: 28%;
 }
 
 .professional__column--phone {
-  width: 23%;
-}
-
-.professional__column--rating {
-  width: 21%;
+  width: 25%;
 }
 
 .professional__column--actions {
-  width: 17%;
+  width: 20%;
 }
 
 .professional__table th,
