@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { Footer, Icon, PropertyCardSimple } from "../../components";
 import kaikenLogo from "../../assets/icons/kaiken.svg";
@@ -112,7 +112,7 @@ export default function PublicProperties() {
   const queryFilter = new URLSearchParams(window.location.search).get("filter");
   const [operation, setOperation] = useState(queryFilter === "rent" ? "rent" : "buy");
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const visibleProperties = useMemo(() => properties.filter((property) => property.operation === operation), [operation]);
+  const visibleProperties = properties.filter((property) => property.operation === operation);
 
   useEffect(() => {
     if (!filtersOpen) return undefined;
