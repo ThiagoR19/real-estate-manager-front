@@ -1,7 +1,7 @@
 import * as dashboardService from "./dashboard.js";
 import * as loginService from "./login.js";
 import * as propertyService from "./properties.js";
-
+import * as contVisitaService from "./contVisita.js"
 export { getSession, saveSession, clearSession, login, logout } from "./login.js";
 export {
   assetUrl,
@@ -32,4 +32,5 @@ export const api = {
   deletePropertyFile: propertyService.deletePropertyFile,
   downloadPropertyDocument: propertyService.downloadPropertyDocument,
   dashboard: dashboardService.getDashboard,
+  contVisita: contVisitaService.sumarVisita,
 };
