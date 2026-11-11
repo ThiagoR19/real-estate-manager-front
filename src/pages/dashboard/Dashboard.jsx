@@ -42,14 +42,12 @@ function AgentsCard({ agents }) {
 }
 
 function StatusCard({ valores }) {
-  console.log(valores)
   let statusItems = [
     { label: "Total de propiedades:", value: valores["total"], icon: houseIcon },
     { label: "Total en alquiler:", value: valores.enAlquiler, icon: keyIcon },
     { label: "Propiedades vendidas:", value: valores.vendidas, icon: houseIcon },
     { label: "Propiedades vacias:", value: valores.vacias, icon: tagIcon },
   ];
-  console.log(statusItems)
   return (
     <section className="dashboard-card dashboard-status-card">
       <div className="dashboard-status-card__heading">
@@ -71,15 +69,15 @@ export default function Dashboard() {
   const [datos, setDatos] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
+  
   useEffect(() => {
     api.dashboard()
       .then((respuesta) => setDatos(respuesta))
       .catch((causa) => setError(causa.message))
       .finally(() => setLoading(false));
   }, []);
-  console.error(error)
   if (!loading) {
+    console.log(datos)
     return (
       <main className="dashboard-page">
         <div className="dashboard-page__background" aria-hidden="true" />

@@ -9,7 +9,7 @@ import { getSession } from "./services/login.js";
 import "./App.css";
 import { api } from "./services/api.js";
 let yaSeHizo = false;
-const validar = ["/", "public-properties", "public-property", "about-us"]
+const validar = ["/", "/public-properties", "/public-property", "/about-us", "/home"]
 function AuthenticatedApp() {
   const [menuOpen, setMenuOpen] = useState(false);
   if (!getSession()?.token) {
@@ -61,7 +61,7 @@ function App() {
       api.contVisita(idInmobi)
     }
   }, [location])
-  
+
   return (
     <Switch>
       <Route path="/home" component={Home} />
