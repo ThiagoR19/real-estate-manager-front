@@ -5,11 +5,14 @@ import { AboutUs, Agency, Agents, AgentDashboard, Chat, Collections, ConfirmRegi
 
 import { Header, Navbar } from "./layouts/index.js";
 import { getSession } from "./services/login.js";
+import { ToastContainer } from "./components/index.js";
 
 import "./App.css";
 import { api } from "./services/api.js";
+
 let yaSeHizo = false;
 const validar = ["/", "/public-properties", "/public-property", "/about-us", "/home"]
+
 function AuthenticatedApp() {
   const [menuOpen, setMenuOpen] = useState(false);
   if (!getSession()?.token) {
@@ -57,7 +60,7 @@ function App() {
     if (yaSeHizo) return;
     yaSeHizo = true;
 
-    if (validar.includes(location)){
+    if (validar.includes(location)) {
       api.contVisita(idInmobi)
     }
   }, [location])
@@ -75,6 +78,7 @@ function App() {
       <Route path="/" component={Home} />
       <Route>
         <AuthenticatedApp />
+        <ToastContainer />
       </Route>
     </Switch>
   );

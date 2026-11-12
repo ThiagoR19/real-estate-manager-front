@@ -3,7 +3,7 @@ import { calendarIcon, plusIconWhite, toolboxIcon, userIcon } from "../../assets
 import {
   ActivityCard as SharedActivityCard,
   PerformanceCard as SharedPerformanceCard,
-} from "../dashboard/DashboardWidgets";
+} from "../../components";
 import "./AgentDashboard.css";
 
 const propertyPhotos = [

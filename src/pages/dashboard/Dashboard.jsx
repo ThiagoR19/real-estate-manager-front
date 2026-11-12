@@ -2,9 +2,11 @@ import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { api } from "../../services/api";
 
-import { ActivityCard as SharedActivityCard, PerformanceCard as SharedPerformanceCard } from "./DashboardWidgets";
+import { ActivityCard as SharedActivityCard, PerformanceCard as SharedPerformanceCard } from "../../components";
 import initials from "../../utils/initials"
 import avatar from "../../utils/avatarClass"
+import { mostrarToast } from "../../components"
+
 import "./Dashboard.css";
 import { houseIcon, peopleIcon, penIcon, plusIconWhite, tagIcon } from "../../assets/icons";
 import keyIcon from "../../assets/icons/llaveNosotrosIcon.svg";
@@ -67,14 +69,18 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  
   useEffect(() => {
     api.dashboard()
       .then((respuesta) => setDatos(respuesta))
-      .catch((causa) => setError(causa.message))
+      .catch((causa) => {
+        setError(causa.message)
+        mostrarToast({ tipo: "error", titulo: causa.codigo, mensaje:causa.mensaje, accion: { texto: "Recargar", onclick:()=>window.location.reload } })
+      })
       .finally(() => setLoading(false));
   }, []);
-  if (!loading) {
-    console.log(datos)
+
+  if (!loading && error== "") {
     return (
       <main className="dashboard-page">
         <div className="dashboard-page__background" aria-hidden="true" />

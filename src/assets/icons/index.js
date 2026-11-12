@@ -1,4 +1,5 @@
 export { default as addressCardIcon } from "./address-card-regular-full.svg";
+export { default as alarmClockIcon } from "./alarm-clock-outline.svg";
 export { default as angleDownIcon } from "./angle-down-solid-full.svg";
 export { default as arrowsRotateIcon } from "./arrows-rotate-solid-full.svg";
 export { default as barsIcon } from "./bars-solid-full.svg";
@@ -50,6 +51,7 @@ export { default as shieldHalvedIcon } from "./shield-halved-solid-full.svg";
 export { default as tagIcon } from "./tag-solid-full.svg";
 export { default as toolboxIcon } from "./toolbox-solid-full.svg";
 export { default as trashCanIcon } from "./trash-can-solid-full.svg";
+export { default as triangleExclamationIcon } from "./triangle-exclamation-outline.svg";
 export { default as userIcon } from "./user-solid-full.svg";
 export { default as xIcon } from "./x-solid-full.svg";
 export { default as walletIcon } from "./wallet.svg";
