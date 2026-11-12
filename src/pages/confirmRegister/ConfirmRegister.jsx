@@ -1,8 +1,6 @@
 import { useLocation } from "wouter";
 
 import { Skeleton, ImagePanel, TextField, PrimaryButton, LegalText } from "../../components";
-import useSubmit from "../../hooks/useSubmit";
-import wait from "../../utils/wait";
 
 import addressCardIcon from "../../assets/icons/address-card-regular-full.svg";
 import background from "../../assets/loginFondo.png";
@@ -11,14 +9,9 @@ import "./ConfirmRegister.css";
 
 export default function ConfirmRegister() {
   const [, navigate] = useLocation();
-  const [submitState, submit] = useSubmit();
-
   function handleSubmit(event) {
     event.preventDefault();
-    submit(async () => {
-      await wait(700);
-      navigate("/login");
-    });
+    navigate("/login");
   }
 
   return (
@@ -48,12 +41,7 @@ export default function ConfirmRegister() {
             </small>
           </TextField>
 
-          <PrimaryButton
-            texto="Verificar"
-            textoEnviando="Verificando"
-            estado={submitState}
-            className="confirm-register__submit"
-          />
+          <PrimaryButton texto="Verificar" className="confirm-register__submit" />
         </form>
 
         <footer className="confirm-register__footer">

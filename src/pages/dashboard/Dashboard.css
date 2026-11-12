@@ -238,6 +238,12 @@
   cursor: pointer;
   font-size: 11px;
 }
+.Dashboard--green{
+  color: var(--verdeOscInfo);
+}
+.Dashboard--red{
+  color: var(--rojoOscInfo);
+}
 
 .dashboard-period-select .dashboard-icon {
   position: absolute;
@@ -367,7 +373,6 @@
 }
 
 .dashboard-kpi em {
-  color: #26825c;
   font-size: 10px;
   font-style: normal;
   font-weight: 500;

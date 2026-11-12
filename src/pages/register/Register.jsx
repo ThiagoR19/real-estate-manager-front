@@ -13,9 +13,6 @@ import {
 } from "../../components";
 import Login from "../login/Login";
 
-import useSubmit from "../../hooks/useSubmit";
-import wait from "../../utils/wait";
-
 import mailIcono from "../../assets/icons/loginMail.svg";
 import candadoIcono from "../../assets/icons/loginLock.svg";
 import fondo from "../../assets/loginFondo.png";
@@ -26,8 +23,6 @@ const DURACION_SALIDA = 900;
 
 export default function Register() {
   const panelRef = useRef(null);
-
-  const [submitState, submit] = useSubmit();
 
   const [saliendo, setSaliendo] = useState(false);
   const [variablesSalida, setVariablesSalida] = useState({});
@@ -46,10 +41,7 @@ export default function Register() {
 
   const enviarFormulario = (e) => {
     e.preventDefault();
-    submit(async () => {
-      await wait(700);
-      navegar("/confirm-register");
-    });
+    navegar("/confirm-register");
   };
 
   const irALogin = (e) => {
@@ -124,12 +116,7 @@ export default function Register() {
             />
           </div>
 
-          <PrimaryButton
-            texto="Crear"
-            textoEnviando="Creando"
-            estado={submitState}
-            className="Registration__boton"
-          />
+          <PrimaryButton texto="Crear" className="Registration__boton" />
 
           <GoogleSignIn texto="Registrarse con" className="Registration__google" />
         </form>

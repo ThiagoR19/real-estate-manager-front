@@ -1,46 +1,18 @@
-import { useState } from "react";
-import { Redirect, Route, Switch } from "wouter";
-import {
-  AboutUs,
-  Agency,
-  Agents,
-  AgentDashboard,
-  Chat,
-  Collections,
-  ConfirmRegister,
-  Dashboard,
-  DashboardOwner,
-  Home,
-  Indec,
-  Login,
-  MyProperties,
-  Owners,
-  Payments,
-  PaymentsAndCollections,
-  Professional,
-  Profile,
-  Properties,
-  Property,
-  PublicProperties,
-  PublicProperty,
-  Register,
-  ReportsAgent,
-  Schedule,
-  SuperAdmin,
-  SuperAdminDashboard,
-  Tenant,
-  TenantDashboard,
-  Terms,
-} from "./pages/index.js";
+import { useState, useEffect } from "react";
+const idInmobi = import.meta.env.VITE_ID_INMOBILIARIA;
+import { Redirect, Route, Switch, useLocation } from "wouter";
+import { AboutUs, Agency, Agents, AgentDashboard, Chat, Collections, ConfirmRegister, Dashboard, DashboardOwner, Home, Indec, Login, MyProperties, Owners, Payments, PaymentsAndCollections, Professional, Profile, Properties, Property, PublicProperties, PublicProperty, Register, ReportsAgent, Schedule, SuperAdmin, SuperAdminDashboard, Tenant, TenantDashboard, Terms } from "./pages/index.js";
 
 import { Header, Navbar } from "./layouts/index.js";
-import { api } from "./services/api.js";
+import { getSession } from "./services/login.js";
 
 import "./App.css";
-
+import { api } from "./services/api.js";
+let yaSeHizo = false;
+const validar = ["/", "/public-properties", "/public-property", "/about-us", "/home"]
 function AuthenticatedApp() {
   const [menuOpen, setMenuOpen] = useState(false);
-  if (!api.getSession()?.token) {
+  if (!getSession()?.token) {
     return <Redirect to="/home" replace />;
   }
 
@@ -78,8 +50,18 @@ function AuthenticatedApp() {
     </div>
   );
 }
-
 function App() {
+  const [location] = useLocation();
+
+  useEffect(() => {
+    if (yaSeHizo) return;
+    yaSeHizo = true;
+
+    if (validar.includes(location)){
+      api.contVisita(idInmobi)
+    }
+  }, [location])
+
   return (
     <Switch>
       <Route path="/home" component={Home} />

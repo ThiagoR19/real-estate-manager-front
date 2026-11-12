@@ -6,6 +6,7 @@ import * as profileService from "./profile.js";
 import * as professionalService from "./professionals.js";
 import * as tenantService from "./tenants.js";
 import * as indecService from "./indec.js";
+import * as contVisitaService from "./contVisita.js";
 
 export const api = {
   agents: agentService.agents,
@@ -50,4 +51,5 @@ export const api = {
   indec: indecService.indec,
   createIndec: indecService.createIndec,
   dashboard: dashboardService.getDashboard,
+  contVisita: contVisitaService.sumarVisita,
 };

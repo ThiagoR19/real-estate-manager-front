@@ -4,9 +4,26 @@ import { Button, IncreaseModal } from "../../components";
 import "./Indec.css";
 import { api } from "../../services/api";
 
+const monthNames = [
+  "Enero",
+  "Febrero",
+  "Marzo",
+  "Abril",
+  "Mayo",
+  "Junio",
+  "Julio",
+  "Agosto",
+  "Septiembre",
+  "Octubre",
+  "Noviembre",
+  "Diciembre",
+];
+
 export default function Indec() {
-  const [year, setYear] = useState("2024");
+  const [year, setYear] = useState(String(new Date().getFullYear()));
   const [records, setRecords] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [feedback, setFeedback] = useState("");
 
@@ -28,12 +45,24 @@ export default function Indec() {
   }
 
   useEffect(() => {
-    async function getIndec() {
-      setRecords(await api.indec());
-      console.log(await api.indec());
-    }
-    getIndec();
-  }, []);
+    let active = true;
+
+    api
+      .indec(year)
+      .then((data) => {
+        if (active) setRecords(data);
+      })
+      .catch((requestError) => {
+        if (active) setError(requestError.message);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [year]);
 
   return (
     <main id="indec">
@@ -52,8 +81,16 @@ export default function Indec() {
           <label className="indec__year">
             <img src={clockIcon} alt="" />
             <span className="sr-only">Año</span>
-            <select value={year} onChange={(event) => setYear(event.target.value)}>
-              {[...new Set(["2024", "2025", "2026", ...records.map((record) => record.year)])]
+            <select
+              value={year}
+              onChange={(event) => {
+                setRecords([]);
+                setError("");
+                setLoading(true);
+                setYear(event.target.value);
+              }}
+            >
+              {[...new Set(["2024", "2025", "2026", String(new Date().getFullYear())])]
                 .sort()
                 .map((item) => (
                   <option key={item}>{item}</option>
@@ -71,11 +108,13 @@ export default function Indec() {
         </div>
         {records.map((record) => (
           <div className="indec__row" key={record.id}>
-            <strong>{record.month}</strong>
-            <b>{record.percentage}%</b>
+            <strong>{record.month ?? monthNames[record.mes - 1]}</strong>
+            <b>{record.porcentaje ?? record.percentage}%</b>
           </div>
         ))}
-        {!records.length && (
+        {loading && <p className="indec__empty">Cargando porcentajes...</p>}
+        {!loading && error && <p className="indec__empty">{error}</p>}
+        {!loading && !error && !records.length && (
           <p className="indec__empty">Todavía no hay porcentajes cargados para este año.</p>
         )}
       </section>

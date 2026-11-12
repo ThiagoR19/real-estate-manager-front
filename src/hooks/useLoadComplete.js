@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 
-import wait from "../utils/wait";
-
 // Si algo nunca termina (red caída, pestaña en segundo plano), el skeleton igual se va
 const LIMITE_ESPERA = 8000;
 
@@ -34,15 +32,18 @@ export default function useLoadComplete(ref, extraImages = []) {
       return waitForImage(img);
     });
 
-    Promise.race([
-      Promise.all([document.fonts.ready, ...visibleImages, ...backgroundImages]),
-      wait(LIMITE_ESPERA),
-    ]).then(() => {
+    const timeout = window.setTimeout(() => {
+      if (activo) setLoaded(true);
+    }, LIMITE_ESPERA);
+
+    Promise.all([document.fonts.ready, ...visibleImages, ...backgroundImages]).then(() => {
+      window.clearTimeout(timeout);
       if (activo) setLoaded(true);
     });
 
     return () => {
       activo = false;
+      window.clearTimeout(timeout);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
