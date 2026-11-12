@@ -4,7 +4,7 @@ export async function agents() {
   const rows = [];
   let page = 1;
   while (true) {
-    const result = await request(`/agentes?page=${page}&limit=100`);
+    const result = await request(`/agentes?page=${page}&limit=10`);
     rows.push(...result.data);
     if (page >= (result.paginacion?.paginas || 1)) break;
     page += 1;

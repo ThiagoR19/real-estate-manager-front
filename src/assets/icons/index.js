@@ -68,3 +68,5 @@ export { default as walletIcon } from "./wallet.svg";
 export { default as warningToastIcon } from "./warning-toast.svg";
 export { default as starIcon } from "./star.svg";
 export { default as whatsappIcon } from "./whatsapp.svg";
+export {default as building} from "./building.svg"
+export {default as editSuper} from "./edit-superAdmin.svg"

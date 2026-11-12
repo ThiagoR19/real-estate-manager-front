@@ -14,7 +14,7 @@ export async function properties() {
   let page = 1;
   let hasNext = true;
   while (hasNext) {
-    const result = await request(`/propiedades?page=${page}&limit=100`);
+    const result = await request(`/propiedades?page=${page}&limit=12`);
     items.push(...result.data);
     hasNext = page < (result.paginacion?.paginas || 1);
     page++;

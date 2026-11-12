@@ -8,6 +8,7 @@ import * as tenantService from "./tenants.js";
 import * as indecService from "./indec.js";
 import * as contVisitaService from "./contVisita.js";
 import * as visitService from "./visits.js";
+import * as agencyService from "./agencies.js";
 
 export const api = {
   agents: agentService.agents,
@@ -54,4 +55,15 @@ export const api = {
   dashboard: dashboardService.getDashboard,
   contVisita: contVisitaService.sumarVisita,
   visits: visitService.visits,
+  agencies: agencyService.agencies,
+  allAdmins: agencyService.allAdmins,
+  allAgents: agencyService.allAgents,
+  superAdminPanel: agencyService.superAdminPanel,
+  createAgency: agencyService.crearInmobi,
+  deleteAgency: agencyService.eliminarInmobi,
+  deleteAdmin: agencyService.eliminarAdmin,
+  renameAgency: agencyService.renombrarInmobi,
+  createAdmin: agencyService.crearAdmin,
+  adminToAgent: agencyService.adminAAgente,
+  agentToAdmin: agencyService.agenteAAdmin,
 };
