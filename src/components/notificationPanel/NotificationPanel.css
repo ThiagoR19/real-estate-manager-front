@@ -94,6 +94,27 @@
   color: var(--azulOsc);
 }
 
+.NotificationPanel__marcar:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.NotificationPanel__error {
+  margin: 8px 24px;
+  font-size: 13px;
+  color: var(--rojoOscInfo);
+}
+
+.NotificationPanel__error button {
+  border: 0;
+  padding: 0;
+  font: inherit;
+  text-decoration: underline;
+  color: inherit;
+  background: none;
+  cursor: pointer;
+}
+
 /* Filtros */
 
 .NotificationPanel__filtros {

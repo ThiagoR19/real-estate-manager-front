@@ -14,29 +14,25 @@ const filtros = [
 ];
 
 export default function NotificationPanel({
-  notificaciones: iniciales = [],
+  notificaciones = [],
+  cargando = false,
+  error = "",
+  onReintentar,
+  onMarcarLeida,
+  onMarcarTodas,
   onCerrar,
   className = "",
 }) {
-  const [notificaciones, setNotificationes] = useState(iniciales);
   const [filtro, setFiltro] = useState("todas");
   // id → si estaba sin leer al expandirla (esas se ven en azul oscuro; las ya leídas siguen en gris)
   const [expandidas, setExpandidas] = useState(() => new Map());
 
   const visibles = notificaciones.filter(filtros.find((f) => f.id === filtro).cumple);
 
-  const marcarLeida = (id) => {
-    setNotificationes((lista) => lista.map((n) => (n.id === id ? { ...n, leida: true } : n)));
-  };
-
-  const marcarTodas = () => {
-    setNotificationes((lista) => lista.map((n) => ({ ...n, leida: true })));
-  };
-
   // Al expandir una notificación pasa a estar leída
   const alternar = (id) => {
     const abrir = !expandidas.has(id);
-    const sinLeer = !notificaciones.find((n) => n.id === id).leida;
+    const sinLeer = !notificaciones.find((n) => n.id === id)?.leida;
 
     setExpandidas((actuales) => {
       const nuevas = new Map(actuales);
@@ -44,7 +40,7 @@ export default function NotificationPanel({
       return nuevas;
     });
 
-    if (abrir) marcarLeida(id);
+    if (abrir && sinLeer) onMarcarLeida?.(id);
   };
 
   return (
@@ -67,9 +63,20 @@ export default function NotificationPanel({
         </button>
       </header>
 
-      <button type="button" className="NotificationPanel__marcar" onClick={marcarTodas}>
+      <button
+        type="button"
+        className="NotificationPanel__marcar"
+        onClick={onMarcarTodas}
+        disabled={!notificaciones.some((item) => !item.leida)}
+      >
         Marcar todo como leído
       </button>
+
+      {error && (
+        <p className="NotificationPanel__error" role="alert">
+          {error} {onReintentar && <button type="button" onClick={onReintentar}>Reintentar</button>}
+        </p>
+      )}
 
       <div className="NotificationPanel__filtros" role="group" aria-label="Filtrar notificaciones">
         {filtros.map(({ id, texto, cumple }) => (
@@ -90,7 +97,9 @@ export default function NotificationPanel({
 
       <div className="NotificationPanel__lista">
         {visibles.length === 0 ? (
-          <p className="NotificationPanel__vacio">No hay notificaciones para mostrar</p>
+          <p className="NotificationPanel__vacio">
+            {cargando ? "Cargando notificaciones..." : error ? "No se pudieron cargar las notificaciones." : "No hay notificaciones para mostrar"}
+          </p>
         ) : (
           visibles.map((notificacion) => (
             <Notification

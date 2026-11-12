@@ -73,6 +73,40 @@ export const secondaryItems = [
 
 export const allItems = [...primaryItems, ...secondaryItems];
 
+const navigationRoles = {
+  "/dashboard": [2],
+  "/tenant-dashboard": [5],
+  "/agent-dashboard": [3],
+  "/owner-dashboard": [4],
+  "/my-properties": [4],
+  "/collections": [2, 3, 4],
+  "/payments-collections": [2, 3],
+  "/indec": [2, 3],
+  "/super-admin": [1],
+  "/owners": [2, 3],
+  "/tenant": [2, 3],
+  "/professional": [2, 3],
+  "/schedule": [2, 3],
+  "/chat": [2, 3, 4, 5],
+  "/properties": [2, 3],
+  "/reports-agent": [2, 3, 4, 5],
+  "/payments": [2, 3, 5],
+  "/agents": [2],
+  "/agency": [2],
+  "/profile": [1, 2, 3, 4, 5],
+  "/terms": [1, 2, 3, 4, 5],
+  "/about-us": [1, 2, 3, 4, 5],
+};
+
+export function navigationItemsForRole(role) {
+  const roleId = Number(role);
+  const canSee = ({ href }) => roleId === 1 || navigationRoles[href]?.includes(roleId);
+  return {
+    primary: primaryItems.filter(canSee),
+    secondary: secondaryItems.filter(canSee),
+  };
+}
+
 export const pageLabels = {
   "/super-admin-dashboard": "Panel administrativo",
   "/property": "Propiedad",

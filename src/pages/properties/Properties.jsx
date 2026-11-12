@@ -7,6 +7,9 @@ import {
   DropdownSelect,
   Button,
   PropertyCardSimple,
+  Pagination,
+  usePagination,
+  PROPERTY_PAGE_SIZE,
 } from "../../components";
 import { api } from "../../services/api.js";
 import "./Properties.css";
@@ -76,14 +79,20 @@ export default function Properties() {
   const [error, setError] = useState("");
   const [feedback, setFeedback] = useState("");
   const [search, setSearch] = useState("");
+  const filterItems = buildFilterOptions(catalogs, properties);
+  const visibleProperties = properties.filter((property) =>
+    matchesFilters(property, filters, search),
+  );
+  const { page, totalPages, pageItems, setPage, resetPage } = usePagination(visibleProperties, PROPERTY_PAGE_SIZE);
 
   useEffect(() => {
     const onSearch = (event) => {
       setSearch(String(event.detail || "").toLocaleLowerCase("es-AR"));
+      setPage(1);
     };
     window.addEventListener("property-search", onSearch);
     return () => window.removeEventListener("property-search", onSearch);
-  }, []);
+  }, [setPage]);
 
   useEffect(() => {
     let active = true;
@@ -140,11 +149,6 @@ export default function Properties() {
     }
   }
 
-  const filterItems = buildFilterOptions(catalogs, properties);
-  const visibleProperties = properties.filter((property) =>
-    matchesFilters(property, filters, search),
-  );
-
   return (
     <main id="properties">
       <section className="properties__top" aria-label="Encabezado y filtros de propiedades">
@@ -158,7 +162,7 @@ export default function Properties() {
               key={filter.id}
               filter={filter}
               value={filters[filter.id]}
-              onChange={(value) => setFilters((current) => ({ ...current, [filter.id]: value }))}
+              onChange={(value) => { setFilters((current) => ({ ...current, [filter.id]: value })); resetPage(); }}
             />
           ))}
           <Button
@@ -187,7 +191,7 @@ export default function Properties() {
       ) : (
         <section className="properties__grid" aria-label="Listado de propiedades">
           {visibleProperties.length ? (
-            visibleProperties.map((property) => (
+            pageItems.map((property) => (
               <PropertyCardSimple
                 key={property.id}
                 property={property}
@@ -203,6 +207,7 @@ export default function Properties() {
           )}
         </section>
       )}
+      {!loading && <Pagination page={page} totalPages={totalPages} total={visibleProperties.length} onPageChange={setPage} pageSize={PROPERTY_PAGE_SIZE} />}
 
       <p className="properties__feedback" role="status">
         {feedback}

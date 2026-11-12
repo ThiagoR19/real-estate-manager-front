@@ -33,16 +33,28 @@
   border-radius: 50%;
 }
 
-.Notification__punto--vencimiento {
+.Notification__punto--contrato {
   background-color: var(--rojoOscInfo);
 }
 
 .Notification__punto--visita {
+  background-color: #7c3aed;
+}
+
+.Notification__punto--mantenimiento {
+  background-color: var(--naranjOscInfo);
+}
+
+.Notification__punto--mensaje {
   background-color: var(--azulOscInfo);
 }
 
-.Notification__punto--reporte {
-  background-color: var(--naranjOscInfo);
+.Notification__punto--pago {
+  background-color: #188751;
+}
+
+.Notification__punto--otro {
+  background-color: var(--azulGris);
 }
 
 .Notification__tiempo {
@@ -72,6 +84,7 @@
   overflow: hidden;
   font-size: calc(14px * var(--noti-escala));
   line-height: 1.3;
+  white-space: pre-line;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }

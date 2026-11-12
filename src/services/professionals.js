@@ -5,7 +5,7 @@ export async function professionals() {
   let page = 1;
   let hasNext = true;
   while (hasNext) {
-    const result = await request(`/profesionales?page=${page}&limit=100`);
+    const result = await request(`/profesionales?page=${page}&limit=10`);
     items.push(...(Array.isArray(result.data) ? result.data : []));
     hasNext = page < (result.paginacion?.paginas || 1);
     page++;

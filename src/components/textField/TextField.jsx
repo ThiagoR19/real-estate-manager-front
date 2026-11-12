@@ -15,6 +15,12 @@ export default function TextField({
   conOjo = false,
   className = "",
   children,
+  required = false,
+  minLength,
+  maxLength,
+  inputMode,
+  pattern,
+  defaultValue,
 }) {
   const [mostrar, setMostrar] = useState(false);
 
@@ -36,6 +42,12 @@ export default function TextField({
           className={`TextField__input ${conOjo ? "TextField__input--ojo" : ""}`}
           placeholder={placeholder}
           autoComplete={autoComplete}
+          required={required}
+          minLength={minLength}
+          maxLength={maxLength}
+          inputMode={inputMode}
+          pattern={pattern}
+          defaultValue={defaultValue}
         />
 
         {conOjo && (

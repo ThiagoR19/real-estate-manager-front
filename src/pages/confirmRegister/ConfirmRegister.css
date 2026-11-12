@@ -169,3 +169,5 @@
     line-height: 2;
   }
 }
+.confirm-register__error { margin: 12px 0; color: #a52332; font-size: 13px; }
+.confirm-register__back { align-self: flex-start; border: 0; background: transparent; color: #1766a6; font: inherit; cursor: pointer; }

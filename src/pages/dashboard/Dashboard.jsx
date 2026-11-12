@@ -73,8 +73,8 @@ export default function Dashboard() {
       .catch((causa) => setError(causa.message))
       .finally(() => setLoading(false));
   }, []);
+  if (error) return <main className="dashboard-page"><p role="alert">{error}</p></main>;
   if (!loading) {
-    console.log(datos)
     return (
       <main className="dashboard-page">
         <div className="dashboard-page__background" aria-hidden="true" />

@@ -1,58 +1,51 @@
+import { useState } from "react";
 import { useLocation } from "wouter";
-
 import { Skeleton, ImagePanel, TextField, PrimaryButton, LegalText } from "../../components";
-
+import { api } from "../../services/api.js";
+import { clearRegistrationDraft, getRegistrationDraft } from "../../services/registrationDraft.js";
 import addressCardIcon from "../../assets/icons/address-card-regular-full.svg";
 import background from "../../assets/loginFondo.png";
-
 import "./ConfirmRegister.css";
 
 export default function ConfirmRegister() {
   const [, navigate] = useLocation();
-  function handleSubmit(event) {
+  const [status, setStatus] = useState("inactivo");
+  const [error, setError] = useState("");
+  const draft = getRegistrationDraft();
+
+  async function handleSubmit(event) {
     event.preventDefault();
-    navigate("/login");
+    if (!draft) return;
+    const dni = String(new FormData(event.currentTarget).get("authorized-id") || "").replace(/\D/g, "");
+    if (!/^\d{7,8}$/.test(dni)) {
+      setError("Ingresá un DNI válido de 7 u 8 números.");
+      return;
+    }
+    setStatus("enviando");
+    setError("");
+    try {
+      const session = await api.register({ ...draft, dni });
+      api.saveSession(session);
+      clearRegistrationDraft();
+      setStatus("listo");
+      const role = session.usuario.rol;
+      window.location.assign(role === 4 ? "/owner-dashboard" : role === 5 ? "/tenant-dashboard" : "/properties");
+    } catch (cause) {
+      setError(cause.message);
+      setStatus("inactivo");
+    }
   }
 
   return (
     <Skeleton as="main" className="confirm-register" fondos={[background]}>
       <ImagePanel conBrand className="confirm-register__background" />
-
       <section className="confirm-register__card" aria-labelledby="confirm-register-title">
         <form className="confirm-register__form" onSubmit={handleSubmit}>
-          <header className="confirm-register__header">
-            <h1 id="confirm-register-title">Verificación</h1>
-            <p>
-              Ingrese el DNI que está como titular en el contrato para poder acceder a administrar
-              del inmueble
-            </p>
-          </header>
-
-          <TextField
-            id="authorized-id"
-            label="DNI autorizado"
-            placeholder="DNI"
-            icono={addressCardIcon}
-            autoComplete="off"
-            className="confirm-register__field"
-          >
-            <small>
-              Solo tiene 3 intentos, si los falla pídale un nuevo enlace a la inmobiliaria
-            </small>
-          </TextField>
-
-          <PrimaryButton texto="Verificar" className="confirm-register__submit" />
+          <header className="confirm-register__header"><h1 id="confirm-register-title">Verificación</h1><p>Ingresá el DNI autorizado por la inmobiliaria para activar tu cuenta.</p></header>
+          {draft ? <><TextField id="authorized-id" label="DNI autorizado" placeholder="DNI sin puntos" icono={addressCardIcon} autoComplete="off" inputMode="numeric" required className="confirm-register__field"><small>Tenés 3 intentos. Si se agotan, solicitá una nueva invitación.</small></TextField>{error && <p className="confirm-register__error" role="alert">{error}</p>}<PrimaryButton texto="Verificar y activar" textoEnviando="Verificando" estado={status} className="confirm-register__submit" /></> : <p className="confirm-register__error">Comenzá el registro desde tu enlace de invitación. Si recargaste esta página, volvé a ingresar tus datos.</p>}
+          {!draft && <button type="button" className="confirm-register__back" onClick={() => navigate("/register")}>Volver al registro</button>}
         </form>
-
-        <footer className="confirm-register__footer">
-          <LegalText />
-          <p>
-            ¿Ya tienes una cuenta?{" "}
-            <button type="button" onClick={() => navigate("/login")}>
-              Inicia sesión
-            </button>
-          </p>
-        </footer>
+        <footer className="confirm-register__footer"><LegalText /><p>¿Ya tienes una cuenta? <button type="button" onClick={() => navigate("/login")}>Inicia sesión</button></p></footer>
       </section>
     </Skeleton>
   );

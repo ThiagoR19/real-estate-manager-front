@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { buildingColumnsIcon, penIcon, plusIcon, trashCanIcon } from "../../assets/icons";
-import { SummaryPill, Button, AgencyModal } from "../../components";
+import { SummaryPill, Button, AgencyModal, Pagination, usePagination } from "../../components";
 import "./SuperAdmin.css";
 
 function BuildingIcon() {
@@ -38,6 +38,7 @@ export default function SuperAdmin() {
   const [agencies, setAgencies] = useState(initialAgencies);
   const [expanded, setExpanded] = useState({ "Inmobiliaria S&T": true });
   const [modal, setModal] = useState(null);
+  const { page, totalPages, pageItems, setPage } = usePagination(agencies);
 
   function saveAgency(name) {
     if (modal.mode === "edit") {
@@ -135,7 +136,7 @@ export default function SuperAdmin() {
           </div>
         </div>
         <section className="super-admin__agency-list" aria-label="Inmobiliarias registradas">
-          {agencies.map((agency) => (
+          {pageItems.map((agency) => (
             <article
               className={`super-admin__agency${expanded[agency.name] ? " is-expanded" : ""}`}
               key={agency.name}
@@ -227,6 +228,7 @@ export default function SuperAdmin() {
               )}
             </article>
           ))}
+          <Pagination page={page} totalPages={totalPages} total={agencies.length} onPageChange={setPage} />
         </section>
       </section>
       {modal && (

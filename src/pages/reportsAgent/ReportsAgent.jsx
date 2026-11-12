@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import reportReference from "../../assets/reports-reference.png";
-import { ReportModal } from "../../components";
+import { ReportModal, Pagination, usePagination, PAGE_SIZE } from "../../components";
 import { houseIcon, relojHomeIcon } from "../../assets/icons";
 import "./ReportsAgent.css";
 
@@ -85,11 +85,12 @@ export default function ReportsAgent({ allowCreate = false }) {
       return matchesQuery && matchesProperty;
     });
   }, [query, reportItems, selectedProperty]);
+  const { page, totalPages, pageItems, setPage, resetPage } = usePagination(visibleReports);
 
   const properties = [...new Set(reportItems.map(({ location }) => location))];
 
   const activeReport =
-    visibleReports.find(({ id }) => id === activeReportId) ?? visibleReports[0] ?? reportItems[0];
+    pageItems.find(({ id }) => id === activeReportId) ?? pageItems[0] ?? reportItems[0];
   const photos = activeReport.photos?.length ? activeReport.photos : [{}, {}, {}];
   const selectedPhoto = Math.min(selectedPhotos[activeReport.id] ?? 0, photos.length - 1);
 
@@ -98,7 +99,7 @@ export default function ReportsAgent({ allowCreate = false }) {
     const thumbnail = track?.children[selectedPhoto];
     if (thumbnail)
       track.scrollTo({ left: thumbnail.offsetLeft - track.offsetLeft, behavior: "smooth" });
-  }, [activeReportId, selectedPhoto]);
+  }, [activeReport.id, selectedPhoto]);
 
   function selectPhoto(index) {
     setSelectedPhotos((current) => ({ ...current, [activeReport.id]: index }));
@@ -121,6 +122,9 @@ export default function ReportsAgent({ allowCreate = false }) {
       },
     ]);
     setActiveReportId(id);
+    setQuery("");
+    setSelectedProperty("Todas las propiedades");
+    setPage(Math.ceil((reportItems.length + 1) / PAGE_SIZE));
     setCreateOpen(false);
   }
 
@@ -149,7 +153,7 @@ export default function ReportsAgent({ allowCreate = false }) {
             <input
               type="search"
               value={query}
-              onChange={(event) => setQuery(event.target.value)}
+              onChange={(event) => { setQuery(event.target.value); resetPage(); }}
               placeholder="Buscar contacto..."
               aria-label="Buscar contacto"
             />
@@ -162,7 +166,7 @@ export default function ReportsAgent({ allowCreate = false }) {
               </span>
               <select
                 value={selectedProperty}
-                onChange={(event) => setSelectedProperty(event.target.value)}
+                onChange={(event) => { setSelectedProperty(event.target.value); resetPage(); }}
                 aria-label="Filtrar reportes por propiedad"
               >
                 <option>Todas las propiedades</option>
@@ -177,13 +181,13 @@ export default function ReportsAgent({ allowCreate = false }) {
           )}
 
           <div className="reports__list">
-            {visibleReports.map((report, index) => (
+            {pageItems.map((report, index) => (
               <button
                 key={report.id}
-                className={`reports__list-item ${activeReportId === report.id ? "is-active" : ""}`}
+                className={`reports__list-item ${activeReport.id === report.id ? "is-active" : ""}`}
                 type="button"
                 onClick={() => setActiveReportId(report.id)}
-                aria-pressed={activeReportId === report.id}
+                aria-pressed={activeReport.id === report.id}
               >
                 <ReportPhoto
                   className="reports__list-photo"
@@ -211,6 +215,7 @@ export default function ReportsAgent({ allowCreate = false }) {
               <p className="reports__empty">No se encontraron reportes.</p>
             )}
           </div>
+          <Pagination page={page} totalPages={totalPages} total={visibleReports.length} onPageChange={setPage} />
         </aside>
 
         <section className="reports__detail-panel" aria-labelledby="report-detail-title">

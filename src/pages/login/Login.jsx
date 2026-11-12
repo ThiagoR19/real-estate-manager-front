@@ -66,6 +66,7 @@ export default function Login() {
             placeholder="Tu usuario"
             icono={mailIcon}
             autoComplete="username"
+            required
             className="login__field"
           />
 
@@ -76,6 +77,7 @@ export default function Login() {
             placeholder="Ingresa tu contraseña"
             icono={lockIcon}
             autoComplete="current-password"
+            required
             conOjo
             className="login__field Login-pass"
           ></TextField>

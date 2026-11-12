@@ -1,344 +1,176 @@
-import { useMemo, useState } from "react";
-import {
-  buildingColumnsIcon,
-  magnifyingGlassIcon,
-  paperPlaneIcon,
-  userIcon,
-} from "../../assets/icons";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { buildingColumnsIcon, magnifyingGlassIcon, paperPlaneIcon, userIcon } from "../../assets/icons";
 import DropdownSelect from "../../components/select/DropdownSelect";
+import { api } from "../../services/api.js";
+import { getSession } from "../../services/login.js";
 import agiLogo from "../../assets/icons/agiLogo.svg";
 import "./Chat.css";
 
-const conversations = [
-  {
-    id: "administracion",
-    name: "Administración AGI",
-    detail: "Bielke 454 - Depto. 3B",
-    kind: "administration",
-    status: "En línea",
-    dayLabel: "Hoy",
-    messages: [
-      {
-        id: "a-1",
-        side: "incoming",
-        time: "09:12",
-        text: "¡Buen día! Te escribimos por la visita al departamento de Bielke 454.",
-      },
-      {
-        id: "a-2",
-        side: "outgoing",
-        time: "09:18",
-        text: "Hola, sí. ¿Sigue disponible para el jueves por la tarde?",
-      },
-      {
-        id: "a-3",
-        side: "incoming",
-        time: "09:21",
-        text: "Sí, tenemos disponibilidad a las 16:30. La propiedad tiene 2 ambientes, balcón y cochera.",
-      },
-      {
-        id: "a-4",
-        side: "outgoing",
-        time: "09:27",
-        text: "Perfecto, me interesa. ¿Qué documentación necesito llevar?",
-      },
-      {
-        id: "a-5",
-        side: "incoming",
-        time: "09:31",
-        text: "Con tu DNI alcanza para la visita. Si te gusta, después te compartimos los requisitos para avanzar con la reserva.",
-      },
-      {
-        id: "a-6",
-        side: "outgoing",
-        time: "09:35",
-        text: "¡Genial! Confirmo entonces para el jueves a las 16:30. Gracias 😊",
-      },
-    ],
-  },
-  {
-    id: "pablo",
-    name: "Agente Pablo",
-    detail: "Equipo comercial · Palermo",
-    kind: "agent",
-    status: "En línea",
-    dayLabel: "Ayer",
-    messages: [
-      {
-        id: "p-1",
-        side: "incoming",
-        time: "Ayer",
-        text: "Hola, ¿cómo estás? Te paso una opción que puede encajar con lo que buscás.",
-      },
-      {
-        id: "p-2",
-        side: "incoming",
-        time: "Ayer",
-        text: "Es un 2 ambientes luminoso en Palermo, cerca del subte y con expensas bajas. ¿Querés que coordinemos una visita?",
-      },
-      {
-        id: "p-3",
-        side: "outgoing",
-        time: "Ayer",
-        text: "¡Hola Pablo! Sí, me interesa. ¿Podría ser el viernes después de las 17?",
-      },
-    ],
-  },
-  {
-    id: "juan",
-    name: "Agente Juan",
-    detail: "Equipo comercial · Caballito",
-    kind: "agent",
-    status: "Visto recientemente",
-    dayLabel: "Ayer",
-    messages: [
-      {
-        id: "j-1",
-        side: "incoming",
-        time: "Ayer",
-        text: "Te confirmo que recibimos la documentación para la propiedad de Av. Rivadavia.",
-      },
-      {
-        id: "j-2",
-        side: "outgoing",
-        time: "Ayer",
-        text: "¡Muchas gracias! Quedo atento a cualquier novedad.",
-      },
-      {
-        id: "j-3",
-        side: "incoming",
-        time: "Ayer",
-        text: "Ya la estamos revisando. Te aviso apenas tenga una respuesta.",
-      },
-    ],
-  },
-  {
-    id: "batracio",
-    name: "Agente Batracio",
-    detail: "Equipo comercial · Villa Crespo",
-    kind: "agent",
-    status: "En línea",
-    dayLabel: "Martes",
-    messages: [
-      {
-        id: "b-1",
-        side: "incoming",
-        time: "Mar",
-        text: "¡Buenas! La propietaria confirmó que acepta mascotas 🐾",
-      },
-      {
-        id: "b-2",
-        side: "outgoing",
-        time: "Mar",
-        text: "¡Qué buena noticia! ¿Podemos ver el departamento esta semana?",
-      },
-      {
-        id: "b-3",
-        side: "incoming",
-        time: "Mar",
-        text: "Sí, tengo un lugar el miércoles a las 18. ¿Te sirve?",
-      },
-    ],
-  },
-  {
-    id: "san-martin",
-    name: "Agente San Martín",
-    detail: "Equipo comercial · Belgrano",
-    kind: "agent",
-    status: "Visto recientemente",
-    dayLabel: "Lunes",
-    messages: [
-      {
-        id: "s-1",
-        side: "incoming",
-        time: "Lun",
-        text: "Te comparto el plano y las medidas del living que me pediste.",
-      },
-      {
-        id: "s-2",
-        side: "outgoing",
-        time: "Lun",
-        text: "¡Gracias! El espacio se ve muy bien. ¿Tiene orientación al frente?",
-      },
-      {
-        id: "s-3",
-        side: "incoming",
-        time: "Lun",
-        text: "Así es, da al frente y recibe luz natural durante toda la mañana.",
-      },
-    ],
-  },
-];
+const personName = (person) => [person.nombre, person.apellido].filter(Boolean).join(" ") || "Usuario";
+const displayTime = (date) => date ? new Date(date).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" }) : "";
 
 function ConversationAvatar({ kind, className = "" }) {
   const isAdministration = kind === "administration";
   return (
-    <span
-      className={`chat__avatar ${isAdministration ? "chat__avatar--agi" : "chat__avatar--agent"} ${className}`}
-      aria-hidden="true"
-    >
+    <span className={`chat__avatar ${isAdministration ? "chat__avatar--agi" : "chat__avatar--agent"} ${className}`} aria-hidden="true">
       <img src={isAdministration ? agiLogo : userIcon} alt="" />
     </span>
   );
 }
 
-function getLastMessage(conversation) {
-  return conversation.messages.at(-1)?.text ?? "Todavía no hay mensajes";
-}
-
 export default function Chat() {
-  const [selectedId, setSelectedId] = useState(conversations[0].id);
+  const [conversations, setConversations] = useState([]);
+  const [contacts, setContacts] = useState([]);
+  const [selectedId, setSelectedId] = useState(null);
+  const [messages, setMessages] = useState([]);
   const [search, setSearch] = useState("");
   const [draft, setDraft] = useState("");
-  const [sentMessages, setSentMessages] = useState({});
+  const [files, setFiles] = useState([]);
+  const [newContactId, setNewContactId] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
+  const [hasMore, setHasMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const endRef = useRef(null);
+  const atBottomRef = useRef(true);
+  const fileRef = useRef(null);
+  const session = getSession();
 
-  const selectedConversation =
-    conversations.find(({ id }) => id === selectedId) ?? conversations[0];
-  const conversationOptions = conversations.map(({ name }) => name);
-  const filteredConversations = useMemo(() => {
-    const normalizedSearch = search.trim().toLocaleLowerCase();
-    if (!normalizedSearch) return conversations;
-    return conversations.filter(({ name, detail }) =>
-      `${name} ${detail}`.toLocaleLowerCase().includes(normalizedSearch),
-    );
-  }, [search]);
-
-  const visibleMessages = [
-    ...selectedConversation.messages,
-    ...(sentMessages[selectedConversation.id] ?? []),
-  ];
-
-  function selectConversation(id) {
-    setSelectedId(id);
-    setDraft("");
+  async function refreshConversations() {
+    const rows = await api.conversations();
+    setConversations(rows);
+    setSelectedId((current) => current === 0 ? 0 : current && rows.some((row) => row.id === current) ? current : rows[0]?.id ?? null);
   }
 
-  function sendMessage(event) {
-    event.preventDefault();
-    const text = draft.trim();
-    if (!text) return;
+  useEffect(() => {
+    let active = true;
+    Promise.all([api.conversations(), api.chatContacts()])
+      .then(([rows, people]) => {
+        if (!active) return;
+        setConversations(rows);
+        setContacts(people);
+        setSelectedId(rows[0]?.id ?? null);
+      })
+      .catch((cause) => { if (active) setError(cause.message); })
+      .finally(() => { if (active) setLoading(false); });
+    const interval = window.setInterval(() => {
+      api.conversations().then((rows) => {
+        if (active) {
+          setConversations(rows);
+          setSelectedId((current) => current === 0 ? 0 : current && rows.some((row) => row.id === current) ? current : rows[0]?.id ?? null);
+        }
+      }).catch(() => {});
+    }, 10000);
+    return () => { active = false; window.clearInterval(interval); };
+  }, []);
 
-    setSentMessages((current) => ({
-      ...current,
-      [selectedConversation.id]: [
-        ...(current[selectedConversation.id] ?? []),
-        { id: `${selectedConversation.id}-${Date.now()}`, side: "outgoing", time: "Ahora", text },
-      ],
-    }));
-    setDraft("");
+  useEffect(() => {
+    if (!selectedId) return undefined;
+    let active = true;
+    async function refresh() {
+      try {
+        const result = await api.chatMessages(selectedId);
+        if (!active) return;
+        const recent = [...result.data].reverse();
+        setMessages((current) => {
+          const recentIds = new Set(recent.map((message) => message.id));
+          return [...current.filter((message) => !recentIds.has(message.id)), ...recent];
+        });
+        setHasMore(page < (result.paginacion?.paginas || 1));
+        await api.markChatRead(selectedId);
+      } catch (cause) { if (active) setError(cause.message); }
+    }
+    refresh();
+    const interval = window.setInterval(refresh, 5000);
+    return () => { active = false; window.clearInterval(interval); };
+  }, [selectedId, page]);
+
+  useEffect(() => { if (atBottomRef.current) endRef.current?.scrollIntoView({ block: "end" }); }, [messages, selectedId]);
+
+  const selectedConversation = conversations.find(({ id }) => id === selectedId);
+  const filteredConversations = useMemo(() => {
+    const query = search.trim().toLocaleLowerCase("es-AR");
+    return conversations.filter((item) => personName(item).toLocaleLowerCase("es-AR").includes(query));
+  }, [conversations, search]);
+  const conversationOptions = conversations.map((item) => `${personName(item)} (#${item.id})`);
+  const kind = selectedConversation?.rol?.toLowerCase().includes("admin") ? "administration" : "agent";
+
+  async function loadMore() {
+    try {
+      const next = page + 1;
+      const result = await api.chatMessages(selectedId, next);
+      setMessages((current) => [...result.data.reverse(), ...current]);
+      setPage(next);
+      setHasMore(next < (result.paginacion?.paginas || 1));
+    } catch (cause) { setError(cause.message); }
+  }
+
+  async function sendMessage(event) {
+    event.preventDefault();
+    const content = draft.trim();
+    if ((!content && !files.length) || sending) return;
+    setSending(true);
+    atBottomRef.current = true;
+    setError("");
+    try {
+      if (selectedId) {
+        const message = await api.sendChatMessage(selectedId, content, files);
+        setMessages((current) => [...current, message]);
+      } else {
+        if (!newContactId || !content) throw new Error("Seleccioná un contacto y escribí un mensaje.");
+        const result = await api.startConversation(Number(newContactId), content);
+        await refreshConversations();
+        setSelectedId(result.conversacion.id);
+        setNewContactId("");
+      }
+      setDraft("");
+      setFiles([]);
+      if (fileRef.current) fileRef.current.value = "";
+      await refreshConversations();
+    } catch (cause) { setError(cause.message); }
+    finally { setSending(false); }
   }
 
   return (
     <main id="chat" className="chat-page">
-      <DropdownSelect
-        label="Conversación"
-        value={selectedConversation.name}
-        options={conversationOptions}
-        onChange={(name) =>
-          selectConversation(
-            conversations.find((conversation) => conversation.name === name)?.id ?? selectedId,
-          )
-        }
-        className="chat__mobile-select"
-        triggerClassName="chat__mobile-select-trigger"
-        chevronClassName="chat__mobile-select-chevron"
-        blurOnSelect
-      />
+      {conversations.length > 0 && (
+        <DropdownSelect label="Conversación" value={selectedConversation ? `${personName(selectedConversation)} (#${selectedId})` : ""}
+          options={conversationOptions} onChange={(name) => { atBottomRef.current = true; setMessages([]); setPage(1); setSelectedId(Number(name.match(/#(\d+)\)$/)?.[1])); }}
+          className="chat__mobile-select" triggerClassName="chat__mobile-select-trigger" chevronClassName="chat__mobile-select-chevron" blurOnSelect />
+      )}
+      <button className="chat__mobile-new" type="button" onClick={() => { atBottomRef.current = true; setSelectedId(0); setMessages([]); setPage(1); setDraft(""); }}>+ Nueva conversación</button>
       <div className="chat__layout">
         <aside className="chat__conversations" aria-label="Conversaciones">
-          <div className="chat__sidebar-heading">
-            <h1>Conversaciones</h1>
-            <span className="chat__total">{conversations.length}</span>
-          </div>
-          <label className="chat__search">
-            <img src={magnifyingGlassIcon} alt="" />
-            <input
-              type="search"
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Buscar conversación"
-              aria-label="Buscar conversación"
-            />
-          </label>
-
+          <div className="chat__sidebar-heading"><h1>Conversaciones</h1><span className="chat__total">{conversations.length}</span></div>
+          <label className="chat__search"><img src={magnifyingGlassIcon} alt="" /><input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar conversación" aria-label="Buscar conversación" /></label>
+          <button className="chat__new" type="button" onClick={() => { atBottomRef.current = true; setSelectedId(0); setMessages([]); setPage(1); setDraft(""); }}>+ Nueva conversación</button>
           <div className="chat__conversation-list" role="list">
             {filteredConversations.map((conversation) => (
-              <button
-                className={`chat__conversation${conversation.id === selectedId ? " is-selected" : ""}`}
-                key={conversation.id}
-                type="button"
-                onClick={() => selectConversation(conversation.id)}
-                aria-current={conversation.id === selectedId ? "page" : undefined}
-              >
-                <ConversationAvatar kind={conversation.kind} />
-                <span className="chat__conversation-copy">
-                  <span className="chat__conversation-name">{conversation.name}</span>
-                  <span className="chat__conversation-preview">{getLastMessage(conversation)}</span>
-                </span>
+              <button className={`chat__conversation${conversation.id === selectedId ? " is-selected" : ""}`} key={conversation.id} type="button" onClick={() => { atBottomRef.current = true; setSelectedId(conversation.id); setMessages([]); setPage(1); setDraft(""); }} aria-current={conversation.id === selectedId ? "page" : undefined}>
+                <ConversationAvatar kind={conversation.rol?.toLowerCase().includes("admin") ? "administration" : "agent"} />
+                <span className="chat__conversation-copy"><span className="chat__conversation-name">{personName(conversation)} {conversation.noLeidos > 0 && <strong>({conversation.noLeidos})</strong>}</span><span className="chat__conversation-preview">{conversation.ultimoMensaje || "Todavía no hay mensajes"}</span></span>
               </button>
             ))}
-            {filteredConversations.length === 0 && (
-              <p className="chat__empty-list">No se encontraron conversaciones.</p>
-            )}
+            {!loading && !filteredConversations.length && <p className="chat__empty-list">No hay conversaciones para mostrar.</p>}
           </div>
-          <div className="chat__sidebar-note">
-            <img src={buildingColumnsIcon} alt="" />
-            <span>Tu equipo, siempre cerca.</span>
-          </div>
+          <div className="chat__sidebar-note"><img src={buildingColumnsIcon} alt="" /><span>Tu equipo, siempre cerca.</span></div>
         </aside>
-
         <section className="chat__thread" aria-labelledby="chat-thread-title">
-          <header className="chat__thread-header">
-            <ConversationAvatar kind={selectedConversation.kind} className="chat__avatar--header" />
-            <div className="chat__thread-identity">
-              <h2 id="chat-thread-title">{selectedConversation.name}</h2>
-              <p>{selectedConversation.detail}</p>
-            </div>
-          </header>
-
-          <div
-            className="chat__messages"
-            aria-live="polite"
-            aria-label={`Mensajes con ${selectedConversation.name}`}
-          >
-            <div className="chat__day-divider">
-              <span>{selectedConversation.dayLabel}</span>
-            </div>
-            {visibleMessages.length === 0 ? (
-              <p className="chat__empty-thread">Todavía no hay mensajes en esta conversación.</p>
-            ) : (
-              visibleMessages.map((message) => (
-                <div className={`chat__message chat__message--${message.side}`} key={message.id}>
-                  {message.side === "incoming" && (
-                    <ConversationAvatar
-                      kind={selectedConversation.kind}
-                      className="chat__avatar--message"
-                    />
-                  )}
-                  <div className="chat__message-content">
-                    <div
-                      className={`chat__bubble${message.side === "incoming" ? " chat__bubble--incoming" : " chat__bubble--outgoing"}`}
-                    >
-                      <span>{message.text}</span>
-                    </div>
-                    <time className="chat__message-time">{message.time}</time>
-                  </div>
-                </div>
-              ))
-            )}
+          <header className="chat__thread-header"><ConversationAvatar kind={kind} className="chat__avatar--header" /><div className="chat__thread-identity"><h2 id="chat-thread-title">{selectedConversation ? personName(selectedConversation) : "Nueva conversación"}</h2><p>{selectedConversation?.rol || "Elegí un contacto para comenzar"}</p></div></header>
+          {error && <p className="chat__error" role="alert">{error}</p>}
+          {!selectedId && <label className="chat__contact-picker">Contacto <select value={newContactId} onChange={(event) => setNewContactId(event.target.value)}><option value="">Seleccioná un contacto</option>{contacts.map((contact) => <option value={contact.idUsuario} key={contact.idUsuario}>{personName(contact)} · {contact.rol}</option>)}</select></label>}
+          <div className="chat__messages" aria-live="polite" aria-label={selectedConversation ? `Mensajes con ${personName(selectedConversation)}` : "Nueva conversación"} onScroll={(event) => { const node = event.currentTarget; atBottomRef.current = node.scrollHeight - node.scrollTop - node.clientHeight < 80; }}>
+            {selectedId && hasMore && <button type="button" className="chat__load-more" onClick={loadMore}>Ver mensajes anteriores</button>}
+            {selectedId && !messages.length && <p className="chat__empty-thread">Todavía no hay mensajes en esta conversación.</p>}
+            {messages.map((message) => {
+              const side = message.idUsuario === session?.usuario?.id ? "outgoing" : "incoming";
+              return <div className={`chat__message chat__message--${side}`} key={message.id}>{side === "incoming" && <ConversationAvatar kind={kind} className="chat__avatar--message" />}<div className="chat__message-content"><div className={`chat__bubble chat__bubble--${side}`}><span>{message.contenido}</span>{message.adjuntos?.map((attachment) => <button type="button" className="chat__attachment" key={attachment.id} onClick={() => api.downloadChatAttachment(selectedId, attachment).catch((cause) => setError(cause.message))}>📎 {attachment.nombreArchivo}</button>)}</div><time className="chat__message-time" dateTime={message.fecha}>{displayTime(message.fecha)}</time></div></div>;
+            })}
+            <div ref={endRef} />
           </div>
-
-          <form className="chat__composer" onSubmit={sendMessage}>
-            <input
-              value={draft}
-              onChange={(event) => setDraft(event.target.value)}
-              placeholder="Escribe tu mensaje..."
-              aria-label="Escribe tu mensaje"
-            />
-            <button type="submit" aria-label="Enviar mensaje" title="Enviar mensaje">
-              <img src={paperPlaneIcon} alt="" />
-            </button>
-          </form>
+          <form className="chat__composer" onSubmit={sendMessage}><input value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Escribe tu mensaje..." aria-label="Escribe tu mensaje" maxLength={5000} /><label className="chat__attach" title="Adjuntar archivos">📎<input ref={fileRef} className="chat__file-input" type="file" multiple accept="image/jpeg,image/png,image/webp,application/pdf" onChange={(event) => setFiles([...event.target.files].slice(0, 5))} aria-label="Adjuntar archivos" disabled={!selectedId} /></label><button type="submit" disabled={sending} aria-label="Enviar mensaje" title="Enviar mensaje"><img src={paperPlaneIcon} alt="" /></button></form>
+          {files.length > 0 && <p className="chat__composer-hint">{files.length} archivo(s) seleccionado(s)</p>}
           <p className="chat__composer-hint">Presiona Enter para enviar</p>
         </section>
       </div>

@@ -127,3 +127,9 @@
     display: none;
   }
 }
+.visit-modal__select-wrap { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 42px; padding: 0 10px; border: 1px solid #cdd8e6; border-radius: 8px; }
+.visit-modal__select-wrap img { width: 18px; height: 18px; }
+.visit-modal__select-wrap select { flex: 1; min-width: 0; border: 0; background: transparent; font: inherit; color: #17235e; }
+.visit-modal__reason { width: 100%; min-height: 72px; padding: 8px; border: 1px solid #cdd8e6; border-radius: 8px; font: inherit; }
+.visit-modal__new-client { display: grid; gap: 8px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.visit-modal__new-client input, .visit-modal__new-client select { width: 100%; min-height: 38px; border: 1px solid #cdd8e6; border-radius: 8px; padding: 6px; font: inherit; }

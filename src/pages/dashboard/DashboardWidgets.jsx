@@ -37,7 +37,7 @@ function porcentaje(actual, anterior){
   }
   return {devolver,peor}
 }
-const VISITAS_POR_PAGINA = 6;
+const VISITAS_POR_PAGINA = 10;
 
 function visitTime(fecha) {
   const date = new Date(fecha);

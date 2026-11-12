@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { calendarIcon, plusIcon, userIcon } from "../../assets/icons";
-import { Button, VisitModal } from "../../components";
+import { Button, VisitModal, Pagination, usePagination } from "../../components";
+import { api } from "../../services/api.js";
+import { getSession } from "../../services/login.js";
 import propertyImage from "/images (1).jpg";
 import "./Schedule.css";
 
@@ -10,39 +12,15 @@ const viewOptions = [
   { id: "month", label: "Mes" },
 ];
 const timeSlots = ["08:00", "11:00", "14:00", "17:00", "20:00"];
-const sampleVisits = [
-  [0, "09:00 - 09:45", "Depto en Palermo", "Laura Gómez", "Confirmada"],
-  [0, "11:30 - 12:15", "Casa de San Isidro", "Martín Pérez", "A confirmar"],
-  [0, "16:00 - 16:45", "Av. Santa Fe 850", "Sofía López", "Cancelada"],
-  [1, "10:00 - 11:00", "Casa de San Isidro", "Laura Gómez", "Confirmada"],
-  [2, "15:30 - 16:15", "Depto en Palermo", "Joaquín Ruiz", "Confirmada"],
-  [4, "11:30 - 12:15", "Av. Santa Fe 850", "Valentina Díaz", "A confirmar"],
-  [8, "12:00 - 13:00", "Depto en Palermo", "Laura Gómez", "Confirmada"],
-  [14, "09:30 - 10:30", "Casa de San Isidro", "Martín Pérez", "A confirmar"],
-];
-const storageKey = "agi-schedule-visits-v2";
-
-function createSampleVisits() {
-  const today = new Date();
-  return sampleVisits.map(([offset, time, property, client, status], index) => ({
-    id: index + 1,
-    date: dateKey(new Date(today.getFullYear(), today.getMonth(), today.getDate() + offset)),
-    time,
-    property,
-    client,
-    status,
-    agent: "Matías F.",
-  }));
-}
-
-function readVisits() {
-  try {
-    const saved = JSON.parse(window.localStorage.getItem(storageKey));
-    if (Array.isArray(saved)) return saved;
-  } catch {
-    // Continue with example visits if browser storage is unavailable.
-  }
-  return createSampleVisits();
+function toVisit(row) {
+  const at = new Date(row.fecha);
+  return {
+    id: row.id, date: dateKey(at),
+    time: at.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" }),
+    property: row.propiedad, client: `${row.clienteNombre} ${row.clienteApellido}`,
+    agent: `${row.agenteNombre} ${row.agenteApellido}`, status: row.estado,
+    idCliente: row.idCliente, idPropiedad: row.idPropiedad, idAgente: row.idAgente,
+  };
 }
 
 function parseDate(value) {
@@ -59,7 +37,7 @@ function capitalize(value) {
 }
 
 function statusTone(status) {
-  if (status === "Confirmada") return "green";
+  if (status === "Programada") return "green";
   if (status === "Cancelada") return "red";
   if (status === "Realizada") return "slate";
   return "blue";
@@ -67,7 +45,12 @@ function statusTone(status) {
 
 function moveDate(value, amount, unit = "day") {
   const next = parseDate(value);
-  if (unit === "month") next.setMonth(next.getMonth() + amount);
+  if (unit === "month") {
+    const day = next.getDate();
+    next.setDate(1);
+    next.setMonth(next.getMonth() + amount);
+    next.setDate(Math.min(day, new Date(next.getFullYear(), next.getMonth() + 1, 0).getDate()));
+  }
   else next.setDate(next.getDate() + amount);
   return dateKey(next);
 }
@@ -130,19 +113,14 @@ function VisitCard({ visit, onEdit }) {
   );
 }
 
-function ScheduleHeader({ view, onViewChange, onCreate, onUpcomingOpen }) {
+function ScheduleHeader({ view, onViewChange, onCreate, onUpcomingOpen, canManage }) {
   return (
     <div className="schedule__topbar">
       <header className="schedule__hero">
         <h1>Agenda</h1>
         <p>Organizá tus visitas y seguí cada encuentro con tus clientes.</p>
       </header>
-      <Button
-        className="schedule__new-visit"
-        icon={plusIcon}
-        text="Nueva visita"
-        onClick={onCreate}
-      />
+      {canManage && <Button className="schedule__new-visit" icon={plusIcon} text="Nueva visita" onClick={onCreate} />}
       <div className="schedule__view-toggle" role="group" aria-label="Tipo de vista">
         {viewOptions.map(({ id, label }) => (
           <Button
@@ -165,6 +143,7 @@ function ScheduleHeader({ view, onViewChange, onCreate, onUpcomingOpen }) {
 
 function UpcomingVisits({ visits, onEdit, open, onClose }) {
   const [showAll, setShowAll] = useState(false);
+  const { page, totalPages, pageItems, setPage, resetPage } = usePagination(visits);
   return (
     <aside
       className={`schedule__sidebar${open ? " is-open" : ""}`}
@@ -189,7 +168,7 @@ function UpcomingVisits({ visits, onEdit, open, onClose }) {
       </div>
       <p className="schedule__sidebar-caption">Tus encuentros desde hoy</p>
       <div className="schedule__upcoming-list">
-        {(showAll ? visits : visits.slice(0, 5)).map((visit) => (
+        {(showAll ? pageItems : visits.slice(0, 5)).map((visit) => (
           <button
             className="schedule__upcoming-item"
             type="button"
@@ -226,11 +205,12 @@ function UpcomingVisits({ visits, onEdit, open, onClose }) {
           </p>
         )}
       </div>
+      {showAll && <Pagination page={page} totalPages={totalPages} total={visits.length} onPageChange={setPage} />}
       {visits.length > 5 && (
         <button
           className="schedule__show-all"
           type="button"
-          onClick={() => setShowAll((value) => !value)}
+          onClick={() => { setShowAll((value) => !value); resetPage(); }}
         >
           {showAll ? "Ver menos" : `Ver todas (${visits.length})`}
         </button>
@@ -467,18 +447,31 @@ function MonthView({ visits, date, onEdit, onDateChange }) {
 export default function Schedule() {
   const [view, setView] = useState("day");
   const [date, setDate] = useState(() => dateKey(new Date()));
-  const [visits, setVisits] = useState(readVisits);
+  const [visits, setVisits] = useState([]);
+  const [properties, setProperties] = useState([]);
+  const [clients, setClients] = useState([]);
+  const [agents, setAgents] = useState([]);
   const [modal, setModal] = useState(null);
   const [feedback, setFeedback] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
   const [upcomingOpen, setUpcomingOpen] = useState(false);
+  const canManage = getSession()?.usuario?.rol === 3;
 
   useEffect(() => {
-    try {
-      window.localStorage.setItem(storageKey, JSON.stringify(visits));
-    } catch {
-      /* Storage can be unavailable. */
-    }
-  }, [visits]);
+    let active = true;
+    Promise.all([api.allVisits(), api.properties(), api.propertyCatalogs(), api.visitClients()])
+      .then(([visitRows, propertyRows, catalogs, clientRows]) => {
+        if (!active) return;
+        setVisits(visitRows.map(toVisit));
+        setProperties(propertyRows);
+        setAgents(catalogs.agentes);
+        setClients(clientRows);
+      })
+      .catch((cause) => { if (active) setError(cause.message); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, []);
 
   useEffect(() => {
     if (!feedback) return undefined;
@@ -496,21 +489,36 @@ export default function Schedule() {
   }, [upcomingOpen]);
 
   function editVisit(visit) {
+    if (!canManage) return;
     setUpcomingOpen(false);
     setModal({ visit });
   }
 
-  function saveVisit(values) {
-    const editing = modal.visit;
-    setVisits((current) =>
-      editing
-        ? current.map((visit) => (visit.id === editing.id ? { ...visit, ...values } : visit))
-        : [...current, { ...values, id: Date.now() }],
-    );
-    setDate(values.date);
-    setView("day");
-    setFeedback(editing ? "Visita modificada." : "Visita agendada.");
-    setModal(null);
+  async function saveVisit(values) {
+    try {
+      const editing = modal.visit;
+      const { status, motivo, clientName, clientSurname, clientInterest, ...body } = values;
+      if (!body.idCliente && status !== "Cancelada") {
+        const client = await api.createVisitClient({ nombre: clientName, apellido: clientSurname, interes: clientInterest });
+        body.idCliente = client.id;
+        setClients((current) => [...current, client]);
+      }
+      let saved;
+      if (editing && status === "Cancelada") {
+        saved = await api.cancelVisit(editing.id, motivo);
+      } else if (editing) {
+        saved = await api.updateVisit(editing.id, { ...body, estado: status });
+      } else {
+        saved = await api.createVisit(body);
+      }
+      const normalized = toVisit(saved);
+      setVisits((current) => editing ? current.map((visit) => visit.id === editing.id ? normalized : visit) : [...current, normalized]);
+      setDate(normalized.date);
+      setView("day");
+      setFeedback(editing ? "Visita modificada." : "Visita agendada.");
+      setModal(null);
+      setError("");
+    } catch (cause) { setError(cause.message); throw cause; }
   }
 
   const upcomingVisits = visits
@@ -525,11 +533,14 @@ export default function Schedule() {
     <main id="schedule">
       <div className="schedule__content">
         <ScheduleHeader
+          canManage={canManage}
           view={view}
           onViewChange={setView}
-          onCreate={() => setModal({ visit: null })}
+          onCreate={() => { if (canManage) setModal({ visit: null }); }}
           onUpcomingOpen={() => setUpcomingOpen(true)}
         />
+        {loading && <p className="schedule__message" role="status">Cargando visitas…</p>}
+        {error && <p className="schedule__message" role="alert">{error}</p>}
         {view === "day" && (
           <DayView visits={visits} date={date} onEdit={editVisit} onDateChange={setDate} />
         )}
@@ -572,6 +583,9 @@ export default function Schedule() {
         <VisitModal
           visit={modal.visit}
           defaultDate={date}
+          properties={properties}
+          clients={clients}
+          agents={agents}
           onClose={() => setModal(null)}
           onSubmit={saveVisit}
         />

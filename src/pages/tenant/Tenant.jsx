@@ -18,6 +18,8 @@ import {
   EntityActions,
   Button,
   SummaryPill,
+  Pagination,
+  usePagination,
 } from "../../components";
 import propertyImage from "/images.jpg";
 import "./Tenant.css";
@@ -278,6 +280,7 @@ export default function Tenant() {
       return matchesQuery && matchesProperty && matchesStatus && matchesDate;
     });
   }, [filterValues, query, tenants]);
+  const { page, totalPages, pageItems, setPage, resetPage } = usePagination(visibleTenants);
 
   async function confirmDeleteTenant() {
     if (!pendingDelete) return;
@@ -340,6 +343,7 @@ export default function Tenant() {
   }
 
   function updateFilter(index, value) {
+    resetPage();
     setFilterValues((current) =>
       current.map((item, itemIndex) => (itemIndex === index ? value : item)),
     );
@@ -368,7 +372,7 @@ export default function Tenant() {
               placeholder="Buscar contacto..."
               aria-label="Buscar contacto"
               value={query}
-              onChange={(event) => setQuery(event.target.value)}
+              onChange={(event) => { setQuery(event.target.value); resetPage(); }}
             />
           </label>
           {filterControls.map((filter, index) => (
@@ -402,7 +406,7 @@ export default function Tenant() {
                 </tr>
               </thead>
               <tbody>
-                {visibleTenants.map((tenant) => (
+                {pageItems.map((tenant) => (
                   <TenantRow
                     key={tenant.id}
                     tenant={tenant}
@@ -422,6 +426,7 @@ export default function Tenant() {
           {!loading && !loadError && !visibleTenants.length && (
             <p className="tenant__empty">No encontramos inquilinos con esos criterios.</p>
           )}
+          <Pagination page={page} totalPages={totalPages} total={visibleTenants.length} onPageChange={setPage} />
         </section>
       </div>
 

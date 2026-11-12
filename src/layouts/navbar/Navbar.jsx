@@ -3,9 +3,9 @@ import { Link, useLocation } from "wouter";
 import { xIcon as closeIcon } from "../../assets/icons";
 import brandLogo from "../../assets/logoAGI.png";
 import {
-  accountRoleFor,
   allItems,
   isItemActive,
+  navigationItemsForRole,
   primaryItems,
   secondaryItems,
 } from "../navigation";
@@ -38,7 +38,15 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
     window.addEventListener("session-updated", syncUser);
     return () => window.removeEventListener("session-updated", syncUser);
   }, []);
-  const role = accountRoleFor(pathname);
+  const roleId = Number(user?.rol);
+  const role = {
+    1: "Super admin",
+    2: "Administrador",
+    3: "Agente",
+    4: "Propietario",
+    5: "Inquilino",
+  }[roleId] ?? "Usuario";
+  const desktopItems = navigationItemsForRole(roleId);
 
   async function closeSession(event) {
     event.preventDefault();
@@ -52,14 +60,13 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
     }
   }
   const mobilePaths =
-    role === "Propietario"
+    roleId === 4
       ? ["/owner-dashboard", "/my-properties", "/collections", "/reports-agent", "/chat"]
-      : role === "Inquilino"
+      : roleId === 5
         ? ["/tenant-dashboard", "/payments", "/reports", "/chat"]
-        : role === "Super admin"
-          ? ["/super-admin"]
-          : [
-              role === "Agente" ? "/agent-dashboard" : "/dashboard",
+        : [2, 3].includes(roleId)
+          ? [
+              roleId === 3 ? "/agent-dashboard" : "/dashboard",
               "/owners",
               "/tenant",
               "/professional",
@@ -67,20 +74,19 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
               "/chat",
               "/properties",
               "/reports-agent",
-            ];
-  const mobilePrimary = mobilePaths.map((href) => {
+            ]
+          : [];
+  const mobilePrimary = roleId === 1 ? primaryItems : mobilePaths.map((href) => {
     const item =
       allItems.find((entry) => entry.href === href) ??
       allItems.find((entry) => entry.href === "/reports-agent");
     return { ...item, href, label: href.endsWith("dashboard") ? "Dashboard" : item.label };
   });
-  const mobileSecondary = secondaryItems.filter(({ href }) =>
-    [
-      "/profile",
-      "/terms",
-      ...(["Agente", "Administrador"].includes(role) ? ["/agents", "/agency"] : []),
-    ].includes(href),
-  );
+  const mobileSecondary = roleId === 1
+    ? secondaryItems
+    : desktopItems.secondary.filter(({ href }) =>
+        ["/profile", "/terms", "/agents", "/agency"].includes(href),
+      );
 
   useEffect(() => {
     if (!menuOpen) return undefined;
@@ -130,11 +136,11 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
         </div>
 
         <nav className="navbar__drawer-nav navbar__drawer-nav--desktop">
-          {primaryItems.map((item) => (
+          {desktopItems.primary.map((item) => (
             <NavigationItem key={item.href} item={item} pathname={pathname} onNavigate={onClose} />
           ))}
           <span className="navbar__drawer-divider" aria-hidden="true" />
-          {secondaryItems.map((item) => (
+          {desktopItems.secondary.map((item) => (
             <NavigationItem key={item.href} item={item} pathname={pathname} onNavigate={onClose} />
           ))}
         </nav>

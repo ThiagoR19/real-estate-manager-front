@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
-import { Footer, Icon, PropertyCardSimple } from "../../components";
+import { Footer, Icon, PropertyCardSimple, Pagination, usePagination, PROPERTY_PAGE_SIZE } from "../../components";
 import kaikenLogo from "../../assets/icons/kaiken.svg";
 import filterIcon from "../../assets/icons/options.svg";
 import "./PublicProperties.css";
@@ -285,6 +285,8 @@ export default function PublicProperties() {
   const [operation, setOperation] = useState(queryFilter === "rent" ? "rent" : "buy");
   const [filtersOpen, setFiltersOpen] = useState(false);
   const visibleProperties = properties.filter((property) => property.operation === operation);
+  const { page, totalPages, pageItems, setPage, resetPage } = usePagination(visibleProperties, PROPERTY_PAGE_SIZE);
+  const changeOperation = (value) => { setOperation(value); resetPage(); };
 
   useEffect(() => {
     if (!filtersOpen) return undefined;
@@ -302,7 +304,7 @@ export default function PublicProperties() {
 
   return (
     <main className="public-properties">
-      <PublicHeader operation={operation} setOperation={setOperation} />
+      <PublicHeader operation={operation} setOperation={changeOperation} />
       <div className="public-properties__layout">
         {filtersOpen && (
           <button
@@ -314,7 +316,7 @@ export default function PublicProperties() {
         )}
         <FilterSidebar
           operation={operation}
-          setOperation={setOperation}
+          setOperation={changeOperation}
           open={filtersOpen}
           onClose={() => setFiltersOpen(false)}
         />
@@ -324,7 +326,7 @@ export default function PublicProperties() {
               <h1 id="public-properties-title">
                 Propiedades en {operation === "buy" ? "venta" : "alquiler"}
               </h1>
-              <span>{visibleProperties.length === 0 ? 0 : 142} propiedades encontradas</span>
+              <span>{visibleProperties.length} propiedades encontradas</span>
             </div>
             <label>
               Ordenar por:
@@ -346,10 +348,11 @@ export default function PublicProperties() {
             </button>
           </div>
           <div className="public-properties__grid">
-            {visibleProperties.map((property) => (
+            {pageItems.map((property) => (
               <PropertyCardSimple key={property.id} property={property} variant="public" />
             ))}
           </div>
+          <Pagination page={page} totalPages={totalPages} total={visibleProperties.length} onPageChange={setPage} pageSize={PROPERTY_PAGE_SIZE} />
         </section>
       </div>
       <Footer />

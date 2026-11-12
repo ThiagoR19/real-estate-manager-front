@@ -96,13 +96,13 @@ export default function ManagementModal({
   );
 }
 
-export function ModalActions({ onClose, submitText = "Guardar cambios" }) {
+export function ModalActions({ onClose, submitText = "Guardar cambios", disabled = false }) {
   return (
     <footer className="management-modal__actions">
       <button className="management-modal__cancel" type="button" onClick={onClose}>
         Cancelar
       </button>
-      <Button className="management-modal__submit" type="submit" text={submitText} />
+      <Button className="management-modal__submit" type="submit" text={submitText} disabled={disabled} />
     </footer>
   );
 }

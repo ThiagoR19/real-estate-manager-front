@@ -18,6 +18,8 @@ import {
   ModalInput,
   ConfirmDeleteModal,
   EntityActions,
+  Pagination,
+  usePagination,
 } from "../../components";
 import { api } from "../../services/api.js";
 import initials from "../../utils/initials.js";
@@ -165,6 +167,7 @@ export default function Agents() {
       ) &&
       (zone === zones[0] || agent.area === zone),
   );
+  const { page, totalPages, pageItems, setPage, resetPage } = usePagination(visibleAgents);
 
   useEffect(() => {
     api
@@ -244,10 +247,10 @@ export default function Agents() {
               placeholder="Buscar contacto..."
               aria-label="Buscar contacto"
               value={query}
-              onChange={(event) => setQuery(event.target.value)}
+              onChange={(event) => { setQuery(event.target.value); resetPage(); }}
             />
           </label>
-          <ZoneFilter value={zone} onChange={setZone} zones={zones} />
+          <ZoneFilter value={zone} onChange={(value) => { setZone(value); resetPage(); }} zones={zones} />
           <Button
             className="agents__new-button"
             onClick={() => setModal({ mode: "create", person: null })}
@@ -269,7 +272,7 @@ export default function Agents() {
                 </tr>
               </thead>
               <tbody>
-                {visibleAgents.map((agent) => (
+                {pageItems.map((agent) => (
                   <AgentRow
                     key={agent.id}
                     agent={agent}
@@ -283,6 +286,7 @@ export default function Agents() {
           {!visibleAgents.length && (
             <p className="agents__empty">No encontramos agentes con esos criterios.</p>
           )}
+          <Pagination page={page} totalPages={totalPages} total={visibleAgents.length} onPageChange={setPage} />
         </section>
       </div>
 

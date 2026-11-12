@@ -22,6 +22,8 @@ export { default as ModalOverlay } from "./modalOverlay/ModalOverlay";
 export { default as Navbar } from "./navbar/Navbar";
 export { default as Notification } from "./notification/Notification";
 export { default as NotificationPanel } from "./notificationPanel/NotificationPanel";
+export { default as Pagination } from "./pagination/Pagination";
+export { usePagination, PAGE_SIZE, PROPERTY_PAGE_SIZE } from "./pagination/usePagination";
 export { default as PersonModal } from "./person/PersonModal";
 export { default as PrimaryButton } from "./primaryButton/PrimaryButton";
 export { default as ProfessionalModal } from "./professional/ProfessionalModal";

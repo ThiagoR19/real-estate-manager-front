@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { ModalOverlay, NotificationPanel } from "../../components";
-import notifications from "../../data/notifications";
 import {
   barsIcon as menuIcon,
   bellIcon,
@@ -14,16 +13,93 @@ import { accountRoleFor, allItems, isItemActive, pageLabels } from "../navigatio
 import { api } from "../../services/api.js";
 import "./Header.css";
 
-export default function Header({ menuOpen = false, onToggleMenu = () => {} }) {
+export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
   const [pathname] = useLocation();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [user, setUser] = useState(() => api.getSession()?.usuario);
+  const [notifications, setNotifications] = useState([]);
+  const [notificationsLoading, setNotificationsLoading] = useState(false);
+  const [notificationsError, setNotificationsError] = useState("");
+  const notificationsRequest = useRef(0);
+  const notificationsIdentity = useRef(`${user?.id}:${user?.rol}`);
+
+  const loadNotifications = useCallback(async () => {
+    const requestId = ++notificationsRequest.current;
+    setNotificationsLoading(true);
+    try {
+      const items = await api.notifications();
+      if (requestId !== notificationsRequest.current) return;
+      setNotifications(Array.isArray(items) ? items : []);
+      setNotificationsError("");
+    } catch (error) {
+      if (requestId === notificationsRequest.current) setNotificationsError(error.message);
+    } finally {
+      if (requestId === notificationsRequest.current) setNotificationsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    const syncUser = () => setUser(api.getSession()?.usuario);
+    const syncUser = () => {
+      const nextUser = api.getSession()?.usuario;
+      const nextIdentity = `${nextUser?.id}:${nextUser?.rol}`;
+      if (nextIdentity !== notificationsIdentity.current) {
+        notificationsIdentity.current = nextIdentity;
+        notificationsRequest.current += 1;
+        setNotifications([]);
+        setNotificationsLoading(false);
+        setNotificationsError("");
+      }
+      setUser(nextUser);
+    };
     window.addEventListener("session-updated", syncUser);
     return () => window.removeEventListener("session-updated", syncUser);
   }, []);
+
+  useEffect(() => {
+    notificationsRequest.current += 1;
+    if (![2, 3, 4, 5].includes(Number(user?.rol))) return undefined;
+
+    const initialLoad = window.setTimeout(loadNotifications, 0);
+    const interval = window.setInterval(loadNotifications, 30000);
+    const refreshOnFocus = () => loadNotifications();
+    window.addEventListener("focus", refreshOnFocus);
+    return () => {
+      notificationsRequest.current += 1;
+      window.clearTimeout(initialLoad);
+      window.clearInterval(interval);
+      window.removeEventListener("focus", refreshOnFocus);
+    };
+  }, [user?.id, user?.rol, loadNotifications]);
+
+  const markNotificationRead = async (id) => {
+    notificationsRequest.current += 1;
+    setNotificationsLoading(false);
+    try {
+      const updated = await api.markNotificationRead(id);
+      if (!updated) throw new Error("La notificación no se pudo marcar como leída.");
+      setNotifications((items) => items.map((item) =>
+        item.id === id ? { ...item, leida: true } : item,
+      ));
+      setNotificationsError("");
+    } catch (error) {
+      setNotificationsError(error.message);
+    }
+  };
+
+  const markAllNotificationsRead = async () => {
+    const unread = notifications.filter((item) => !item.leida);
+    if (!unread.length) return;
+    notificationsRequest.current += 1;
+    setNotificationsLoading(false);
+    const results = await Promise.allSettled(unread.map((item) => api.markNotificationRead(item.id)));
+    const updatedIds = new Set(unread.filter((_, index) =>
+      results[index].status === "fulfilled" && results[index].value,
+    ).map((item) => item.id));
+    setNotifications((items) => items.map((item) =>
+      updatedIds.has(item.id) ? { ...item, leida: true } : item,
+    ));
+    setNotificationsError(updatedIds.size === unread.length ? "" : "Algunas notificaciones no se pudieron marcar como leídas.");
+  };
   const currentItem = allItems.find(({ href }) => isItemActive(pathname, href));
   const isPayments = pathname === "/payments" || pathname.startsWith("/payments/");
   const isProperties =
@@ -42,7 +118,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => {} }) {
   const accountRole = accountRoleFor(pathname);
   const roleName =
     { 1: "Super admin", 2: "Administrador", 3: "Agente", 4: "Propietario", 5: "Inquilino" }[
-      user?.rol
+    user?.rol
     ] || accountRole;
   const currentLabel = isPayments
     ? "Zona de pago"
@@ -97,9 +173,9 @@ export default function Header({ menuOpen = false, onToggleMenu = () => {} }) {
             onChange={
               isProperties
                 ? (event) =>
-                    window.dispatchEvent(
-                      new CustomEvent("property-search", { detail: event.target.value }),
-                    )
+                  window.dispatchEvent(
+                    new CustomEvent("property-search", { detail: event.target.value }),
+                  )
                 : undefined
             }
           />
@@ -107,12 +183,15 @@ export default function Header({ menuOpen = false, onToggleMenu = () => {} }) {
       )}
 
       <aside className="navbar__account" aria-label="Cuenta de usuario">
-        {!isSuperAdmin && (
+        {!isSuperAdmin && Number(user?.rol) !== 1 && (
           <div className="navbar__notifications">
             <button
               type="button"
               aria-label="Notificaciones"
-              onClick={() => setNotificationsOpen(true)}
+              onClick={() => {
+                setNotificationsOpen(true);
+                loadNotifications();
+              }}
             >
               <img src={bellIcon} alt="" />
             </button>
@@ -151,6 +230,11 @@ export default function Header({ menuOpen = false, onToggleMenu = () => {} }) {
       >
         <NotificationPanel
           notificaciones={notifications}
+          cargando={notificationsLoading}
+          error={notificationsError}
+          onReintentar={loadNotifications}
+          onMarcarLeida={markNotificationRead}
+          onMarcarTodas={markAllNotificationsRead}
           onCerrar={() => setNotificationsOpen(false)}
         />
       </ModalOverlay>

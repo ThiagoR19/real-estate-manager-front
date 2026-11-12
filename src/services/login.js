@@ -15,6 +15,7 @@ export function saveSession(session) {
 
 export function clearSession() {
   localStorage.removeItem("agi-session");
+  window.dispatchEvent(new Event("session-updated"));
 }
 
 export const login = (usuario, password) =>
@@ -24,7 +25,13 @@ export const login = (usuario, password) =>
     auth: false,
   }).then(({ data }) => data);
 
+export const register = (body) =>
+  request("/auth/registro", { method: "POST", body, auth: false }).then(({ data }) => data);
+
 export async function logout() {
-  await request("/auth/logout", { method: "POST" });
-  clearSession();
+  try {
+    await request("/auth/logout", { method: "POST" });
+  } finally {
+    clearSession();
+  }
 }

@@ -8,6 +8,10 @@ import * as tenantService from "./tenants.js";
 import * as indecService from "./indec.js";
 import * as contVisitaService from "./contVisita.js";
 import * as visitService from "./visits.js";
+import * as chatService from "./chats.js";
+import * as ownerPropertiesService from "./ownerProperties.js";
+import * as documentService from "./documents.js";
+import * as notificationService from "./notifications.js";
 
 export const api = {
   agents: agentService.agents,
@@ -19,6 +23,7 @@ export const api = {
   saveSession: loginService.saveSession,
   clearSession: loginService.clearSession,
   login: loginService.login,
+  register: loginService.register,
   logout: loginService.logout,
   assetUrl: propertyService.assetUrl,
   propertyCatalogs: propertyService.propertyCatalogs,
@@ -54,4 +59,23 @@ export const api = {
   dashboard: dashboardService.getDashboard,
   contVisita: contVisitaService.sumarVisita,
   visits: visitService.visits,
+  allVisits: visitService.allVisits,
+  visitClients: visitService.visitClients,
+  createVisitClient: visitService.createVisitClient,
+  createVisit: visitService.createVisit,
+  updateVisit: visitService.updateVisit,
+  cancelVisit: visitService.cancelVisit,
+  conversations: chatService.conversations,
+  chatContacts: chatService.contacts,
+  chatMessages: chatService.messages,
+  sendChatMessage: chatService.sendMessage,
+  startConversation: chatService.startConversation,
+  markChatRead: chatService.markRead,
+  downloadChatAttachment: chatService.downloadAttachment,
+  contracts: ownerPropertiesService.contracts,
+  reports: ownerPropertiesService.reports,
+  contractDocuments: documentService.contractDocuments,
+  downloadDocument: documentService.downloadDocument,
+  notifications: notificationService.notifications,
+  markNotificationRead: notificationService.markNotificationRead,
 };

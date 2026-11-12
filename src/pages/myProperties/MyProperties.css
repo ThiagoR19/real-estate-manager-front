@@ -703,3 +703,5 @@
     height: 88px;
   }
 }
+.owner-properties__message { margin: 14px; color: #42516d; }
+.owner-properties__download { border: 0; background: transparent; color: #1766a6; text-decoration: underline; cursor: pointer; }

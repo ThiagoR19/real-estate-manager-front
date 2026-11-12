@@ -8,10 +8,10 @@ import {
   ImagePanel,
   TextField,
   PrimaryButton,
-  GoogleSignIn,
   LegalText,
 } from "../../components";
 import Login from "../login/Login";
+import { setRegistrationDraft } from "../../services/registrationDraft.js";
 
 import mailIcono from "../../assets/icons/loginMail.svg";
 import candadoIcono from "../../assets/icons/loginLock.svg";
@@ -26,6 +26,7 @@ export default function Register() {
 
   const [saliendo, setSaliendo] = useState(false);
   const [variablesSalida, setVariablesSalida] = useState({});
+  const [error, setError] = useState("");
   const [, navegar] = useLocation();
 
   // Cuando termina la animación del hero, cambia a Login
@@ -41,6 +42,23 @@ export default function Register() {
 
   const enviarFormulario = (e) => {
     e.preventDefault();
+    const form = new FormData(e.currentTarget);
+    const password = String(form.get("registro-password") || "");
+    const confirmation = String(form.get("registro-confirmar") || "");
+    const codigo = String(form.get("registro-codigo") || "").trim();
+    if (password !== confirmation) {
+      setError("Las contraseñas no coinciden.");
+      return;
+    }
+    if (!/^[a-f0-9]{64}$/i.test(codigo)) {
+      setError("Ingresá el código completo de la invitación.");
+      return;
+    }
+    setRegistrationDraft({
+      codigo,
+      correo: String(form.get("registro-email") || "").trim(),
+      password,
+    });
     navegar("/confirm-register");
   };
 
@@ -94,6 +112,7 @@ export default function Register() {
               placeholder="ejemplo@gmail.com"
               icono={mailIcono}
               autoComplete="email"
+              required
               className="Registration__campo-email"
             />
 
@@ -104,6 +123,9 @@ export default function Register() {
               placeholder="Ingresa tu contraseña"
               icono={candadoIcono}
               autoComplete="new-password"
+              required
+              minLength={8}
+              conOjo
             />
 
             <TextField
@@ -113,12 +135,25 @@ export default function Register() {
               placeholder="Repite tu contraseña"
               icono={candadoIcono}
               autoComplete="new-password"
+              required
+              minLength={8}
+              conOjo
+            />
+            <TextField
+              id="registro-codigo"
+              label="Código de invitación"
+              tipo="text"
+              placeholder="Código recibido de la inmobiliaria"
+              icono={mailIcono}
+              autoComplete="off"
+              defaultValue={new URLSearchParams(window.location.search).get("codigo") || ""}
+              required
+              className="Registration__campo-email"
             />
           </div>
 
-          <PrimaryButton texto="Crear" className="Registration__boton" />
-
-          <GoogleSignIn texto="Registrarse con" className="Registration__google" />
+          {error && <p className="Registration__error" role="alert">{error}</p>}
+          <PrimaryButton texto="Continuar" className="Registration__boton" />
         </form>
 
         <footer className="Registration__pie">

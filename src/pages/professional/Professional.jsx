@@ -13,6 +13,8 @@ import {
   ConfirmDeleteModal,
   EntityActions,
   Button,
+  Pagination,
+  usePagination,
 } from "../../components";
 import "./Professional.css";
 
@@ -41,6 +43,7 @@ export default function Professional() {
     selectedType === "Tipo"
       ? professionals
       : professionals.filter(({ profesion }) => profesion === selectedType);
+  const { page, totalPages, pageItems, setPage, resetPage } = usePagination(visibleProfessionals);
 
   function openCreateModal() {
     setModal({ isOpen: true, mode: "create", professional: null });
@@ -99,7 +102,7 @@ export default function Professional() {
             placeholder="Tipo"
             value={selectedType}
             options={filterOptions}
-            onChange={setSelectedType}
+            onChange={(value) => { setSelectedType(value); resetPage(); }}
             icon={peopleIcon}
             className="professional__filter"
             triggerClassName="professional__filter-trigger"
@@ -135,7 +138,7 @@ export default function Professional() {
               </tr>
             </thead>
             <tbody>
-              {visibleProfessionals.map((professional) => (
+              {pageItems.map((professional) => (
                 <tr key={professional.id}>
                   <th scope="row" data-label="Profesional">
                     <div className="professional__identity">
@@ -197,6 +200,7 @@ export default function Professional() {
         {visibleProfessionals.length === 0 && (
           <p className="professional__empty">No hay profesionales para este tipo.</p>
         )}
+        <Pagination page={page} totalPages={totalPages} total={visibleProfessionals.length} onPageChange={setPage} />
       </section>
 
       <p className="professional__feedback" aria-live="polite">

@@ -16,6 +16,8 @@ import {
   PersonModal,
   ConfirmDeleteModal,
   EntityActions,
+  Pagination,
+  usePagination,
 } from "../../components";
 import "./Owners.css";
 
@@ -115,6 +117,7 @@ export default function Owners() {
         owner.alias,
       ].some((value) => value.toLowerCase().includes(normalizedQuery)),
   );
+  const { page, totalPages, pageItems, setPage, resetPage } = usePagination(visibleOwners);
 
   function saveOwner(data) {
     if (modal.mode === "edit") {
@@ -162,7 +165,7 @@ export default function Owners() {
               placeholder="Buscar propietario..."
               aria-label="Buscar propietario"
               value={query}
-              onChange={(event) => setQuery(event.target.value)}
+              onChange={(event) => { setQuery(event.target.value); resetPage(); }}
             />
           </label>
           <Button
@@ -188,7 +191,7 @@ export default function Owners() {
                 </tr>
               </thead>
               <tbody>
-                {visibleOwners.map((owner) => (
+                {pageItems.map((owner) => (
                   <OwnerRow
                     key={owner.id}
                     owner={owner}
@@ -202,6 +205,7 @@ export default function Owners() {
           {!visibleOwners.length && (
             <p className="owners__empty">No encontramos propietarios con ese criterio.</p>
           )}
+          <Pagination page={page} totalPages={totalPages} total={visibleOwners.length} onPageChange={setPage} />
         </section>
       </div>
 

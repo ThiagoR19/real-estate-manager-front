@@ -70,6 +70,7 @@ function App() {
       <Route path="/public-property" component={PublicProperty} />
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
+      <Route path="/activar" component={Register} />
       <Route path="/confirm-register" component={ConfirmRegister} />
       <Route path="/super-admin-dashboard" component={SuperAdminDashboard} />
       <Route path="/" component={Home} />
