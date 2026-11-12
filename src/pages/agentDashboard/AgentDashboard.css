@@ -34,7 +34,7 @@ body:has(#agent-dashboard) {
   text-decoration: none;
 }
 
-#agent-dashboard img {
+#agent-dashboard img:not(.dashboard-icon) {
   object-fit: contain;
   filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg)
     brightness(93%) contrast(99%);
@@ -906,48 +906,160 @@ body:has(#agent-dashboard) .navbar__search {
 #agent-dashboard {
   height: calc(100dvh - 61px);
   min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .agent-dashboard__page {
   display: flex;
-  height: 100%;
+  min-height: 100%;
   flex-direction: column;
 }
 
 .agent-dashboard__intro {
-  flex: 0 0 83px;
+  flex: 0 0 auto;
+  gap: 16px;
+  min-height: 83px;
+  height: auto;
+  padding-bottom: 12px;
 }
 
 .agent-dashboard__grid {
-  flex: 1 1 0;
-  min-height: 0;
-  grid-template-rows: minmax(0, 1fr) minmax(0, 0.38fr);
+  margin-bottom: 25px;
 }
 
-.agent-dashboard__agenda-card {
+.agent-dashboard__agenda-list,
+.agent-dashboard__reports-list {
   min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.agent-dashboard__agenda-list {
+  margin-bottom: 12px;
+}
+
+.agent-dashboard__agenda-list .dashboard-activity-empty,
+.agent-dashboard__reports-list .dashboard-activity-empty {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  padding: 4px 2px;
+  background: #fff;
+}
+
+.agent-dashboard__activity-card {
+  min-width: 0;
+  overflow-x: clip;
+}
+
+.agent-dashboard__activity-grid {
+  height: auto;
+}
+
+@media (min-width: 1301px) {
+  .agent-dashboard__page {
+    height: 100%;
+  }
+
+  .agent-dashboard__grid {
+    flex: 1 1 0;
+    min-height: 0;
+    grid-template-rows: minmax(330px, 1fr) minmax(126px, 0.38fr);
+  }
+
+  .agent-dashboard__agenda-card {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 1300px) {
+  .agent-dashboard__page {
+    width: calc(100% - 40px);
+  }
+
+  .agent-dashboard__grid {
+    grid-template-columns: minmax(260px, 0.9fr) minmax(0, 1.55fr);
+    grid-template-rows: 400px auto 330px;
+    grid-template-areas: "agenda performance" "activity activity" "reports reports";
+    min-height: 0;
+  }
+
+  .agent-dashboard__agenda-card,
+  .agent-dashboard__reports-card {
+    min-height: 0;
+  }
+
+  .agent-dashboard__activity-card {
+    min-height: 140px;
+  }
+}
+
+@media (max-width: 1000px) {
+  .agent-dashboard__activity-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 860px) {
+  .agent-dashboard__grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 420px 380px auto 330px;
+    grid-template-areas: "performance" "agenda" "activity" "reports";
+  }
 }
 
 @media (max-width: 760px) {
   #agent-dashboard {
     height: calc(100dvh - 40px);
-    overflow-y: auto;
   }
 
   .agent-dashboard__page {
-    height: auto;
-    min-height: 100%;
+    width: calc(100% - 24px);
   }
 
   .agent-dashboard__intro {
-    flex-basis: auto;
+    min-height: 112px;
+    padding: 18px;
   }
 
-  .agent-dashboard__grid {
-    flex: 0 0 auto;
+  .agent-dashboard__agenda-card {
+    min-height: 0;
+    max-height: 420px;
+  }
+
+  .agent-dashboard__reports-card {
+    min-height: 0;
+    max-height: 460px;
   }
 }
 
-.agent-dashboard__grid {
-  margin-bottom: 25px;
+@media (max-width: 420px) {
+  .agent-dashboard__agenda-card .agent-dashboard__section-heading {
+    flex-wrap: wrap;
+    row-gap: 6px;
+  }
+
+  .agent-dashboard__agenda-card .agent-dashboard__section-heading time {
+    width: 100%;
+    margin-left: 37px;
+  }
+
+  .agent-dashboard__agenda-item {
+    grid-template-columns: 42px 30px 42px minmax(0, 1fr);
+  }
+
+  .agent-dashboard__agenda-list::before {
+    left: 56px;
+  }
+
+  .agent-dashboard__report-item {
+    grid-template-columns: 52px minmax(0, 1fr) 9px;
+    gap: 8px;
+  }
+
+  .agent-dashboard__report-item > img {
+    width: 52px;
+    height: 50px;
+  }
 }

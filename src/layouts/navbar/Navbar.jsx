@@ -38,7 +38,10 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
     window.addEventListener("session-updated", syncUser);
     return () => window.removeEventListener("session-updated", syncUser);
   }, []);
-  const role = accountRoleFor(pathname);
+  const role =
+    { 1: "Super admin", 2: "Administrador", 3: "Agente", 4: "Propietario", 5: "Inquilino" }[
+      user?.rol
+    ] || accountRoleFor(pathname);
 
   async function closeSession(event) {
     event.preventDefault();
@@ -53,13 +56,13 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
   }
   const mobilePaths =
     role === "Propietario"
-      ? ["/owner-dashboard", "/my-properties", "/collections", "/reports-agent", "/chat"]
+      ? ["/dashboard", "/my-properties", "/collections", "/reports-agent", "/chat"]
       : role === "Inquilino"
-        ? ["/tenant-dashboard", "/payments", "/reports", "/chat"]
+        ? ["/dashboard", "/payments", "/reports", "/chat"]
         : role === "Super admin"
           ? ["/super-admin"]
           : [
-              role === "Agente" ? "/agent-dashboard" : "/dashboard",
+              "/dashboard",
               "/owners",
               "/tenant",
               "/professional",

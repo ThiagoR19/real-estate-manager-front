@@ -155,7 +155,7 @@ function PerformanceChart({ points, period }) {
   );
 }
 
-export default function PerformanceCard({indicadores, grafico = {}}) {
+export default function PerformanceCard({indicadores, grafico = {}, className = ""}) {
   const [period, setPeriod] = useState("semana");
 
   const indi =[
@@ -166,7 +166,7 @@ export default function PerformanceCard({indicadores, grafico = {}}) {
   ]
 
   return (
-    <section className={`dashboard-card dashboard-performance-card`}>
+    <section className={`dashboard-card dashboard-performance-card ${className}`}>
       <div className="dashboard-performance-card__header">
         <div>
           <h2 className="dashboard-card__title"><Icon src={chartColumnIcon} />{periods[period].title}</h2>

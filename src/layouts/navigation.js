@@ -7,7 +7,6 @@ import {
   commentsIcon,
   fileLinesIcon,
   houseIcon,
-  houseUserIcon,
   peopleIcon,
   walletIcon,
   userIcon,
@@ -15,24 +14,6 @@ import {
 
 export const primaryItems = [
   { href: "/dashboard", label: "Dashboard", icon: chartColumnIcon },
-  {
-    href: "/tenant-dashboard",
-    label: "Dashboard inquilinos",
-    breadcrumbLabel: "Dashboard",
-    icon: houseUserIcon,
-  },
-  {
-    href: "/agent-dashboard",
-    label: "Dashboard agente",
-    breadcrumbLabel: "Dashboard",
-    icon: chartColumnIcon,
-  },
-  {
-    href: "/owner-dashboard",
-    label: "Dashboard propietarios",
-    breadcrumbLabel: "Dashboard",
-    icon: houseUserIcon,
-  },
   {
     href: "/my-properties",
     label: "Mis propiedades",
