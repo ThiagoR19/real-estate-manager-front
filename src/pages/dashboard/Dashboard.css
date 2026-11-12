@@ -255,31 +255,61 @@
 }
 
 .dashboard-chart {
+  display: flex;
   flex: 1;
+  flex-direction: column;
   min-height: 0;
 }
 
+.dashboard-chart__plot {
+  position: relative;
+  flex: 1;
+  min-height: 60px;
+  margin: 8px 16px 20px 24px;
+}
+
 .dashboard-chart svg {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
-  height: calc(100% - 25px);
+  height: 100%;
   overflow: visible;
 }
 
 .dashboard-chart__grid line {
   stroke: #d9dfe6;
   stroke-width: 1;
+  vector-effect: non-scaling-stroke;
 }
 
-.dashboard-chart__axis-labels text {
-  fill: #65738e;
-  font-family: inherit;
+.dashboard-chart__y-label,
+.dashboard-chart__x-label {
+  position: absolute;
+  color: #65738e;
   font-size: 10px;
+  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.dashboard-chart__y-label {
+  right: 100%;
+  padding-right: 6px;
+  transform: translateY(-50%);
+}
+
+.dashboard-chart__x-label {
+  top: 100%;
+  padding-top: 6px;
+  transform: translateX(-50%);
 }
 
 .dashboard-chart path {
   fill: none;
   stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
 }
 
@@ -316,6 +346,137 @@
 
 .dashboard-legend-dot--purple {
   background: #8127f6;
+}
+
+.dashboard-activity-empty {
+  grid-column: 1 / -1;
+  margin: 8px 0 0;
+  color: #65738e;
+  font-size: 12px;
+}
+
+.agent-dashboard__activity-heading button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.dashboard-activity-card {
+  overflow-x: clip;
+}
+
+.dashboard-activity-slide--siguiente {
+  animation: dashboard-deslizar-izquierda 0.35s ease-out;
+}
+
+.dashboard-activity-slide--anterior {
+  animation: dashboard-deslizar-derecha 0.35s ease-out;
+}
+
+@keyframes dashboard-deslizar-izquierda {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes dashboard-deslizar-derecha {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-activity-slide {
+    animation: none;
+  }
+}
+
+.dashboard-chart__plot {
+  cursor: crosshair;
+  touch-action: pan-y;
+}
+
+.dashboard-chart__guide {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #b8c2cf;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.dashboard-chart__dot {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(21, 33, 66, 0.25);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.dashboard-chart__tooltip {
+  position: absolute;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 170px;
+  padding: 8px 10px;
+  border: 1px solid #e8f0f6;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(21, 33, 66, 0.12);
+  color: #152142;
+  font-size: 11px;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.dashboard-chart__tooltip--left {
+  transform: translateX(calc(-100% - 10px));
+}
+
+.dashboard-chart__tooltip--right {
+  transform: translateX(10px);
+}
+
+.dashboard-chart__tooltip strong {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.dashboard-chart__tooltip span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #65738e;
+}
+
+.dashboard-chart__tooltip i {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.dashboard-chart__tooltip b {
+  margin-left: auto;
+  padding-left: 10px;
+  color: #152142;
+  font-weight: 700;
 }
 
 .dashboard-kpis {
@@ -745,8 +906,8 @@
     flex: none;
   }
 
-  .dashboard-chart svg {
-    height: 190px;
+  .dashboard-chart__x-label--extra {
+    display: none;
   }
 
   .dashboard-chart__legend {
@@ -864,6 +1025,7 @@
   height: calc(100dvh - 61px);
   min-height: 0;
   flex-direction: column;
+  overflow-y: auto;
 }
 
 .dashboard-hero {
@@ -873,7 +1035,19 @@
 .dashboard-content {
   height: calc(100% - 100px);
   min-height: 0;
-  grid-template-rows: minmax(0, 1fr) minmax(0, 0.38fr);
+  grid-template-rows: minmax(320px, 1fr) minmax(126px, 0.38fr);
+}
+
+/* Tablet: tres filas */
+@media (max-width: 1300px) {
+  .dashboard-hero {
+    flex-basis: auto;
+  }
+
+  .dashboard-content {
+    height: auto;
+    grid-template-rows: 368px auto auto;
+  }
 }
 
 @media (max-width: 760px) {
