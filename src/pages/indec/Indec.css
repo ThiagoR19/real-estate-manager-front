@@ -127,6 +127,8 @@
 .indec__table-head {
   background: #edf5fd;
   font-size: 13px;
+  justify-content: space-between;
+  display: flex;
 }
 
 .indec__row {
@@ -320,8 +322,7 @@
   }
 
   .indec__year img {
-    filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg)
-      brightness(93%) contrast(99%);
+    filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%);
   }
 
   .indec__year img:last-child {
@@ -341,6 +342,11 @@
     padding: 0 8%;
     text-align: center;
   }
+
+  .indec__table-head strong {
+    flex: 1;
+  }
+
 
   .indec__row b {
     text-align: center;

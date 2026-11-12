@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
-import { api, assetUrl } from "../../services/api";
+import { api } from "../../services/api";
 
 import { ActivityCard as SharedActivityCard, PerformanceCard as SharedPerformanceCard } from "./DashboardWidgets";
 import initials from "../../utils/initials"
@@ -8,9 +8,6 @@ import avatar from "../../utils/avatarClass"
 import "./Dashboard.css";
 import { houseIcon, peopleIcon, penIcon, plusIconWhite, tagIcon } from "../../assets/icons";
 import keyIcon from "../../assets/icons/llaveNosotrosIcon.svg";
-
-
-
 
 
 function Icon({ src, className = "" }) {
@@ -25,7 +22,7 @@ function AgentsCard({ agents }) {
         {agents.map((agent) =>
           <div className="dashboard-agent" key={`AG${initials(agent.nombre, agent.apellido)}${agent.idAgente}`}>
             {agent.urlFotoPerfil
-              ? <img className="dashboard-avatar dashboard-avatar--foto" src={assetUrl(agent.urlFotoPerfil)} alt="" aria-hidden="true" />
+              ? <img className="dashboard-avatar dashboard-avatar--foto" src={api.assetUrl(agent.urlFotoPerfil)} alt="" aria-hidden="true" />
               : <div className={`dashboard-avatar ${avatar(agent.nombre, agent.apellido)}`} aria-hidden="true">
                 {initials(agent.nombre, agent.apellido)}
               </div>}
@@ -69,7 +66,7 @@ export default function Dashboard() {
   const [datos, setDatos] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  
+
   useEffect(() => {
     api.dashboard()
       .then((respuesta) => setDatos(respuesta))
@@ -95,9 +92,9 @@ export default function Dashboard() {
           <AgentsCard
             agents={datos.topAgentes}
           />
-          <SharedPerformanceCard 
-          indicadores={datos.indicadores}
-          grafico={datos.rendimiento}
+          <SharedPerformanceCard
+            indicadores={datos.indicadores}
+            grafico={datos.rendimiento}
           />
           <StatusCard
             valores={datos.estadosPropiedades}
