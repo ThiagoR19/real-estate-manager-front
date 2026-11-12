@@ -9,10 +9,8 @@ const chartSeries = [
   { color: "#fa2929", values: [5.8, 7.3, 6.7, 10.4, 8.4, 7.3, 9.9] },
   { color: "#8127f6", values: [1.7, 3.3, 0.6, 1.2, 4.4, 3.1, 5.8] },
 ];
-function porcentaje(actual, anterior){
-  if (anterior==null || anterior==0) {
-    anterior = 1
-  }
+function porcentaje(actual, anterior = 1){
+
   let total = Math.round((actual*100)/anterior)
   let devolver
   let peor = false
