@@ -9,6 +9,7 @@ import * as indecService from "./indec.js";
 import * as contVisitaService from "./contVisita.js";
 import * as visitService from "./visits.js";
 import * as agencyService from "./agencies.js";
+import * as chatService from "./chats.js";
 
 export const api = {
   agents: agentService.agents,
@@ -66,4 +67,5 @@ export const api = {
   createAdmin: agencyService.crearAdmin,
   adminToAgent: agencyService.adminAAgente,
   agentToAdmin: agencyService.agenteAAdmin,
+  sendChatMessage: chatService.sendChatMessage,
 };

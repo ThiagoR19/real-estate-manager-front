@@ -74,7 +74,7 @@ export default function Dashboard() {
       .then((respuesta) => setDatos(respuesta))
       .catch((causa) => {
         setError(causa.message)
-        mostrarToast({ tipo: "error", titulo: causa.codigo, mensaje: causa.mensaje, accion: { texto: "Recargar", onclick: () => window.location.reload } })
+        mostrarToast({ tipo: "error", titulo: causa.codigo, mensaje: causa.menssage, accion: { texto: "Recargar", onclick: () => window.location.reload } })
       })
       .finally(() => setLoading(false));
   }, []);

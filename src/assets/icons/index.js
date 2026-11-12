@@ -70,3 +70,5 @@ export { default as starIcon } from "./star.svg";
 export { default as whatsappIcon } from "./whatsapp.svg";
 export {default as building} from "./building.svg"
 export {default as editSuper} from "./edit-superAdmin.svg"
+export {default as smailing} from "./smailing.svg"
+export {default as toolplumbing} from "./plumbing-dashboard-owner.svg"
