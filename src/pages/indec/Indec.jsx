@@ -19,29 +19,66 @@ const monthNames = [
   "Diciembre",
 ];
 
+function currentIndecPeriod() {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Argentina/Buenos_Aires",
+    year: "numeric",
+    month: "numeric",
+  }).formatToParts(new Date());
+
+  return {
+    year: Number(parts.find((part) => part.type === "year").value),
+    month: Number(parts.find((part) => part.type === "month").value),
+  };
+}
+
 export default function Indec() {
-  const [year, setYear] = useState(String(new Date().getFullYear()));
+  const currentYear = new Date().getFullYear();
+  const [year, setYear] = useState(String(currentYear));
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [feedback, setFeedback] = useState("");
+  const yearOptions = Array.from(
+    { length: Math.max(1, currentYear + 2 - 2024) },
+    (_, index) => String(2024 + index),
+  );
 
-  function addPercentage({ year: recordYear, month, percentage }) {
-    if (percentage === "" || !Number.isFinite(Number(percentage)) || Number(percentage) < 0) return;
-    setRecords((current) => [
-      {
-        id: Date.now(),
-        year: recordYear,
-        month,
-        percentage: Number(percentage).toLocaleString("es-AR", { maximumFractionDigits: 2 }),
-      },
-      ...current.filter((record) => !(record.year === recordYear && record.month === month)),
-    ]);
-    setYear(recordYear);
-    setShowForm(false);
-    setFeedback(`Porcentaje de ${month} ${recordYear} guardado.`);
-    window.setTimeout(() => setFeedback(""), 2800);
+  async function addPercentage({ year: selectedYear, month, percentage }) {
+    const mes = monthNames.indexOf(month) + 1;
+    const porcentaje = Number(percentage);
+
+    if (mes < 1 || percentage === "" || !Number.isFinite(porcentaje) || porcentaje < 0) return;
+
+    const periodoActual = currentIndecPeriod();
+    const anio = Number(selectedYear);
+    if (anio > periodoActual.year || (anio === periodoActual.year && mes > periodoActual.month)) {
+      setError("No se puede cargar el porcentaje de un mes que todavía no empezó.");
+      return;
+    }
+
+    setError("");
+    setFeedback("");
+    setLoading(true);
+
+    try {
+      await api.createIndec({ anio, mes, porcentaje });
+      setYear(String(anio));
+      setShowForm(false);
+      setFeedback(`Porcentaje de ${month} ${anio} guardado.`);
+      window.setTimeout(() => setFeedback(""), 2800);
+      try {
+        const updatedRecords = await api.indec(anio);
+        setRecords(updatedRecords);
+      } catch (refreshError) {
+        setError(`Se guardó, pero no se pudo actualizar la lista: ${refreshError.message}`);
+      }
+    } catch (requestError) {
+      setError(requestError.message);
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -76,7 +113,10 @@ export default function Indec() {
             className="indec__new-button"
             icon={plusIcon}
             text="Nuevo porcentaje"
-            onClick={() => setShowForm(true)}
+            onClick={() => {
+              setError("");
+              setShowForm(true);
+            }}
           />
           <label className="indec__year">
             <img src={clockIcon} alt="" />
@@ -90,11 +130,9 @@ export default function Indec() {
                 setYear(event.target.value);
               }}
             >
-              {[...new Set(["2024", "2025", "2026", String(new Date().getFullYear())])]
-                .sort()
-                .map((item) => (
-                  <option key={item}>{item}</option>
-                ))}
+              {yearOptions.map((item) => (
+                <option key={item}>{item}</option>
+              ))}
             </select>
             <img src={angleDownIcon} alt="" />
           </label>
@@ -125,7 +163,12 @@ export default function Indec() {
         </p>
       )}
       {showForm && (
-        <IncreaseModal year={year} onClose={() => setShowForm(false)} onSubmit={addPercentage} />
+        <IncreaseModal
+          year={year}
+          error={error}
+          onClose={() => setShowForm(false)}
+          onSubmit={addPercentage}
+        />
       )}
     </main>
   );

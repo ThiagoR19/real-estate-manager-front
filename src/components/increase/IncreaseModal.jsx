@@ -18,12 +18,15 @@ const monthNames = [
   "Diciembre",
 ];
 
-export default function IncreaseModal({ year, onClose, onSubmit }) {
+export default function IncreaseModal({ year, error, onClose, onSubmit }) {
   const [form, setForm] = useState({ year, month: "Mayo", percentage: "" });
   const currentYear = new Date().getFullYear();
-  const years = [
-    ...new Set([year, ...Array.from({ length: 7 }, (_, index) => String(currentYear - 3 + index))]),
-  ].sort();
+  const years = Array.from(
+    { length: Math.max(1, currentYear + 2 - 2024) },
+    (_, index) => String(2024 + index),
+  );
+  if (!years.includes(year)) years.push(year);
+  years.sort();
 
   function update(name, value) {
     setForm((current) => ({ ...current, [name]: value }));
@@ -82,6 +85,11 @@ export default function IncreaseModal({ year, onClose, onSubmit }) {
               />
             </ModalField>
           </div>
+          {error && (
+            <p className="increase-modal__error" role="alert">
+              {error}
+            </p>
+          )}
         </div>
         <ModalActions onClose={onClose} />
       </form>

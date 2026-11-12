@@ -13,8 +13,6 @@ export async function professionals() {
   return items;
 }
 
-export const createProfessional = (body) =>
-  request("/profesionales", { method: "POST", body }).then(({ data }) => data);
-export const updateProfessional = (id, body) =>
-  request(`/profesionales/${id}`, { method: "PUT", body }).then(({ data }) => data);
+export const createProfessional = (body) => request("/profesionales", { method: "POST", body }).then(({ data }) => data);
+export const updateProfessional = (id, body) => request(`/profesionales/${id}`, { method: "PUT", body }).then(({ data }) => data);
 export const deleteProfessional = (id) => request(`/profesionales/${id}`, { method: "DELETE" });
