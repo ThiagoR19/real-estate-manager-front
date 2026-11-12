@@ -123,12 +123,10 @@ export default function SuperAdmin() {
     }
   }
 
-  // Abre la confirmación; recién al confirmar se hace el DELETE
   function eliminarPersona(persona) {
     setAEliminar(persona);
   }
 
-  // Abre la confirmación para borrar la inmobiliaria que se está editando
   function eliminarInmobiliaria(agency) {
     setAEliminar({ ...agency, tipo: "inmobiliaria" });
   }
@@ -153,7 +151,6 @@ export default function SuperAdmin() {
     return `¿Seguro que desea eliminar a ${aEliminar.nombre} ${aEliminar.apellido}?`;
   }
 
-  // Agente → Admin: PATCH /agentes/:id/ADMIN | Admin → Agente: PATCH /admins/:id/agente
   function cambiarRol(persona, rol) {
     if (rol === persona.rol) return;
     const nombre = `${persona.nombre} ${persona.apellido}`;
