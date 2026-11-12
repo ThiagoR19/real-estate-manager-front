@@ -149,7 +149,10 @@
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  background: #bed9eb;
+  background: #bbd7eb;
+  color: #061b4a;
+  font-size: 14px;
+  font-weight: 400;
   object-fit: cover;
 }
 
@@ -289,13 +292,15 @@
 }
 
 .navbar__account-avatar {
-  display: block;
+  display: grid;
+  place-items: center;
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  background-position: -1460px -10px;
-  background-size: 1521px 766px;
-  background-repeat: no-repeat;
+  background: #bbd7eb;
+  color: #061b4a;
+  font-size: 14px;
+  font-weight: 400;
 }
 
 .navbar__header img.navbar__account-avatar--photo,
@@ -522,8 +527,6 @@
   .navbar__account-avatar {
     width: 36px;
     height: 36px;
-    background-position: -1251.43px -8.57px;
-    background-size: 1303.71px 656.57px;
   }
 
   .navbar__drawer {
@@ -767,12 +770,6 @@
   }
   .navbar__header--super-admin .navbar__account-link small {
     font-size: 10px;
-  }
-  .navbar__header--super-admin .navbar__account-avatar--super-admin {
-    background-image: url("../../assets/superAdminReference.png");
-    background-position: -1460px -9px;
-    background-size: 1521px 692px;
-    border: 1px solid #d9dfe8;
   }
 }
 

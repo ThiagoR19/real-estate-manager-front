@@ -135,7 +135,6 @@ function PublicHeader({ operation, setOperation }) {
         >
           Alquilar
         </Link>
-        <Link href="/about-us">Nosotros</Link>
         <Link href="/home#contacto">Contacto</Link>
       </nav>
       <div className="public-properties__header-actions">

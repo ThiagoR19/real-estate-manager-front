@@ -3,11 +3,9 @@ import {
   buildingColumnsIcon,
   calendarIcon,
   chartColumnIcon,
-  circleInfoIcon,
   commentsIcon,
   fileLinesIcon,
   houseIcon,
-  houseUserIcon,
   peopleIcon,
   walletIcon,
   userIcon,
@@ -19,7 +17,7 @@ export const primaryItems = [
     href: "/tenant-dashboard",
     label: "Dashboard inquilinos",
     breadcrumbLabel: "Dashboard",
-    icon: houseUserIcon,
+    icon: chartColumnIcon,
   },
   {
     href: "/agent-dashboard",
@@ -31,7 +29,7 @@ export const primaryItems = [
     href: "/owner-dashboard",
     label: "Dashboard propietarios",
     breadcrumbLabel: "Dashboard",
-    icon: houseUserIcon,
+    icon: chartColumnIcon,
   },
   {
     href: "/my-properties",
@@ -51,7 +49,7 @@ export const primaryItems = [
     href: "/super-admin",
     label: "Panel superAdmin",
     breadcrumbLabel: "Panel administrativo",
-    icon: buildingColumnsIcon,
+    icon: chartColumnIcon,
   },
   { href: "/owners", label: "Propietarios", icon: peopleIcon },
   { href: "/tenant", label: "Inquilinos", icon: peopleIcon },
@@ -68,7 +66,6 @@ export const secondaryItems = [
   { href: "/agency", label: "Mi Inmobiliaria", icon: buildingColumnsIcon },
   { href: "/profile", label: "Mi perfil", icon: userIcon },
   { href: "/terms", label: "Términos y condiciones", icon: fileLinesIcon },
-  { href: "/about-us", label: "Acerca de nosotros", icon: circleInfoIcon },
 ];
 
 export const allItems = [...primaryItems, ...secondaryItems];
@@ -79,7 +76,7 @@ const navigationRoles = {
   "/agent-dashboard": [3],
   "/owner-dashboard": [4],
   "/my-properties": [4],
-  "/collections": [2, 3, 4],
+  "/collections": [1, 4],
   "/payments-collections": [2, 3],
   "/indec": [2, 3],
   "/super-admin": [1],
@@ -95,7 +92,6 @@ const navigationRoles = {
   "/agency": [2],
   "/profile": [1, 2, 3, 4, 5],
   "/terms": [1, 2, 3, 4, 5],
-  "/about-us": [1, 2, 3, 4, 5],
 };
 
 export function navigationItemsForRole(role) {

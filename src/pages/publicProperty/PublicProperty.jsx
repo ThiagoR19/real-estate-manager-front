@@ -59,7 +59,6 @@ function PublicHeader() {
           Comprar
         </Link>
         <Link href="/public-properties?filter=rent">Alquilar</Link>
-        <Link href="/about-us">Nosotros</Link>
         <Link href="/home#contacto">Contacto</Link>
       </nav>
       <div className="public-property__header-actions">

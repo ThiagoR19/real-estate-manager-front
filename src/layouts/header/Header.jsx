@@ -7,16 +7,18 @@ import {
   magnifyingGlassIcon as searchIcon,
   xIcon as closeIcon,
 } from "../../assets/icons";
-import referenceImage from "../../assets/terms-reference.png";
 import brandLogo from "../../assets/logoAGI.png";
 import { accountRoleFor, allItems, isItemActive, pageLabels } from "../navigation";
 import { api } from "../../services/api.js";
+import initials from "../../utils/initials.js";
+import avatarClass from "../../utils/avatarClass.js";
 import "./Header.css";
 
 export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
   const [pathname] = useLocation();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [user, setUser] = useState(() => api.getSession()?.usuario);
+  const [photoLoadError, setPhotoLoadError] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [notificationsLoading, setNotificationsLoading] = useState(false);
   const [notificationsError, setNotificationsError] = useState("");
@@ -50,6 +52,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
         setNotificationsError("");
       }
       setUser(nextUser);
+      setPhotoLoadError(false);
     };
     window.addEventListener("session-updated", syncUser);
     return () => window.removeEventListener("session-updated", syncUser);
@@ -120,6 +123,8 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
     { 1: "Super admin", 2: "Administrador", 3: "Agente", 4: "Propietario", 5: "Inquilino" }[
     user?.rol
     ] || accountRole;
+  const userInitials = initials(user?.nombre, user?.apellido);
+  const userAvatarClass = avatarClass(user?.nombre, user?.apellido);
   const currentLabel = isPayments
     ? "Zona de pago"
     : pathname.startsWith("/property/")
@@ -202,23 +207,17 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
             {user ? `${user.nombre} ${user.apellido}` : "Cuenta"}
             <small>{roleName}</small>
           </span>
-          {user?.urlFotoPerfil ? (
+          {user?.urlFotoPerfil && !photoLoadError ? (
             <img
               className="navbar__account-avatar navbar__account-avatar--photo"
               src={api.assetUrl(user.urlFotoPerfil)}
               alt=""
-            />
-          ) : isSuperAdmin ? (
-            <i
-              className="navbar__account-avatar navbar__account-avatar--super-admin"
-              aria-hidden="true"
+              onError={() => setPhotoLoadError(true)}
             />
           ) : (
-            <i
-              className="navbar__account-avatar"
-              style={{ backgroundImage: `url(${referenceImage})` }}
-              aria-hidden="true"
-            />
+            <span className={`navbar__account-avatar ${userAvatarClass}`} aria-hidden="true">
+              {userInitials}
+            </span>
           )}
         </Link>
       </aside>

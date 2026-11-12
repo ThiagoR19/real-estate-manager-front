@@ -160,7 +160,7 @@
   background:
     radial-gradient(ellipse at 50% 68%, #172230 0 39%, transparent 40%),
     linear-gradient(160deg, #aeb6be, #273541);
-  color: transparent;
+  color: #fff;
 }
 
 @media (min-width: 761px) {

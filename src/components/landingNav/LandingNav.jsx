@@ -10,7 +10,7 @@ const enlaces = [
   { texto: "Inicio", href: "/home" },
   { texto: "Comprar", href: "/public-properties?filter=buy" },
   { texto: "Alquilar", href: "/public-properties?filter=rent" },
-  { texto: "Nosotros", href: "/about-us" },
+  { texto: "Sobre nosotros", href: "/about-us" },
   { texto: "Contacto", href: "#contacto" },
 ];
 

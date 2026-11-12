@@ -10,6 +10,13 @@ import "./App.css";
 import { api } from "./services/api.js";
 let yaSeHizo = false;
 const validar = ["/", "/public-properties", "/public-property", "/about-us", "/home"]
+const dashboardByRole = {
+  1: "/super-admin",
+  2: "/dashboard",
+  3: "/agent-dashboard",
+  4: "/owner-dashboard",
+  5: "/tenant-dashboard",
+};
 function AuthenticatedApp() {
   const [menuOpen, setMenuOpen] = useState(false);
   if (!getSession()?.token) {
@@ -37,7 +44,11 @@ function AuthenticatedApp() {
         <Route path="/chat" component={Chat} />
         <Route path="/agency" component={Agency} />
         <Route path="/payments" component={Payments} />
-        <Route path="/collections" component={Collections} />
+        <Route path="/collections">
+          {() => [1, 4].includes(Number(getSession()?.usuario?.rol))
+            ? <Collections />
+            : <Redirect to={dashboardByRole[Number(getSession()?.usuario?.rol)] ?? "/home"} replace />}
+        </Route>
         <Route path="/payments-collections" component={PaymentsAndCollections} />
         <Route path="/indec" component={Indec} />
         <Route path="/my-properties" component={MyProperties} />

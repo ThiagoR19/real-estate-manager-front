@@ -10,6 +10,8 @@ import {
   secondaryItems,
 } from "../navigation";
 import { api } from "../../services/api.js";
+import initials from "../../utils/initials.js";
+import avatarClass from "../../utils/avatarClass.js";
 import "./Navbar.css";
 
 function NavigationItem({ item, pathname, onNavigate }) {
@@ -32,9 +34,13 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
   const [pathname] = useLocation();
   const [logoutError, setLogoutError] = useState("");
   const [user, setUser] = useState(() => api.getSession()?.usuario);
+  const [photoLoadError, setPhotoLoadError] = useState(false);
 
   useEffect(() => {
-    const syncUser = () => setUser(api.getSession()?.usuario);
+    const syncUser = () => {
+      setUser(api.getSession()?.usuario);
+      setPhotoLoadError(false);
+    };
     window.addEventListener("session-updated", syncUser);
     return () => window.removeEventListener("session-updated", syncUser);
   }, []);
@@ -154,12 +160,11 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
           ))}
         </nav>
         <Link href="/profile" className="navbar__drawer-account" onClick={onClose}>
-          {user?.urlFotoPerfil ? (
-            <img className="navbar__drawer-avatar" src={api.assetUrl(user.urlFotoPerfil)} alt="" />
+          {user?.urlFotoPerfil && !photoLoadError ? (
+            <img className="navbar__drawer-avatar" src={api.assetUrl(user.urlFotoPerfil)} alt="" onError={() => setPhotoLoadError(true)} />
           ) : (
-            <span className="navbar__drawer-avatar" aria-hidden="true">
-              {user?.nombre?.[0]}
-              {user?.apellido?.[0]}
+            <span className={`navbar__drawer-avatar ${avatarClass(user?.nombre, user?.apellido)}`} aria-hidden="true">
+              {initials(user?.nombre, user?.apellido)}
             </span>
           )}
           <span>
