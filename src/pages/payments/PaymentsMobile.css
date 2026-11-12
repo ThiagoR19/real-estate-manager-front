@@ -52,7 +52,7 @@
     font-size: 16px;
   }
 
-  .payment-mobile__toolbar>button,
+  .payment-mobile__toolbar > button,
   .payment-mobile__close {
     display: grid;
     place-items: center;
@@ -96,7 +96,16 @@
     box-shadow: 0 1px 5px #17235e20;
   }
 
-  :is(#payments, #payment-view, #collections):has(.payments__sidebar.is-open, .collections__sidebar.is-open) :is(.payments__workspace, .collections__workspace, .payment-mobile__toolbar, .payment-mobile__summary-toggle) {
+  :is(#payments, #payment-view, #collections):has(
+      .payments__sidebar.is-open,
+      .collections__sidebar.is-open
+    )
+    :is(
+      .payments__workspace,
+      .collections__workspace,
+      .payment-mobile__toolbar,
+      .payment-mobile__summary-toggle
+    ) {
     visibility: hidden;
   }
 
@@ -277,7 +286,7 @@
     padding: 0;
   }
 
-  :is(.payments__facts, .collections__facts)>div {
+  :is(.payments__facts, .collections__facts) > div {
     grid-template-columns: 34px minmax(0, 1fr) auto;
     gap: 8px;
     min-height: 38px;
@@ -310,7 +319,7 @@
     font-size: 18px;
   }
 
-  :is(.payments__breakdown, .collections__breakdown)>div {
+  :is(.payments__breakdown, .collections__breakdown) > div {
     display: flex;
     justify-content: space-between;
     min-height: 30px;

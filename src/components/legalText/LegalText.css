@@ -3,18 +3,18 @@
 /* --------------------------------------------------------------------------------- */
 
 .LegalText {
-    margin: 0;
-    font-size: 12px;
-    line-height: 1.6;
-    text-align: center;
-    color: var(--azulGris);
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+  text-align: center;
+  color: var(--azulGris);
 }
 
 .LegalText__link {
-    color: inherit;
-    text-decoration: none;
+  color: inherit;
+  text-decoration: none;
 }
 
 .LegalText__link:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }

@@ -139,7 +139,9 @@
 }
 
 .dashboard-avatar--violet {
-  background: radial-gradient(circle at 70% 25%, #f3e4ec 0 13%, transparent 14%), linear-gradient(135deg, #e6dce3, #816e85);
+  background:
+    radial-gradient(circle at 70% 25%, #f3e4ec 0 13%, transparent 14%),
+    linear-gradient(135deg, #e6dce3, #816e85);
 }
 
 .dashboard-avatar--blue {
@@ -155,10 +157,11 @@
 }
 
 .dashboard-avatar--silver {
-  background: radial-gradient(ellipse at 50% 68%, #172230 0 39%, transparent 40%), linear-gradient(160deg, #aeb6be, #273541);
+  background:
+    radial-gradient(ellipse at 50% 68%, #172230 0 39%, transparent 40%),
+    linear-gradient(160deg, #aeb6be, #273541);
   color: transparent;
 }
-
 
 @media (min-width: 761px) {
   .terms__div {
@@ -169,7 +172,6 @@
 }
 
 @media (max-width: 1100px) {
-
   #tenant-dashboard,
   #agent-dashboard,
   #tenant,
@@ -193,7 +195,6 @@
 }
 
 @media (max-width: 760px) {
-
   #tenant-dashboard,
   #agent-dashboard,
   #tenant,

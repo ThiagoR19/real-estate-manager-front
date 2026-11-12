@@ -71,8 +71,16 @@ export default function TenantModal({ isOpen, mode, tenant, onClose, onSubmit })
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const isEditing = mode === "edit";
-  const displayName = isEditing ? `${tenant?.nombre || ""} ${tenant?.apellido || ""}`.trim() : "Inquilino";
-  const displayStatus = isEditing ? (!tenant?.activo ? "Inactivo" : tenant?.estadoCuenta === "PENDIENTE_ACTIVACION" ? "Pendiente" : "Activo") : "Estado";
+  const displayName = isEditing
+    ? `${tenant?.nombre || ""} ${tenant?.apellido || ""}`.trim()
+    : "Inquilino";
+  const displayStatus = isEditing
+    ? !tenant?.activo
+      ? "Inactivo"
+      : tenant?.estadoCuenta === "PENDIENTE_ACTIVACION"
+        ? "Pendiente"
+        : "Activo"
+    : "Estado";
 
   useEffect(() => {
     if (!isOpen) {
@@ -138,12 +146,12 @@ export default function TenantModal({ isOpen, mode, tenant, onClose, onSubmit })
         onMouseDown={(event) => event.stopPropagation()}
       >
         <header className="tenant-modal__header">
-          <h2 id="tenant-modal-title">
-            {isEditing ? "Editar inquilino" : "Crear inquilino"}
-          </h2>
-          <p>{isEditing
-            ? "Actualiza la información de contacto y el estado del inquilino."
-            : "El correo será su usuario y se generará un enlace para activar la cuenta."}</p>
+          <h2 id="tenant-modal-title">{isEditing ? "Editar inquilino" : "Crear inquilino"}</h2>
+          <p>
+            {isEditing
+              ? "Actualiza la información de contacto y el estado del inquilino."
+              : "El correo será su usuario y se generará un enlace para activar la cuenta."}
+          </p>
         </header>
 
         <form onSubmit={handleSubmit}>
@@ -232,7 +240,9 @@ export default function TenantModal({ isOpen, mode, tenant, onClose, onSubmit })
                   label="Estado"
                   value={form.active ? statusOptions[0] : statusOptions[1]}
                   options={statusOptions}
-                  onChange={(status) => setForm((current) => ({ ...current, active: status === statusOptions[0] }))}
+                  onChange={(status) =>
+                    setForm((current) => ({ ...current, active: status === statusOptions[0] }))
+                  }
                   icon={userIcon}
                   className="tenant-modal__select"
                   triggerClassName="tenant-modal__select-trigger"
@@ -245,13 +255,27 @@ export default function TenantModal({ isOpen, mode, tenant, onClose, onSubmit })
             </div>
           </div>
 
-          {error && <p className="tenant-modal__error" role="alert">{error}</p>}
+          {error && (
+            <p className="tenant-modal__error" role="alert">
+              {error}
+            </p>
+          )}
 
           <footer className="tenant-modal__actions">
-            <button className="tenant-modal__cancel" type="button" onClick={onClose} disabled={saving}>
+            <button
+              className="tenant-modal__cancel"
+              type="button"
+              onClick={onClose}
+              disabled={saving}
+            >
               Cancelar
             </button>
-            <Button className="tenant-modal__submit" type="submit" text={saving ? "Guardando..." : "Guardar cambios"} disabled={saving} />
+            <Button
+              className="tenant-modal__submit"
+              type="submit"
+              text={saving ? "Guardando..." : "Guardar cambios"}
+              disabled={saving}
+            />
           </footer>
         </form>
       </section>

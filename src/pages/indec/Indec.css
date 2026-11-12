@@ -38,7 +38,9 @@
   justify-content: center;
   padding: 18px 25px;
   border-radius: 19px;
-  background: linear-gradient(90deg, #f7fbffed 0%, #edf5fdc9 45%, #ffffff10), url("../../assets/fondoCasa.png") center / cover;
+  background:
+    linear-gradient(90deg, #f7fbffed 0%, #edf5fdc9 45%, #ffffff10),
+    url("../../assets/fondoCasa.png") center / cover;
 }
 
 .indec__hero h1 {
@@ -318,7 +320,8 @@
   }
 
   .indec__year img {
-    filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%);
+    filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg)
+      brightness(93%) contrast(99%);
   }
 
   .indec__year img:last-child {

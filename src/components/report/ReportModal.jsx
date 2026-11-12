@@ -48,9 +48,12 @@ export default function ReportModal({ isOpen, onClose, onSubmit }) {
     };
   }, [isOpen, onClose]);
 
-  useEffect(() => () => {
-    photosRef.current.forEach(({ url }) => URL.revokeObjectURL(url));
-  }, []);
+  useEffect(
+    () => () => {
+      photosRef.current.forEach(({ url }) => URL.revokeObjectURL(url));
+    },
+    [],
+  );
 
   if (!isOpen) {
     return null;
@@ -123,7 +126,9 @@ export default function ReportModal({ isOpen, onClose, onSubmit }) {
         <form onSubmit={handleSubmit}>
           <section className="report-modal__card" aria-labelledby="report-modal-main-data">
             <header className="report-modal__section-header">
-              <span className="report-modal__step" aria-hidden="true">1</span>
+              <span className="report-modal__step" aria-hidden="true">
+                1
+              </span>
               <h3 id="report-modal-main-data">Datos principales</h3>
             </header>
 
@@ -174,9 +179,14 @@ export default function ReportModal({ isOpen, onClose, onSubmit }) {
             </div>
           </section>
 
-          <section className="report-modal__card report-modal__photos-card" aria-labelledby="report-modal-photos">
+          <section
+            className="report-modal__card report-modal__photos-card"
+            aria-labelledby="report-modal-photos"
+          >
             <header className="report-modal__section-header">
-              <span className="report-modal__step" aria-hidden="true">2</span>
+              <span className="report-modal__step" aria-hidden="true">
+                2
+              </span>
               <h3 id="report-modal-photos">Fotos del reporte</h3>
             </header>
 
@@ -196,7 +206,9 @@ export default function ReportModal({ isOpen, onClose, onSubmit }) {
                 ))}
 
                 <label className="report-modal__add-photos">
-                  <span className="report-modal__add-icon" aria-hidden="true">+</span>
+                  <span className="report-modal__add-icon" aria-hidden="true">
+                    +
+                  </span>
                   <span>Agregar fotos</span>
                   <input type="file" accept="image/*" multiple onChange={addPhotos} />
                 </label>

@@ -1,34 +1,66 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { ModalOverlay, NotificationPanel } from "../../components";
 import notifications from "../../data/notifications";
-import { barsIcon as menuIcon, bellIcon, magnifyingGlassIcon as searchIcon, xIcon as closeIcon, } from "../../assets/icons";
+import {
+  barsIcon as menuIcon,
+  bellIcon,
+  magnifyingGlassIcon as searchIcon,
+  xIcon as closeIcon,
+} from "../../assets/icons";
 import referenceImage from "../../assets/terms-reference.png";
 import brandLogo from "../../assets/logoAGI.png";
 import { accountRoleFor, allItems, isItemActive, pageLabels } from "../navigation";
 import { api } from "../../services/api.js";
 import "./Header.css";
 
-export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
+export default function Header({ menuOpen = false, onToggleMenu = () => {} }) {
   const [pathname] = useLocation();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [user, setUser] = useState(() => api.getSession()?.usuario);
+
+  useEffect(() => {
+    const syncUser = () => setUser(api.getSession()?.usuario);
+    window.addEventListener("session-updated", syncUser);
+    return () => window.removeEventListener("session-updated", syncUser);
+  }, []);
   const currentItem = allItems.find(({ href }) => isItemActive(pathname, href));
   const isPayments = pathname === "/payments" || pathname.startsWith("/payments/");
-  const isProperties = pathname === "/properties" || pathname.startsWith("/properties/") || pathname === "/property" || pathname.startsWith("/property/");
-  const isPaymentsAndCollections = pathname === "/payments-collections" || pathname.startsWith("/payments-collections/");
-  const isOwnerDashboard = pathname === "/owner-dashboard" || pathname === "/my-properties" || pathname === "/collections";
-  const isAdminDashboard = pathname === "/admin-dashboard" || pathname === "/super-admin" || pathname === "/indec";
+  const isProperties =
+    pathname === "/properties" ||
+    pathname.startsWith("/properties/") ||
+    pathname === "/property" ||
+    pathname.startsWith("/property/");
+  const isPaymentsAndCollections =
+    pathname === "/payments-collections" || pathname.startsWith("/payments-collections/");
+  const isOwnerDashboard =
+    pathname === "/owner-dashboard" || pathname === "/my-properties" || pathname === "/collections";
+  const isAdminDashboard =
+    pathname === "/admin-dashboard" || pathname === "/super-admin" || pathname === "/indec";
   const isSuperAdmin = pathname === "/super-admin";
   const isChat = pathname === "/chat";
   const accountRole = accountRoleFor(pathname);
-  const user = api.getSession()?.usuario;
-  const roleName = { 1: "Super admin", 2: "Administrador", 3: "Agente", 4: "Propietario", 5: "Inquilino" }[user?.rol] || accountRole;
-  const currentLabel = isPayments ? "Zona de pago" : pathname.startsWith("/property/") ? "Propiedad" : currentItem?.breadcrumbLabel ?? currentItem?.label ?? pageLabels[pathname] ?? "Dashboard";
-  const searchPlaceholder = isPaymentsAndCollections ? "Buscar propietario/locatario" : isProperties ? "Buscar propiedades..." : "Buscar contacto...";
-  const showSearch = isPaymentsAndCollections || pathname === "/properties" || pathname === "/professional";
+  const roleName =
+    { 1: "Super admin", 2: "Administrador", 3: "Agente", 4: "Propietario", 5: "Inquilino" }[
+      user?.rol
+    ] || accountRole;
+  const currentLabel = isPayments
+    ? "Zona de pago"
+    : pathname.startsWith("/property/")
+      ? "Propiedad"
+      : (currentItem?.breadcrumbLabel ?? currentItem?.label ?? pageLabels[pathname] ?? "Dashboard");
+  const searchPlaceholder = isPaymentsAndCollections
+    ? "Buscar propietario/locatario"
+    : isProperties
+      ? "Buscar propiedades..."
+      : "Buscar contacto...";
+  const showSearch =
+    isPaymentsAndCollections || pathname === "/properties" || pathname === "/professional";
 
   return (
-    <header className={`navbar__header${isPayments ? " navbar__header--payments" : ""}${isOwnerDashboard ? " navbar__header--dashboard-owner" : ""}${isAdminDashboard ? " navbar__header--dashboard" : ""}${isChat ? " navbar__header--chat" : ""}${isSuperAdmin ? " navbar__header--super-admin" : ""}`}>
+    <header
+      className={`navbar__header${isPayments ? " navbar__header--payments" : ""}${isOwnerDashboard ? " navbar__header--dashboard-owner" : ""}${isAdminDashboard ? " navbar__header--dashboard" : ""}${isChat ? " navbar__header--chat" : ""}${isSuperAdmin ? " navbar__header--super-admin" : ""}`}
+    >
       <button
         className="navbar__menu-button"
         type="button"
@@ -40,7 +72,11 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
         <img className="navbar__menu-icon" src={menuOpen ? closeIcon : menuIcon} alt="" />
       </button>
 
-      <Link href={isSuperAdmin ? "/super-admin" : "/dashboard"} className="navbar__brand" aria-label="AGI, inicio">
+      <Link
+        href={isSuperAdmin ? "/super-admin" : "/dashboard"}
+        className="navbar__brand"
+        aria-label="AGI, inicio"
+      >
         <img className="navbar__brand-icon" src={brandLogo} alt="" />
         <strong>AGI</strong>
         <small className="navbar__brand-caption">Propiedades</small>
@@ -51,31 +87,72 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
         <span aria-current="page">{currentLabel}</span>
       </nav>
 
-      {showSearch && <label className="navbar__search">
-        <img src={searchIcon} alt="" />
-        <input type="search" placeholder={searchPlaceholder} aria-label={searchPlaceholder.replace("...", "")} onChange={isProperties ? (event) => window.dispatchEvent(new CustomEvent("property-search", { detail: event.target.value })) : undefined} />
-      </label>}
+      {showSearch && (
+        <label className="navbar__search">
+          <img src={searchIcon} alt="" />
+          <input
+            type="search"
+            placeholder={searchPlaceholder}
+            aria-label={searchPlaceholder.replace("...", "")}
+            onChange={
+              isProperties
+                ? (event) =>
+                    window.dispatchEvent(
+                      new CustomEvent("property-search", { detail: event.target.value }),
+                    )
+                : undefined
+            }
+          />
+        </label>
+      )}
 
       <aside className="navbar__account" aria-label="Cuenta de usuario">
-        {!isSuperAdmin && <div className="navbar__notifications">
-          <button type="button" aria-label="Notificaciones" onClick={() => setNotificationsOpen(true)}>
-            <img src={bellIcon} alt="" />
-          </button>
-        </div>}
+        {!isSuperAdmin && (
+          <div className="navbar__notifications">
+            <button
+              type="button"
+              aria-label="Notificaciones"
+              onClick={() => setNotificationsOpen(true)}
+            >
+              <img src={bellIcon} alt="" />
+            </button>
+          </div>
+        )}
         <Link href="/profile" className="navbar__account-link">
           <span>
             {user ? `${user.nombre} ${user.apellido}` : "Cuenta"}
             <small>{roleName}</small>
           </span>
-          {isSuperAdmin ? <i className="navbar__account-avatar navbar__account-avatar--super-admin" aria-hidden="true" /> : <i
-            className="navbar__account-avatar"
-            style={{ backgroundImage: `url(${referenceImage})` }}
-            aria-hidden="true"
-          />}
+          {user?.urlFotoPerfil ? (
+            <img
+              className="navbar__account-avatar navbar__account-avatar--photo"
+              src={api.assetUrl(user.urlFotoPerfil)}
+              alt=""
+            />
+          ) : isSuperAdmin ? (
+            <i
+              className="navbar__account-avatar navbar__account-avatar--super-admin"
+              aria-hidden="true"
+            />
+          ) : (
+            <i
+              className="navbar__account-avatar"
+              style={{ backgroundImage: `url(${referenceImage})` }}
+              aria-hidden="true"
+            />
+          )}
         </Link>
       </aside>
-      <ModalOverlay abierto={notificationsOpen} onCerrar={() => setNotificationsOpen(false)} posicion="derecha" etiqueta="Notificaciones">
-        <NotificationPanel notificaciones={notifications} onCerrar={() => setNotificationsOpen(false)} />
+      <ModalOverlay
+        abierto={notificationsOpen}
+        onCerrar={() => setNotificationsOpen(false)}
+        posicion="derecha"
+        etiqueta="Notificaciones"
+      >
+        <NotificationPanel
+          notificaciones={notifications}
+          onCerrar={() => setNotificationsOpen(false)}
+        />
       </ModalOverlay>
     </header>
   );

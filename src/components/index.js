@@ -11,7 +11,13 @@ export { default as ImagePanel } from "./imagePanel/ImagePanel";
 export { default as IncreaseModal } from "./increase/IncreaseModal";
 export { default as LandingNav } from "./landingNav/LandingNav";
 export { default as LegalText } from "./legalText/LegalText";
-export { default as ManagementModal, ModalActions, ModalField, ModalInput, ModalSelect } from "./managementModal/ManagementModal";
+export {
+  default as ManagementModal,
+  ModalActions,
+  ModalField,
+  ModalInput,
+  ModalSelect,
+} from "./managementModal/ManagementModal";
 export { default as ModalOverlay } from "./modalOverlay/ModalOverlay";
 export { default as Navbar } from "./navbar/Navbar";
 export { default as Notification } from "./notification/Notification";

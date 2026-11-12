@@ -3,7 +3,9 @@ body:has(#superadmin-dashboard) {
   background: #f5f7fa;
 }
 
-.superadmin__mobile-copy { display: none; }
+.superadmin__mobile-copy {
+  display: none;
+}
 
 #superadmin-dashboard {
   min-height: 100dvh;
@@ -201,7 +203,13 @@ body:has(#superadmin-dashboard) {
 .superadmin__hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgb(255 255 255 / 98%) 0%, rgb(255 255 255 / 89%) 41%, rgb(255 255 255 / 29%) 76%, rgb(255 255 255 / 4%) 100%);
+  background: linear-gradient(
+    90deg,
+    rgb(255 255 255 / 98%) 0%,
+    rgb(255 255 255 / 89%) 41%,
+    rgb(255 255 255 / 29%) 76%,
+    rgb(255 255 255 / 4%) 100%
+  );
 }
 
 .superadmin__hero-copy {
@@ -512,7 +520,14 @@ body:has(#superadmin-dashboard) {
 }
 
 .superadmin__user-avatar--female {
-  background: linear-gradient(145deg, #47362c 0%, #dda79a 30%, #efc174 31%, #b76549 74%, #e3d3c4 75%);
+  background: linear-gradient(
+    145deg,
+    #47362c 0%,
+    #dda79a 30%,
+    #efc174 31%,
+    #b76549 74%,
+    #e3d3c4 75%
+  );
 }
 
 .superadmin__user-avatar--blue {
@@ -532,7 +547,8 @@ body:has(#superadmin-dashboard) {
 .superadmin__delete-button img {
   width: 16px;
   height: 16px;
-  filter: brightness(0) saturate(100%) invert(23%) sepia(86%) saturate(2556%) hue-rotate(340deg) brightness(92%) contrast(87%);
+  filter: brightness(0) saturate(100%) invert(23%) sepia(86%) saturate(2556%) hue-rotate(340deg)
+    brightness(92%) contrast(87%);
 }
 
 .superadmin__admin-name {
@@ -973,7 +989,11 @@ body:has(#superadmin-dashboard) {
 .superadmin__sidebar {
   display: none;
 }
-.superadmin__active-icon { color: #14703e; font-size: 18px; font-weight: 800; }
+.superadmin__active-icon {
+  color: #14703e;
+  font-size: 18px;
+  font-weight: 800;
+}
 
 #superadmin-dashboard {
   overflow-x: hidden;
@@ -992,12 +1012,20 @@ body:has(#superadmin-dashboard) {
   justify-content: flex-start;
 }
 
-.superadmin__active-count { display: flex; }
+.superadmin__active-count {
+  display: flex;
+}
 
 @media (max-width: 760px) {
-  .superadmin__desktop-copy { display: none; }
-  .superadmin__mobile-copy { display: inline; }
-  .superadmin__active-count { display: none; }
+  .superadmin__desktop-copy {
+    display: none;
+  }
+  .superadmin__mobile-copy {
+    display: inline;
+  }
+  .superadmin__active-count {
+    display: none;
+  }
 
   .superadmin__content {
     padding: 14px 12px 28px;

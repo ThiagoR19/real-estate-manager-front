@@ -48,11 +48,22 @@ export default function Property() {
 
   useEffect(() => {
     let active = true;
-    Promise.all([api.getProperty(id), api.propertyCatalogs()]).then(([property, lists]) => {
-      if (active) { setPropertyData(property); setCatalogs(lists); }
-    }).catch((cause) => { if (active) setError(cause.message); })
-      .finally(() => { if (active) setLoading(false); });
-    return () => { active = false; };
+    Promise.all([api.getProperty(id), api.propertyCatalogs()])
+      .then(([property, lists]) => {
+        if (active) {
+          setPropertyData(property);
+          setCatalogs(lists);
+        }
+      })
+      .catch((cause) => {
+        if (active) setError(cause.message);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
   }, [id]);
 
   useEffect(() => {
@@ -66,8 +77,20 @@ export default function Property() {
     { label: "Tipo", value: propertyData?.tipo, icon: houseIcon },
     { label: "Ubicación", value: propertyData?.ubicacion, icon: locationIcon },
     { label: "Estado comercial", value: propertyData?.estadoComercial, icon: clockIcon },
-    { label: "Agente asignado", value: catalogs.agentes.find((agent) => agent.id === propertyData?.idAgente)?.nombre || "Sin asignar", icon: userIcon },
-    { label: "Fecha de alta", value: propertyData?.fechaCreacion ? new Date(propertyData.fechaCreacion).toLocaleDateString("es-AR") : "—", icon: calendarIcon },
+    {
+      label: "Agente asignado",
+      value:
+        catalogs.agentes.find((agent) => agent.id === propertyData?.idAgente)?.nombre ||
+        "Sin asignar",
+      icon: userIcon,
+    },
+    {
+      label: "Fecha de alta",
+      value: propertyData?.fechaCreacion
+        ? new Date(propertyData.fechaCreacion).toLocaleDateString("es-AR")
+        : "—",
+      icon: calendarIcon,
+    },
   ];
 
   const propertyStats = [
@@ -78,23 +101,46 @@ export default function Property() {
   ];
 
   function changeImage(direction) {
-    setActiveImage((current) => (current + direction + currentGalleryImages.length) % currentGalleryImages.length);
+    setActiveImage(
+      (current) =>
+        (current + direction + currentGalleryImages.length) % currentGalleryImages.length,
+    );
   }
 
   function saveProperty(saved, fileError) {
     setPropertyData(saved);
     setActiveImage(0);
     setPropertyModalOpen(false);
-    if (fileError) setError(`La propiedad se guardó, pero hubo un problema con sus archivos: ${fileError}`);
+    if (fileError)
+      setError(`La propiedad se guardó, pero hubo un problema con sus archivos: ${fileError}`);
   }
 
   async function remove() {
-    try { await api.deleteProperty(id); navigate("/properties"); }
-    catch (cause) { setError(cause.message); setDeleteModalOpen(false); }
+    try {
+      await api.deleteProperty(id);
+      navigate("/properties");
+    } catch (cause) {
+      setError(cause.message);
+      setDeleteModalOpen(false);
+    }
   }
 
-  if (loading) return <main id="property"><div className="property__page">Cargando propiedad...</div></main>;
-  if (!propertyData) return <main id="property"><div className="property__page"><h1>Propiedad no disponible</h1><p role="alert">{error}</p><Link href="/properties">Volver a propiedades</Link></div></main>;
+  if (loading)
+    return (
+      <main id="property">
+        <div className="property__page">Cargando propiedad...</div>
+      </main>
+    );
+  if (!propertyData)
+    return (
+      <main id="property">
+        <div className="property__page">
+          <h1>Propiedad no disponible</h1>
+          <p role="alert">{error}</p>
+          <Link href="/properties">Volver a propiedades</Link>
+        </div>
+      </main>
+    );
 
   return (
     <main id="property">
@@ -102,7 +148,12 @@ export default function Property() {
         {error && <p role="alert">{error}</p>}
         <header className="property__title-row">
           <h1>{propertyData.nombre}</h1>
-          <PropertyActions className="property-actions--header" name={propertyData.nombre} onEdit={() => setPropertyModalOpen(true)} onDelete={() => setDeleteModalOpen(true)} />
+          <PropertyActions
+            className="property-actions--header"
+            name={propertyData.nombre}
+            onEdit={() => setPropertyModalOpen(true)}
+            onDelete={() => setDeleteModalOpen(true)}
+          />
         </header>
 
         <div className="property__layout">
@@ -111,8 +162,16 @@ export default function Property() {
               <div className="property__gallery-main">
                 <img
                   className="property__gallery-main-image"
-                  src={currentGalleryImages[safeActiveImage].url ? api.assetUrl(currentGalleryImages[safeActiveImage].url) : currentGalleryImages[safeActiveImage].src}
-                  alt={currentGalleryImages[safeActiveImage].url ? `Foto de ${propertyData.nombre}` : currentGalleryImages[safeActiveImage].alt}
+                  src={
+                    currentGalleryImages[safeActiveImage].url
+                      ? api.assetUrl(currentGalleryImages[safeActiveImage].url)
+                      : currentGalleryImages[safeActiveImage].src
+                  }
+                  alt={
+                    currentGalleryImages[safeActiveImage].url
+                      ? `Foto de ${propertyData.nombre}`
+                      : currentGalleryImages[safeActiveImage].alt
+                  }
                 />
                 <button
                   className="property__gallery-arrow property__gallery-arrow--previous"
@@ -136,7 +195,12 @@ export default function Property() {
                 </span>
               </div>
 
-              <div ref={thumbnailsRef} className="property__gallery-thumbnails" role="list" aria-label="Seleccionar foto">
+              <div
+                ref={thumbnailsRef}
+                className="property__gallery-thumbnails"
+                role="list"
+                aria-label="Seleccionar foto"
+              >
                 {currentGalleryImages.map((image, index) => (
                   <button
                     className={`property__thumbnail${activeImage === index ? " is-active" : ""}`}
@@ -169,29 +233,70 @@ export default function Property() {
           <div className="property__right-column">
             <section className="property__info-card" aria-labelledby="property-description-title">
               <h2 id="property-description-title">Descripción</h2>
-              <p className="property__description">{propertyData.descripcion || "Sin descripción."}</p>
+              <p className="property__description">
+                {propertyData.descripcion || "Sin descripción."}
+              </p>
               <div className="property__details">
-                {propertyDetails.map((detail) => <DetailRow detail={detail} key={detail.label} />)}
+                {propertyDetails.map((detail) => (
+                  <DetailRow detail={detail} key={detail.label} />
+                ))}
               </div>
             </section>
 
             <section className="property__due-card" aria-labelledby="property-due-title">
-              <h2 id="property-due-title"><Icon src={calendarIcon} />Datos comerciales y documentos</h2>
+              <h2 id="property-due-title">
+                <Icon src={calendarIcon} />
+                Datos comerciales y documentos
+              </h2>
               <div className="property__due-grid">
-                <article className="property__due-item"><div><strong>Precio</strong><span>{propertyData.precio == null ? "Sin especificar" : `${propertyData.moneda} ${Number(propertyData.precio).toLocaleString("es-AR")}`}</span></div></article>
-                <article className="property__due-item"><div><strong>Publicación</strong><span>{propertyData.publicada ? "Publicada" : "No publicada"}</span></div></article>
+                <article className="property__due-item">
+                  <div>
+                    <strong>Precio</strong>
+                    <span>
+                      {propertyData.precio == null
+                        ? "Sin especificar"
+                        : `${propertyData.moneda} ${Number(propertyData.precio).toLocaleString("es-AR")}`}
+                    </span>
+                  </div>
+                </article>
+                <article className="property__due-item">
+                  <div>
+                    <strong>Publicación</strong>
+                    <span>{propertyData.publicada ? "Publicada" : "No publicada"}</span>
+                  </div>
+                </article>
                 {!propertyData.documentos?.length && <p>No hay documentos adjuntos.</p>}
-                {propertyData.documentos?.map((document) => <article className="property__due-item" key={document.id}><div><strong>PDF</strong><button type="button" onClick={async () => {
-                  try { await api.downloadPropertyDocument(id, document); }
-                  catch (cause) { setError(cause.message); }
-                }}>{document.nombreArchivo}</button></div></article>)}
+                {propertyData.documentos?.map((document) => (
+                  <article className="property__due-item" key={document.id}>
+                    <div>
+                      <strong>PDF</strong>
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          try {
+                            await api.downloadPropertyDocument(id, document);
+                          } catch (cause) {
+                            setError(cause.message);
+                          }
+                        }}
+                      >
+                        {document.nombreArchivo}
+                      </button>
+                    </div>
+                  </article>
+                ))}
               </div>
             </section>
           </div>
         </div>
       </div>
 
-      <ConfirmDeleteModal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} onConfirm={remove} title="¿Seguro que desea eliminar esta propiedad?" />
+      <ConfirmDeleteModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={remove}
+        title="¿Seguro que desea eliminar esta propiedad?"
+      />
 
       {propertyModalOpen && (
         <PropertyModal

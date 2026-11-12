@@ -28,7 +28,8 @@ body:has(#agency) {
 
 #agency img {
   object-fit: contain;
-  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%);
+  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg)
+    brightness(93%) contrast(99%);
 }
 
 #agency :focus-visible:not(input):not(textarea):not(select) {
@@ -146,7 +147,7 @@ body:has(#agency) {
   line-height: 1.4;
 }
 
-.agency__form-section+.agency__form-section {
+.agency__form-section + .agency__form-section {
   margin-top: 20px;
 }
 
@@ -200,8 +201,8 @@ body:has(#agency) {
   flex-direction: column;
 }
 
-.agency__field>span:first-child,
-.agency__upload-field>label {
+.agency__field > span:first-child,
+.agency__upload-field > label {
   margin: 0 0 4px;
   padding-left: 1px;
   font-size: 14px;
@@ -244,7 +245,7 @@ body:has(#agency) {
   padding: 0 7px;
 }
 
-.agency__upload-field>label {
+.agency__upload-field > label {
   margin-bottom: 17px;
 }
 
@@ -258,7 +259,9 @@ body:has(#agency) {
   background: #f5f9fd;
   color: #17235e;
   cursor: pointer;
-  transition: border-color 150ms ease, background-color 150ms ease;
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease;
 }
 
 .agency__upload:hover {
@@ -281,7 +284,7 @@ body:has(#agency) {
   display: none;
 }
 
-.agency__upload-field>input {
+.agency__upload-field > input {
   display: none;
 }
 
@@ -413,7 +416,7 @@ body:has(#agency) {
     gap: 16px;
   }
 
-  .agency__upload-field>label {
+  .agency__upload-field > label {
     margin-bottom: 7px;
   }
 
@@ -429,7 +432,6 @@ body:has(#agency) {
 }
 
 @media (prefers-reduced-motion: reduce) {
-
   .agency__upload,
   .agency__save {
     transition: none;
@@ -486,7 +488,8 @@ body:has(#agency) {
   }
 
   #agency .agency__identity-email img {
-    filter: brightness(0) saturate(100%) invert(56%) sepia(12%) saturate(798%) hue-rotate(184deg) brightness(88%) contrast(86%);
+    filter: brightness(0) saturate(100%) invert(56%) sepia(12%) saturate(798%) hue-rotate(184deg)
+      brightness(88%) contrast(86%);
   }
 
   .agency__form-card {
@@ -518,7 +521,7 @@ body:has(#agency) {
     margin-bottom: 18px;
   }
 
-  .agency__section-heading>div {
+  .agency__section-heading > div {
     display: contents;
   }
 
@@ -543,7 +546,7 @@ body:has(#agency) {
     padding: 0;
   }
 
-  .agency__form-section+.agency__form-section {
+  .agency__form-section + .agency__form-section {
     margin-top: 28px;
   }
 
@@ -557,7 +560,7 @@ body:has(#agency) {
     grid-column: 1 / -1;
   }
 
-  .agency__upload-field>label {
+  .agency__upload-field > label {
     margin-bottom: 10px;
   }
 

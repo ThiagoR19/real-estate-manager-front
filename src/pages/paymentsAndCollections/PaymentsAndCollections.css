@@ -27,7 +27,9 @@
   min-height: 100px;
   padding: 14px 25px;
   border-radius: 20px;
-  background: linear-gradient(90deg, #f5f9ffed 0%, #e9f2fbd0 42%, #ffffff12 100%), url("../../assets/fondoCasa.png") center / cover;
+  background:
+    linear-gradient(90deg, #f5f9ffed 0%, #e9f2fbd0 42%, #ffffff12 100%),
+    url("../../assets/fondoCasa.png") center / cover;
 }
 
 .agent-payments__hero h1 {
@@ -491,7 +493,7 @@
   background: #fff;
 }
 
-.agent-payments__new-concept>div {
+.agent-payments__new-concept > div {
   grid-column: 1 / -1;
   display: flex;
   justify-content: flex-end;
@@ -671,7 +673,8 @@
   width: 20px;
   height: 20px;
   object-fit: contain;
-  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%);
+  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg)
+    brightness(93%) contrast(99%);
 }
 
 @media (max-width: 1400px) {
@@ -716,7 +719,6 @@
 }
 
 @media (max-width: 1100px) {
-
   .agent-payments__decision span {
     display: block;
   }
@@ -804,8 +806,6 @@
     background: #fff;
     box-shadow: 0 1px 5px #14205714;
   }
-
-
 
   .agent-payments__year {
     grid-area: year;

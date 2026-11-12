@@ -24,7 +24,8 @@ body:has(#owners) {
 
 #owners img {
   object-fit: contain;
-  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%);
+  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg)
+    brightness(93%) contrast(99%);
 }
 
 #owners :focus-visible:not(input):not(textarea):not(select) {
@@ -335,7 +336,7 @@ body:has(#owners) {
 .owners__property,
 .owners__contact span,
 .owners__person-copy,
-.owners__property>span {
+.owners__property > span {
   display: flex;
 }
 
@@ -347,7 +348,7 @@ body:has(#owners) {
 
 .owners__contact,
 .owners__person-copy,
-.owners__property>span {
+.owners__property > span {
   flex-direction: column;
 }
 
@@ -365,7 +366,8 @@ body:has(#owners) {
 .owners__contact img {
   width: 16px;
   height: 16px;
-  filter: brightness(0) saturate(100%) invert(48%) sepia(13%) saturate(1012%) hue-rotate(187deg) brightness(92%) contrast(86%) !important;
+  filter: brightness(0) saturate(100%) invert(48%) sepia(13%) saturate(1012%) hue-rotate(187deg)
+    brightness(92%) contrast(86%) !important;
 }
 
 .owners__avatar {
@@ -382,7 +384,7 @@ body:has(#owners) {
 }
 
 .owners__person-copy,
-.owners__property>span {
+.owners__property > span {
   gap: 5px;
   min-width: 0;
 }
@@ -699,7 +701,6 @@ body:has(#owners) .navbar__search {
 }
 
 @media (max-width: 360px) {
-
   .owners__table-card td,
   .owners__table-card td:first-child,
   .owners__table-card td:last-child {
@@ -721,7 +722,6 @@ body:has(#owners) .navbar__search {
 }
 
 @media (prefers-reduced-motion: reduce) {
-
   .owners__new-button,
   .owners__actions,
   .owners__modal-close {

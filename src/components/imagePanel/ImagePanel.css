@@ -1,47 +1,47 @@
 .ImagePanel {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    padding: clamp(20px, 4.3vh, 27px) clamp(24px, 3.8vw, 58px) clamp(32px, 8.5vh, 60px);
-    color: var(--blanc);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(20px, 4.3vh, 27px) clamp(24px, 3.8vw, 58px) clamp(32px, 8.5vh, 60px);
+  color: var(--blanc);
 
-    background-color: var(--azulMedio);
-    background-image: url('../../assets/loginFondo.png');
-    background-size: cover;
-    background-position: center;
+  background-color: var(--azulMedio);
+  background-image: url("../../assets/loginFondo.png");
+  background-size: cover;
+  background-position: center;
 }
 
 .ImagePanel__contenido {
-    max-width: 440px;
-    margin-top: auto;
+  max-width: 440px;
+  margin-top: auto;
 }
 
 .ImagePanel__titulo {
-    margin: 0;
-    font-size: clamp(30px, 2.65vw, 40px);
-    font-weight: 600;
-    line-height: 1.15;
-    letter-spacing: -.3px;
+  margin: 0;
+  font-size: clamp(30px, 2.65vw, 40px);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.3px;
 }
 
 .ImagePanel__titulo span {
-    display: block;
-    color: var(--azulLlamativo);
+  display: block;
+  color: var(--azulLlamativo);
 }
 
 .ImagePanel__linea {
-    display: block;
-    width: 50px;
-    height: 5px;
-    margin: 14px 0 18px 3px;
-    border-radius: 2px;
-    background-color: var(--azulLlamativo);
+  display: block;
+  width: 50px;
+  height: 5px;
+  margin: 14px 0 18px 3px;
+  border-radius: 2px;
+  background-color: var(--azulLlamativo);
 }
 
 .ImagePanel__texto {
-    max-width: 310px;
-    margin: 0 0 0 3px;
-    font-size: 16px;
-    line-height: 1.45;
-    color: var(--blanc);
+  max-width: 310px;
+  margin: 0 0 0 3px;
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--blanc);
 }

@@ -61,7 +61,9 @@
   justify-content: center;
   padding: 18px 25px;
   border-radius: 18px;
-  background: linear-gradient(90deg, #f7fbffed 0%, #edf5fdc9 45%, #ffffff10), url("../../assets/fondoCasa.png") center / cover;
+  background:
+    linear-gradient(90deg, #f7fbffed 0%, #edf5fdc9 45%, #ffffff10),
+    url("../../assets/fondoCasa.png") center / cover;
 }
 
 .super-admin__hero h1 {
@@ -122,7 +124,7 @@
   box-shadow: 0 1px 5px #17235e1a;
 }
 
-.super-admin__agency>header {
+.super-admin__agency > header {
   display: flex;
   align-items: center;
   min-height: 67px;
@@ -413,7 +415,7 @@
     margin: 22px 0 0;
   }
 
-  .super-admin__agency>header {
+  .super-admin__agency > header {
     flex-wrap: wrap;
     min-height: 72px;
     padding: 8px 10px;

@@ -28,4 +28,3 @@ export { default as Schedule } from "./schedule/Schedule";
 export { default as SuperAdmin } from "./superAdmin/SuperAdmin";
 export { default as Tenant } from "./tenant/Tenant";
 export { default as Terms } from "./terms/Terms";
-

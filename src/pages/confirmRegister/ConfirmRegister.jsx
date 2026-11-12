@@ -29,7 +29,10 @@ export default function ConfirmRegister() {
         <form className="confirm-register__form" onSubmit={handleSubmit}>
           <header className="confirm-register__header">
             <h1 id="confirm-register-title">Verificación</h1>
-            <p>Ingrese el DNI que está como titular en el contrato para poder acceder a administrar del inmueble</p>
+            <p>
+              Ingrese el DNI que está como titular en el contrato para poder acceder a administrar
+              del inmueble
+            </p>
           </header>
 
           <TextField
@@ -40,7 +43,9 @@ export default function ConfirmRegister() {
             autoComplete="off"
             className="confirm-register__field"
           >
-            <small>Solo tiene 3 intentos, si los falla pídale un nuevo enlace a la inmobiliaria</small>
+            <small>
+              Solo tiene 3 intentos, si los falla pídale un nuevo enlace a la inmobiliaria
+            </small>
           </TextField>
 
           <PrimaryButton
@@ -53,7 +58,12 @@ export default function ConfirmRegister() {
 
         <footer className="confirm-register__footer">
           <LegalText />
-          <p>¿Ya tienes una cuenta? <button type="button" onClick={() => navigate("/login")}>Inicia sesión</button></p>
+          <p>
+            ¿Ya tienes una cuenta?{" "}
+            <button type="button" onClick={() => navigate("/login")}>
+              Inicia sesión
+            </button>
+          </p>
         </footer>
       </section>
     </Skeleton>

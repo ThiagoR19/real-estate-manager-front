@@ -16,8 +16,10 @@ export async function tenants() {
 
 export const tenant = (id) => request(`/inquilinos/${id}`).then(({ data }) => data);
 export const tenantFiles = (id) => request(`/inquilinos/${id}/archivos`).then(({ data }) => data);
-export const createTenant = (body) => request("/inquilinos", { method: "POST", body }).then(({ data }) => data);
-export const updateTenant = (id, body) => request(`/inquilinos/${id}`, { method: "PUT", body }).then(({ data }) => data);
+export const createTenant = (body) =>
+  request("/inquilinos", { method: "POST", body }).then(({ data }) => data);
+export const updateTenant = (id, body) =>
+  request(`/inquilinos/${id}`, { method: "PUT", body }).then(({ data }) => data);
 export const deleteTenant = (id) => request(`/inquilinos/${id}`, { method: "DELETE" });
 
 export function uploadTenantFiles(id, kind, files) {
@@ -26,7 +28,8 @@ export function uploadTenantFiles(id, kind, files) {
   return request(`/inquilinos/${id}/archivos/${kind}`, { method: "POST", body });
 }
 
-export const deleteTenantFile = (id, kind, fileId) => request(`/inquilinos/${id}/archivos/${kind}/${fileId}`, { method: "DELETE" });
+export const deleteTenantFile = (id, kind, fileId) =>
+  request(`/inquilinos/${id}/archivos/${kind}/${fileId}`, { method: "DELETE" });
 
 export async function downloadTenantDocument(id, file) {
   try {
@@ -48,9 +51,16 @@ export async function downloadTenantDocument(id, file) {
     }
     let payload = error.response?.data;
     if (payload instanceof Blob) {
-      try { payload = JSON.parse(await payload.text()); }
-      catch (parseError) { console.log(parseError); }
+      try {
+        payload = JSON.parse(await payload.text());
+      } catch (parseError) {
+        console.log(parseError);
+      }
     }
-    throw new Error(payload?.error?.mensaje || (status ? `Error HTTP ${status}` : "No se pudo conectar con el servidor."), { cause: error });
+    throw new Error(
+      payload?.error?.mensaje ||
+        (status ? `Error HTTP ${status}` : "No se pudo conectar con el servidor."),
+      { cause: error },
+    );
   }
 }

@@ -92,8 +92,12 @@
   cursor: pointer;
 }
 
-#payment-view .payment-view__property-trigger:focus-visible { outline: none; }
-#payment-view .payment-view__property-value { flex: initial; }
+#payment-view .payment-view__property-trigger:focus-visible {
+  outline: none;
+}
+#payment-view .payment-view__property-value {
+  flex: initial;
+}
 #payment-view .payment-view__property-select .select-control__options {
   color: #17235e;
 }
@@ -171,14 +175,31 @@
 }
 
 .payment-view__month {
-  transition: background-color 180ms ease, box-shadow 180ms ease, color 180ms ease;
+  transition:
+    background-color 180ms ease,
+    box-shadow 180ms ease,
+    color 180ms ease;
 }
 
-.payment-view__month:hover { background: #f1f5fa; }
-.payment-view__month--neutral.is-selected { background: #e2e7ed; color: #153d96; }
-.payment-view__month--danger.is-selected { background: #ffdfe1; color: #b40000; }
-.payment-view__month--success.is-selected { background: #d2f7df; color: #14723b; }
-.payment-view__month--info.is-selected { background: #dbeaff; color: #164cb8; }
+.payment-view__month:hover {
+  background: #f1f5fa;
+}
+.payment-view__month--neutral.is-selected {
+  background: #e2e7ed;
+  color: #153d96;
+}
+.payment-view__month--danger.is-selected {
+  background: #ffdfe1;
+  color: #b40000;
+}
+.payment-view__month--success.is-selected {
+  background: #d2f7df;
+  color: #14723b;
+}
+.payment-view__month--info.is-selected {
+  background: #dbeaff;
+  color: #164cb8;
+}
 
 .payment-view__month strong {
   font-size: 13px;
@@ -305,7 +326,8 @@
   width: 20px;
   height: 20px;
   object-fit: contain;
-  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%);
+  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg)
+    brightness(93%) contrast(99%);
 }
 
 .payment-view__metric .payment-view__icon,
@@ -368,7 +390,8 @@
 .payment-view__receipt button .payment-view__icon {
   width: 18px;
   height: 18px;
-  filter: brightness(0) saturate(100%) invert(35%) sepia(100%) saturate(1698%) hue-rotate(196deg) brightness(90%) contrast(101%);
+  filter: brightness(0) saturate(100%) invert(35%) sepia(100%) saturate(1698%) hue-rotate(196deg)
+    brightness(90%) contrast(101%);
 }
 
 .payment-view__receipt button span {
@@ -481,7 +504,7 @@
   margin: 24px 0 47px;
 }
 
-.payment-view__detail dl>div {
+.payment-view__detail dl > div {
   display: grid;
   grid-template-columns: 34px minmax(0, 1fr) auto;
   align-items: center;
@@ -504,11 +527,12 @@
   font-weight: 700;
 }
 
-.payment-view__detail dl>div>.payment-view__icon {
+.payment-view__detail dl > div > .payment-view__icon {
   width: 21px;
   height: 21px;
   margin-left: 7px;
-  filter: brightness(0) saturate(100%) invert(36%) sepia(98%) saturate(1774%) hue-rotate(203deg) brightness(95%) contrast(99%);
+  filter: brightness(0) saturate(100%) invert(36%) sepia(98%) saturate(1774%) hue-rotate(203deg)
+    brightness(95%) contrast(99%);
 }
 
 .payment-view__coin {
@@ -532,7 +556,7 @@
   background: #d9e9ff;
 }
 
-.payment-view__detail aside>span {
+.payment-view__detail aside > span {
   display: grid;
   flex: 0 0 36px;
   place-items: center;
@@ -542,10 +566,11 @@
   background: #fff;
 }
 
-.payment-view__detail aside>span .payment-view__icon {
+.payment-view__detail aside > span .payment-view__icon {
   width: 19px;
   height: 19px;
-  filter: brightness(0) saturate(100%) invert(36%) sepia(98%) saturate(1774%) hue-rotate(203deg) brightness(95%) contrast(99%);
+  filter: brightness(0) saturate(100%) invert(36%) sepia(98%) saturate(1774%) hue-rotate(203deg)
+    brightness(95%) contrast(99%);
 }
 
 .payment-view__detail aside strong {
@@ -596,7 +621,8 @@
 }
 
 .payment-view__actions label .payment-view__icon {
-  filter: brightness(0) saturate(100%) invert(31%) sepia(93%) saturate(1753%) hue-rotate(204deg) brightness(82%) contrast(105%);
+  filter: brightness(0) saturate(100%) invert(31%) sepia(93%) saturate(1753%) hue-rotate(204deg)
+    brightness(82%) contrast(105%);
   transform: rotate(180deg);
 }
 
@@ -680,7 +706,7 @@
   }
 
   .payment-view__receipt {
-    transform: scale(.91);
+    transform: scale(0.91);
   }
 }
 
@@ -699,7 +725,7 @@
     background: #f8f9fa;
   }
 
-  #payment-view .payment-mobile__toolbar>button {
+  #payment-view .payment-mobile__toolbar > button {
     flex-shrink: 0;
   }
 
@@ -873,7 +899,7 @@
     color: #17235e;
   }
 
-  #payment-view .payments__facts>div {
+  #payment-view .payments__facts > div {
     grid-template-columns: 34px minmax(0, 1fr) auto;
     gap: 8px;
     min-height: 38px;
@@ -890,7 +916,7 @@
     text-align: right;
   }
 
-  #payment-view .payments__facts>div.payment-view__mobile-only {
+  #payment-view .payments__facts > div.payment-view__mobile-only {
     display: grid;
     margin-top: 16px;
   }
@@ -913,7 +939,7 @@
     font-size: 18px;
   }
 
-  #payment-view .payment-view__breakdown>div {
+  #payment-view .payment-view__breakdown > div {
     min-height: 32px;
     padding: 4px 7px;
     font-size: 14px;

@@ -28,7 +28,8 @@ body:has(#property) {
   width: 20px;
   height: 20px;
   object-fit: contain;
-  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%);
+  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg)
+    brightness(93%) contrast(99%);
 }
 
 #property :focus-visible:not(input):not(textarea):not(select) {
@@ -160,7 +161,9 @@ body:has(#property) {
   font-size: 39px;
   line-height: 0.7;
   transform: translateY(-50%);
-  transition: background-color 150ms ease, transform 150ms ease;
+  transition:
+    background-color 150ms ease,
+    transform 150ms ease;
 }
 
 .property__gallery-arrow:hover {
@@ -697,25 +700,101 @@ body:has(#property) {
 }
 
 @media (max-width: 760px) {
-  .property__page { padding: 15px 4px; }
-  .property__title-row { margin: 0 5px 10px; }
-  .property__title-row h1 { font-size: 28px; }
-  .property__layout { display: flex; flex-direction: column; gap: 12px; }
-  .property__left-column, .property__right-column { display: contents; }
-  .property__gallery { order: 0; width: calc(100% - 54px); margin: 0 auto 24px; }
-  .property__gallery-main { height: auto; min-height: 0; aspect-ratio: 340 / 247; }
-  .property__gallery-arrow { width: 26px; height: 35px; border-radius: 0; background: transparent; color: white; }
-  .property__gallery-counter { display: none; }
-  .property__gallery-thumbnails { gap: 10px; margin-top: 4px; padding-bottom: 0; }
-  .property__thumbnail { min-width: 0; height: auto; aspect-ratio: 105 / 97; border-width: 2px; }
-  .property__info-card { order: 1; width: 100%; padding: 19px 15px 0; }
-  .property__description { font-size: 14px; line-height: 1.2; }
-  .property__detail-row { grid-template-columns: 27px minmax(0, 1.35fr) minmax(0, 1fr); gap: 10px; min-height: 53px; }
-  .property__detail-row strong, .property__detail-value { font-size: 14px; }
-  .property__stats { order: 2; width: 100%; grid-template-columns: 1fr; gap: 12px; padding: 0 6px; }
-  .property__stat-card { min-height: 47px; height: 47px; padding: 5px 12px 5px 8px; border: 1px solid #edf4fa; }
-  .property__stat-icon-wrap { width: 65px; height: 35px; margin-right: 20px; }
-  .property__stat-card strong { font-size: 14px; }
-  .property__stat-value { width: 58px; height: 35px; font-size: 22px; }
-  .property__due-card { order: 3; width: 100%; }
+  .property__page {
+    padding: 15px 4px;
+  }
+  .property__title-row {
+    margin: 0 5px 10px;
+  }
+  .property__title-row h1 {
+    font-size: 28px;
+  }
+  .property__layout {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .property__left-column,
+  .property__right-column {
+    display: contents;
+  }
+  .property__gallery {
+    order: 0;
+    width: calc(100% - 54px);
+    margin: 0 auto 24px;
+  }
+  .property__gallery-main {
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 340 / 247;
+  }
+  .property__gallery-arrow {
+    width: 26px;
+    height: 35px;
+    border-radius: 0;
+    background: transparent;
+    color: white;
+  }
+  .property__gallery-counter {
+    display: none;
+  }
+  .property__gallery-thumbnails {
+    gap: 10px;
+    margin-top: 4px;
+    padding-bottom: 0;
+  }
+  .property__thumbnail {
+    min-width: 0;
+    height: auto;
+    aspect-ratio: 105 / 97;
+    border-width: 2px;
+  }
+  .property__info-card {
+    order: 1;
+    width: 100%;
+    padding: 19px 15px 0;
+  }
+  .property__description {
+    font-size: 14px;
+    line-height: 1.2;
+  }
+  .property__detail-row {
+    grid-template-columns: 27px minmax(0, 1.35fr) minmax(0, 1fr);
+    gap: 10px;
+    min-height: 53px;
+  }
+  .property__detail-row strong,
+  .property__detail-value {
+    font-size: 14px;
+  }
+  .property__stats {
+    order: 2;
+    width: 100%;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 0 6px;
+  }
+  .property__stat-card {
+    min-height: 47px;
+    height: 47px;
+    padding: 5px 12px 5px 8px;
+    border: 1px solid #edf4fa;
+  }
+  .property__stat-icon-wrap {
+    width: 65px;
+    height: 35px;
+    margin-right: 20px;
+  }
+  .property__stat-card strong {
+    font-size: 14px;
+  }
+  .property__stat-value {
+    width: 58px;
+    height: 35px;
+    font-size: 22px;
+  }
+  .property__due-card {
+    order: 3;
+    width: 100%;
+  }
 }

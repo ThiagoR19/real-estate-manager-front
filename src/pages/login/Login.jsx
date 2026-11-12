@@ -5,11 +5,11 @@ import { Skeleton, ImagePanel, TextField, PrimaryButton, LegalText } from "../..
 
 import { api } from "../../services/api.js";
 
-import mailIcon from "../../assets/icons/loginMail.svg"
-import lockIcon from "../../assets/icons/loginLock.svg"
-import fondo from "../../assets/loginFondo.png"
+import mailIcon from "../../assets/icons/loginMail.svg";
+import lockIcon from "../../assets/icons/loginLock.svg";
+import fondo from "../../assets/loginFondo.png";
 
-import "./Login.css"
+import "./Login.css";
 
 export default function Login() {
   const [submitState, setSubmitState] = useState("inactivo");
@@ -27,11 +27,22 @@ export default function Login() {
     setError("");
     const form = new FormData(e.currentTarget);
     try {
-      const session = await api.login(String(form.get("email") || "").trim(), String(form.get("password") || ""));
+      const session = await api.login(
+        String(form.get("email") || "").trim(),
+        String(form.get("password") || ""),
+      );
       api.saveSession(session);
       setSubmitState("listo");
       const role = session.usuario.rol;
-      window.location.assign(role === 1 ? "/super-admin" : role === 4 ? "/owner-dashboard" : role === 5 ? "/tenant-dashboard" : "/properties");
+      window.location.assign(
+        role === 1
+          ? "/super-admin"
+          : role === 4
+            ? "/owner-dashboard"
+            : role === 5
+              ? "/tenant-dashboard"
+              : "/properties",
+      );
     } catch (cause) {
       setError(cause.message);
       setSubmitState("inactivo");
@@ -67,8 +78,7 @@ export default function Login() {
             autoComplete="current-password"
             conOjo
             className="login__field Login-pass"
-          >
-          </TextField>
+          ></TextField>
 
           <PrimaryButton
             texto="Ingresar"
@@ -77,12 +87,18 @@ export default function Login() {
             className="login__submit"
           />
 
-          {error && <p className="login__error" role="alert">{error}</p>}
+          {error && (
+            <p className="login__error" role="alert">
+              {error}
+            </p>
+          )}
         </form>
 
         <div className="login__footer">
           <LegalText className="login__terms" />
-          <p className="login__register">¿No tienes una cuenta? <Link href="/register">Regístrate</Link></p>
+          <p className="login__register">
+            ¿No tienes una cuenta? <Link href="/register">Regístrate</Link>
+          </p>
         </div>
       </section>
     </Skeleton>

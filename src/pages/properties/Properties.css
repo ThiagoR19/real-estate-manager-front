@@ -46,7 +46,12 @@
   overflow: hidden;
   border-radius: 18px;
   background-image:
-    linear-gradient(90deg, rgba(247, 250, 254, 0.98) 0%, rgba(247, 250, 254, 0.82) 43%, rgba(247, 250, 254, 0.12) 78%),
+    linear-gradient(
+      90deg,
+      rgba(247, 250, 254, 0.98) 0%,
+      rgba(247, 250, 254, 0.82) 43%,
+      rgba(247, 250, 254, 0.12) 78%
+    ),
     url("../../assets/fondoCasa.png");
   background-position: center;
   background-size: cover;
@@ -127,7 +132,8 @@
 
 .properties__icon {
   object-fit: contain;
-  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%);
+  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg)
+    brightness(93%) contrast(99%);
 }
 
 .properties__new-button {
@@ -443,7 +449,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-
   .properties__details-button,
   .properties__more-button,
   .properties__new-button {

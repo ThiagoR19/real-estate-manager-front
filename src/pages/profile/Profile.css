@@ -35,7 +35,8 @@ body:has(#profile) {
 
 #profile img {
   object-fit: contain;
-  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%);
+  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg)
+    brightness(93%) contrast(99%);
 }
 
 #profile :focus-visible:not(input):not(textarea):not(select) {
@@ -90,7 +91,8 @@ body:has(#profile) {
 .profile__brand-icon {
   width: 37px;
   height: 40px;
-  filter: brightness(0) saturate(100%) invert(52%) sepia(92%) saturate(2012%) hue-rotate(150deg) brightness(94%) contrast(101%) !important;
+  filter: brightness(0) saturate(100%) invert(52%) sepia(92%) saturate(2012%) hue-rotate(150deg)
+    brightness(94%) contrast(101%) !important;
 }
 
 .profile__brand strong {
@@ -173,7 +175,7 @@ body:has(#profile) {
   gap: 15px;
 }
 
-.profile__account-link>span {
+.profile__account-link > span {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -272,13 +274,14 @@ body:has(#profile) {
   opacity: 0.65;
 }
 
-.profile__avatar-photo {
+#profile .profile__avatar-photo {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   border-radius: inherit;
   object-fit: cover;
+  filter: none;
 }
 
 .profile__photo-feedback {
@@ -329,7 +332,7 @@ body:has(#profile) {
   background: #edf6ff;
 }
 
-.profile__password-hint>img {
+.profile__password-hint > img {
   flex-shrink: 0;
   width: 35px;
   height: 35px;
@@ -509,7 +512,8 @@ body:has(#profile) {
 .profile__password-toggle img {
   width: 18px;
   height: 18px;
-  filter: brightness(0) saturate(100%) invert(56%) sepia(12%) saturate(798%) hue-rotate(184deg) brightness(88%) contrast(86%) !important;
+  filter: brightness(0) saturate(100%) invert(56%) sepia(12%) saturate(798%) hue-rotate(184deg)
+    brightness(88%) contrast(86%) !important;
 }
 
 .profile__actions {
@@ -555,7 +559,8 @@ body:has(#profile) {
 .profile__logout-button img {
   width: 17px;
   height: 17px;
-  filter: brightness(0) saturate(100%) invert(20%) sepia(91%) saturate(2031%) hue-rotate(341deg) brightness(88%) contrast(101%) !important;
+  filter: brightness(0) saturate(100%) invert(20%) sepia(91%) saturate(2031%) hue-rotate(341deg)
+    brightness(88%) contrast(101%) !important;
 }
 
 .profile__logout-error {
@@ -567,6 +572,20 @@ body:has(#profile) {
   color: #991b1b;
   font-size: 13px;
   text-align: right;
+}
+
+.profile__save-feedback {
+  position: absolute;
+  right: 0;
+  bottom: 55px;
+  margin: 0;
+  color: #166534;
+  font-size: 13px;
+  text-align: right;
+}
+
+.profile__save-feedback--error {
+  color: #991b1b;
 }
 
 .profile__save-button img {
@@ -647,7 +666,7 @@ body:has(#profile) {
     padding-right: 8px;
   }
 
-  .profile__account-link>span {
+  .profile__account-link > span {
     display: none;
   }
 
@@ -753,7 +772,6 @@ body:has(#profile) {
 }
 
 @media (prefers-reduced-motion: reduce) {
-
   .profile__field-control,
   .profile__save-button,
   .profile__logout-button {
@@ -810,7 +828,8 @@ body:has(#profile) {
   }
 
   #profile .profile__email img {
-    filter: brightness(0) saturate(100%) invert(56%) sepia(12%) saturate(798%) hue-rotate(184deg) brightness(88%) contrast(86%);
+    filter: brightness(0) saturate(100%) invert(56%) sepia(12%) saturate(798%) hue-rotate(184deg)
+      brightness(88%) contrast(86%);
   }
 
   .profile__content {
@@ -852,7 +871,7 @@ body:has(#profile) {
     line-height: 1.2;
   }
 
-  .profile__form-section:not(.profile__form-section--security) .profile__section-heading>div {
+  .profile__form-section:not(.profile__form-section--security) .profile__section-heading > div {
     display: contents;
   }
 
@@ -921,6 +940,14 @@ body:has(#profile) {
     order: 3;
     align-self: stretch;
     margin: 20px 16px 18px;
+    flex-wrap: wrap;
+  }
+
+  .profile__save-feedback {
+    position: static;
+    order: -1;
+    width: 100%;
+    text-align: left;
   }
 
   .profile__actions {

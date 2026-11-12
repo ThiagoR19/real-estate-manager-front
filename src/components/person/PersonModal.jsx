@@ -34,7 +34,14 @@ function initialForm(person, kind) {
 }
 
 function personInitials(name) {
-  return name.trim().split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join("").toUpperCase();
+  return name
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase();
 }
 
 export default function PersonModal({ kind, mode, person, onClose, onSubmit }) {
@@ -68,40 +75,114 @@ export default function PersonModal({ kind, mode, person, onClose, onSubmit }) {
             <span className="management-modal__avatar" aria-hidden="true">
               {person ? personInitials(displayName) : isOwner ? "PR" : "AG"}
             </span>
-            <span><strong>{displayName}</strong><small>{person?.status || "Estado"}</small></span>
+            <span>
+              <strong>{displayName}</strong>
+              <small>{person?.status || "Estado"}</small>
+            </span>
           </div>
           <div className="management-modal__fields">
             <ModalField label="Nombre">
-              <ModalInput icon={userIcon} name="firstName" value={form.firstName} onChange={updateField} placeholder="Nombre" autoComplete="given-name" required />
+              <ModalInput
+                icon={userIcon}
+                name="firstName"
+                value={form.firstName}
+                onChange={updateField}
+                placeholder="Nombre"
+                autoComplete="given-name"
+                required
+              />
             </ModalField>
             <ModalField label="Apellido">
-              <ModalInput icon={userIcon} name="lastName" value={form.lastName} onChange={updateField} placeholder="Apellido" autoComplete="family-name" required />
+              <ModalInput
+                icon={userIcon}
+                name="lastName"
+                value={form.lastName}
+                onChange={updateField}
+                placeholder="Apellido"
+                autoComplete="family-name"
+                required
+              />
             </ModalField>
             <ModalField label="Correo">
-              <ModalInput icon={envelopeIcon} name="email" type="email" value={form.email} onChange={updateField} placeholder="ejemplo@gmail.com" autoComplete="email" required />
+              <ModalInput
+                icon={envelopeIcon}
+                name="email"
+                type="email"
+                value={form.email}
+                onChange={updateField}
+                placeholder="ejemplo@gmail.com"
+                autoComplete="email"
+                required
+              />
             </ModalField>
             <ModalField label="Teléfono">
-              <ModalInput icon={phoneIcon} name="phone" type="tel" value={form.phone} onChange={updateField} placeholder="2133 123123" autoComplete="tel" required />
+              <ModalInput
+                icon={phoneIcon}
+                name="phone"
+                type="tel"
+                value={form.phone}
+                onChange={updateField}
+                placeholder="2133 123123"
+                autoComplete="tel"
+                required
+              />
             </ModalField>
             <ModalField label="Dirección">
-              <ModalInput icon={locationDotIcon} name="address" value={form.address} onChange={updateField} placeholder="Av. San Martín 12" autoComplete="street-address" />
+              <ModalInput
+                icon={locationDotIcon}
+                name="address"
+                value={form.address}
+                onChange={updateField}
+                placeholder="Av. San Martín 12"
+                autoComplete="street-address"
+              />
             </ModalField>
             <ModalField label="DNI">
-              <ModalInput icon={addressCardIcon} name="dni" value={form.dni} onChange={updateField} placeholder="12123123" inputMode="numeric" required />
+              <ModalInput
+                icon={addressCardIcon}
+                name="dni"
+                value={form.dni}
+                onChange={updateField}
+                placeholder="12123123"
+                inputMode="numeric"
+                required
+              />
             </ModalField>
-            {isOwner && <>
-              <ModalField label="CBU">
-                <ModalInput icon={buildingColumnsIcon} name="cbu" value={form.cbu} onChange={updateField} placeholder="2680000611000012436763" inputMode="numeric" maxLength={22} />
-              </ModalField>
-              <ModalField label="Alias">
-                <ModalInput icon={buildingColumnsIcon} name="alias" value={form.alias} onChange={updateField} placeholder="pepe.cacho.felicidad" />
-              </ModalField>
-            </>}
+            {isOwner && (
+              <>
+                <ModalField label="CBU">
+                  <ModalInput
+                    icon={buildingColumnsIcon}
+                    name="cbu"
+                    value={form.cbu}
+                    onChange={updateField}
+                    placeholder="2680000611000012436763"
+                    inputMode="numeric"
+                    maxLength={22}
+                  />
+                </ModalField>
+                <ModalField label="Alias">
+                  <ModalInput
+                    icon={buildingColumnsIcon}
+                    name="alias"
+                    value={form.alias}
+                    onChange={updateField}
+                    placeholder="pepe.cacho.felicidad"
+                  />
+                </ModalField>
+              </>
+            )}
             <ModalField label={isOwner ? "Propiedad" : "Zona"}>
               <ModalSelect
                 label={isOwner ? "Propiedad" : "Zona"}
                 icon={houseIcon}
-                options={[isOwner ? "Propiedad" : "Zona", ...new Set([...(isOwner ? propertyOptions : zoneOptions), isOwner ? form.property : form.zone])]}
+                options={[
+                  isOwner ? "Propiedad" : "Zona",
+                  ...new Set([
+                    ...(isOwner ? propertyOptions : zoneOptions),
+                    isOwner ? form.property : form.zone,
+                  ]),
+                ]}
                 value={isOwner ? form.property : form.zone}
                 onChange={(value) => {
                   if (value !== (isOwner ? "Propiedad" : "Zona")) {
@@ -111,9 +192,15 @@ export default function PersonModal({ kind, mode, person, onClose, onSubmit }) {
               />
             </ModalField>
             <ModalField label="Estado">
-              <ModalSelect label="Estado" icon={peopleIcon} options={["Estado", ...statusOptions]} value={form.status} onChange={(status) => {
-                if (status !== "Estado") setForm((current) => ({ ...current, status }));
-              }} />
+              <ModalSelect
+                label="Estado"
+                icon={peopleIcon}
+                options={["Estado", ...statusOptions]}
+                value={form.status}
+                onChange={(status) => {
+                  if (status !== "Estado") setForm((current) => ({ ...current, status }));
+                }}
+              />
             </ModalField>
           </div>
         </div>

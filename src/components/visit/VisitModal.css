@@ -70,8 +70,12 @@
     min-width: 0;
   }
 
-  .visit-modal__date .management-modal__input-wrap { padding-inline: 9px; }
-  .visit-modal__date input { font-size: 12px; }
+  .visit-modal__date .management-modal__input-wrap {
+    padding-inline: 9px;
+  }
+  .visit-modal__date input {
+    font-size: 12px;
+  }
 
   .visit-modal__fields {
     grid-template-columns: 1fr;
@@ -109,8 +113,17 @@
 }
 
 @media (max-width: 370px) {
-  .visit-modal__fields { padding-inline: 8px; }
-  .visit-modal__summary .visit-modal__section-title { gap: 7px; font-size: 15px; }
-  .visit-modal__date { width: 140px; }
-  .visit-modal__time-row .management-modal__input-wrap > img { display: none; }
+  .visit-modal__fields {
+    padding-inline: 8px;
+  }
+  .visit-modal__summary .visit-modal__section-title {
+    gap: 7px;
+    font-size: 15px;
+  }
+  .visit-modal__date {
+    width: 140px;
+  }
+  .visit-modal__time-row .management-modal__input-wrap > img {
+    display: none;
+  }
 }

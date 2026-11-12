@@ -55,7 +55,11 @@ function UploadField({ label, name, value, onChange, wide = false }) {
         aria-label={`${value ? "Cambiar" : "Subir"} imagen de ${label.toLowerCase()}`}
       >
         {value ? (
-          <img className="agency__upload-preview" src={value} alt={`Vista previa de ${label.toLowerCase()}`} />
+          <img
+            className="agency__upload-preview"
+            src={value}
+            alt={`Vista previa de ${label.toLowerCase()}`}
+          />
         ) : (
           <>
             <img className="agency__upload-plus" src={plusIcon} alt="" />
@@ -101,7 +105,11 @@ export default function Agency() {
         <aside className="agency__identity-card" aria-label="Resumen de la inmobiliaria">
           <div className="agency__identity-logo-wrap">
             <img className="agency__identity-logo" src={brandLogo} alt="Logo de AGI Propiedades" />
-            <Button className="agency__identity-camera" icon={cameraIcon} aria-label="Cambiar logo de la inmobiliaria" />
+            <Button
+              className="agency__identity-camera"
+              icon={cameraIcon}
+              aria-label="Cambiar logo de la inmobiliaria"
+            />
           </div>
           <h1>AGI Propiedades</h1>
           <p className="agency__identity-type">Inmobiliaria</p>
@@ -128,35 +136,68 @@ export default function Agency() {
                 <span>Nombre inmobiliaria</span>
                 <span className="agency__field-control">
                   <img src={userIcon} alt="" />
-                  <input name="name" value={agency.name} onChange={updateAgency} placeholder="AGI Propiedades" aria-label="Nombre inmobiliaria" />
+                  <input
+                    name="name"
+                    value={agency.name}
+                    onChange={updateAgency}
+                    placeholder="AGI Propiedades"
+                    aria-label="Nombre inmobiliaria"
+                  />
                 </span>
               </label>
               <label className="agency__field">
                 <span>Teléfono</span>
                 <span className="agency__field-control">
                   <img src={phoneIcon} alt="" />
-                  <input name="phone" value={agency.phone} onChange={updateAgency} placeholder="1231231298" aria-label="Teléfono" inputMode="tel" />
+                  <input
+                    name="phone"
+                    value={agency.phone}
+                    onChange={updateAgency}
+                    placeholder="1231231298"
+                    aria-label="Teléfono"
+                    inputMode="tel"
+                  />
                 </span>
               </label>
             </div>
           </section>
 
-          <section className="agency__form-section agency__form-section--images" aria-labelledby="agency-images">
+          <section
+            className="agency__form-section agency__form-section--images"
+            aria-labelledby="agency-images"
+          >
             <SectionHeading
               icon={imageIcon}
               title="Imágenes"
               description="Actualiza las imágenes que identifican a tu inmobiliaria en la plataforma"
             />
             <div className="agency__uploads">
-              <UploadField label="Banner" name="banner" value={images.banner} onChange={updateImage} wide />
+              <UploadField
+                label="Banner"
+                name="banner"
+                value={images.banner}
+                onChange={updateImage}
+                wide
+              />
               <UploadField label="Logo" name="logo" value={images.logo} onChange={updateImage} />
-              <UploadField label="Principal" name="principal" value={images.principal} onChange={updateImage} />
+              <UploadField
+                label="Principal"
+                name="principal"
+                value={images.principal}
+                onChange={updateImage}
+              />
             </div>
           </section>
         </form>
       </div>
 
-      <Button className="agency__save" icon={checkIcon} text={saved ? "Cambios guardados" : "Guardar cambios"} onClick={saveChanges} aria-live="polite" />
+      <Button
+        className="agency__save"
+        icon={checkIcon}
+        text={saved ? "Cambios guardados" : "Guardar cambios"}
+        onClick={saveChanges}
+        aria-live="polite"
+      />
     </main>
   );
 }

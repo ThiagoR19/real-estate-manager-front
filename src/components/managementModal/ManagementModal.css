@@ -25,70 +25,317 @@
   animation: management-modal-slide-in 180ms ease-out;
 }
 
-.management-modal--compact { width: min(100%, 890px); padding: 15px 20px 20px; }
-.management-modal button, .management-modal input { font: inherit; }
-.management-modal button:focus-visible { outline: 2px solid #2178c4; outline-offset: 3px; }
-.management-modal__header { margin-bottom: 13px; }
-.management-modal__header h2 { margin: 0; color: #17235e; font-size: 31px; font-weight: 750; line-height: 1.2; }
-.management-modal__header p { margin: 3px 0 0 2px; color: #7e8aa6; font-size: 14px; line-height: 1.4; }
-.management-modal__card { border: 2px solid #edf2f6; border-radius: 11px; background: #fff; box-shadow: 0 2px 4px rgb(23 35 94 / 14%); }
-.management-modal__summary { display: flex; align-items: center; gap: 16px; min-height: 72px; padding: 11px 13px; border-radius: 9px 9px 0 0; background: #f3f8fc; }
-.management-modal__avatar { display: grid; flex-shrink: 0; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: #b9d7eb; font-size: 14px; font-weight: 600; }
-.management-modal__summary > span:last-child { display: flex; flex-direction: column; gap: 6px; }
-.management-modal__summary strong { font-size: 14px; line-height: 1.1; }
-.management-modal__summary small { color: #7e8aa6; font-size: 12px; line-height: 1.1; }
-.management-modal__fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 14px; padding: 9px 15px 18px; }
-.management-modal__field { display: flex; min-width: 0; flex-direction: column; gap: 4px; }
-.management-modal__label { padding-left: 3px; color: #17235e; font-size: 14px; font-weight: 700; line-height: 1.15; }
-.management-modal__input-wrap, .management-modal__select-trigger { display: flex; align-items: center; gap: 15px; width: 100%; min-width: 0; height: 47px; padding: 0 14px; border: 2px solid #e1ebf4; border-radius: 10px; background: #fff; color: #7e8aa6; font-size: 14px; }
-.management-modal__input-wrap:focus-within, .management-modal__select-trigger:focus-visible { border-color: #8fbde1; }
-.management-modal__input-wrap > img, .management-modal__select-icon img { flex-shrink: 0; width: 18px; height: 18px; object-fit: contain; filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%); }
-.management-modal__input-wrap input { width: 100%; min-width: 0; height: 100%; margin: 0; padding: 0; border: 0; outline: 0; background: transparent; color: #7e8aa6; font-size: 14px; }
-.management-modal__input-wrap input::placeholder { color: #7e8aa6; opacity: 1; }
-.management-modal__select { width: 100%; }
-.management-modal .management-modal__select-trigger { cursor: pointer; font-size: 14px; text-align: left; }
-.management-modal__select-icon { display: flex; flex-shrink: 0; width: 18px; height: 18px; }
-.management-modal__select-arrow { width: 20px; height: 20px; margin-left: auto; }
-.management-modal__select-options { color: #17235e; font-size: 14px; }
-.management-modal__actions { display: flex; justify-content: flex-end; gap: 18px; padding-top: 22px; }
-.management-modal__actions button { display: flex; align-items: center; justify-content: center; height: 35px; padding: 0 15px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 700; }
-.management-modal__cancel { width: 234px; border: 1px solid #0755ff; background: #f5fafd; color: #17235e; }
-.management-modal__cancel:hover { background: #eaf4fe; }
-.management-modal__submit { width: 228px; box-shadow: 0 3px 4px rgb(23 35 94 / 25%); }
-.management-modal--confirmation { width: min(100%, 800px); padding: 24px 27px; }
-.management-modal--confirmation .management-modal__header { margin: 0; }
-.management-modal--confirmation .management-modal__actions { padding-top: 26px; padding-right: 15px; }
+.management-modal--compact {
+  width: min(100%, 890px);
+  padding: 15px 20px 20px;
+}
+.management-modal button,
+.management-modal input {
+  font: inherit;
+}
+.management-modal button:focus-visible {
+  outline: 2px solid #2178c4;
+  outline-offset: 3px;
+}
+.management-modal__header {
+  margin-bottom: 13px;
+}
+.management-modal__header h2 {
+  margin: 0;
+  color: #17235e;
+  font-size: 31px;
+  font-weight: 750;
+  line-height: 1.2;
+}
+.management-modal__header p {
+  margin: 3px 0 0 2px;
+  color: #7e8aa6;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.management-modal__card {
+  border: 2px solid #edf2f6;
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: 0 2px 4px rgb(23 35 94 / 14%);
+}
+.management-modal__summary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 72px;
+  padding: 11px 13px;
+  border-radius: 9px 9px 0 0;
+  background: #f3f8fc;
+}
+.management-modal__avatar {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #b9d7eb;
+  font-size: 14px;
+  font-weight: 600;
+}
+.management-modal__summary > span:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.management-modal__summary strong {
+  font-size: 14px;
+  line-height: 1.1;
+}
+.management-modal__summary small {
+  color: #7e8aa6;
+  font-size: 12px;
+  line-height: 1.1;
+}
+.management-modal__fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 14px;
+  padding: 9px 15px 18px;
+}
+.management-modal__field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+.management-modal__label {
+  padding-left: 3px;
+  color: #17235e;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.15;
+}
+.management-modal__input-wrap,
+.management-modal__select-trigger {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+  min-width: 0;
+  height: 47px;
+  padding: 0 14px;
+  border: 2px solid #e1ebf4;
+  border-radius: 10px;
+  background: #fff;
+  color: #7e8aa6;
+  font-size: 14px;
+}
+.management-modal__input-wrap:focus-within,
+.management-modal__select-trigger:focus-visible {
+  border-color: #8fbde1;
+}
+.management-modal__input-wrap > img,
+.management-modal__select-icon img {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg)
+    brightness(93%) contrast(99%);
+}
+.management-modal__input-wrap input {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #7e8aa6;
+  font-size: 14px;
+}
+.management-modal__input-wrap input::placeholder {
+  color: #7e8aa6;
+  opacity: 1;
+}
+.management-modal__select {
+  width: 100%;
+}
+.management-modal .management-modal__select-trigger {
+  cursor: pointer;
+  font-size: 14px;
+  text-align: left;
+}
+.management-modal__select-icon {
+  display: flex;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+}
+.management-modal__select-arrow {
+  width: 20px;
+  height: 20px;
+  margin-left: auto;
+}
+.management-modal__select-options {
+  color: #17235e;
+  font-size: 14px;
+}
+.management-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 18px;
+  padding-top: 22px;
+}
+.management-modal__actions button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 35px;
+  padding: 0 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+}
+.management-modal__cancel {
+  width: 234px;
+  border: 1px solid #0755ff;
+  background: #f5fafd;
+  color: #17235e;
+}
+.management-modal__cancel:hover {
+  background: #eaf4fe;
+}
+.management-modal__submit {
+  width: 228px;
+  box-shadow: 0 3px 4px rgb(23 35 94 / 25%);
+}
+.management-modal--confirmation {
+  width: min(100%, 800px);
+  padding: 24px 27px;
+}
+.management-modal--confirmation .management-modal__header {
+  margin: 0;
+}
+.management-modal--confirmation .management-modal__actions {
+  padding-top: 26px;
+  padding-right: 15px;
+}
 
-@keyframes management-modal-fade-in { from { opacity: 0; } to { opacity: 1; } }
-@keyframes management-modal-slide-in { from { opacity: 0; transform: translateY(8px) scale(.99); } to { opacity: 1; transform: none; } }
+@keyframes management-modal-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes management-modal-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
 @media (max-width: 650px) {
-  .management-modal__overlay { padding: 12px 8px; overflow-y: auto; background: rgb(0 0 0 / 50%); }
-  .management-modal { max-height: calc(100dvh - 24px); padding: 17px 11px 14px; }
-  .management-modal__header { margin-bottom: 16px; }
-  .management-modal__header h2 { font-size: 31px; }
-  .management-modal__fields { grid-template-columns: 1fr; gap: 10px; padding: 10px 8px 18px; }
-  .management-modal__summary { gap: 13px; min-height: 72px; padding: 11px 10px; }
-  .management-modal__avatar { width: 42px; height: 42px; }
-  .management-modal__actions { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; padding-top: 14px; }
-  .management-modal__actions button { width: 100%; min-width: 0; padding: 0 6px; font-size: 14px; }
-  .management-modal--person-agent .management-modal__field:nth-child(4) { order: 6; }
-  .management-modal--person-agent .management-modal__field:nth-child(5) { order: 4; }
-  .management-modal--person-agent .management-modal__field:nth-child(6) { order: 7; }
-  .management-modal--person-agent .management-modal__field:nth-child(7) { order: 5; }
-  .management-modal--person-agent .management-modal__field:nth-child(8) { order: 8; }
-  .management-modal--person-agent .management-modal__field:nth-child(-n+3) { order: 1; }
-  .management-modal--person-owner .management-modal__field:nth-child(1) { order: 1; }
-  .management-modal--person-owner .management-modal__field:nth-child(2) { order: 6; }
-  .management-modal--person-owner .management-modal__field:nth-child(3) { order: 2; }
-  .management-modal--person-owner .management-modal__field:nth-child(4) { order: 7; }
-  .management-modal--person-owner .management-modal__field:nth-child(5) { order: 3; }
-  .management-modal--person-owner .management-modal__field:nth-child(6) { order: 8; }
-  .management-modal--person-owner .management-modal__field:nth-child(7) { order: 4; }
-  .management-modal--person-owner .management-modal__field:nth-child(8) { order: 9; }
-  .management-modal--person-owner .management-modal__field:nth-child(9) { order: 5; }
-  .management-modal--person-owner .management-modal__field:nth-child(10) { order: 10; }
-  .management-modal--confirmation .management-modal__actions { padding-right: 0; }
+  .management-modal__overlay {
+    padding: 12px 8px;
+    overflow-y: auto;
+    background: rgb(0 0 0 / 50%);
+  }
+  .management-modal {
+    max-height: calc(100dvh - 24px);
+    padding: 17px 11px 14px;
+  }
+  .management-modal__header {
+    margin-bottom: 16px;
+  }
+  .management-modal__header h2 {
+    font-size: 31px;
+  }
+  .management-modal__fields {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 10px 8px 18px;
+  }
+  .management-modal__summary {
+    gap: 13px;
+    min-height: 72px;
+    padding: 11px 10px;
+  }
+  .management-modal__avatar {
+    width: 42px;
+    height: 42px;
+  }
+  .management-modal__actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 13px;
+    padding-top: 14px;
+  }
+  .management-modal__actions button {
+    width: 100%;
+    min-width: 0;
+    padding: 0 6px;
+    font-size: 14px;
+  }
+  .management-modal--person-agent .management-modal__field:nth-child(4) {
+    order: 6;
+  }
+  .management-modal--person-agent .management-modal__field:nth-child(5) {
+    order: 4;
+  }
+  .management-modal--person-agent .management-modal__field:nth-child(6) {
+    order: 7;
+  }
+  .management-modal--person-agent .management-modal__field:nth-child(7) {
+    order: 5;
+  }
+  .management-modal--person-agent .management-modal__field:nth-child(8) {
+    order: 8;
+  }
+  .management-modal--person-agent .management-modal__field:nth-child(-n + 3) {
+    order: 1;
+  }
+  .management-modal--person-owner .management-modal__field:nth-child(1) {
+    order: 1;
+  }
+  .management-modal--person-owner .management-modal__field:nth-child(2) {
+    order: 6;
+  }
+  .management-modal--person-owner .management-modal__field:nth-child(3) {
+    order: 2;
+  }
+  .management-modal--person-owner .management-modal__field:nth-child(4) {
+    order: 7;
+  }
+  .management-modal--person-owner .management-modal__field:nth-child(5) {
+    order: 3;
+  }
+  .management-modal--person-owner .management-modal__field:nth-child(6) {
+    order: 8;
+  }
+  .management-modal--person-owner .management-modal__field:nth-child(7) {
+    order: 4;
+  }
+  .management-modal--person-owner .management-modal__field:nth-child(8) {
+    order: 9;
+  }
+  .management-modal--person-owner .management-modal__field:nth-child(9) {
+    order: 5;
+  }
+  .management-modal--person-owner .management-modal__field:nth-child(10) {
+    order: 10;
+  }
+  .management-modal--confirmation .management-modal__actions {
+    padding-right: 0;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .management-modal__overlay, .management-modal { animation: none; }
+  .management-modal__overlay,
+  .management-modal {
+    animation: none;
+  }
 }

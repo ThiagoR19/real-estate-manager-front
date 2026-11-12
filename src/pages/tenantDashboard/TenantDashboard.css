@@ -17,8 +17,10 @@ body:has(#tenant-dashboard) {
   position: absolute;
   z-index: 0;
   inset: 0;
-  background: linear-gradient(180deg, rgb(255 255 255 / 10%), rgb(255 255 255 / 68%) 48%, #f5f8fb 100%), url("../../assets/fondoCasa.png") center 38% / cover no-repeat;
-  opacity: .9;
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 10%), rgb(255 255 255 / 68%) 48%, #f5f8fb 100%),
+    url("../../assets/fondoCasa.png") center 38% / cover no-repeat;
+  opacity: 0.9;
   content: "";
 }
 
@@ -34,7 +36,8 @@ body:has(#tenant-dashboard) {
 
 #tenant-dashboard img {
   object-fit: contain;
-  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%);
+  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg)
+    brightness(93%) contrast(99%);
 }
 
 #tenant-dashboard a {
@@ -177,7 +180,8 @@ body:has(#tenant-dashboard) .navbar__search {
 }
 
 .tenant-dashboard__event-icon img {
-  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%);
+  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg)
+    brightness(93%) contrast(99%);
 }
 
 .tenant-dashboard__card-icon {
@@ -198,9 +202,16 @@ body:has(#tenant-dashboard) .navbar__search {
   content: "";
 }
 
-.tenant-dashboard__card-icon::before { top: 5px; }
-.tenant-dashboard__card-icon::after { top: 10px; }
-.tenant-dashboard__card-icon span { top: 15px; width: 7px; }
+.tenant-dashboard__card-icon::before {
+  top: 5px;
+}
+.tenant-dashboard__card-icon::after {
+  top: 10px;
+}
+.tenant-dashboard__card-icon span {
+  top: 15px;
+  width: 7px;
+}
 
 .tenant-dashboard__event-copy {
   display: flex;
@@ -346,9 +357,15 @@ body:has(#tenant-dashboard) .navbar__search {
   box-shadow: 0 2px 6px rgb(23 35 94 / 7%);
 }
 
-.tenant-dashboard__payment--info { border-color: #d8e6ff; }
-.tenant-dashboard__payment--success { border-color: #c8f1d8; }
-.tenant-dashboard__payment--danger { border-color: #ffd7d7; }
+.tenant-dashboard__payment--info {
+  border-color: #d8e6ff;
+}
+.tenant-dashboard__payment--success {
+  border-color: #c8f1d8;
+}
+.tenant-dashboard__payment--danger {
+  border-color: #ffd7d7;
+}
 
 .tenant-dashboard__payment-icon {
   display: grid;
@@ -360,8 +377,12 @@ body:has(#tenant-dashboard) .navbar__search {
   background: #142457;
 }
 
-.tenant-dashboard__payment--success .tenant-dashboard__payment-icon { background: #16733b; }
-.tenant-dashboard__payment--danger .tenant-dashboard__payment-icon { background: #a9161a; }
+.tenant-dashboard__payment--success .tenant-dashboard__payment-icon {
+  background: #16733b;
+}
+.tenant-dashboard__payment--danger .tenant-dashboard__payment-icon {
+  background: #a9161a;
+}
 
 .tenant-dashboard__payment-icon img {
   width: 15px;
@@ -499,7 +520,8 @@ body:has(#tenant-dashboard) .navbar__search {
 
   #tenant-dashboard::before {
     z-index: 0;
-    background-image: linear-gradient(180deg, #fff, #ffffff20 40%, #f8f9fa 80%), url("../../assets/fondoCasa.png");
+    background-image:
+      linear-gradient(180deg, #fff, #ffffff20 40%, #f8f9fa 80%), url("../../assets/fondoCasa.png");
   }
 
   .tenant-dashboard__page {
@@ -514,7 +536,9 @@ body:has(#tenant-dashboard) .navbar__search {
     min-height: 68px;
     padding: 11px 16px;
     border-radius: 12px;
-    background: linear-gradient(90deg, #edf5ffed, #edf5ff30), url("../../assets/fondoCasa.png") center 46% / cover;
+    background:
+      linear-gradient(90deg, #edf5ffed, #edf5ff30),
+      url("../../assets/fondoCasa.png") center 46% / cover;
   }
 
   .tenant-dashboard__intro h1 {
@@ -697,8 +721,10 @@ body:has(#tenant-dashboard) .navbar__search {
 
 #tenant-dashboard::before {
   z-index: 0;
-  background: linear-gradient(180deg, rgb(255 255 255 / 10%), rgb(255 255 255 / 68%) 48%, #f5f8fb 100%), url("../../assets/fondoCasa.png") center 38% / cover no-repeat;
-  opacity: .9;
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 10%), rgb(255 255 255 / 68%) 48%, #f5f8fb 100%),
+    url("../../assets/fondoCasa.png") center 38% / cover no-repeat;
+  opacity: 0.9;
 }
 
 .tenant-dashboard__page {

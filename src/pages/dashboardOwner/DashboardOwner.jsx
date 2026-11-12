@@ -4,13 +4,28 @@ import { circleInfoIcon, commentsIcon, paperPlaneIcon, toolboxIcon } from "../..
 import "./DashboardOwner.css";
 
 const initialMessages = [
-  { author: "Administracion", text: "Hola Juan, ¿pudiste revisar el presupuesto para la reparacion en Bulnes?", time: "10:15", type: "received" },
+  {
+    author: "Administracion",
+    text: "Hola Juan, ¿pudiste revisar el presupuesto para la reparacion en Bulnes?",
+    time: "10:15",
+    type: "received",
+  },
   { author: "Tu", text: "Si.", time: "10:15", type: "sent" },
-  { author: "Administracion", text: "Uh flaco re cortante. Tratame mejor :) ", time: "10:15", type: "received" },
+  {
+    author: "Administracion",
+    text: "Uh flaco re cortante. Tratame mejor :) ",
+    time: "10:15",
+    type: "received",
+  },
 ];
 
 const properties = [
-  { address: "Av. del Libertador 4500, 4B", status: "Alquilado", detail: "Inquilino: Thiago Hernandez", tone: "rented" },
+  {
+    address: "Av. del Libertador 4500, 4B",
+    status: "Alquilado",
+    detail: "Inquilino: Thiago Hernandez",
+    tone: "rented",
+  },
   { address: "Bulnes 1200, 2A", status: "En venta", detail: "Precio: 204k", tone: "sale" },
 ];
 
@@ -37,15 +52,26 @@ function QuickChat() {
   }
 
   return (
-    <section className="owner-dashboard__card owner-dashboard__chat-card" aria-labelledby="quick-chat-title">
+    <section
+      className="owner-dashboard__card owner-dashboard__chat-card"
+      aria-labelledby="quick-chat-title"
+    >
       <header className="owner-dashboard__card-header">
         <img src={commentsIcon} alt="" />
         <h2 id="quick-chat-title">Chat rapido</h2>
       </header>
 
-      <div className="owner-dashboard__messages" ref={messagesRef} aria-live="polite" aria-label="Mensajes recientes">
+      <div
+        className="owner-dashboard__messages"
+        ref={messagesRef}
+        aria-live="polite"
+        aria-label="Mensajes recientes"
+      >
         {messages.map((message, index) => (
-          <article className={`owner-dashboard__message owner-dashboard__message--${message.type}`} key={`${message.time}-${index}`}>
+          <article
+            className={`owner-dashboard__message owner-dashboard__message--${message.type}`}
+            key={`${message.time}-${index}`}
+          >
             <strong>{message.author}</strong>
             <p>{message.text}</p>
             <time>{message.time}</time>
@@ -70,7 +96,10 @@ function QuickChat() {
 
 function PropertyStatus() {
   return (
-    <section className="owner-dashboard__card owner-dashboard__status-card" aria-labelledby="property-status-title">
+    <section
+      className="owner-dashboard__card owner-dashboard__status-card"
+      aria-labelledby="property-status-title"
+    >
       <header className="owner-dashboard__card-header owner-dashboard__card-header--with-copy">
         <img src={circleInfoIcon} alt="" />
         <div>
@@ -94,7 +123,10 @@ function PropertyStatus() {
 
         <div className="owner-dashboard__metric">
           <span>En alquiler: 1/1</span>
-          <div className="owner-dashboard__progress owner-dashboard__progress--complete" aria-label="En alquiler: 100 por ciento">
+          <div
+            className="owner-dashboard__progress owner-dashboard__progress--complete"
+            aria-label="En alquiler: 100 por ciento"
+          >
             <span>100%</span>
           </div>
         </div>
@@ -104,7 +136,11 @@ function PropertyStatus() {
           {properties.map((property) => (
             <article className="owner-dashboard__property" key={property.address}>
               <h4>{property.address}</h4>
-              <span className={`owner-dashboard__property-status owner-dashboard__property-status--${property.tone}`}>{property.status}</span>
+              <span
+                className={`owner-dashboard__property-status owner-dashboard__property-status--${property.tone}`}
+              >
+                {property.status}
+              </span>
               <p>{property.detail}</p>
             </article>
           ))}
@@ -116,13 +152,22 @@ function PropertyStatus() {
 
 function ReportsPrompt() {
   return (
-    <section className="owner-dashboard__card owner-dashboard__reports-card" aria-labelledby="property-report-title">
+    <section
+      className="owner-dashboard__card owner-dashboard__reports-card"
+      aria-labelledby="property-report-title"
+    >
       <header className="owner-dashboard__card-header">
         <img src={toolboxIcon} alt="" />
         <h2 id="property-report-title">Reporte de propiedades</h2>
       </header>
       <div className="owner-dashboard__reports-body">
-        <p>¿Tiene algun problema la propiedad?<br />Envie un reporte del problema y no<br />encargaremos de solucionarlo</p>
+        <p>
+          ¿Tiene algun problema la propiedad?
+          <br />
+          Envie un reporte del problema y no
+          <br />
+          encargaremos de solucionarlo
+        </p>
         <span className="owner-dashboard__smile" aria-hidden="true" />
       </div>
       <Link className="owner-dashboard__reports-link" href="/reports-agent">

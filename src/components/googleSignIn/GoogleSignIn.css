@@ -3,55 +3,55 @@
 /* --------------------------------------------------------------------------------- */
 
 .GoogleSignIn__separador {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-    margin: clamp(14px, 3.6vh, 26px) 0 clamp(18px, 7.5vh, 52px);
-    font-size: 12px;
-    white-space: nowrap;
-    color: var(--azulGris);
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin: clamp(14px, 3.6vh, 26px) 0 clamp(18px, 7.5vh, 52px);
+  font-size: 12px;
+  white-space: nowrap;
+  color: var(--azulGris);
 }
 
 .GoogleSignIn__separador::before,
 .GoogleSignIn__separador::after {
-    content: "";
-    flex: 1;
-    height: 1px;
-    background-color: var(--azulGris);
+  content: "";
+  flex: 1;
+  height: 1px;
+  background-color: var(--azulGris);
 }
 
 .GoogleSignIn__boton {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    width: 100%;
-    height: var(--boton-alto, 43px);
-    border: 1.5px solid var(--bordes);
-    border-radius: 6px;
-    font: inherit;
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--azulOsc);
-    background-color: var(--blanc);
-    cursor: pointer;
-    transition: background-color .2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: var(--boton-alto, 43px);
+  border: 1.5px solid var(--bordes);
+  border-radius: 6px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--azulOsc);
+  background-color: var(--blanc);
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
 .GoogleSignIn__boton:hover {
-    background-color: var(--casiBlanc);
+  background-color: var(--casiBlanc);
 }
 
 .GoogleSignIn__icono {
-    display: flex;
-    width: var(--google-icono, 26px);
-    height: var(--google-icono, 26px);
+  display: flex;
+  width: var(--google-icono, 26px);
+  height: var(--google-icono, 26px);
 }
 
 .GoogleSignIn__icono img {
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 
-    -webkit-user-drag: none;
-    user-select: none;
+  -webkit-user-drag: none;
+  user-select: none;
 }

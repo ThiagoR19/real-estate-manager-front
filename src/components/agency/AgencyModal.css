@@ -17,7 +17,10 @@
 }
 
 @media (max-width: 650px) {
-  .agency-modal__band { min-height: 28px; padding: 0; }
+  .agency-modal__band {
+    min-height: 28px;
+    padding: 0;
+  }
   .agency-modal__field {
     padding: 5px 8px 10px;
   }

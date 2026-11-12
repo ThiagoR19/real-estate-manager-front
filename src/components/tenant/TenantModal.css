@@ -144,7 +144,9 @@
   border: 2px solid #e1ebf4;
   border-radius: 10px;
   background: #fff;
-  transition: border-color 150ms ease, box-shadow 150ms ease;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
 }
 
 .tenant-modal__input-wrap:focus-within {
@@ -158,7 +160,8 @@
   width: 18px;
   height: 18px;
   object-fit: contain;
-  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%);
+  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg)
+    brightness(93%) contrast(99%);
 }
 
 .tenant-modal__input-wrap input {
@@ -253,7 +256,10 @@
   cursor: pointer;
   font-size: 14px;
   font-weight: 700;
-  transition: background-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+  transition:
+    background-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
 }
 
 .tenant-modal__actions button:hover {
@@ -277,13 +283,23 @@
 }
 
 @keyframes tenant-modal-fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes tenant-modal-slide-in {
-  from { opacity: 0; transform: translateY(8px) scale(0.99); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 @media (max-width: 650px) {
@@ -309,12 +325,24 @@
     padding-left: 11px;
   }
 
-  .tenant-modal__field:nth-child(-n+3) { order: 1; }
-  .tenant-modal__field:nth-child(4) { order: 6; }
-  .tenant-modal__field:nth-child(5) { order: 4; }
-  .tenant-modal__field:nth-child(6) { order: 7; }
-  .tenant-modal__field:nth-child(7) { order: 5; }
-  .tenant-modal__field:nth-child(8) { order: 8; }
+  .tenant-modal__field:nth-child(-n + 3) {
+    order: 1;
+  }
+  .tenant-modal__field:nth-child(4) {
+    order: 6;
+  }
+  .tenant-modal__field:nth-child(5) {
+    order: 4;
+  }
+  .tenant-modal__field:nth-child(6) {
+    order: 7;
+  }
+  .tenant-modal__field:nth-child(7) {
+    order: 5;
+  }
+  .tenant-modal__field:nth-child(8) {
+    order: 8;
+  }
 
   .tenant-modal__actions {
     display: grid;
@@ -329,7 +357,10 @@
     padding: 0 6px;
     font-size: 14px;
   }
-  .tenant-modal__select-arrow { width: 22px; height: 22px; }
+  .tenant-modal__select-arrow {
+    width: 22px;
+    height: 22px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

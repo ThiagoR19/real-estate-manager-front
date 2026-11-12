@@ -1,6 +1,37 @@
 import { useState } from "react";
 import { Redirect, Route, Switch } from "wouter";
-import { AboutUs, Agency, Agents, AgentDashboard, Chat, Collections, ConfirmRegister, Dashboard, DashboardOwner, Home, Indec, Login, MyProperties, Owners, Payments, PaymentsAndCollections, Professional, Profile, Properties, Property, PublicProperties, PublicProperty, Register, ReportsAgent, Schedule, SuperAdmin, SuperAdminDashboard, Tenant, TenantDashboard, Terms } from "./pages/index.js";
+import {
+  AboutUs,
+  Agency,
+  Agents,
+  AgentDashboard,
+  Chat,
+  Collections,
+  ConfirmRegister,
+  Dashboard,
+  DashboardOwner,
+  Home,
+  Indec,
+  Login,
+  MyProperties,
+  Owners,
+  Payments,
+  PaymentsAndCollections,
+  Professional,
+  Profile,
+  Properties,
+  Property,
+  PublicProperties,
+  PublicProperty,
+  Register,
+  ReportsAgent,
+  Schedule,
+  SuperAdmin,
+  SuperAdminDashboard,
+  Tenant,
+  TenantDashboard,
+  Terms,
+} from "./pages/index.js";
 
 import { Header, Navbar } from "./layouts/index.js";
 import { api } from "./services/api.js";

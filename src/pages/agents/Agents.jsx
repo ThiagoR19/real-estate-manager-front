@@ -8,7 +8,17 @@ import {
   phoneIcon,
   plusIcon,
 } from "../../assets/icons";
-import { DropdownSelect, Button, SummaryPill, ManagementModal, ModalActions, ModalField, ModalInput, ConfirmDeleteModal, EntityActions } from "../../components";
+import {
+  DropdownSelect,
+  Button,
+  SummaryPill,
+  ManagementModal,
+  ModalActions,
+  ModalField,
+  ModalInput,
+  ConfirmDeleteModal,
+  EntityActions,
+} from "../../components";
 import { api } from "../../services/api.js";
 import initials from "../../utils/initials.js";
 import "./Agents.css";
@@ -36,19 +46,41 @@ function AgentRow({ agent, onEdit, onDelete }) {
     <tr>
       <td data-label="Agente">
         <div className="agents__person">
-          <span className="agents__avatar">{agent.urlFotoPerfil ? <img src={api.assetUrl(agent.urlFotoPerfil)} alt="" /> : initials(agent.nombre, agent.apellido)}</span>
-          <span className="agents__person-copy"><strong>{name}</strong><small>DNI {agent.dni || "—"}</small></span>
+          <span className="agents__avatar">
+            {agent.urlFotoPerfil ? (
+              <img src={api.assetUrl(agent.urlFotoPerfil)} alt="" />
+            ) : (
+              initials(agent.nombre, agent.apellido)
+            )}
+          </span>
+          <span className="agents__person-copy">
+            <strong>{name}</strong>
+            <small>DNI {agent.dni || "—"}</small>
+          </span>
         </div>
       </td>
       <td data-label="Correo">
-        <span className="agents__contact"><img src={envelopeIcon} alt="" />{agent.correo || "—"}</span>
+        <span className="agents__contact">
+          <img src={envelopeIcon} alt="" />
+          {agent.correo || "—"}
+        </span>
       </td>
       <td data-label="Teléfono">
-        <span className="agents__contact"><img src={phoneIcon} alt="" />{agent.telefono || "—"}</span>
+        <span className="agents__contact">
+          <img src={phoneIcon} alt="" />
+          {agent.telefono || "—"}
+        </span>
       </td>
-      <td data-label="Zona asignada"><strong>{agent.area || "Sin asignar"}</strong></td>
+      <td data-label="Zona asignada">
+        <strong>{agent.area || "Sin asignar"}</strong>
+      </td>
       <td data-label="Acciones" className="agents__actions-cell">
-        <EntityActions entity="agente" name={name} onEdit={() => onEdit(agent)} onDelete={() => onDelete(agent)} />
+        <EntityActions
+          entity="agente"
+          name={name}
+          onEdit={() => onEdit(agent)}
+          onDelete={() => onDelete(agent)}
+        />
       </td>
     </tr>
   );
@@ -67,28 +99,50 @@ function AgentModal({ agent, onClose, onSubmit }) {
     try {
       setError("");
       await onSubmit(body, photo?.size ? photo : null);
-    } catch (cause) { setError(cause.message); }
+    } catch (cause) {
+      setError(cause.message);
+    }
   }
 
-  return <ManagementModal title={agent ? "Editar agente" : "Crear agente"} onClose={onClose}>
-    <form onSubmit={submit}>
-      <div className="management-modal__card">
-        <div className="management-modal__fields">
-          <ModalField label="Nombre"><ModalInput name="nombre" defaultValue={agent?.nombre || ""} /></ModalField>
-          <ModalField label="Apellido"><ModalInput name="apellido" defaultValue={agent?.apellido || ""} /></ModalField>
-          <ModalField label="Correo"><ModalInput name="correo" defaultValue={agent?.correo || ""} /></ModalField>
-          <ModalField label="Teléfono"><ModalInput name="telefono" defaultValue={agent?.telefono || ""} /></ModalField>
-          <ModalField label="Dirección"><ModalInput name="direccion" defaultValue={agent?.direccion || ""} /></ModalField>
-          <ModalField label="DNI"><ModalInput name="dni" defaultValue={agent?.dni || ""} /></ModalField>
-          <ModalField label="Usuario"><ModalInput name="usuario" defaultValue={agent?.usuario || ""} /></ModalField>
-          <ModalField label={agent ? "Nueva contraseña" : "Contraseña"}><ModalInput name="password" type="password" /></ModalField>
-          <ModalField label="Foto de perfil"><input name="fotoPerfil" type="file" accept="image/jpeg,image/png,image/webp" /></ModalField>
+  return (
+    <ManagementModal title={agent ? "Editar agente" : "Crear agente"} onClose={onClose}>
+      <form onSubmit={submit}>
+        <div className="management-modal__card">
+          <div className="management-modal__fields">
+            <ModalField label="Nombre">
+              <ModalInput name="nombre" defaultValue={agent?.nombre || ""} />
+            </ModalField>
+            <ModalField label="Apellido">
+              <ModalInput name="apellido" defaultValue={agent?.apellido || ""} />
+            </ModalField>
+            <ModalField label="Correo">
+              <ModalInput name="correo" defaultValue={agent?.correo || ""} />
+            </ModalField>
+            <ModalField label="Teléfono">
+              <ModalInput name="telefono" defaultValue={agent?.telefono || ""} />
+            </ModalField>
+            <ModalField label="Dirección">
+              <ModalInput name="direccion" defaultValue={agent?.direccion || ""} />
+            </ModalField>
+            <ModalField label="DNI">
+              <ModalInput name="dni" defaultValue={agent?.dni || ""} />
+            </ModalField>
+            <ModalField label="Usuario">
+              <ModalInput name="usuario" defaultValue={agent?.usuario || ""} />
+            </ModalField>
+            <ModalField label={agent ? "Nueva contraseña" : "Contraseña"}>
+              <ModalInput name="password" type="password" />
+            </ModalField>
+            <ModalField label="Foto de perfil">
+              <input name="fotoPerfil" type="file" accept="image/jpeg,image/png,image/webp" />
+            </ModalField>
+          </div>
         </div>
-      </div>
-      {error && <p role="alert">{error}</p>}
-      <ModalActions onClose={onClose} submitText={agent ? "Guardar cambios" : "Crear agente"} />
-    </form>
-  </ManagementModal>;
+        {error && <p role="alert">{error}</p>}
+        <ModalActions onClose={onClose} submitText={agent ? "Guardar cambios" : "Crear agente"} />
+      </form>
+    </ManagementModal>
+  );
 }
 
 export default function Agents() {
@@ -102,32 +156,47 @@ export default function Agents() {
 
   const [error, setError] = useState("");
   const zones = ["Todas las zonas", ...new Set(agents.map((agent) => agent.area).filter(Boolean))];
-  const visibleAgents = agents.filter((agent) =>
-    [agent.nombre, agent.apellido, agent.dni, agent.correo, agent.area].some((value) => String(value ?? "").toLowerCase().includes(query.toLowerCase()))
-    && (zone === zones[0] || agent.area === zone)
+  const visibleAgents = agents.filter(
+    (agent) =>
+      [agent.nombre, agent.apellido, agent.dni, agent.correo, agent.area].some((value) =>
+        String(value ?? "")
+          .toLowerCase()
+          .includes(query.toLowerCase()),
+      ) &&
+      (zone === zones[0] || agent.area === zone),
   );
 
   useEffect(() => {
-    api.agents().then(setAgents).catch((cause) => setError(cause.message));
+    api
+      .agents()
+      .then(setAgents)
+      .catch((cause) => setError(cause.message));
   }, []);
 
   async function saveAgent(body, photo) {
-    const result = modal.mode === "edit"
-      ? await api.updateAgent(modal.person.id, body)
-      : await api.createAgent(body);
+    const result =
+      modal.mode === "edit"
+        ? await api.updateAgent(modal.person.id, body)
+        : await api.createAgent(body);
     let saved = result;
     let photoError = "";
     if (photo) {
       try {
         const uploaded = await api.updateAgentPhoto(result.id, photo);
         saved = { ...result, urlFotoPerfil: uploaded.urlFotoPerfil };
-      } catch (cause) { photoError = ` La foto no se subió: ${cause.message}`; }
+      } catch (cause) {
+        photoError = ` La foto no se subió: ${cause.message}`;
+      }
     }
-    setAgents((current) => modal.mode === "edit"
-      ? current.map((agent) => agent.id === result.id ? saved : agent)
-      : [...current, saved]);
+    setAgents((current) =>
+      modal.mode === "edit"
+        ? current.map((agent) => (agent.id === result.id ? saved : agent))
+        : [...current, saved],
+    );
     setActivationUrl(result.activacion?.enlace || "");
-    setNotice(`${modal.mode === "edit" ? "Agente actualizado" : "Agente creado"} correctamente.${photoError}`);
+    setNotice(
+      `${modal.mode === "edit" ? "Agente actualizado" : "Agente creado"} correctamente.${photoError}`,
+    );
     setModal(null);
   }
 
@@ -138,7 +207,9 @@ export default function Agents() {
       setPendingDelete(null);
       setActivationUrl("");
       setNotice("Agente eliminado correctamente.");
-    } catch (cause) { setError(cause.message); }
+    } catch (cause) {
+      setError(cause.message);
+    }
   }
 
   return (
@@ -150,36 +221,96 @@ export default function Agents() {
             <p>Gestiona la información de todos los agentes</p>
           </div>
           <div className="agents__summary" aria-label="Resumen de agentes">
-            <SummaryPill label="Agentes activos" value={agents.filter((agent) => agent.estadoCuenta === "ACTIVO").length} icon={peopleIcon} tone="success" />
-            <SummaryPill label="Pendientes" value={agents.filter((agent) => agent.estadoCuenta === "PENDIENTE_ACTIVACION").length} icon={clockIcon} tone="warning" />
+            <SummaryPill
+              label="Agentes activos"
+              value={agents.filter((agent) => agent.estadoCuenta === "ACTIVO").length}
+              icon={peopleIcon}
+              tone="success"
+            />
+            <SummaryPill
+              label="Pendientes"
+              value={agents.filter((agent) => agent.estadoCuenta === "PENDIENTE_ACTIVACION").length}
+              icon={clockIcon}
+              tone="warning"
+            />
           </div>
         </section>
 
         <section className="agents__toolbar" aria-label="Buscar y filtrar agentes">
           <label className="agents__search">
             <img src={magnifyingGlassIcon} alt="" />
-            <input type="search" placeholder="Buscar contacto..." aria-label="Buscar contacto" value={query} onChange={(event) => setQuery(event.target.value)} />
+            <input
+              type="search"
+              placeholder="Buscar contacto..."
+              aria-label="Buscar contacto"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+            />
           </label>
           <ZoneFilter value={zone} onChange={setZone} zones={zones} />
-          <Button className="agents__new-button" onClick={() => setModal({ mode: "create", person: null })} icon={plusIcon} text="Nuevo agente" />
+          <Button
+            className="agents__new-button"
+            onClick={() => setModal({ mode: "create", person: null })}
+            icon={plusIcon}
+            text="Nuevo agente"
+          />
         </section>
 
         <section className="agents__table-card" aria-label="Listado de agentes">
           <div className="agents__table-wrap">
             <table>
-              <thead><tr><th>Agente</th><th>Correo</th><th>Teléfono</th><th>Zona asignada</th><th>Acciones</th></tr></thead>
-              <tbody>{visibleAgents.map((agent) => <AgentRow key={agent.id} agent={agent} onEdit={(person) => setModal({ mode: "edit", person })} onDelete={setPendingDelete} />)}</tbody>
+              <thead>
+                <tr>
+                  <th>Agente</th>
+                  <th>Correo</th>
+                  <th>Teléfono</th>
+                  <th>Zona asignada</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {visibleAgents.map((agent) => (
+                  <AgentRow
+                    key={agent.id}
+                    agent={agent}
+                    onEdit={(person) => setModal({ mode: "edit", person })}
+                    onDelete={setPendingDelete}
+                  />
+                ))}
+              </tbody>
             </table>
           </div>
-          {!visibleAgents.length && <p className="agents__empty">No encontramos agentes con esos criterios.</p>}
+          {!visibleAgents.length && (
+            <p className="agents__empty">No encontramos agentes con esos criterios.</p>
+          )}
         </section>
       </div>
 
-      {notice && <p className="agents__notice" role="status">{notice} {activationUrl && <a href={activationUrl}>Abrir enlace de activación</a>}</p>}
-      {error && <p className="agents__notice" role="alert">{error}</p>}
+      {notice && (
+        <p className="agents__notice" role="status">
+          {notice} {activationUrl && <a href={activationUrl}>Abrir enlace de activación</a>}
+        </p>
+      )}
+      {error && (
+        <p className="agents__notice" role="alert">
+          {error}
+        </p>
+      )}
 
-      {modal && <AgentModal key={modal.person?.id ?? "new"} agent={modal.person} onClose={() => setModal(null)} onSubmit={saveAgent} />}
-      <ConfirmDeleteModal isOpen={Boolean(pendingDelete)} title="¿Seguro que desea eliminar un agente?" onClose={() => setPendingDelete(null)} onConfirm={deleteAgent} />
+      {modal && (
+        <AgentModal
+          key={modal.person?.id ?? "new"}
+          agent={modal.person}
+          onClose={() => setModal(null)}
+          onSubmit={saveAgent}
+        />
+      )}
+      <ConfirmDeleteModal
+        isOpen={Boolean(pendingDelete)}
+        title="¿Seguro que desea eliminar un agente?"
+        onClose={() => setPendingDelete(null)}
+        onConfirm={deleteAgent}
+      />
     </main>
   );
 }

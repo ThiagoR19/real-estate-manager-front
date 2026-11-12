@@ -1,78 +1,81 @@
 .ModalOverlay {
-    --capa-duracion: .35s;
-    --capa-curva: cubic-bezier(.22, 1, .36, 1);
+  --capa-duracion: 0.35s;
+  --capa-curva: cubic-bezier(0.22, 1, 0.36, 1);
 
-    position: fixed;
-    inset: 0;
-    z-index: 100;
-    visibility: hidden;
-    pointer-events: none;
-    transition: visibility 0s linear var(--capa-duracion);
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  visibility: hidden;
+  pointer-events: none;
+  transition: visibility 0s linear var(--capa-duracion);
 }
 
 .ModalOverlay--abierta {
-    visibility: visible;
-    pointer-events: auto;
-    transition: none;
+  visibility: visible;
+  pointer-events: auto;
+  transition: none;
 }
 
 .ModalOverlay__fondo {
-    position: absolute;
-    inset: 0;
-    background-color: color-mix(in srgb, var(--negroOscInfo) 45%, transparent);
-    opacity: 0;
-    transition: opacity var(--capa-duracion) ease;
+  position: absolute;
+  inset: 0;
+  background-color: color-mix(in srgb, var(--negroOscInfo) 45%, transparent);
+  opacity: 0;
+  transition: opacity var(--capa-duracion) ease;
 }
 
 .ModalOverlay--abierta .ModalOverlay__fondo {
-    opacity: 1;
+  opacity: 1;
 }
 
 .ModalOverlay__contenido {
-    position: absolute;
-    outline: none;
-    transition:
-        transform var(--capa-duracion) var(--capa-curva),
-        opacity var(--capa-duracion) ease;
+  position: absolute;
+  outline: none;
+  transition:
+    transform var(--capa-duracion) var(--capa-curva),
+    opacity var(--capa-duracion) ease;
 }
 
 /* Panel lateral: entra desde la derecha */
 .ModalOverlay__contenido--derecha {
-    top: 0;
-    right: 0;
-    bottom: 0;
-    max-width: 100%;
-    transform: translateX(100%);
+  top: 0;
+  right: 0;
+  bottom: 0;
+  max-width: 100%;
+  transform: translateX(100%);
 }
 
 .ModalOverlay--abierta .ModalOverlay__contenido--derecha {
-    transform: none;
+  transform: none;
 }
 
 /* Modal centrado: aparece con un leve zoom */
 .ModalOverlay__contenido--centro {
-    top: 50%;
-    left: 50%;
-    max-width: calc(100% - 32px);
-    max-height: calc(100% - 32px);
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(.95);
+  top: 50%;
+  left: 50%;
+  max-width: calc(100% - 32px);
+  max-height: calc(100% - 32px);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.95);
 }
 
 .ModalOverlay--abierta .ModalOverlay__contenido--centro {
-    opacity: 1;
-    transform: translate(-50%, -50%);
+  opacity: 1;
+  transform: translate(-50%, -50%);
 }
 
 @media (max-width: 760px) {
-    .ModalOverlay__contenido--centro { max-width: calc(100% - 16px); max-height: calc(100dvh - 24px); overflow-y: auto; }
+  .ModalOverlay__contenido--centro {
+    max-width: calc(100% - 16px);
+    max-height: calc(100dvh - 24px);
+    overflow-y: auto;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-
-    .ModalOverlay,
-    .ModalOverlay__fondo,
-    .ModalOverlay__contenido {
-        transition-duration: 0s;
-    }
+  .ModalOverlay,
+  .ModalOverlay__fondo,
+  .ModalOverlay__contenido {
+    transition-duration: 0s;
+  }
 }

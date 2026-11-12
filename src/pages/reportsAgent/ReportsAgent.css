@@ -39,7 +39,8 @@ body:has(#reports-agent) {
 
 #reports-agent img {
   object-fit: contain;
-  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%);
+  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg)
+    brightness(93%) contrast(99%);
 }
 
 #reports-agent :focus-visible:not(input):not(textarea):not(select) {
@@ -89,7 +90,8 @@ body:has(#reports-agent) {
 .reports__brand-logo {
   width: 37px;
   height: 40px;
-  filter: brightness(0) saturate(100%) invert(52%) sepia(92%) saturate(2012%) hue-rotate(150deg) brightness(94%) contrast(101%) !important;
+  filter: brightness(0) saturate(100%) invert(52%) sepia(92%) saturate(2012%) hue-rotate(150deg)
+    brightness(94%) contrast(101%) !important;
 }
 
 .reports__brand strong {
@@ -327,7 +329,8 @@ body:has(#reports-agent) {
 #reports-agent .reports__property-icon img {
   width: 14px;
   height: 14px;
-  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%);
+  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg)
+    brightness(93%) contrast(99%);
 }
 
 .reports__property-filter select {
@@ -376,7 +379,9 @@ body:has(#reports-agent) {
   background: #fff;
   text-align: left;
   cursor: pointer;
-  transition: background-color 150ms ease, border-color 150ms ease;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
 }
 
 .reports__list-item:hover,
@@ -512,7 +517,7 @@ body:has(#reports-agent) {
   padding: 0;
   border: 0;
   border-radius: 7px;
-  background: #fffE;
+  background: #fffe;
   color: #17235e;
   cursor: pointer;
   font-size: 26px !important;
@@ -701,7 +706,7 @@ body:has(#reports-agent) {
   gap: 10px;
 }
 
-.reports__facts p>span {
+.reports__facts p > span {
   font-size: 16px;
 }
 
@@ -757,7 +762,8 @@ body:has(#reports-agent) {
 #reports-agent .reports__status-icon {
   width: 18px;
   height: 18px;
-  filter: brightness(0) saturate(100%) invert(53%) sepia(95%) saturate(1397%) hue-rotate(346deg) brightness(102%) contrast(101%);
+  filter: brightness(0) saturate(100%) invert(53%) sepia(95%) saturate(1397%) hue-rotate(346deg)
+    brightness(102%) contrast(101%);
 }
 
 .reports__drawn-icon--house {
@@ -777,7 +783,7 @@ body:has(#reports-agent) {
   border-radius: 2px 2px 0 0;
   background: #0c2a69;
   content: "";
-  transform: rotate(45deg) scale(.72);
+  transform: rotate(45deg) scale(0.72);
 }
 
 .reports__drawn-icon--house::after {
@@ -1154,7 +1160,6 @@ body:has(#reports-agent) {
 }
 
 @media (max-width: 760px) {
-
   .reports__gallery,
   .reports__main-photo-frame,
   .reports__main-photo {

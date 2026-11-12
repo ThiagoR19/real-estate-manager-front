@@ -1,6 +1,18 @@
 import { memo, useCallback, useEffect, useState } from "react";
 import { useLocation } from "wouter";
-import { addressCardIcon, cameraIcon, checkIcon, envelopeIcon, eyeIcon, eyeSlashIcon, locationDotIcon, lockIcon, phoneIcon, trashCanIcon, userIcon, } from "../../assets/icons";
+import {
+  addressCardIcon,
+  cameraIcon,
+  checkIcon,
+  envelopeIcon,
+  eyeIcon,
+  eyeSlashIcon,
+  locationDotIcon,
+  lockIcon,
+  phoneIcon,
+  trashCanIcon,
+  userIcon,
+} from "../../assets/icons";
 import "./Profile.css";
 import { Button } from "../../components";
 import { api } from "../../services/api.js";
@@ -17,9 +29,17 @@ const personalFields = [
 ];
 
 const passwordFields = [
-  { id: "current-password", label: "Contraseña actual", placeholder: "Ingresa tu contraseña actual" },
+  {
+    id: "current-password",
+    label: "Contraseña actual",
+    placeholder: "Ingresa tu contraseña actual",
+  },
   { id: "new-password", label: "Nueva contraseña", placeholder: "Ingresa una nueva contraseña" },
-  { id: "confirm-password", label: "Confirmar nueva contraseña", placeholder: "Repite la nueva contraseña" },
+  {
+    id: "confirm-password",
+    label: "Confirmar nueva contraseña",
+    placeholder: "Repite la nueva contraseña",
+  },
 ];
 
 const Field = memo(function Field({ field, placeholder }) {
@@ -42,7 +62,13 @@ const PasswordField = memo(function PasswordField({ field, visible, onToggle }) 
         {field.required && <b aria-hidden="true">*</b>}
       </span>
       <span className="profile__field-control profile__field-control--password">
-        <input id={field.id} name={field.id} type={visible ? "text" : "password"} placeholder={field.placeholder} required={field.required} />
+        <input
+          id={field.id}
+          name={field.id}
+          type={visible ? "text" : "password"}
+          placeholder={field.placeholder}
+          required={field.required}
+        />
         <button
           className="profile__password-toggle"
           type="button"
@@ -66,7 +92,27 @@ export default function Profile() {
   const [photoError, setPhotoError] = useState("");
   const [photoNotice, setPhotoNotice] = useState("");
   const [photoLoadError, setPhotoLoadError] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
+  const [saveNotice, setSaveNotice] = useState("");
   const [, navigate] = useLocation();
+
+  const showProfile = useCallback((updated, token) => {
+    setProfile(updated);
+    setPhotoLoadError(false);
+    const session = api.getSession();
+    if (session)
+      api.saveSession({
+        ...session,
+        token: token || session.token,
+        usuario: {
+          ...session.usuario,
+          nombre: updated.nombre,
+          apellido: updated.apellido,
+          urlFotoPerfil: updated.urlFotoPerfil,
+        },
+      });
+  }, []);
 
   const togglePassword = useCallback((id) => {
     setVisiblePasswords((current) => ({ ...current, [id]: !current[id] }));
@@ -85,32 +131,51 @@ export default function Profile() {
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
+    const form = e.currentTarget;
+    setSaving(true);
+    setSaveError("");
+    setSaveNotice("");
 
-    const values = Object.fromEntries(new FormData(e.currentTarget));
+    const values = Object.fromEntries(new FormData(form));
 
     const payload = Object.fromEntries(
-      personalFields.map(({ id }) => [id, String(values[id] ?? "").trim()]).filter(([, value]) => value !== "")
+      personalFields
+        .map(({ id }) => [id, String(values[id] ?? "").trim()])
+        .filter(([, value]) => value !== ""),
     );
 
     const contraseñaActual = values["current-password"];
     const contraseñaNueva = values["new-password"];
     const confirmarContraseña = values["confirm-password"];
 
-    if (contraseñaActual && contraseñaNueva && confirmarContraseña) {
-      const passwordPayload = {
-        actual: contraseñaActual,
-        nueva: contraseñaNueva,
-        confirmacion: confirmarContraseña
+    try {
+      if (Object.keys(payload).length > 0) {
+        const result = await api.updateProfile(payload);
+        showProfile(result.perfil, result.token);
       }
-      if (contraseñaNueva !== confirmarContraseña) return;
-      await api.updatePassword(passwordPayload);
+      if (contraseñaActual || contraseñaNueva || confirmarContraseña) {
+        await api.updatePassword({
+          actual: contraseñaActual,
+          nueva: contraseñaNueva,
+          confirmacion: confirmarContraseña,
+        });
+      }
+      if (
+        Object.keys(payload).length > 0 ||
+        contraseñaActual ||
+        contraseñaNueva ||
+        confirmarContraseña
+      ) {
+        form.reset();
+        setSaveNotice("Cambios guardados correctamente.");
+      }
+    } catch (error) {
+      setSaveError(error.message || "No se pudieron guardar los cambios.");
+    } finally {
+      setSaving(false);
     }
-
-    if (Object.keys(payload).length > 0) {
-      await api.updateProfile(payload);
-    }
-  }
+  };
 
   const handlePhotoChange = async (event) => {
     const input = event.currentTarget;
@@ -134,15 +199,8 @@ export default function Profile() {
 
     setPhotoUploading(true);
     try {
-      await api.updateProfilePhoto(file);
-
-      try {
-        setProfile((await api.profile()) ?? {});
-        setPhotoLoadError(false);
-        setPhotoNotice("Foto de perfil actualizada.");
-      } catch {
-        setPhotoError("La foto se subió, pero no se pudo actualizar la vista del perfil.");
-      }
+      showProfile(await api.updateProfilePhoto(file));
+      setPhotoNotice("Foto de perfil actualizada.");
     } catch (error) {
       setPhotoError(error.message || "No se pudo subir la foto de perfil.");
     } finally {
@@ -157,7 +215,7 @@ export default function Profile() {
     async function cargarPerfil() {
       try {
         const loadedProfile = await api.profile();
-        if (mounted) setProfile(loadedProfile ?? {});
+        if (mounted) showProfile(loadedProfile ?? {});
       } catch (error) {
         console.error(error);
       }
@@ -167,10 +225,11 @@ export default function Profile() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [showProfile]);
 
-  const iniciales = initials(profile.nombre, profile.apellido)
-  const profilePhotoUrl = profile.urlFotoPerfil && !photoLoadError ? api.assetUrl(profile.urlFotoPerfil) : "";
+  const iniciales = initials(profile.nombre, profile.apellido);
+  const profilePhotoUrl =
+    profile.urlFotoPerfil && !photoLoadError ? api.assetUrl(profile.urlFotoPerfil) : "";
 
   return (
     <main id="profile">
@@ -178,29 +237,54 @@ export default function Profile() {
         <aside className="profile__sidebar">
           <section className="profile__identity-card" aria-label="Resumen del perfil">
             <div className={`profile__avatar ${avatarClass(profile.nombre, profile.apellido)}`}>
-              {profilePhotoUrl
-                ? <img className="profile__avatar-photo" src={profilePhotoUrl} alt={`Foto de perfil de ${profile.nombre ?? ""} ${profile.apellido ?? ""}`.trim()} onError={() => setPhotoLoadError(true)} />
-                : <span>{iniciales}</span>}
+              {profilePhotoUrl ? (
+                <img
+                  className="profile__avatar-photo"
+                  src={profilePhotoUrl}
+                  alt={`Foto de perfil de ${profile.nombre ?? ""} ${profile.apellido ?? ""}`.trim()}
+                  onError={() => {
+                    setPhotoLoadError(true);
+                    setPhotoNotice("");
+                    setPhotoError("No se pudo cargar la foto de perfil.");
+                  }}
+                />
+              ) : (
+                <span>{iniciales}</span>
+              )}
               <label className={`profile__avatar-upload${photoUploading ? " is-uploading" : ""}`}>
                 <img src={cameraIcon} alt="" />
                 <input
                   type="file"
                   accept="image/jpeg,image/png,image/webp"
                   aria-label={photoUploading ? "Subiendo foto de perfil" : "Cambiar foto de perfil"}
-                  disabled={photoUploading}
+                  disabled={photoUploading || saving}
                   onChange={handlePhotoChange}
                 />
               </label>
             </div>
-            <h1>{profile.nombre} {profile.apellido}</h1>
-            <p className="profile__role">Administrador</p>
+            <h1>
+              {profile.nombre} {profile.apellido}
+            </h1>
+            <p className="profile__role">{profile.rol || "Usuario"}</p>
             <p className="profile__email">
               <img src={envelopeIcon} alt="" />
               {profile.correo}
             </p>
-            {photoUploading && <p className="profile__photo-feedback" role="status">Subiendo foto...</p>}
-            {photoError && <p className="profile__photo-feedback profile__photo-feedback--error" role="alert">{photoError}</p>}
-            {photoNotice && <p className="profile__photo-feedback" role="status">{photoNotice}</p>}
+            {photoUploading && (
+              <p className="profile__photo-feedback" role="status">
+                Subiendo foto...
+              </p>
+            )}
+            {photoError && (
+              <p className="profile__photo-feedback profile__photo-feedback--error" role="alert">
+                {photoError}
+              </p>
+            )}
+            {photoNotice && (
+              <p className="profile__photo-feedback" role="status">
+                {photoNotice}
+              </p>
+            )}
           </section>
 
           <section className="profile__password-hint" aria-labelledby="password-hint-title">
@@ -225,20 +309,36 @@ export default function Profile() {
 
           <section className="profile__form-section" aria-labelledby="personal-information-title">
             <div className="profile__section-heading">
-              <span className="profile__section-icon"><img src={userIcon} alt="" /></span>
+              <span className="profile__section-icon">
+                <img src={userIcon} alt="" />
+              </span>
               <div>
                 <h3 id="personal-information-title">Información personal</h3>
-                <p>Mantén tu información actualizada. Estos datos se utilizan en la plataforma y en las comunicaciones del sistema</p>
+                <p>
+                  Mantén tu información actualizada. Estos datos se utilizan en la plataforma y en
+                  las comunicaciones del sistema
+                </p>
               </div>
             </div>
             <div className="profile__fields profile__fields--personal">
-              {personalFields.map((field) => <Field key={field.id} field={field} placeholder={profile[field.id] ? profile[field.id] : field.label} />)}
+              {personalFields.map((field) => (
+                <Field
+                  key={field.id}
+                  field={field}
+                  placeholder={profile[field.id] ? profile[field.id] : field.label}
+                />
+              ))}
             </div>
           </section>
 
-          <section className="profile__form-section profile__form-section--security" aria-labelledby="security-title">
+          <section
+            className="profile__form-section profile__form-section--security"
+            aria-labelledby="security-title"
+          >
             <div className="profile__section-heading">
-              <span className="profile__section-icon"><img src={lockIcon} alt="" /></span>
+              <span className="profile__section-icon">
+                <img src={lockIcon} alt="" />
+              </span>
               <div>
                 <h3 id="security-title">Seguridad</h3>
                 <p>Cambia tu contraseña periódicamente para mantener tu cuenta segura</p>
@@ -259,10 +359,37 @@ export default function Profile() {
       </div>
 
       <div className="profile__actions">
-        <Button className="profile__logout-button" icon={trashCanIcon} text={loggingOut ? "Cerrando sesión..." : "Cerrar sesión"} onClick={closeSession} disabled={loggingOut} />
-        <Button type="submit" form="profile-form" className="profile__save-button" icon={checkIcon} text="Guardar cambios" />
-        {logoutError && <p className="profile__logout-error" role="alert">{logoutError}</p>}
+        <Button
+          className="profile__logout-button"
+          icon={trashCanIcon}
+          text={loggingOut ? "Cerrando sesión..." : "Cerrar sesión"}
+          onClick={closeSession}
+          disabled={loggingOut}
+        />
+        <Button
+          type="submit"
+          form="profile-form"
+          className="profile__save-button"
+          icon={checkIcon}
+          text={saving ? "Guardando..." : "Guardar cambios"}
+          disabled={saving || photoUploading}
+        />
+        {saveError && (
+          <p className="profile__save-feedback profile__save-feedback--error" role="alert">
+            {saveError}
+          </p>
+        )}
+        {saveNotice && (
+          <p className="profile__save-feedback" role="status">
+            {saveNotice}
+          </p>
+        )}
+        {logoutError && (
+          <p className="profile__logout-error" role="alert">
+            {logoutError}
+          </p>
+        )}
       </div>
-    </main >
+    </main>
   );
 }

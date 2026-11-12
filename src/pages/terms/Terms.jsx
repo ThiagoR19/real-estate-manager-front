@@ -82,7 +82,9 @@ export default function Terms() {
     if (!section) return;
 
     setActiveSection(id);
-    const behavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth";
+    const behavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? "instant"
+      : "smooth";
     if (window.matchMedia("(max-width: 760px)").matches) {
       section.scrollIntoView({ behavior, block: "start" });
     } else if (content) {
@@ -97,7 +99,9 @@ export default function Terms() {
   const updateActiveSection = useCallback(() => {
     const content = contentRef.current;
     if (window.matchMedia("(max-width: 760px)").matches) {
-      const currentSection = [...sections].reverse().find(({ id }) => sectionRefs.current[id]?.getBoundingClientRect().top <= 140);
+      const currentSection = [...sections]
+        .reverse()
+        .find(({ id }) => sectionRefs.current[id]?.getBoundingClientRect().top <= 140);
       if (currentSection) setActiveSection(currentSection.id);
       return;
     }
@@ -144,21 +148,38 @@ export default function Terms() {
 
         <section className="terms__div-section" aria-labelledby="terms-title">
           <header className="terms__div-section-header">
-            <h1 className="terms__section-header-h1" id="terms-title">Términos y condiciones</h1>
-            <p className="terms__section-header-p">Condiciones de uso, responsabilidad y uso de la plataforma</p>
+            <h1 className="terms__section-header-h1" id="terms-title">
+              Términos y condiciones
+            </h1>
+            <p className="terms__section-header-p">
+              Condiciones de uso, responsabilidad y uso de la plataforma
+            </p>
           </header>
 
           <label className="terms__mobile-documentation">
             <img src={fileIcon} alt="" />
             <span className="sr-only">Ir a sección</span>
-            <select value={activeSection} onChange={(event) => {
-              const section = sectionRefs.current[event.target.value];
-              if (section) {
-                setActiveSection(event.target.value);
-                section.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth", block: "start" });
-              }
-            }} aria-label="Ir a sección de términos">
-              {sections.map(({ id, title }) => <option key={id} value={id}>{title}</option>)}
+            <select
+              value={activeSection}
+              onChange={(event) => {
+                const section = sectionRefs.current[event.target.value];
+                if (section) {
+                  setActiveSection(event.target.value);
+                  section.scrollIntoView({
+                    behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+                      ? "instant"
+                      : "smooth",
+                    block: "start",
+                  });
+                }
+              }}
+              aria-label="Ir a sección de términos"
+            >
+              {sections.map(({ id, title }) => (
+                <option key={id} value={id}>
+                  {title}
+                </option>
+              ))}
             </select>
             <span aria-hidden="true">⌄</span>
           </label>
@@ -178,12 +199,18 @@ export default function Terms() {
                 id={`terms-${id}`}
                 aria-labelledby={`terms-heading-${id}`}
                 tabIndex={-1}
-                ref={(element) => { sectionRefs.current[id] = element; }}
+                ref={(element) => {
+                  sectionRefs.current[id] = element;
+                }}
               >
-                <span className="terms__div-section-span" aria-hidden="true">{index + 1}</span>
+                <span className="terms__div-section-span" aria-hidden="true">
+                  {index + 1}
+                </span>
                 <article className="terms__div-section-article">
-                  <h2 className="terms__section-article-h2" id={`terms-heading-${id}`}>{title}</h2>
-                <p className="terms__section-article-p">{text}</p>
+                  <h2 className="terms__section-article-h2" id={`terms-heading-${id}`}>
+                    {title}
+                  </h2>
+                  <p className="terms__section-article-p">{text}</p>
                 </article>
               </section>
             ))}

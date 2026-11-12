@@ -55,7 +55,7 @@
   color: #fff;
 }
 
-#collections .collections__property-row>button {
+#collections .collections__property-row > button {
   flex: 0 0 38px;
   height: 100%;
   padding: 0;
@@ -181,7 +181,10 @@
 }
 
 .collections__month {
-  transition: background-color 180ms ease, box-shadow 180ms ease, color 180ms ease;
+  transition:
+    background-color 180ms ease,
+    box-shadow 180ms ease,
+    color 180ms ease;
 }
 
 .collections__month:hover {
@@ -392,7 +395,8 @@
 .collections__zoom .collections__icon {
   width: 18px;
   height: 18px;
-  filter: brightness(0) saturate(100%) invert(35%) sepia(100%) saturate(1698%) hue-rotate(196deg) brightness(90%) contrast(101%);
+  filter: brightness(0) saturate(100%) invert(35%) sepia(100%) saturate(1698%) hue-rotate(196deg)
+    brightness(90%) contrast(101%);
 }
 
 .collections__zoom span {
@@ -504,7 +508,7 @@
   margin: 0;
 }
 
-.collections__facts>div {
+.collections__facts > div {
   display: grid;
   grid-template-columns: 34px minmax(0, 1fr) auto;
   align-items: center;
@@ -516,7 +520,8 @@
   width: 21px;
   height: 21px;
   margin-left: 7px;
-  filter: brightness(0) saturate(100%) invert(36%) sepia(98%) saturate(1774%) hue-rotate(203deg) brightness(95%) contrast(99%);
+  filter: brightness(0) saturate(100%) invert(36%) sepia(98%) saturate(1774%) hue-rotate(203deg)
+    brightness(95%) contrast(99%);
 }
 
 .collections__facts strong,
@@ -556,7 +561,7 @@
   font-size: 16px;
 }
 
-.collections__breakdown>div {
+.collections__breakdown > div {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -594,7 +599,7 @@
   background: #d9e9ff;
 }
 
-.collections__admin-note>span {
+.collections__admin-note > span {
   display: grid;
   flex: 0 0 36px;
   place-items: center;
@@ -607,7 +612,8 @@
 .collections__admin-note .collections__icon {
   width: 19px;
   height: 19px;
-  filter: brightness(0) saturate(100%) invert(36%) sepia(98%) saturate(1774%) hue-rotate(203deg) brightness(95%) contrast(99%);
+  filter: brightness(0) saturate(100%) invert(36%) sepia(98%) saturate(1774%) hue-rotate(203deg)
+    brightness(95%) contrast(99%);
 }
 
 .collections__admin-note strong {
@@ -650,12 +656,13 @@
 }
 
 .collections__download .collections__icon {
-  filter: brightness(0) saturate(100%) invert(31%) sepia(93%) saturate(1753%) hue-rotate(204deg) brightness(82%) contrast(105%);
+  filter: brightness(0) saturate(100%) invert(31%) sepia(93%) saturate(1753%) hue-rotate(204deg)
+    brightness(82%) contrast(105%);
 }
 
 #collections button:disabled {
   cursor: not-allowed;
-  opacity: .5;
+  opacity: 0.5;
 }
 
 .collections__feedback {
@@ -673,7 +680,8 @@
   width: 20px;
   height: 20px;
   object-fit: contain;
-  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%);
+  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg)
+    brightness(93%) contrast(99%);
 }
 
 .collections__receipt-dialog {
@@ -842,7 +850,7 @@
     line-height: 1;
   }
 
-  #collections .payment-mobile__toolbar>button {
+  #collections .payment-mobile__toolbar > button {
     flex-shrink: 0;
   }
 
@@ -955,7 +963,7 @@
     padding: 0;
   }
 
-  #collections .collections__facts>div {
+  #collections .collections__facts > div {
     grid-template-columns: 34px minmax(0, 1fr) auto;
     gap: 8px;
   }
@@ -984,7 +992,7 @@
     font-size: 18px;
   }
 
-  #collections .collections__breakdown>div {
+  #collections .collections__breakdown > div {
     min-height: 32px;
     padding: 4px 7px;
     font-size: 14px;
@@ -1023,7 +1031,7 @@
   }
 
   .collections__receipt-dialog .collections__receipt {
-    transform: scale(.9);
+    transform: scale(0.9);
   }
 }
 
@@ -1067,7 +1075,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-
   .collections__chevron,
   .collections__month {
     transition: none;

@@ -1,11 +1,9 @@
 import { Link } from "wouter";
+import { calendarIcon, plusIconWhite, toolboxIcon, userIcon } from "../../assets/icons";
 import {
-  calendarIcon,
-  plusIconWhite,
-  toolboxIcon,
-  userIcon,
-} from "../../assets/icons";
-import { ActivityCard as SharedActivityCard, PerformanceCard as SharedPerformanceCard } from "../dashboard/DashboardWidgets";
+  ActivityCard as SharedActivityCard,
+  PerformanceCard as SharedPerformanceCard,
+} from "../dashboard/DashboardWidgets";
 import "./AgentDashboard.css";
 
 const propertyPhotos = [
@@ -15,18 +13,69 @@ const propertyPhotos = [
 ];
 
 const agendaItems = [
-  { time: "10:00", title: "Casa de San isidro", address: "Av. Libertador 4500", person: "Laura Gomez", photo: propertyPhotos[1] },
-  { time: "11:00", title: "Casa de San isidro", address: "Av. Libertador 4500", person: "Laura Gomez", photo: propertyPhotos[0] },
-  { time: "14:00", title: "Casa de San isidro", address: "Av. Libertador 4500", person: "Laura Gomez", photo: propertyPhotos[2] },
-  { time: "15:30", title: "Casa de San isidro", address: "Av. Libertador 4500", person: "Laura Gomez", photo: propertyPhotos[0] },
-  { time: "16:00", title: "Casa de San isidro", address: "Av. Libertador 4500", person: "Laura Gomez", photo: propertyPhotos[1] },
-  { time: "17:00", title: "Casa de San isidro", address: "Av. Libertador 4500", person: "Laura Gomez", photo: propertyPhotos[2] },
+  {
+    time: "10:00",
+    title: "Casa de San isidro",
+    address: "Av. Libertador 4500",
+    person: "Laura Gomez",
+    photo: propertyPhotos[1],
+  },
+  {
+    time: "11:00",
+    title: "Casa de San isidro",
+    address: "Av. Libertador 4500",
+    person: "Laura Gomez",
+    photo: propertyPhotos[0],
+  },
+  {
+    time: "14:00",
+    title: "Casa de San isidro",
+    address: "Av. Libertador 4500",
+    person: "Laura Gomez",
+    photo: propertyPhotos[2],
+  },
+  {
+    time: "15:30",
+    title: "Casa de San isidro",
+    address: "Av. Libertador 4500",
+    person: "Laura Gomez",
+    photo: propertyPhotos[0],
+  },
+  {
+    time: "16:00",
+    title: "Casa de San isidro",
+    address: "Av. Libertador 4500",
+    person: "Laura Gomez",
+    photo: propertyPhotos[1],
+  },
+  {
+    time: "17:00",
+    title: "Casa de San isidro",
+    address: "Av. Libertador 4500",
+    person: "Laura Gomez",
+    photo: propertyPhotos[2],
+  },
 ];
 
 const reports = [
-  { title: "Fuga de gas", person: "Sofia Ramirez", property: "Casa de san isidro", photo: propertyPhotos[1] },
-  { title: "Pared hume...", person: "Sofia Ramirez", property: "Casa de san isidro", photo: propertyPhotos[2] },
-  { title: "Humedad", person: "Sofia Ramirez", property: "Casa de san isidro", photo: propertyPhotos[0] },
+  {
+    title: "Fuga de gas",
+    person: "Sofia Ramirez",
+    property: "Casa de san isidro",
+    photo: propertyPhotos[1],
+  },
+  {
+    title: "Pared hume...",
+    person: "Sofia Ramirez",
+    property: "Casa de san isidro",
+    photo: propertyPhotos[2],
+  },
+  {
+    title: "Humedad",
+    person: "Sofia Ramirez",
+    property: "Casa de san isidro",
+    photo: propertyPhotos[0],
+  },
 ];
 
 function Icon({ src, className = "" }) {
@@ -35,7 +84,10 @@ function Icon({ src, className = "" }) {
 
 function AgendaCard() {
   return (
-    <section className="agent-dashboard__card agent-dashboard__agenda-card" aria-labelledby="agent-agenda-title">
+    <section
+      className="agent-dashboard__card agent-dashboard__agenda-card"
+      aria-labelledby="agent-agenda-title"
+    >
       <header className="agent-dashboard__section-heading">
         <Icon src={calendarIcon} />
         <h2 id="agent-agenda-title">Agenda del día</h2>
@@ -51,25 +103,35 @@ function AgendaCard() {
             <div className="agent-dashboard__agenda-copy">
               <strong>{item.title}</strong>
               <span>{item.address}</span>
-              <small><Icon src={userIcon} />{item.person}</small>
+              <small>
+                <Icon src={userIcon} />
+                {item.person}
+              </small>
             </div>
           </article>
         ))}
       </div>
 
-      <Link className="agent-dashboard__subtle-button" href="/schedule">Ver agenda completa <span aria-hidden="true">→</span></Link>
+      <Link className="agent-dashboard__subtle-button" href="/schedule">
+        Ver agenda completa <span aria-hidden="true">→</span>
+      </Link>
     </section>
   );
 }
 
 function ReportsCard() {
   return (
-    <section className="agent-dashboard__card agent-dashboard__reports-card" aria-labelledby="agent-reports-title">
+    <section
+      className="agent-dashboard__card agent-dashboard__reports-card"
+      aria-labelledby="agent-reports-title"
+    >
       <header className="agent-dashboard__section-heading">
         <Icon src={toolboxIcon} />
         <h2 id="agent-reports-title">Reportes de inquilinos</h2>
         <span className="agent-dashboard__pending">2 pendientes</span>
-        <span className="agent-dashboard__heading-chevron" aria-hidden="true">›</span>
+        <span className="agent-dashboard__heading-chevron" aria-hidden="true">
+          ›
+        </span>
       </header>
 
       <div className="agent-dashboard__reports-list">
@@ -77,7 +139,9 @@ function ReportsCard() {
           <Link className="agent-dashboard__report-item" href="/reports-agent" key={report.title}>
             <img src={report.photo} alt="" />
             <span className="agent-dashboard__report-copy">
-              <strong>{report.title} <i aria-hidden="true" /></strong>
+              <strong>
+                {report.title} <i aria-hidden="true" />
+              </strong>
               <span>{report.person}</span>
               <span>{report.property}</span>
             </span>
@@ -87,7 +151,9 @@ function ReportsCard() {
         ))}
       </div>
 
-      <Link className="agent-dashboard__reports-button" href="/reports-agent">Todos los reportes <span aria-hidden="true">→</span></Link>
+      <Link className="agent-dashboard__reports-button" href="/reports-agent">
+        Todos los reportes <span aria-hidden="true">→</span>
+      </Link>
     </section>
   );
 }
@@ -101,7 +167,10 @@ export default function AgentDashboard() {
             <h1>¡Hola, Thiago!</h1>
             <p>Aquí tienes un resumen de la actividad de la inmobiliaria</p>
           </div>
-          <Link className="agent-dashboard__schedule-button" href="/schedule"><Icon src={plusIconWhite} />Agendar cita</Link>
+          <Link className="agent-dashboard__schedule-button" href="/schedule">
+            <Icon src={plusIconWhite} />
+            Agendar cita
+          </Link>
         </header>
 
         <div className="agent-dashboard__grid">
@@ -114,4 +183,3 @@ export default function AgentDashboard() {
     </main>
   );
 }
-

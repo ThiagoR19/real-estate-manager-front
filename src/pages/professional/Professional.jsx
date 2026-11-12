@@ -1,6 +1,19 @@
 import { useEffect, useState } from "react";
-import { envelopeIcon, peopleIcon, phoneIcon, penIcon, plusIcon, trashCanIcon, } from "../../assets/icons";
-import { DropdownSelect, ProfessionalModal, ConfirmDeleteModal, EntityActions, Button } from "../../components";
+import {
+  envelopeIcon,
+  peopleIcon,
+  phoneIcon,
+  penIcon,
+  plusIcon,
+  trashCanIcon,
+} from "../../assets/icons";
+import {
+  DropdownSelect,
+  ProfessionalModal,
+  ConfirmDeleteModal,
+  EntityActions,
+  Button,
+} from "../../components";
 import "./Professional.css";
 
 import { api } from "../../services/api.js";
@@ -14,13 +27,20 @@ export default function Professional() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    api.professionals().then(setProfessionals).catch((cause) => setError(cause.message));
+    api
+      .professionals()
+      .then(setProfessionals)
+      .catch((cause) => setError(cause.message));
   }, []);
 
-  const filterOptions = ["Tipo", ...new Set(professionals.map((item) => item.profesion).filter(Boolean))];
-  const visibleProfessionals = (
-    selectedType === "Tipo" ? professionals : professionals.filter(({ profesion }) => profesion === selectedType)
-  );
+  const filterOptions = [
+    "Tipo",
+    ...new Set(professionals.map((item) => item.profesion).filter(Boolean)),
+  ];
+  const visibleProfessionals =
+    selectedType === "Tipo"
+      ? professionals
+      : professionals.filter(({ profesion }) => profesion === selectedType);
 
   function openCreateModal() {
     setModal({ isOpen: true, mode: "create", professional: null });
@@ -44,7 +64,7 @@ export default function Professional() {
     };
     if (modal.mode === "edit") {
       const saved = await api.updateProfessional(modal.professional.id, body);
-      setProfessionals((current) => current.map((item) => item.id === saved.id ? saved : item));
+      setProfessionals((current) => current.map((item) => (item.id === saved.id ? saved : item)));
       setFeedback(`Se actualizó la información de ${form.name}.`);
     } else {
       const saved = await api.createProfessional(body);
@@ -60,7 +80,9 @@ export default function Professional() {
       setProfessionals((current) => current.filter(({ id }) => id !== professional.id));
       setFeedback(`${professional.nombre} ${professional.apellido} fue eliminado de la lista.`);
       setPendingDelete(null);
-    } catch (cause) { setError(cause.message); }
+    } catch (cause) {
+      setError(cause.message);
+    }
   }
 
   return (
@@ -86,7 +108,12 @@ export default function Professional() {
             optionsClassName="professional__filter-options"
           />
 
-          <Button className="professional__new" onClick={openCreateModal} icon={plusIcon} text="Nuevo profesional" />
+          <Button
+            className="professional__new"
+            onClick={openCreateModal}
+            icon={plusIcon}
+            text="Nuevo profesional"
+          />
         </div>
       </section>
 
@@ -113,10 +140,13 @@ export default function Professional() {
                   <th scope="row" data-label="Profesional">
                     <div className="professional__identity">
                       <span className="professional__avatar" aria-hidden="true">
-                        {professional.nombre?.[0]}{professional.apellido?.[0]}
+                        {professional.nombre?.[0]}
+                        {professional.apellido?.[0]}
                       </span>
                       <span>
-                        <strong>{professional.nombre} {professional.apellido}</strong>
+                        <strong>
+                          {professional.nombre} {professional.apellido}
+                        </strong>
                         <small>{professional.profesion}</small>
                       </span>
                     </div>
@@ -141,8 +171,22 @@ export default function Professional() {
                         onEdit={() => editProfessional(professional)}
                         onDelete={() => setPendingDelete(professional)}
                       />
-                      <button className="professional__mobile-action professional__mobile-action--edit" type="button" aria-label={`Editar profesional: ${professional.nombre} ${professional.apellido}`} onClick={() => editProfessional(professional)}><img src={penIcon} alt="" /></button>
-                      <button className="professional__mobile-action professional__mobile-action--delete" type="button" aria-label={`Eliminar profesional: ${professional.nombre} ${professional.apellido}`} onClick={() => setPendingDelete(professional)}><img src={trashCanIcon} alt="" /></button>
+                      <button
+                        className="professional__mobile-action professional__mobile-action--edit"
+                        type="button"
+                        aria-label={`Editar profesional: ${professional.nombre} ${professional.apellido}`}
+                        onClick={() => editProfessional(professional)}
+                      >
+                        <img src={penIcon} alt="" />
+                      </button>
+                      <button
+                        className="professional__mobile-action professional__mobile-action--delete"
+                        type="button"
+                        aria-label={`Eliminar profesional: ${professional.nombre} ${professional.apellido}`}
+                        onClick={() => setPendingDelete(professional)}
+                      >
+                        <img src={trashCanIcon} alt="" />
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -155,16 +199,35 @@ export default function Professional() {
         )}
       </section>
 
-      <p className="professional__feedback" aria-live="polite">{feedback}</p>
-      {error && <p className="professional__feedback" role="alert">{error}</p>}
+      <p className="professional__feedback" aria-live="polite">
+        {feedback}
+      </p>
+      {error && (
+        <p className="professional__feedback" role="alert">
+          {error}
+        </p>
+      )}
 
-      <ConfirmDeleteModal isOpen={Boolean(pendingDelete)} onClose={() => setPendingDelete(null)} onConfirm={() => removeProfessional(pendingDelete)} title="¿Seguro que desea eliminar este profesional?" />
+      <ConfirmDeleteModal
+        isOpen={Boolean(pendingDelete)}
+        onClose={() => setPendingDelete(null)}
+        onConfirm={() => removeProfessional(pendingDelete)}
+        title="¿Seguro que desea eliminar este profesional?"
+      />
 
       {modal.isOpen && (
         <ProfessionalModal
           isOpen={modal.isOpen}
           mode={modal.mode}
-          professional={modal.professional && { ...modal.professional, name: `${modal.professional.nombre} ${modal.professional.apellido}`, email: modal.professional.correo, phone: modal.professional.telefono, specialty: modal.professional.profesion }}
+          professional={
+            modal.professional && {
+              ...modal.professional,
+              name: `${modal.professional.nombre} ${modal.professional.apellido}`,
+              email: modal.professional.correo,
+              phone: modal.professional.telefono,
+              specialty: modal.professional.profesion,
+            }
+          }
           onClose={closeProfessionalModal}
           onSubmit={saveProfessional}
         />

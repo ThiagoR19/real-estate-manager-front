@@ -23,9 +23,12 @@ export async function properties() {
 }
 
 export const property = (id) => request(`/propiedades/${id}`).then(({ data }) => data);
-export const propertyFiles = (id) => request(`/propiedades/${id}/archivos`).then(({ data }) => data);
-export const createProperty = (body) => request("/propiedades", { method: "POST", body }).then(({ data }) => data);
-export const updateProperty = (id, body) => request(`/propiedades/${id}`, { method: "PUT", body }).then(({ data }) => data);
+export const propertyFiles = (id) =>
+  request(`/propiedades/${id}/archivos`).then(({ data }) => data);
+export const createProperty = (body) =>
+  request("/propiedades", { method: "POST", body }).then(({ data }) => data);
+export const updateProperty = (id, body) =>
+  request(`/propiedades/${id}`, { method: "PUT", body }).then(({ data }) => data);
 export const deleteProperty = (id) => request(`/propiedades/${id}`, { method: "DELETE" });
 
 export function uploadPropertyFiles(id, kind, files) {
@@ -34,7 +37,8 @@ export function uploadPropertyFiles(id, kind, files) {
   return request(`/propiedades/${id}/archivos/${kind}`, { method: "POST", body });
 }
 
-export const deletePropertyFile = (id, kind, fileId) => request(`/propiedades/${id}/archivos/${kind}/${fileId}`, { method: "DELETE" });
+export const deletePropertyFile = (id, kind, fileId) =>
+  request(`/propiedades/${id}/archivos/${kind}/${fileId}`, { method: "DELETE" });
 
 export async function downloadPropertyDocument(id, file) {
   try {
@@ -56,10 +60,17 @@ export async function downloadPropertyDocument(id, file) {
     }
     let payload = error.response?.data;
     if (payload instanceof Blob) {
-      try { payload = JSON.parse(await payload.text()); }
-      catch (parseError) { console.log(parseError); }
+      try {
+        payload = JSON.parse(await payload.text());
+      } catch (parseError) {
+        console.log(parseError);
+      }
     }
-    throw new Error(payload?.error?.mensaje || (status ? `Error HTTP ${status}` : "No se pudo conectar con el servidor."), { cause: error });
+    throw new Error(
+      payload?.error?.mensaje ||
+        (status ? `Error HTTP ${status}` : "No se pudo conectar con el servidor."),
+      { cause: error },
+    );
   }
 }
 

@@ -17,8 +17,14 @@
   z-index: 0;
   inset: 0;
   background:
-    linear-gradient(90deg, rgba(255, 255, 255, .97) 0%, rgba(255, 255, 255, .92) 28%, rgba(255, 255, 255, .58) 54%, rgba(255, 255, 255, .14) 100%),
-    linear-gradient(0deg, rgba(255, 255, 255, .96) 0%, rgba(255, 255, 255, 0) 29%),
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.97) 0%,
+      rgba(255, 255, 255, 0.92) 28%,
+      rgba(255, 255, 255, 0.58) 54%,
+      rgba(255, 255, 255, 0.14) 100%
+    ),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 255, 255, 0) 29%),
     url("../../assets/fondoCasa.png") center / cover no-repeat;
 }
 
@@ -62,8 +68,8 @@
   overflow: hidden;
   border: 1px solid #dfe6ed;
   border-radius: 8px;
-  background: rgba(255, 255, 255, .96);
-  box-shadow: 0 1px 5px rgba(23, 35, 94, .11);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 1px 5px rgba(23, 35, 94, 0.11);
 }
 
 .owner-dashboard__card-header {
@@ -74,11 +80,12 @@
   padding: 15px 17px 7px;
 }
 
-.owner-dashboard__card-header>img {
+.owner-dashboard__card-header > img {
   flex: 0 0 auto;
   width: 22px;
   height: 22px;
-  filter: brightness(0) saturate(100%) invert(17%) sepia(30%) saturate(2209%) hue-rotate(208deg) brightness(87%) contrast(98%);
+  filter: brightness(0) saturate(100%) invert(17%) sepia(30%) saturate(2209%) hue-rotate(208deg)
+    brightness(87%) contrast(98%);
 }
 
 .owner-dashboard__card-header h2 {
@@ -95,7 +102,7 @@
   padding-top: 14px;
 }
 
-.owner-dashboard__card-header--with-copy>img {
+.owner-dashboard__card-header--with-copy > img {
   margin-top: 1px;
 }
 
@@ -196,7 +203,7 @@
 
 .owner-dashboard__chat-form input:focus {
   border-color: #7ea9e8;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, .14);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
 }
 
 .owner-dashboard__chat-form button {
@@ -214,7 +221,8 @@
 .owner-dashboard__chat-form button img {
   width: 21px;
   height: 21px;
-  filter: brightness(0) saturate(100%) invert(17%) sepia(30%) saturate(2209%) hue-rotate(208deg) brightness(87%) contrast(98%);
+  filter: brightness(0) saturate(100%) invert(17%) sepia(30%) saturate(2209%) hue-rotate(208deg)
+    brightness(87%) contrast(98%);
 }
 
 .owner-dashboard__status-card {
@@ -292,7 +300,7 @@
   padding: 13px 14px 10px;
   border: 1px solid #e0e8f0;
   border-radius: 6px;
-  box-shadow: 0 1px 5px rgba(23, 35, 94, .1);
+  box-shadow: 0 1px 5px rgba(23, 35, 94, 0.1);
 }
 
 .owner-dashboard__property h4 {
@@ -422,7 +430,7 @@
   }
 
   .owner-dashboard__grid {
-    grid-template-columns: minmax(280px, .9fr) minmax(430px, 1.4fr);
+    grid-template-columns: minmax(280px, 0.9fr) minmax(430px, 1.4fr);
   }
 
   .owner-dashboard__reports-card {

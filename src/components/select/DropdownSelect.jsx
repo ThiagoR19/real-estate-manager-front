@@ -47,7 +47,9 @@ export default function DropdownSelect({
       if (!rootRef.current?.contains(event.target)) setIsOpen(false);
     }
 
-    function closeOnResize() { setIsOpen(false); }
+    function closeOnResize() {
+      setIsOpen(false);
+    }
 
     document.addEventListener("pointerdown", closeWhenClickingOutside);
     document.addEventListener("keydown", closeWithEscape);
@@ -115,11 +117,16 @@ export default function DropdownSelect({
         onClick={toggleOptions}
       >
         {icon && (
-          <span className={joinClassNames("select-control__icon", iconClassName)} aria-hidden="true">
+          <span
+            className={joinClassNames("select-control__icon", iconClassName)}
+            aria-hidden="true"
+          >
             <img src={icon} alt="" />
           </span>
         )}
-        <span className={joinClassNames("select-control__value", valueClassName)}>{selectedLabel}</span>
+        <span className={joinClassNames("select-control__value", valueClassName)}>
+          {selectedLabel}
+        </span>
         {showChevron && (
           <img
             className={joinClassNames("select-control__chevron", chevronClassName)}

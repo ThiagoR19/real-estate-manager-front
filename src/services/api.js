@@ -5,6 +5,7 @@ import * as propertyService from "./properties.js";
 import * as profileService from "./profile.js";
 import * as professionalService from "./professionals.js";
 import * as tenantService from "./tenants.js";
+import * as indecService from "./indec.js";
 
 export const api = {
   agents: agentService.agents,
@@ -46,5 +47,7 @@ export const api = {
   createProfessional: professionalService.createProfessional,
   updateProfessional: professionalService.updateProfessional,
   deleteProfessional: professionalService.deleteProfessional,
+  indec: indecService.indec,
+  createIndec: indecService.createIndec,
   dashboard: dashboardService.getDashboard,
 };

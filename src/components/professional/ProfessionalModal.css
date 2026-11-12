@@ -89,7 +89,7 @@
   font-weight: 600;
 }
 
-.professional-modal__summary>span:last-child {
+.professional-modal__summary > span:last-child {
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -138,7 +138,9 @@
   border: 2px solid #e1ebf4;
   border-radius: 10px;
   background: #fff;
-  transition: border-color 150ms ease, box-shadow 150ms ease;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
 }
 
 .professional-modal__input-wrap:focus-within {
@@ -152,7 +154,8 @@
   width: 18px;
   height: 18px;
   object-fit: contain;
-  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%);
+  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg)
+    brightness(93%) contrast(99%);
 }
 
 .professional-modal__input-wrap input {
@@ -252,7 +255,10 @@
   cursor: pointer;
   font-size: 14px;
   font-weight: 700;
-  transition: background-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+  transition:
+    background-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
 }
 
 .professional-modal__actions button:hover {
@@ -333,11 +339,13 @@
     padding: 0 6px;
     font-size: 14px;
   }
-  .professional-modal__select-arrow { width: 22px; height: 22px; }
+  .professional-modal__select-arrow {
+    width: 22px;
+    height: 22px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-
   .professional-modal__overlay,
   .professional-modal,
   .professional-modal__input-wrap,

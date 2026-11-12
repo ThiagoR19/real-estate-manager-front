@@ -19,12 +19,28 @@
 }
 
 .entity-actions__trigger:hover,
-.entity-actions__trigger[aria-expanded="true"] { background: #eff6ff; }
-.entity-actions__trigger:focus-visible { outline: 2px solid #2178c4; outline-offset: 2px; }
-.entity-actions__dots { display: flex; flex-direction: column; gap: 3px; }
-.entity-actions__dots i { width: 3px; height: 3px; border-radius: 50%; background: currentColor; }
+.entity-actions__trigger[aria-expanded="true"] {
+  background: #eff6ff;
+}
+.entity-actions__trigger:focus-visible {
+  outline: 2px solid #2178c4;
+  outline-offset: 2px;
+}
+.entity-actions__dots {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.entity-actions__dots i {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: currentColor;
+}
 
-.entity-actions--property { flex: 0 0 56px; }
+.entity-actions--property {
+  flex: 0 0 56px;
+}
 .entity-actions--property .entity-actions__trigger {
   width: 56px;
   height: 47px;
@@ -32,8 +48,14 @@
   border-radius: 10px;
   background: #fff;
 }
-.entity-actions--property .entity-actions__dots { flex-direction: row; gap: 4px; }
-.entity-actions--property .entity-actions__dots i { width: 4px; height: 4px; }
+.entity-actions--property .entity-actions__dots {
+  flex-direction: row;
+  gap: 4px;
+}
+.entity-actions--property .entity-actions__dots i {
+  width: 4px;
+  height: 4px;
+}
 
 .entity-actions__menu {
   position: fixed;
@@ -60,18 +82,30 @@
   border-radius: 4px;
   background: #fff;
   color: #17235e;
-  font: 400 11px / 18px "Inter", "Segoe UI", Arial, sans-serif;
+  font:
+    400 11px / 18px "Inter",
+    "Segoe UI",
+    Arial,
+    sans-serif;
   text-align: left;
   cursor: pointer;
 }
 
-.entity-actions__menu button + button { border-top: 1px solid #e3edf5; }
-.entity-actions__menu button:hover { background: #eff6ff; }
-.entity-actions__menu button:focus-visible { outline: 2px solid #2178c4; outline-offset: -2px; }
+.entity-actions__menu button + button {
+  border-top: 1px solid #e3edf5;
+}
+.entity-actions__menu button:hover {
+  background: #eff6ff;
+}
+.entity-actions__menu button:focus-visible {
+  outline: 2px solid #2178c4;
+  outline-offset: -2px;
+}
 .entity-actions__menu img {
   flex-shrink: 0;
   width: 14px;
   height: 14px;
   object-fit: contain;
-  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%);
+  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg)
+    brightness(93%) contrast(99%);
 }

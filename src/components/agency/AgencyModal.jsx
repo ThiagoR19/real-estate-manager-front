@@ -7,7 +7,11 @@ export default function AgencyModal({ mode = "create", agency, onClose, onSubmit
   const isAdmin = mode === "admin";
   const isEditing = mode === "edit";
   const [value, setValue] = useState(isEditing ? agency?.name || "" : "");
-  const title = isAdmin ? "Agregar admin" : isEditing ? "Editar inmobiliaria" : "Agregar inmobiliaria";
+  const title = isAdmin
+    ? "Agregar admin"
+    : isEditing
+      ? "Editar inmobiliaria"
+      : "Agregar inmobiliaria";
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -18,7 +22,11 @@ export default function AgencyModal({ mode = "create", agency, onClose, onSubmit
   return (
     <ManagementModal
       title={title}
-      subtitle={isAdmin ? `Agrega un nuevo administrador a “${agency?.name || "la inmobiliaria"}”` : "Ingrese la info básica de la inmobiliaria"}
+      subtitle={
+        isAdmin
+          ? `Agrega un nuevo administrador a “${agency?.name || "la inmobiliaria"}”`
+          : "Ingrese la info básica de la inmobiliaria"
+      }
       onClose={onClose}
       variant="agency"
     >
@@ -43,7 +51,12 @@ export default function AgencyModal({ mode = "create", agency, onClose, onSubmit
             </ModalField>
           </div>
         </div>
-        <ModalActions onClose={onClose} submitText={isAdmin ? "Agregar admin" : isEditing ? "Guardar cambios" : "Crear inmobiliaria"} />
+        <ModalActions
+          onClose={onClose}
+          submitText={
+            isAdmin ? "Agregar admin" : isEditing ? "Guardar cambios" : "Crear inmobiliaria"
+          }
+        />
       </form>
     </ManagementModal>
   );

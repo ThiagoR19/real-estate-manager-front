@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { houseIcon, locationDotIcon as locationIcon, plusIcon, tagIcon } from "../../assets/icons";
-import { PropertyModal, ConfirmDeleteModal, DropdownSelect, Button, PropertyCardSimple } from "../../components";
+import {
+  PropertyModal,
+  ConfirmDeleteModal,
+  DropdownSelect,
+  Button,
+  PropertyCardSimple,
+} from "../../components";
 import { api } from "../../services/api.js";
 import "./Properties.css";
 
@@ -47,13 +53,15 @@ function buildFilterOptions(catalogs, properties) {
 }
 
 function matchesFilters(property, filters, search) {
-  const searchableText = [property.nombre, property.ubicacion, property.descripcion].join(" ").toLocaleLowerCase("es-AR");
+  const searchableText = [property.nombre, property.ubicacion, property.descripcion]
+    .join(" ")
+    .toLocaleLowerCase("es-AR");
 
   return (
-    (filters.type === "Todos" || property.tipo === filters.type)
-    && (filters.location === "Todas" || property.ubicacion === filters.location)
-    && (filters.status === "Todos" || property.estadoComercial === filters.status)
-    && (!search || searchableText.includes(search))
+    (filters.type === "Todos" || property.tipo === filters.type) &&
+    (filters.location === "Todas" || property.ubicacion === filters.location) &&
+    (filters.status === "Todos" || property.estadoComercial === filters.status) &&
+    (!search || searchableText.includes(search))
   );
 }
 
@@ -107,11 +115,14 @@ export default function Properties() {
   }
 
   function save(property, fileError) {
-    setProperties((current) => modal.mode === "edit"
-      ? current.map((item) => item.id === property.id ? property : item)
-      : [property, ...current]);
+    setProperties((current) =>
+      modal.mode === "edit"
+        ? current.map((item) => (item.id === property.id ? property : item))
+        : [property, ...current],
+    );
     setModal(null);
-    if (fileError) setError("La propiedad se guardó, pero hubo un problema con sus archivos: " + fileError);
+    if (fileError)
+      setError("La propiedad se guardó, pero hubo un problema con sus archivos: " + fileError);
     else setFeedback(property.nombre + " se guardó correctamente.");
   }
 
@@ -130,7 +141,9 @@ export default function Properties() {
   }
 
   const filterItems = buildFilterOptions(catalogs, properties);
-  const visibleProperties = properties.filter((property) => matchesFilters(property, filters, search));
+  const visibleProperties = properties.filter((property) =>
+    matchesFilters(property, filters, search),
+  );
 
   return (
     <main id="properties">
@@ -158,7 +171,11 @@ export default function Properties() {
         </div>
       </section>
 
-      {error && <p className="properties__feedback" role="alert">{error}</p>}
+      {error && (
+        <p className="properties__feedback" role="alert">
+          {error}
+        </p>
+      )}
       {!loading && !error && (!catalogs.tipos.length || !catalogs.estados.length) && (
         <p className="properties__feedback" role="alert">
           Faltan tipos o estados comerciales en la base de datos para crear propiedades.
@@ -187,7 +204,9 @@ export default function Properties() {
         </section>
       )}
 
-      <p className="properties__feedback" role="status">{feedback}</p>
+      <p className="properties__feedback" role="status">
+        {feedback}
+      </p>
       <ConfirmDeleteModal
         isOpen={Boolean(pendingDelete)}
         onClose={() => setPendingDelete(null)}

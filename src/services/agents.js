@@ -12,8 +12,10 @@ export async function agents() {
   return rows;
 }
 
-export const createAgent = (body) => request("/agentes", { method: "POST", body }).then(({ data }) => data);
-export const updateAgent = (id, body) => request(`/agentes/${id}`, { method: "PUT", body }).then(({ data }) => data);
+export const createAgent = (body) =>
+  request("/agentes", { method: "POST", body }).then(({ data }) => data);
+export const updateAgent = (id, body) =>
+  request(`/agentes/${id}`, { method: "PUT", body }).then(({ data }) => data);
 export const deleteAgent = (id) => request(`/agentes/${id}`, { method: "DELETE" });
 
 export function updateAgentPhoto(id, file) {

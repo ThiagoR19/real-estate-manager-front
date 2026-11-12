@@ -1,10 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  briefcaseIcon,
-  envelopeIcon,
-  phoneIcon,
-  userIcon,
-} from "../../assets/icons";
+import { briefcaseIcon, envelopeIcon, phoneIcon, userIcon } from "../../assets/icons";
 import { Button } from "../index";
 import "./ProfessionalModal.css";
 
@@ -65,12 +60,8 @@ export default function ProfessionalModal({ isOpen, mode, professional, onClose,
   const [form, setForm] = useState(() => getInitialForm(professional));
   const [error, setError] = useState("");
   const isEditing = mode === "edit";
-  const displayName = isEditing
-    ? professional?.name || "Profesional"
-    : "Profesional";
-  const displaySpecialty = isEditing
-    ? professional?.specialty || "Profesión"
-    : "Profesión";
+  const displayName = isEditing ? professional?.name || "Profesional" : "Profesional";
+  const displaySpecialty = isEditing ? professional?.specialty || "Profesión" : "Profesión";
 
   useEffect(() => {
     if (!isOpen) {
@@ -107,7 +98,9 @@ export default function ProfessionalModal({ isOpen, mode, professional, onClose,
     try {
       setError("");
       await onSubmit({ ...form, name: `${form.firstName.trim()} ${form.lastName.trim()}`.trim() });
-    } catch (cause) { setError(cause.message); }
+    } catch (cause) {
+      setError(cause.message);
+    }
   }
 
   return (

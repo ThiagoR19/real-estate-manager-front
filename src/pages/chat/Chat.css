@@ -130,7 +130,7 @@ body:has(#chat) {
   background: #e0efff;
 }
 
-.chat__conversation>span:last-child {
+.chat__conversation > span:last-child {
   overflow: hidden;
   font-size: 16px;
   font-weight: 500;
@@ -327,7 +327,8 @@ body:has(#chat) {
 .chat__composer button img {
   width: 17px;
   height: 17px;
-  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%);
+  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg)
+    brightness(93%) contrast(99%);
 }
 
 .visually-hidden {
@@ -616,8 +617,9 @@ body:has(#chat) {
 .chat__avatar--agent img {
   width: 48%;
   height: 48%;
-  opacity: .82;
-  filter: brightness(0) saturate(100%) invert(17%) sepia(20%) saturate(2600%) hue-rotate(190deg) brightness(91%) contrast(94%);
+  opacity: 0.82;
+  filter: brightness(0) saturate(100%) invert(17%) sepia(20%) saturate(2600%) hue-rotate(190deg)
+    brightness(91%) contrast(94%);
 }
 
 .chat__avatar--agi {
@@ -744,7 +746,8 @@ body:has(#chat) {
 }
 
 .chat__composer button img {
-  filter: brightness(0) saturate(100%) invert(17%) sepia(20%) saturate(2600%) hue-rotate(190deg) brightness(91%) contrast(94%);
+  filter: brightness(0) saturate(100%) invert(17%) sepia(20%) saturate(2600%) hue-rotate(190deg)
+    brightness(91%) contrast(94%);
 }
 
 .chat__composer-hint {
@@ -768,7 +771,7 @@ body:has(#chat) {
 .chat__sidebar-note img {
   width: 14px;
   height: 14px;
-  opacity: .55;
+  opacity: 0.55;
 }
 
 @media (max-width: 650px) {

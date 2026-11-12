@@ -17,8 +17,10 @@ body:has(#agent-dashboard) {
   position: absolute;
   z-index: 0;
   inset: 0;
-  background: linear-gradient(180deg, rgb(255 255 255 / 10%), rgb(255 255 255 / 68%) 48%, #f5f8fb 100%), url("../../assets/fondoCasa.png") center 38% / cover no-repeat;
-  opacity: .9;
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 10%), rgb(255 255 255 / 68%) 48%, #f5f8fb 100%),
+    url("../../assets/fondoCasa.png") center 38% / cover no-repeat;
+  opacity: 0.9;
   content: "";
 }
 
@@ -34,7 +36,8 @@ body:has(#agent-dashboard) {
 
 #agent-dashboard img {
   object-fit: contain;
-  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%);
+  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg)
+    brightness(93%) contrast(99%);
 }
 
 #agent-dashboard :focus-visible {
@@ -136,7 +139,7 @@ body:has(#agent-dashboard) .navbar__search {
   color: #213d92;
 }
 
-.agent-dashboard__section-heading>img {
+.agent-dashboard__section-heading > img {
   flex: 0 0 auto;
   width: 22px;
   height: 22px;
@@ -183,7 +186,7 @@ body:has(#agent-dashboard) .navbar__search {
   min-height: 60px;
 }
 
-.agent-dashboard__agenda-item>time {
+.agent-dashboard__agenda-item > time {
   padding-top: 8px;
   color: #71809c;
   font-size: 12px;
@@ -289,7 +292,7 @@ body:has(#agent-dashboard) .navbar__search {
   align-items: flex-start;
 }
 
-.agent-dashboard__performance-heading>div {
+.agent-dashboard__performance-heading > div {
   min-width: 0;
 }
 
@@ -469,15 +472,18 @@ body:has(#agent-dashboard) .navbar__search {
 }
 
 .agent-dashboard__stat--red .agent-dashboard__stat-icon img {
-  filter: brightness(0) saturate(100%) invert(20%) sepia(97%) saturate(2735%) hue-rotate(346deg) brightness(89%) contrast(99%);
+  filter: brightness(0) saturate(100%) invert(20%) sepia(97%) saturate(2735%) hue-rotate(346deg)
+    brightness(89%) contrast(99%);
 }
 
 .agent-dashboard__stat--orange .agent-dashboard__stat-icon img {
-  filter: brightness(0) saturate(100%) invert(63%) sepia(83%) saturate(1764%) hue-rotate(359deg) brightness(101%) contrast(101%);
+  filter: brightness(0) saturate(100%) invert(63%) sepia(83%) saturate(1764%) hue-rotate(359deg)
+    brightness(101%) contrast(101%);
 }
 
 .agent-dashboard__stat--purple .agent-dashboard__stat-icon img {
-  filter: brightness(0) saturate(100%) invert(33%) sepia(96%) saturate(4830%) hue-rotate(254deg) brightness(92%) contrast(102%);
+  filter: brightness(0) saturate(100%) invert(33%) sepia(96%) saturate(4830%) hue-rotate(254deg)
+    brightness(92%) contrast(102%);
 }
 
 .agent-dashboard__stat-copy {
@@ -518,7 +524,7 @@ body:has(#agent-dashboard) .navbar__search {
   padding: 18px 16px 15px;
 }
 
-.agent-dashboard__reports-card .agent-dashboard__section-heading>img {
+.agent-dashboard__reports-card .agent-dashboard__section-heading > img {
   width: 21px;
   height: 21px;
   margin-right: 12px;
@@ -563,7 +569,7 @@ body:has(#agent-dashboard) .navbar__search {
   background: #f6f8fa;
 }
 
-.agent-dashboard__report-item>img {
+.agent-dashboard__report-item > img {
   width: 62px;
   height: 59px;
   border-radius: 7px;
@@ -607,7 +613,7 @@ body:has(#agent-dashboard) .navbar__search {
   white-space: nowrap;
 }
 
-.agent-dashboard__report-item>small {
+.agent-dashboard__report-item > small {
   align-self: start;
   padding-top: 6px;
   color: #7d8ba7;
@@ -616,7 +622,7 @@ body:has(#agent-dashboard) .navbar__search {
   white-space: nowrap;
 }
 
-.agent-dashboard__report-item>b {
+.agent-dashboard__report-item > b {
   color: #1e3475;
   font-size: 26px;
   font-weight: 300;
@@ -710,7 +716,7 @@ body:has(#agent-dashboard) .navbar__search {
   height: 20px;
 }
 
-.agent-dashboard__activity-item>span:nth-child(2) {
+.agent-dashboard__activity-item > span:nth-child(2) {
   display: flex;
   min-width: 0;
   flex-direction: column;
@@ -850,7 +856,7 @@ body:has(#agent-dashboard) .navbar__search {
     grid-template-columns: 62px minmax(0, 1fr) 9px;
   }
 
-  .agent-dashboard__report-item>small {
+  .agent-dashboard__report-item > small {
     display: none;
   }
 
@@ -915,7 +921,7 @@ body:has(#agent-dashboard) .navbar__search {
 .agent-dashboard__grid {
   flex: 1 1 0;
   min-height: 0;
-  grid-template-rows: minmax(0, 1fr) minmax(0, .38fr);
+  grid-template-rows: minmax(0, 1fr) minmax(0, 0.38fr);
 }
 
 .agent-dashboard__agenda-card {

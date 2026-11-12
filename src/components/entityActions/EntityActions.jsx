@@ -5,7 +5,14 @@ import "./EntityActions.css";
 
 const menuWidth = 156;
 
-export default function EntityActions({ entity, name, onEdit, onDelete, className = "", variant = "table" }) {
+export default function EntityActions({
+  entity,
+  name,
+  onEdit,
+  onDelete,
+  className = "",
+  variant = "table",
+}) {
   const [open, setOpen] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const rootRef = useRef(null);
@@ -17,17 +24,21 @@ export default function EntityActions({ entity, name, onEdit, onDelete, classNam
   useEffect(() => {
     if (!open) return undefined;
 
-    menuRef.current?.querySelectorAll('[role="menuitem"]')[initialFocusRef.current]?.focus({ preventScroll: true });
+    const menuItems = menuRef.current?.querySelectorAll('[role="menuitem"]');
+    menuItems?.[initialFocusRef.current]?.focus({ preventScroll: true });
 
     function dismissOutside(event) {
-      if (!rootRef.current?.contains(event.target) && !menuRef.current?.contains(event.target)) setOpen(false);
+      if (!rootRef.current?.contains(event.target) && !menuRef.current?.contains(event.target))
+        setOpen(false);
     }
 
     function dismissOnScroll(event) {
       if (!menuRef.current?.contains(event.target)) setOpen(false);
     }
 
-    function dismissOnResize() { setOpen(false); }
+    function dismissOnResize() {
+      setOpen(false);
+    }
 
     document.addEventListener("pointerdown", dismissOutside);
     document.addEventListener("focusin", dismissOutside);
@@ -74,19 +85,32 @@ export default function EntityActions({ entity, name, onEdit, onDelete, classNam
       event.preventDefault();
       const items = [...menuRef.current.querySelectorAll('[role="menuitem"]')];
       const index = items.indexOf(document.activeElement);
-      const next = event.key === "Home" ? 0 : event.key === "End" ? items.length - 1
-        : (index + (event.key === "ArrowDown" ? 1 : -1) + items.length) % items.length;
+      const next =
+        event.key === "Home"
+          ? 0
+          : event.key === "End"
+            ? items.length - 1
+            : (index + (event.key === "ArrowDown" ? 1 : -1) + items.length) % items.length;
       items[next]?.focus({ preventScroll: true });
     }
   }
 
   return (
-    <div ref={rootRef} className={`entity-actions entity-actions--${variant} ${className}`.trim()}
-      onClick={(event) => event.stopPropagation()} onKeyDown={(event) => event.stopPropagation()}>
-      <button ref={triggerRef} className="entity-actions__trigger" type="button"
-        aria-label={`Acciones de ${entity}: ${name}`} aria-expanded={open} aria-haspopup="menu"
+    <div
+      ref={rootRef}
+      className={`entity-actions entity-actions--${variant} ${className}`.trim()}
+      onClick={(event) => event.stopPropagation()}
+      onKeyDown={(event) => event.stopPropagation()}
+    >
+      <button
+        ref={triggerRef}
+        className="entity-actions__trigger"
+        type="button"
+        aria-label={`Acciones de ${entity}: ${name}`}
+        aria-expanded={open}
+        aria-haspopup="menu"
         aria-controls={open ? menuId : undefined}
-        onClick={() => open ? closeMenu() : openMenu()}
+        onClick={() => (open ? closeMenu() : openMenu())}
         onKeyDown={(event) => {
           if (event.key === "ArrowDown" || event.key === "ArrowUp") {
             event.preventDefault();
@@ -95,21 +119,37 @@ export default function EntityActions({ entity, name, onEdit, onDelete, classNam
             event.preventDefault();
             closeMenu();
           }
-        }}>
-        <span className="entity-actions__dots" aria-hidden="true"><i /><i /><i /></span>
+        }}
+      >
+        <span className="entity-actions__dots" aria-hidden="true">
+          <i />
+          <i />
+          <i />
+        </span>
       </button>
-      {open && createPortal(
-        <div ref={menuRef} id={menuId} className="entity-actions__menu" role="menu"
-          aria-label={`Acciones de ${entity}: ${name}`} style={position}
-          onClick={(event) => event.stopPropagation()} onKeyDown={handleMenuKeyDown}>
-          <button type="button" role="menuitem" tabIndex={-1} onClick={() => runAction(onEdit)}>
-            <img src={penIcon} alt="" aria-hidden="true" />Editar {entity}
-          </button>
-          <button type="button" role="menuitem" tabIndex={-1} onClick={() => runAction(onDelete)}>
-            <img src={trashCanIcon} alt="" aria-hidden="true" />Eliminar {entity}
-          </button>
-        </div>, document.body,
-      )}
+      {open &&
+        createPortal(
+          <div
+            ref={menuRef}
+            id={menuId}
+            className="entity-actions__menu"
+            role="menu"
+            aria-label={`Acciones de ${entity}: ${name}`}
+            style={position}
+            onClick={(event) => event.stopPropagation()}
+            onKeyDown={handleMenuKeyDown}
+          >
+            <button type="button" role="menuitem" tabIndex={-1} onClick={() => runAction(onEdit)}>
+              <img src={penIcon} alt="" aria-hidden="true" />
+              Editar {entity}
+            </button>
+            <button type="button" role="menuitem" tabIndex={-1} onClick={() => runAction(onDelete)}>
+              <img src={trashCanIcon} alt="" aria-hidden="true" />
+              Eliminar {entity}
+            </button>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }
