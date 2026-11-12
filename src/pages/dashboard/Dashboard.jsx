@@ -95,7 +95,10 @@ export default function Dashboard() {
           <AgentsCard
             agents={datos.topAgentes}
           />
-          <SharedPerformanceCard />
+          <SharedPerformanceCard 
+          indicadores={datos.indicadores}
+          grafico={datos.rendimiento}
+          />
           <StatusCard
             valores={datos.estadosPropiedades}
           />

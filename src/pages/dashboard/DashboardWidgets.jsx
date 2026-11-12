@@ -7,9 +7,25 @@ import "../agentDashboard/AgentDashboard.css";
 const chartSeries = [
   { color: "#f1c400", values: [11.8, 13.5, 13.2, 16.8, 14.8, 13.6, 15.8] },
   { color: "#fa2929", values: [5.8, 7.3, 6.7, 10.4, 8.4, 7.3, 9.9] },
-  { color: "#8127f6", values: [1.7, 3.3, 2.6, 6.2, 4.4, 3.1, 5.8] },
+  { color: "#8127f6", values: [1.7, 3.3, 0.6, 1.2, 4.4, 3.1, 5.8] },
 ];
-
+function porcentaje(actual, anterior){
+  if (anterior==null || anterior==0) {
+    anterior = 1
+  }
+  let total = Math.round((actual*100)/anterior)
+  let devolver
+  let peor = false
+  if (total>=100){
+    total= total - 100
+    devolver = `↑ ${total}%`
+    peor = true
+  }
+  else{
+    devolver = `↓ ${(100-total)}%`
+  }
+  return {devolver,peor}
+}
 const activityItems = Array.from({ length: 6 }, () => ({ title: "Nueva visita agendada", property: "Belgrano 123", time: "Hace 2 h" }));
 
 function Icon({ src, className = "" }) {
@@ -56,10 +72,17 @@ function PerformanceChart() {
   );
 }
 
-export function PerformanceCard({ className = "" }) {
+export function PerformanceCard({indicadores, grafico}) {
   const [period, setPeriod] = useState("Esta semana");
+
+  const indi =[ 
+    porcentaje(indicadores.inquilinosActivos.actual, indicadores.inquilinosActivos.anterior),
+    porcentaje(indicadores.reportesVigentes.actual, indicadores.reportesVigentes.anterior),
+    porcentaje(indicadores.pagosAprobados.actual, indicadores.pagosAprobados.anterior),
+    porcentaje(indicadores.contratosFirmados.actual, indicadores.contratosFirmados.anterior)
+  ]
   return (
-    <section className={`dashboard-card dashboard-performance-card ${className}`}>
+    <section className={`dashboard-card dashboard-performance-card`}>
       <div className="dashboard-performance-card__header">
         <div>
           <h2 className="dashboard-card__title"><Icon src={chartColumnIcon} />Rendimiento de la semana</h2>
@@ -76,21 +99,21 @@ export function PerformanceCard({ className = "" }) {
       </div>
       <PerformanceChart />
       <div className="dashboard-kpis">
-        <div className="dashboard-kpi dashboard-kpi--green">
+        <div className={`dashboard-kpi dashboard-kpi--green`}>
           <span className="dashboard-kpi__icon"><Icon src={userIcon} /></span>
-          <span><small>inquilinos</small><b>18 <em>↑ +20%</em></b></span>
+          <span><small>inquilinos</small><b className={indi[0].peor? "Dashboard--green" : "Dashboard--red"}>{indicadores.inquilinosActivos.actual} <em>{indi[0].devolver}</em></b></span>
         </div>
         <div className="dashboard-kpi dashboard-kpi--red">
           <Icon src={fileLinesIcon} />
-          <span><small>Reportes</small><b>3 <em>↑ +10%</em></b></span>
+          <span><small>Reportes</small><b className={indi[1].peor? "Dashboard--green" : "Dashboard--red"}>{indicadores.reportesVigentes.actual} <em>{indi[1].devolver}</em></b></span>
         </div>
         <div className="dashboard-kpi dashboard-kpi--orange">
           <span className="dashboard-kpi__symbol">$</span>
-          <span><small>Cobros P.</small><b>3 <em>↑ +20%</em></b></span>
+          <span><small>Cobros P.</small><b className={indi[2].peor? "Dashboard--green" : "Dashboard--red"}>{indicadores.pagosAprobados.actual}<em>{indi[2].devolver}</em></b></span>
         </div>
         <div className="dashboard-kpi dashboard-kpi--purple">
           <Icon src={fileLinesIcon} />
-          <span><small>Contratos</small><b>6 <em>↑ +20%</em></b></span>
+          <span><small>Contratos</small><b className={indi[3].peor? "Dashboard--green" : "Dashboard--red"}>{indicadores.contratosFirmados.actual} <em>{indi[3].devolver }</em></b></span>
         </div>
       </div>
     </section>
