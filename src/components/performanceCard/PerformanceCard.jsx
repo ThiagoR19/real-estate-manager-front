@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { angleDownIcon, chartColumnIcon, fileLinesIcon, userIcon } from "../../assets/icons";
+import { angleDownIcon, chartColumnIcon, contractGraphicIcon, moneyGraphicIcon, reportGraphicIcon, userIcon } from "../../assets/icons";
 import "../../pages/dashboard/Dashboard.css";
 
 const chartSeries = [
@@ -186,15 +186,15 @@ export default function PerformanceCard({indicadores, grafico = {}}) {
           <span><small>inquilinos</small><b className={indi[0].peor? "Dashboard--green" : "Dashboard--red"}>{indicadores.inquilinosActivos.actual} <em>{indi[0].devolver}</em></b></span>
         </div>
         <div className="dashboard-kpi dashboard-kpi--red">
-          <Icon src={fileLinesIcon} />
+          <Icon src={reportGraphicIcon} className="dashboard-icon--original" />
           <span><small>Reportes</small><b className={indi[1].peor? "Dashboard--green" : "Dashboard--red"}>{indicadores.reportesVigentes.actual} <em>{indi[1].devolver}</em></b></span>
         </div>
         <div className="dashboard-kpi dashboard-kpi--orange">
-          <span className="dashboard-kpi__symbol">$</span>
+          <span className="dashboard-kpi__symbol"><Icon src={moneyGraphicIcon} className="dashboard-icon--original" /></span>
           <span><small>Cobros P.</small><b className={indi[2].peor? "Dashboard--green" : "Dashboard--red"}>{indicadores.pagosAprobados.actual}<em>{indi[2].devolver}</em></b></span>
         </div>
         <div className="dashboard-kpi dashboard-kpi--purple">
-          <Icon src={fileLinesIcon} />
+          <Icon src={contractGraphicIcon} className="dashboard-icon--original" />
           <span><small>Contratos</small><b className={indi[3].peor? "Dashboard--green" : "Dashboard--red"}>{indicadores.contratosFirmados.actual} <em>{indi[3].devolver }</em></b></span>
         </div>
       </div>

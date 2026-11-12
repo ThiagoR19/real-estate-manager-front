@@ -8,8 +8,7 @@ import avatar from "../../utils/avatarClass"
 import { mostrarToast } from "../../components"
 
 import "./Dashboard.css";
-import { houseIcon, peopleIcon, penIcon, plusIconWhite, tagIcon } from "../../assets/icons";
-import keyIcon from "../../assets/icons/llaveNosotrosIcon.svg";
+import { hauseDashboardIcon, keyDashboardIcon, peopleIcon, penIcon, plusIconWhite, sellDashboardIcon } from "../../assets/icons";
 
 
 function Icon({ src, className = "" }) {
@@ -42,10 +41,10 @@ function AgentsCard({ agents }) {
 
 function StatusCard({ valores }) {
   let statusItems = [
-    { label: "Total de propiedades:", value: valores["total"], icon: houseIcon },
-    { label: "Total en alquiler:", value: valores.enAlquiler, icon: keyIcon },
-    { label: "Propiedades vendidas:", value: valores.vendidas, icon: houseIcon },
-    { label: "Propiedades vacias:", value: valores.vacias, icon: tagIcon },
+    { label: "Total de propiedades:", value: valores["total"], icon: hauseDashboardIcon },
+    { label: "Total en alquiler:", value: valores.enAlquiler, icon: keyDashboardIcon },
+    { label: "Propiedades vendidas:", value: valores.vendidas, icon: hauseDashboardIcon },
+    { label: "Propiedades vacias:", value: valores.vacias, icon: sellDashboardIcon },
   ];
   return (
     <section className="dashboard-card dashboard-status-card">
@@ -56,7 +55,7 @@ function StatusCard({ valores }) {
       <div className="dashboard-status-list">
         {statusItems.map((item) =>
           <div className="dashboard-status-item" key={item.label}>
-            <strong>{item.label}</strong><b>{item.value}</b><Icon src={item.icon} />
+            <strong>{item.label}</strong><b>{item.value}</b><Icon src={item.icon} className="dashboard-icon--original" />
           </div>
         )}
       </div>
@@ -69,18 +68,19 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  
+
   useEffect(() => {
     api.dashboard()
       .then((respuesta) => setDatos(respuesta))
       .catch((causa) => {
         setError(causa.message)
-        mostrarToast({ tipo: "error", titulo: causa.codigo, mensaje:causa.mensaje, accion: { texto: "Recargar", onclick:()=>window.location.reload } })
+        mostrarToast({ tipo: "error", titulo: causa.codigo, mensaje: causa.mensaje, accion: { texto: "Recargar", onclick: () => window.location.reload } })
       })
       .finally(() => setLoading(false));
   }, []);
 
-  if (!loading && error== "") {
+  if (!loading && error == "") {
+
     return (
       <main className="dashboard-page">
         <div className="dashboard-page__background" aria-hidden="true" />

@@ -1,21 +1,22 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "wouter";
 import {
-  alarmClockIcon,
   angleDownIcon,
-  checkIcon,
-  circleInfoIcon,
-  triangleExclamationIcon,
+  checkToastIcon,
+  clockToastIcon,
+  infoToastIcon,
+  warningToastIcon,
   xIcon,
+  xToastIcon,
 } from "../../assets/icons";
 import "./Toast.css";
 
 const iconos = {
-  exito: checkIcon,
-  advertencia: triangleExclamationIcon,
-  error: xIcon,
-  info: circleInfoIcon,
-  recordatorio: alarmClockIcon,
+  exito: checkToastIcon,
+  advertencia: warningToastIcon,
+  error: xToastIcon,
+  info: infoToastIcon,
+  recordatorio: clockToastIcon,
 };
 
 // Línea de tiempo en milisegundos desde que aparece
@@ -65,7 +66,7 @@ export default function Toast({ tipo = "exito", titulo, mensaje, accion, onFin }
       <div className="Toast__fila">
         <div className="Toast__modulo">
           <span className="Toast__icono" aria-hidden="true">
-            <span className="Toast__simbolo" style={{ "--toast-simbolo": `url("${iconos[tipo] ?? iconos.exito}")` }} />
+            <img className="Toast__simbolo" src={iconos[tipo] ?? iconos.exito} alt="" />
           </span>
           <div className="Toast__cuerpo" aria-hidden={fase !== "abierto"}>
             <div className="Toast__contenido">

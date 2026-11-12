@@ -84,7 +84,6 @@
   transform: translateX(-60px);
 }
 
-.Toast__simbolo,
 .Toast__flecha,
 .Toast__x {
   display: block;
@@ -93,13 +92,11 @@
 }
 
 .Toast__simbolo {
-  width: 34px;
-  height: 34px;
-}
-
-.Toast--info .Toast__simbolo {
-  width: 40px;
-  height: 40px;
+  display: block;
+  max-width: 40px;
+  max-height: 40px;
+  -webkit-user-drag: none;
+  user-select: none;
 }
 
 .Toast__cuerpo {
