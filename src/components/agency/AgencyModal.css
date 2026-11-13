@@ -6,6 +6,10 @@
   min-height: 72px;
 }
 
+.agency-modal__card {
+  position: relative;
+}
+
 .agency-modal__field {
   width: min(100%, 430px);
   margin: 0 auto;
@@ -16,12 +20,23 @@
   text-align: center;
 }
 
+.agency-modal__fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 16px;
+  padding: 12px 15px 24px;
+}
+
 @media (max-width: 650px) {
   .agency-modal__band {
     min-height: 28px;
     padding: 0;
   }
   .agency-modal__field {
+    padding: 5px 8px 10px;
+  }
+  .agency-modal__fields {
+    grid-template-columns: 1fr;
     padding: 5px 8px 10px;
   }
 }

@@ -1,9 +1,6 @@
-import { useEffect, useState } from "react";
-import { Link } from "wouter";
-import { api } from "../../services/api";
-import { angleDownIcon, calendarIcon, chartColumnIcon, fileLinesIcon, userIcon } from "../../assets/icons";
-import "./Dashboard.css";
-import "../agentDashboard/AgentDashboard.css";
+import { useState } from "react";
+import { angleDownIcon, chartColumnIcon, contractGraphicIcon, moneyGraphicIcon, reportGraphicIcon, userIcon } from "../../assets/icons";
+import "../../pages/dashboard/Dashboard.css";
 
 const chartSeries = [
   { key: "visitasLanding", color: "#f1c400", label: "Visitas a la página" },
@@ -20,6 +17,7 @@ const periods = {
 const weekDays = ["Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab"];
 const months = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
 const fullMonths = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+
 function porcentaje(actual, anterior){
   if (anterior == null || anterior == 0){
     anterior = 1
@@ -37,6 +35,7 @@ function porcentaje(actual, anterior){
   }
   return {devolver,peor}
 }
+<<<<<<< HEAD:src/pages/dashboard/DashboardWidgets.jsx
 const VISITAS_POR_PAGINA = 10;
 
 function visitTime(fecha) {
@@ -45,6 +44,8 @@ function visitTime(fecha) {
   const esHoy = date.toDateString() === new Date().toDateString();
   return esHoy ? `Hoy ${hora}` : `${date.getDate()}/${date.getMonth() + 1} ${hora}`;
 }
+=======
+>>>>>>> develop-nahuel:src/components/performanceCard/PerformanceCard.jsx
 
 function Icon({ src, className = "" }) {
   return <img className={`dashboard-icon ${className}`} src={src} alt="" aria-hidden="true" />;
@@ -165,18 +166,18 @@ function PerformanceChart({ points, period }) {
   );
 }
 
-export function PerformanceCard({indicadores, grafico = {}}) {
+export default function PerformanceCard({indicadores, grafico = {}, className = ""}) {
   const [period, setPeriod] = useState("semana");
 
-  const indi =[ 
+  const indi =[
     porcentaje(indicadores.inquilinosActivos.actual, indicadores.inquilinosActivos.anterior),
     porcentaje(indicadores.reportesVigentes.actual, indicadores.reportesVigentes.anterior),
     porcentaje(indicadores.pagosAprobados.actual, indicadores.pagosAprobados.anterior),
     porcentaje(indicadores.contratosFirmados.actual, indicadores.contratosFirmados.anterior)
   ]
-  
+
   return (
-    <section className={`dashboard-card dashboard-performance-card`}>
+    <section className={`dashboard-card dashboard-performance-card ${className}`}>
       <div className="dashboard-performance-card__header">
         <div>
           <h2 className="dashboard-card__title"><Icon src={chartColumnIcon} />{periods[period].title}</h2>
@@ -196,61 +197,17 @@ export function PerformanceCard({indicadores, grafico = {}}) {
           <span><small>inquilinos</small><b className={indi[0].peor? "Dashboard--green" : "Dashboard--red"}>{indicadores.inquilinosActivos.actual} <em>{indi[0].devolver}</em></b></span>
         </div>
         <div className="dashboard-kpi dashboard-kpi--red">
-          <Icon src={fileLinesIcon} />
+          <Icon src={reportGraphicIcon} className="dashboard-icon--original" />
           <span><small>Reportes</small><b className={indi[1].peor? "Dashboard--green" : "Dashboard--red"}>{indicadores.reportesVigentes.actual} <em>{indi[1].devolver}</em></b></span>
         </div>
         <div className="dashboard-kpi dashboard-kpi--orange">
-          <span className="dashboard-kpi__symbol">$</span>
+          <span className="dashboard-kpi__symbol"><Icon src={moneyGraphicIcon} className="dashboard-icon--original" /></span>
           <span><small>Cobros P.</small><b className={indi[2].peor? "Dashboard--green" : "Dashboard--red"}>{indicadores.pagosAprobados.actual}<em>{indi[2].devolver}</em></b></span>
         </div>
         <div className="dashboard-kpi dashboard-kpi--purple">
-          <Icon src={fileLinesIcon} />
+          <Icon src={contractGraphicIcon} className="dashboard-icon--original" />
           <span><small>Contratos</small><b className={indi[3].peor? "Dashboard--green" : "Dashboard--red"}>{indicadores.contratosFirmados.actual} <em>{indi[3].devolver }</em></b></span>
         </div>
-      </div>
-    </section>
-  );
-}
-
-export function ActivityCard({ className = "agent-dashboard__card agent-dashboard__activity-card" }) {
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [visitas, setVisitas] = useState([]);
-  const [vista, setVista] = useState({ pagina: 0, direccion: "siguiente" });
-
-  useEffect(() => {
-    let vigente = true;
-    const hoy = new Date().toLocaleDateString("en-CA");
-    api.visits({ desde: hoy, estado: "Programada", page, limit: VISITAS_POR_PAGINA })
-      .then((resultado) => {
-        if (!vigente) return;
-        setVisitas(resultado.data);
-        setTotalPages(resultado.paginacion?.paginas || 1);
-        setVista((anterior) => anterior.pagina === page
-          ? anterior
-          : { pagina: page, direccion: page > anterior.pagina ? "siguiente" : "anterior" });
-      })
-      .catch(() => vigente && setVisitas([]));
-    return () => { vigente = false; };
-  }, [page]);
-
-  return (
-    <section className={`dashboard-card dashboard-activity-card ${className}`} aria-labelledby="agent-activity-title">
-      <header className="agent-dashboard__activity-heading">
-        <h2 id="agent-activity-title"><span aria-hidden="true">◷</span>Actividad reciente</h2>
-        <Link href="/schedule">Ver todas</Link>
-        <button type="button" aria-label="Actividad anterior" disabled={page === 1} onClick={() => setPage(page - 1)}>‹</button>
-        <button type="button" aria-label="Actividad siguiente" disabled={page >= totalPages} onClick={() => setPage(page + 1)}>›</button>
-      </header>
-      <div className={`agent-dashboard__activity-grid dashboard-activity-slide dashboard-activity-slide--${vista.direccion}`} key={vista.pagina}>
-        {visitas.length === 0 && <p className="dashboard-activity-empty">No hay visitas programadas.</p>}
-        {visitas.map((visita) => (
-          <article className="agent-dashboard__activity-item" key={visita.id}>
-            <span className="agent-dashboard__activity-icon"><Icon src={calendarIcon} /></span>
-            <span><strong>Visita con {visita.clienteNombre} {visita.clienteApellido}</strong><small>Propiedad: {visita.propiedad}</small></span>
-            <time dateTime={visita.fecha}>{visitTime(visita.fecha)}</time>
-          </article>
-        ))}
       </div>
     </section>
   );

@@ -44,6 +44,7 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
     window.addEventListener("session-updated", syncUser);
     return () => window.removeEventListener("session-updated", syncUser);
   }, []);
+<<<<<<< HEAD
   const roleId = Number(user?.rol);
   const role = {
     1: "Super admin",
@@ -53,6 +54,12 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
     5: "Inquilino",
   }[roleId] ?? "Usuario";
   const desktopItems = navigationItemsForRole(roleId);
+=======
+  const role =
+    { 1: "Super admin", 2: "Administrador", 3: "Agente", 4: "Propietario", 5: "Inquilino" }[
+      user?.rol
+    ] || accountRoleFor(pathname);
+>>>>>>> develop-nahuel
 
   async function closeSession(event) {
     event.preventDefault();
@@ -66,6 +73,7 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
     }
   }
   const mobilePaths =
+<<<<<<< HEAD
     roleId === 4
       ? ["/owner-dashboard", "/my-properties", "/collections", "/reports-agent", "/chat"]
       : roleId === 5
@@ -73,6 +81,16 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
         : [2, 3].includes(roleId)
           ? [
               roleId === 3 ? "/agent-dashboard" : "/dashboard",
+=======
+    role === "Propietario"
+      ? ["/dashboard", "/my-properties", "/collections", "/reports-agent", "/chat"]
+      : role === "Inquilino"
+        ? ["/dashboard", "/payments", "/reports", "/chat"]
+        : role === "Super admin"
+          ? ["/super-admin"]
+          : [
+              "/dashboard",
+>>>>>>> develop-nahuel
               "/owners",
               "/tenant",
               "/professional",

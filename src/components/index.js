@@ -1,3 +1,4 @@
+export { default as ActivityCard } from "./activityCard/ActivityCard";
 export { default as AgencyModal } from "./agency/AgencyModal";
 export { default as Brand } from "./brand/Brand";
 export { default as Button } from "./button/Button";
@@ -22,8 +23,12 @@ export { default as ModalOverlay } from "./modalOverlay/ModalOverlay";
 export { default as Navbar } from "./navbar/Navbar";
 export { default as Notification } from "./notification/Notification";
 export { default as NotificationPanel } from "./notificationPanel/NotificationPanel";
+<<<<<<< HEAD
 export { default as Pagination } from "./pagination/Pagination";
 export { usePagination, PAGE_SIZE, PROPERTY_PAGE_SIZE } from "./pagination/usePagination";
+=======
+export { default as PerformanceCard } from "./performanceCard/PerformanceCard";
+>>>>>>> develop-nahuel
 export { default as PersonModal } from "./person/PersonModal";
 export { default as PrimaryButton } from "./primaryButton/PrimaryButton";
 export { default as ProfessionalModal } from "./professional/ProfessionalModal";
@@ -40,4 +45,7 @@ export { default as Statistics } from "./statistics/Statistics";
 export { default as SummaryPill } from "./summaryPill/SummaryPill";
 export { default as TenantModal } from "./tenant/TenantModal";
 export { default as TextField } from "./textField/TextField";
+export { default as Toast } from "./toast/Toast";
+export { default as ToastContainer } from "./toast/ToastContainer";
+export { mostrarToast, quitarToast } from "./toast/toastStore";
 export { default as VisitModal } from "./visit/VisitModal";

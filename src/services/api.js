@@ -12,6 +12,8 @@ import * as chatService from "./chats.js";
 import * as ownerPropertiesService from "./ownerProperties.js";
 import * as documentService from "./documents.js";
 import * as notificationService from "./notifications.js";
+import * as agencyService from "./agencies.js";
+import * as myAgencyService from "./myAgency.js";
 
 export const api = {
   agents: agentService.agents,
@@ -78,4 +80,17 @@ export const api = {
   downloadDocument: documentService.downloadDocument,
   notifications: notificationService.notifications,
   markNotificationRead: notificationService.markNotificationRead,
+  agencies: agencyService.agencies,
+  allAdmins: agencyService.allAdmins,
+  allAgents: agencyService.allAgents,
+  superAdminPanel: agencyService.superAdminPanel,
+  createAgency: agencyService.crearInmobi,
+  deleteAgency: agencyService.eliminarInmobi,
+  deleteAdmin: agencyService.eliminarAdmin,
+  renameAgency: agencyService.renombrarInmobi,
+  createAdmin: agencyService.crearAdmin,
+  adminToAgent: agencyService.adminAAgente,
+  agentToAdmin: agencyService.agenteAAdmin,
+  myAgency: myAgencyService.myAgency,
+  updateMyAgency: myAgencyService.updateMyAgency,
 };

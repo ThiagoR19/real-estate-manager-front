@@ -6,31 +6,9 @@ import { AgencyModal } from "../../components";
 import { Header, Navbar } from "../../layouts";
 import "./SuperAdminDashboard.css";
 
-const initialAgencies = [
-  {
-    id: "alianza",
-    name: "Inmobiliaria Alianza",
-    mark: "UH",
-    tone: "gold",
-    expanded: false,
-    admins: [],
-  },
-  {
-    id: "syT",
-    name: "Inmobiliaria S&T",
-    mark: "S&T",
-    tone: "lime",
-    expanded: true,
-    admins: [
-      { id: "hernesto", name: "Hernesto Pesto", initials: "HP", tone: "male", role: "Admin" },
-      { id: "misara", name: "Misara Masara", initials: "MM", tone: "female", role: "Admin" },
-    ],
-  },
-];
-
 function PencilIcon() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
+    <svg viewBox="0 0 24 24" aria-hidden="true" style={{backgroundColor:"red"}}>
       <path d="m14.5 5.5 4 4M4 20l3.2-.7L19.5 7a2.12 2.12 0 0 0-3-3L4.2 16.3 4 20Z" />
     </svg>
   );
@@ -144,7 +122,7 @@ function AgencyCard({ agency, onToggle, onAddAdmin, onEdit, onRemoveAdmin, onRol
 }
 
 export default function SuperAdminDashboard() {
-  const [agencies, setAgencies] = useState(initialAgencies);
+  const [agencies, setAgencies] = useState([]);
   const [modal, setModal] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
 

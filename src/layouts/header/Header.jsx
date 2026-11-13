@@ -212,12 +212,22 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
               className="navbar__account-avatar navbar__account-avatar--photo"
               src={api.assetUrl(user.urlFotoPerfil)}
               alt=""
+<<<<<<< HEAD
               onError={() => setPhotoLoadError(true)}
             />
           ) : (
             <span className={`navbar__account-avatar ${userAvatarClass}`} aria-hidden="true">
               {userInitials}
             </span>
+=======
+            />
+          ): (
+            <i
+              className="navbar__account-avatar"
+              style={{ backgroundImage: `url(${referenceImage})` }}
+              aria-hidden="true"
+            />
+>>>>>>> develop-nahuel
           )}
         </Link>
       </aside>

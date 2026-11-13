@@ -1,21 +1,11 @@
-import { useRef, useState } from "react";
-import {
-  cameraIcon,
-  checkIcon,
-  envelopeIcon,
-  imageIcon,
-  phoneIcon,
-  plusIcon,
-  userIcon,
-} from "../../assets/icons";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { cameraIcon, checkIcon, envelopeIcon, imageIcon, phoneIcon, plusIcon, userIcon, } from "../../assets/icons";
 import brandLogo from "../../assets/logoAGI.png";
-import { Button } from "../../components";
+import { Button, mostrarToast } from "../../components";
 import "./Agency.css";
+import { api } from "../../services/api";
 
-const initialAgency = {
-  name: "",
-  phone: "",
-};
+const initialAgency = {   name: "", phone: "" };
 
 function SectionHeading({ icon, title, description }) {
   return (
@@ -81,7 +71,26 @@ function UploadField({ label, name, value, onChange, wide = false }) {
 export default function Agency() {
   const [agency, setAgency] = useState(initialAgency);
   const [images, setImages] = useState({ banner: "", logo: "", principal: "" });
+  const [datos, setDatos] = useState({})
   const [saved, setSaved] = useState(false);
+  const [loading, setLoading] = useState(true);
+  
+  const cargar = useCallback(() => {
+      let activo = true;
+      api.superAdminPanel()
+        .then(() => activo && setDatos({}))
+        .catch((causa) => {
+          if (!activo) return;
+          setDatos({ mensaje: causa.message });
+          mostrarToast({ tipo: "error", titulo: "No se pudieron cargar las inmobiliarias", mensaje: causa.message });
+        })
+        .finally(() => activo && setLoading(false));
+      return () => {
+        activo = false;
+      };
+    }, []);
+  
+    useEffect(() => cargar(), [cargar]);
 
   function updateAgency(event) {
     const { name, value } = event.target;

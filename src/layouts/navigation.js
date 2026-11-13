@@ -14,6 +14,7 @@ import {
 export const primaryItems = [
   { href: "/dashboard", label: "Dashboard", icon: chartColumnIcon },
   {
+<<<<<<< HEAD
     href: "/tenant-dashboard",
     label: "Dashboard inquilinos",
     breadcrumbLabel: "Dashboard",
@@ -32,6 +33,8 @@ export const primaryItems = [
     icon: chartColumnIcon,
   },
   {
+=======
+>>>>>>> develop-nahuel
     href: "/my-properties",
     label: "Mis propiedades",
     breadcrumbLabel: "Tus propiedades",

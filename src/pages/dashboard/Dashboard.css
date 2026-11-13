@@ -121,6 +121,11 @@
     brightness(83%) contrast(100%);
 }
 
+/* Íconos que ya traen su color en el svg */
+.dashboard-icon--original {
+  filter: none;
+}
+
 .dashboard-agents-card {
   display: flex;
   grid-row: 1 / 3;

@@ -34,15 +34,7 @@ export default function Login() {
       api.saveSession(session);
       setSubmitState("listo");
       const role = session.usuario.rol;
-      window.location.assign(
-        role === 1
-          ? "/super-admin"
-          : role === 4
-            ? "/owner-dashboard"
-            : role === 5
-              ? "/tenant-dashboard"
-              : "/properties",
-      );
+      window.location.assign(role === 1 ? "/super-admin" : "/dashboard");
     } catch (cause) {
       setError(cause.message);
       setSubmitState("inactivo");
