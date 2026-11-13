@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import reportReference from "../../assets/reports-reference.png";
-import { ReportModal, Pagination, usePagination, PAGE_SIZE } from "../../components";
+import { Pagination, usePagination, PAGE_SIZE } from "../../components";
+import ReportModal from "./ReportModal";
 import { houseIcon, relojHomeIcon } from "../../assets/icons";
 import "./ReportsAgent.css";
 

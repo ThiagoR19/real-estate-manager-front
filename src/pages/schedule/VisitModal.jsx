@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { calendarIcon, clockIcon, houseIcon, peopleIcon, userIcon } from "../../assets/icons";
-import { ManagementModal, ModalActions, ModalField, ModalInput } from "../index";
+import { ManagementModal, ModalActions, ModalField, ModalInput } from "../../components";
 import "./VisitModal.css";
 
 export default function VisitModal({ visit, defaultDate, properties, clients, agents, onClose, onSubmit }) {

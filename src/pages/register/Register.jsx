@@ -11,7 +11,8 @@ import {
   LegalText,
 } from "../../components";
 import Login from "../login/Login";
-import { setRegistrationDraft } from "../../services/registrationDraft.js";
+import { clearRegistrationDraft, getRegistrationDraft } from "../../services/registrationDraft.js";
+import { api } from "../../services/api.js";
 
 import mailIcono from "../../assets/icons/loginMail.svg";
 import candadoIcono from "../../assets/icons/loginLock.svg";
@@ -27,6 +28,8 @@ export default function Register() {
   const [saliendo, setSaliendo] = useState(false);
   const [variablesSalida, setVariablesSalida] = useState({});
   const [error, setError] = useState("");
+  const [status, setStatus] = useState("inactivo");
+  const draft = getRegistrationDraft();
   const [, navegar] = useLocation();
 
   // Cuando termina la animación del hero, cambia a Login
@@ -40,26 +43,28 @@ export default function Register() {
     return () => clearTimeout(temporizador);
   }, [saliendo, navegar]);
 
-  const enviarFormulario = (e) => {
+  const enviarFormulario = async (e) => {
     e.preventDefault();
+    if (!draft?.verificacion) return;
     const form = new FormData(e.currentTarget);
     const password = String(form.get("registro-password") || "");
     const confirmation = String(form.get("registro-confirmar") || "");
-    const codigo = String(form.get("registro-codigo") || "").trim();
+    const usuario = String(form.get("registro-usuario") || "").trim();
     if (password !== confirmation) {
       setError("Las contraseñas no coinciden.");
       return;
     }
-    if (!/^[a-f0-9]{64}$/i.test(codigo)) {
-      setError("Ingresá el código completo de la invitación.");
-      return;
+    setError("");
+    setStatus("enviando");
+    try {
+      const session = await api.register({ verificacion: draft.verificacion, usuario, password });
+      api.saveSession(session);
+      clearRegistrationDraft();
+      window.location.assign("/profile");
+    } catch (cause) {
+      setError(cause.message);
+      setStatus("inactivo");
     }
-    setRegistrationDraft({
-      codigo,
-      correo: String(form.get("registro-email") || "").trim(),
-      password,
-    });
-    navegar("/confirm-register");
   };
 
   const irALogin = (e) => {
@@ -100,18 +105,17 @@ export default function Register() {
             <h1 className="Registration__titulo">Crear tu cuenta</h1>
 
             <p className="Registration__subtitulo">
-              Solo las personas con DNI autorizados pueden crear una cuenta
+              Elegí tu nombre de usuario y contraseña para activar tu cuenta.
             </p>
           </header>
 
-          <div className="Registration__campos">
+          {draft?.verificacion ? <div className="Registration__campos">
             <TextField
-              id="registro-email"
-              label="Correo electrónico"
-              tipo="email"
-              placeholder="ejemplo@gmail.com"
+              id="registro-usuario"
+              label="Nombre de usuario"
+              placeholder="Elegí un nombre de usuario"
               icono={mailIcono}
-              autoComplete="email"
+              autoComplete="username"
               required
               className="Registration__campo-email"
             />
@@ -126,7 +130,7 @@ export default function Register() {
               required
               minLength={8}
               conOjo
-            />
+            ><small>Al menos 8 caracteres, con mayúscula, minúscula y número.</small></TextField>
 
             <TextField
               id="registro-confirmar"
@@ -139,21 +143,10 @@ export default function Register() {
               minLength={8}
               conOjo
             />
-            <TextField
-              id="registro-codigo"
-              label="Código de invitación"
-              tipo="text"
-              placeholder="Código recibido de la inmobiliaria"
-              icono={mailIcono}
-              autoComplete="off"
-              defaultValue={new URLSearchParams(window.location.search).get("codigo") || ""}
-              required
-              className="Registration__campo-email"
-            />
-          </div>
+          </div> : <p className="Registration__error">Para crear tu cuenta, abrí el enlace de invitación y verificá tu DNI.</p>}
 
           {error && <p className="Registration__error" role="alert">{error}</p>}
-          <PrimaryButton texto="Continuar" className="Registration__boton" />
+          {draft?.verificacion && <PrimaryButton texto="Crear cuenta" textoEnviando="Creando cuenta" estado={status} className="Registration__boton" />}
         </form>
 
         <footer className="Registration__pie">

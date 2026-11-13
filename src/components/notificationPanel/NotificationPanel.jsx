@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import "./NotificationPanel.css";
 
-import { Notification } from "../index";
+import Notification from "./Notification";
 
 import campanaIcono from "../../assets/icons/campanaNoti.svg";
 import cerrarIcono from "../../assets/icons/closeNotis.svg";

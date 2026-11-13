@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   envelopeIcon,
   fileLinesIcon as fileIcon,
@@ -13,27 +13,26 @@ import propertyImage from "/images.jpg";
 import {
   Button,
   SummaryPill,
-  PersonModal,
   ConfirmDeleteModal,
   EntityActions,
   Pagination,
   usePagination,
 } from "../../components";
+import PersonModal from "./PersonModal";
 import "./Owners.css";
+import { api } from "../../services/api.js";
+import initials from "../../utils/initials.js";
 
-const initialOwners = Array.from({ length: 6 }, (_, index) => ({
-  id: index + 1,
-  initials: "LM",
-  name: "Lucía Martínez",
-  dni: "41.234.567",
-  email: "lucia.m@gmail.com",
-  phone: "11 2345- 6789",
-  address: "Av. San Martín 1250",
-  unit: "Depto. 3B",
-  cbu: "0170204660000087865",
-  alias: "Marco.Polo.Papita",
-  status: "Activo",
-}));
+const displayOwner = (owner) => ({
+  ...owner,
+  name: `${owner.nombre || ""} ${owner.apellido || ""}`.trim() || `DNI ${owner.dni}`,
+  initials: initials(owner.nombre, owner.apellido),
+  email: owner.correo || "",
+  phone: owner.telefono || "",
+  address: owner.direccion || "",
+  unit: "",
+  status: owner.estadoCuenta === "PENDIENTE_ACTIVACION" ? "Pendiente" : owner.activo ? "Activo" : "Inactivo",
+});
 
 const summaryCards = [
   { label: "Cobros pendientes", value: "2", icon: xIcon, tone: "danger" },
@@ -58,11 +57,11 @@ function OwnerRow({ owner, onEdit, onDelete }) {
         <div className="owners__contact">
           <span>
             <img src={envelopeIcon} alt="" />
-            {owner.email}
+            {owner.email || "—"}
           </span>
           <span>
             <img src={phoneIcon} alt="" />
-            {owner.phone}
+            {owner.phone || "—"}
           </span>
         </div>
       </td>
@@ -70,16 +69,16 @@ function OwnerRow({ owner, onEdit, onDelete }) {
         <div className="owners__property">
           <img className="owners__property-image" src={propertyImage} alt="" />
           <span>
-            <strong>{owner.property || owner.address}</strong>
+            <strong>{owner.property || "Sin propiedad asignada"}</strong>
             <small>{owner.unit}</small>
           </span>
         </div>
       </td>
       <td data-label="CBU">
-        <span className="owners__muted-value">{owner.cbu}</span>
+        <span className="owners__muted-value">{owner.cbu || "—"}</span>
       </td>
       <td data-label="Alias">
-        <span className="owners__muted-value">{owner.alias}</span>
+        <span className="owners__muted-value">{owner.alias || "—"}</span>
       </td>
       <td data-label="Estado">
         <span className="owners__status">{owner.status}</span>
@@ -97,11 +96,17 @@ function OwnerRow({ owner, onEdit, onDelete }) {
 }
 
 export default function Owners() {
-  const [owners, setOwners] = useState(initialOwners);
+  const [owners, setOwners] = useState([]);
   const [query, setQuery] = useState("");
   const [modal, setModal] = useState(null);
   const [pendingDelete, setPendingDelete] = useState(null);
   const [notice, setNotice] = useState("");
+  const [activationUrl, setActivationUrl] = useState("");
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    api.owners().then((rows) => setOwners(rows.map(displayOwner))).catch((cause) => setError(cause.message));
+  }, []);
 
   const normalizedQuery = query.trim().toLowerCase();
   const visibleOwners = owners.filter(
@@ -115,30 +120,36 @@ export default function Owners() {
         owner.property || "",
         owner.cbu,
         owner.alias,
-      ].some((value) => value.toLowerCase().includes(normalizedQuery)),
+      ].some((value) => String(value ?? "").toLowerCase().includes(normalizedQuery)),
   );
   const { page, totalPages, pageItems, setPage, resetPage } = usePagination(visibleOwners);
 
-  function saveOwner(data) {
-    if (modal.mode === "edit") {
-      setOwners((current) =>
-        current.map((owner) => (owner.id === modal.person.id ? { ...owner, ...data } : owner)),
-      );
-      setNotice("Propietario actualizado correctamente.");
-    } else {
-      setOwners((current) => [
-        ...current,
-        { ...data, id: Math.max(0, ...current.map((owner) => owner.id)) + 1, unit: "" },
-      ]);
-      setNotice("Propietario creado correctamente.");
-    }
+  async function saveOwner(data) {
+    const raw = modal.mode === "edit"
+      ? await api.updateOwner(modal.person.id, {
+          nombre: data.firstName || null, apellido: data.lastName || null,
+          correo: data.email || null, telefono: data.phone || null,
+          direccion: data.address || null, cbu: data.cbu || null,
+          alias: data.alias || null, activo: data.status !== "Inactivo",
+        })
+      : await api.createOwner({ dni: data.dni });
+    const saved = displayOwner(raw);
+    setOwners((current) => modal.mode === "edit"
+      ? current.map((owner) => owner.id === saved.id ? saved : owner)
+      : [saved, ...current]);
+    setActivationUrl(raw.activacion?.enlace || "");
+    setNotice(modal.mode === "edit" ? "Propietario actualizado correctamente." : "Propietario creado. Compartí el enlace de activación con su titular.");
     setModal(null);
   }
 
-  function deleteOwner() {
-    setOwners((current) => current.filter((owner) => owner.id !== pendingDelete.id));
-    setPendingDelete(null);
-    setNotice("Propietario eliminado correctamente.");
+  async function deleteOwner() {
+    try {
+      await api.deleteOwner(pendingDelete.id);
+      setOwners((current) => current.filter((owner) => owner.id !== pendingDelete.id));
+      setNotice("Propietario eliminado correctamente.");
+      setActivationUrl("");
+    } catch (cause) { setError(cause.message); }
+    finally { setPendingDelete(null); }
   }
 
   return (
@@ -211,9 +222,10 @@ export default function Owners() {
 
       {notice && (
         <p className="owners__notice" role="status">
-          {notice}
+          {notice} {activationUrl && <><a href={activationUrl}>Abrir enlace de activación</a> <button type="button" onClick={() => navigator.clipboard.writeText(activationUrl)}>Copiar enlace</button></>}
         </p>
       )}
+      {error && <p className="owners__notice" role="alert">{error}</p>}
 
       {modal && (
         <PersonModal

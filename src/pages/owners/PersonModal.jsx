@@ -9,18 +9,17 @@ import {
   phoneIcon,
   userIcon,
 } from "../../assets/icons";
-import { ManagementModal, ModalActions, ModalField, ModalInput, ModalSelect } from "../index";
+import { ManagementModal, ModalActions, ModalField, ModalInput, ModalSelect } from "../../components";
 
 const propertyOptions = ["Av. San Martín 1250", "Av. Santa Fe 850"];
-const zoneOptions = ["Palermo", "Belgrano", "Recoleta"];
 const statusOptions = ["Activo", "Inactivo", "Pendiente"];
 
 function initialForm(person, kind) {
   const [firstName = "", ...lastName] = (person?.name || "").trim().split(/\s+/);
 
   return {
-    firstName,
-    lastName: lastName.join(" "),
+    firstName: person && "nombre" in person ? person.nombre || "" : firstName,
+    lastName: person && "apellido" in person ? person.apellido || "" : lastName.join(" "),
     email: person?.email || "",
     phone: person?.phone || "",
     address: person?.address || "",
@@ -28,7 +27,7 @@ function initialForm(person, kind) {
     cbu: person?.cbu || "",
     alias: person?.alias || "",
     property: person?.property || (kind === "owner" ? person?.address : "") || propertyOptions[0],
-    zone: person?.zone || zoneOptions[0],
+    zone: person?.zone || person?.area || "",
     status: person?.status || statusOptions[0],
   };
 }
@@ -44,8 +43,9 @@ function personInitials(name) {
     .toUpperCase();
 }
 
-export default function PersonModal({ kind, mode, person, onClose, onSubmit }) {
+export default function PersonModal({ kind, mode, person, zones = [], onClose, onSubmit }) {
   const [form, setForm] = useState(() => initialForm(person, kind));
+  const [error, setError] = useState("");
   const isOwner = kind === "owner";
   const isEditing = mode === "edit";
   const noun = isOwner ? "propietario" : "agente";
@@ -56,10 +56,13 @@ export default function PersonModal({ kind, mode, person, onClose, onSubmit }) {
     setForm((current) => ({ ...current, [name]: value }));
   }
 
-  function submit(event) {
+  async function submit(event) {
     event.preventDefault();
     const name = `${form.firstName.trim()} ${form.lastName.trim()}`.trim();
-    onSubmit({ ...form, name, initials: personInitials(name) });
+    try {
+      setError("");
+      await onSubmit({ ...form, name, initials: personInitials(name) });
+    } catch (cause) { setError(cause.message || "No se pudieron guardar los cambios."); }
   }
 
   return (
@@ -81,7 +84,7 @@ export default function PersonModal({ kind, mode, person, onClose, onSubmit }) {
             </span>
           </div>
           <div className="management-modal__fields">
-            <ModalField label="Nombre">
+            {isEditing && <><ModalField label="Nombre">
               <ModalInput
                 icon={userIcon}
                 name="firstName"
@@ -89,7 +92,6 @@ export default function PersonModal({ kind, mode, person, onClose, onSubmit }) {
                 onChange={updateField}
                 placeholder="Nombre"
                 autoComplete="given-name"
-                required
               />
             </ModalField>
             <ModalField label="Apellido">
@@ -100,7 +102,6 @@ export default function PersonModal({ kind, mode, person, onClose, onSubmit }) {
                 onChange={updateField}
                 placeholder="Apellido"
                 autoComplete="family-name"
-                required
               />
             </ModalField>
             <ModalField label="Correo">
@@ -112,7 +113,6 @@ export default function PersonModal({ kind, mode, person, onClose, onSubmit }) {
                 onChange={updateField}
                 placeholder="ejemplo@gmail.com"
                 autoComplete="email"
-                required
               />
             </ModalField>
             <ModalField label="Teléfono">
@@ -124,7 +124,6 @@ export default function PersonModal({ kind, mode, person, onClose, onSubmit }) {
                 onChange={updateField}
                 placeholder="2133 123123"
                 autoComplete="tel"
-                required
               />
             </ModalField>
             <ModalField label="Dirección">
@@ -137,6 +136,7 @@ export default function PersonModal({ kind, mode, person, onClose, onSubmit }) {
                 autoComplete="street-address"
               />
             </ModalField>
+            </>}
             <ModalField label="DNI">
               <ModalInput
                 icon={addressCardIcon}
@@ -146,9 +146,11 @@ export default function PersonModal({ kind, mode, person, onClose, onSubmit }) {
                 placeholder="12123123"
                 inputMode="numeric"
                 required
+                pattern="[0-9]{7,8}"
+                readOnly={isEditing}
               />
             </ModalField>
-            {isOwner && (
+            {isOwner && isEditing && (
               <>
                 <ModalField label="CBU">
                   <ModalInput
@@ -172,26 +174,18 @@ export default function PersonModal({ kind, mode, person, onClose, onSubmit }) {
                 </ModalField>
               </>
             )}
-            <ModalField label={isOwner ? "Propiedad" : "Zona"}>
+            {isEditing && !isOwner && <ModalField label="Ciudad">
               <ModalSelect
-                label={isOwner ? "Propiedad" : "Zona"}
+                label="Ciudad"
                 icon={houseIcon}
-                options={[
-                  isOwner ? "Propiedad" : "Zona",
-                  ...new Set([
-                    ...(isOwner ? propertyOptions : zoneOptions),
-                    isOwner ? form.property : form.zone,
-                  ]),
-                ]}
-                value={isOwner ? form.property : form.zone}
+                options={["Sin asignar", ...zones]}
+                value={form.zone || "Sin asignar"}
                 onChange={(value) => {
-                  if (value !== (isOwner ? "Propiedad" : "Zona")) {
-                    setForm((current) => ({ ...current, [isOwner ? "property" : "zone"]: value }));
-                  }
+                  setForm((current) => ({ ...current, zone: value === "Sin asignar" ? "" : value }));
                 }}
               />
-            </ModalField>
-            <ModalField label="Estado">
+            </ModalField>}
+            {isEditing && <ModalField label="Estado">
               <ModalSelect
                 label="Estado"
                 icon={peopleIcon}
@@ -201,9 +195,10 @@ export default function PersonModal({ kind, mode, person, onClose, onSubmit }) {
                   if (status !== "Estado") setForm((current) => ({ ...current, status }));
                 }}
               />
-            </ModalField>
+            </ModalField>}
           </div>
         </div>
+        {error && <p role="alert">{error}</p>}
         <ModalActions onClose={onClose} />
       </form>
     </ManagementModal>

@@ -1,11 +1,5 @@
-import { http, apiBase, request } from "../utils/request.js";
+import { http, request } from "../utils/request.js";
 import { clearSession, getSession } from "./login.js";
-
-export function assetUrl(path) {
-  if (!path) return null;
-  const origin = new URL(apiBase, window.location.origin).origin;
-  return new URL(path, origin).href;
-}
 
 export const propertyCatalogs = () => request("/propiedades/catalogos").then(({ data }) => data);
 
@@ -27,6 +21,11 @@ export const propertyFiles = (id) => request(`/propiedades/${id}/archivos`).then
 export const createProperty = (body) => request("/propiedades", { method: "POST", body }).then(({ data }) => data);
 export const updateProperty = (id, body) => request(`/propiedades/${id}`, { method: "PUT", body }).then(({ data }) => data);
 export const deleteProperty = (id) => request(`/propiedades/${id}`, { method: "DELETE" });
+
+export async function getProperty(id) {
+  const [raw, files] = await Promise.all([property(id), propertyFiles(id)]);
+  return { ...raw, imagenes: files.imagenes || [], documentos: files.documentos || [] };
+}
 
 export function uploadPropertyFiles(id, kind, files) {
   const body = new FormData();
@@ -68,9 +67,4 @@ export async function downloadPropertyDocument(id, file) {
       { cause: error },
     );
   }
-}
-
-export async function getProperty(id) {
-  const [raw, files] = await Promise.all([property(id), propertyFiles(id)]);
-  return { ...raw, imagenes: files.imagenes || [], documentos: files.documentos || [] };
 }

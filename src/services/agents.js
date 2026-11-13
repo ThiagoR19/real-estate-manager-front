@@ -1,5 +1,7 @@
 import { request } from "../utils/request.js";
 
+export const areas = () => request("/areas").then(({ data }) => data);
+
 export async function agents() {
   const rows = [];
   let page = 1;
@@ -15,9 +17,3 @@ export async function agents() {
 export const createAgent = (body) => request("/agentes", { method: "POST", body }).then(({ data }) => data);
 export const updateAgent = (id, body) => request(`/agentes/${id}`, { method: "PUT", body }).then(({ data }) => data);
 export const deleteAgent = (id) => request(`/agentes/${id}`, { method: "DELETE" });
-
-export function updateAgentPhoto(id, file) {
-  const body = new FormData();
-  body.append("fotoPerfil", file);
-  return request(`/agentes/${id}/archivos/foto`, { method: "PUT", body }).then(({ data }) => data);
-}

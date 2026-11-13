@@ -1,5 +1,7 @@
 import * as dashboardService from "./dashboard.js";
 import * as agentService from "./agents.js";
+import * as ownerService from "./owners.js";
+import * as administrationService from "./administration.js";
 import * as loginService from "./login.js";
 import * as propertyService from "./properties.js";
 import * as profileService from "./profile.js";
@@ -12,20 +14,31 @@ import * as chatService from "./chats.js";
 import * as ownerPropertiesService from "./ownerProperties.js";
 import * as documentService from "./documents.js";
 import * as notificationService from "./notifications.js";
+import { assetUrl } from "../utils/assetUrl.js";
 
 export const api = {
   agents: agentService.agents,
+  areas: agentService.areas,
   createAgent: agentService.createAgent,
+  owners: ownerService.owners,
+  createOwner: ownerService.createOwner,
+  updateOwner: ownerService.updateOwner,
+  deleteOwner: ownerService.deleteOwner,
+  agencies: administrationService.agencies,
+  admins: administrationService.admins,
+  createAgency: administrationService.createAgency,
+  createAdmin: administrationService.createAdmin,
+  deleteAdmin: administrationService.deleteAdmin,
   updateAgent: agentService.updateAgent,
   deleteAgent: agentService.deleteAgent,
-  updateAgentPhoto: agentService.updateAgentPhoto,
   getSession: loginService.getSession,
   saveSession: loginService.saveSession,
   clearSession: loginService.clearSession,
   login: loginService.login,
   register: loginService.register,
+  verifyInvitationDni: loginService.verifyInvitationDni,
   logout: loginService.logout,
-  assetUrl: propertyService.assetUrl,
+  assetUrl,
   propertyCatalogs: propertyService.propertyCatalogs,
   properties: propertyService.properties,
   property: propertyService.property,

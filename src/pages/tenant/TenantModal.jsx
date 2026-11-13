@@ -6,7 +6,7 @@ import {
   phoneIcon,
   userIcon,
 } from "../../assets/icons";
-import { DropdownSelect, Button } from "../index";
+import { DropdownSelect, Button } from "../../components";
 import "./TenantModal.css";
 
 const statusOptions = ["Activo", "Inactivo"];
@@ -72,7 +72,7 @@ export default function TenantModal({ isOpen, mode, tenant, onClose, onSubmit })
   const [error, setError] = useState("");
   const isEditing = mode === "edit";
   const displayName = isEditing
-    ? `${tenant?.nombre || ""} ${tenant?.apellido || ""}`.trim()
+    ? `${tenant?.nombre || ""} ${tenant?.apellido || ""}`.trim() || `DNI ${tenant?.dni}`
     : "Inquilino";
   const displayStatus = isEditing
     ? !tenant?.activo
@@ -150,7 +150,7 @@ export default function TenantModal({ isOpen, mode, tenant, onClose, onSubmit })
           <p>
             {isEditing
               ? "Actualiza la información de contacto y el estado del inquilino."
-              : "El correo será su usuario y se generará un enlace para activar la cuenta."}
+              : "Ingresá el DNI para generar un enlace de activación."}
           </p>
         </header>
 
@@ -167,7 +167,7 @@ export default function TenantModal({ isOpen, mode, tenant, onClose, onSubmit })
             </div>
 
             <div className="tenant-modal__fields">
-              <Field label="Nombre">
+              {isEditing && <><Field label="Nombre">
                 <InputWithIcon
                   icon={userIcon}
                   name="firstName"
@@ -224,6 +224,7 @@ export default function TenantModal({ isOpen, mode, tenant, onClose, onSubmit })
                 />
               </Field>
 
+              </>}
               <Field label="DNI">
                 <InputWithIcon
                   icon={addressCardIcon}
@@ -232,10 +233,13 @@ export default function TenantModal({ isOpen, mode, tenant, onClose, onSubmit })
                   onChange={updateField}
                   placeholder="12123123"
                   inputMode="numeric"
+                  pattern="[0-9]{7,8}"
+                  required
+                  readOnly={isEditing}
                 />
               </Field>
 
-              <Field label="Estado">
+              {isEditing && <Field label="Estado">
                 <DropdownSelect
                   label="Estado"
                   value={form.active ? statusOptions[0] : statusOptions[1]}
@@ -251,7 +255,7 @@ export default function TenantModal({ isOpen, mode, tenant, onClose, onSubmit })
                   chevronClassName="tenant-modal__select-arrow"
                   optionsClassName="tenant-modal__select-options"
                 />
-              </Field>
+              </Field>}
             </div>
           </div>
 
@@ -273,7 +277,7 @@ export default function TenantModal({ isOpen, mode, tenant, onClose, onSubmit })
             <Button
               className="tenant-modal__submit"
               type="submit"
-              text={saving ? "Guardando..." : "Guardar cambios"}
+              text={saving ? "Guardando..." : isEditing ? "Guardar cambios" : "Crear inquilino"}
               disabled={saving}
             />
           </footer>

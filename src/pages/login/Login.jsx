@@ -4,6 +4,7 @@ import { Link } from "wouter";
 import { Skeleton, ImagePanel, TextField, PrimaryButton, LegalText } from "../../components";
 
 import { api } from "../../services/api.js";
+import { dashboardByRole } from "../../layouts/navigation.js";
 
 import mailIcon from "../../assets/icons/loginMail.svg";
 import lockIcon from "../../assets/icons/loginLock.svg";
@@ -33,16 +34,8 @@ export default function Login() {
       );
       api.saveSession(session);
       setSubmitState("listo");
-      const role = session.usuario.rol;
-      window.location.assign(
-        role === 1
-          ? "/super-admin"
-          : role === 4
-            ? "/owner-dashboard"
-            : role === 5
-              ? "/tenant-dashboard"
-              : "/properties",
-      );
+      const destination = dashboardByRole[Number(session.usuario?.rol)] ?? "/dashboard";
+      window.location.assign(destination);
     } catch (cause) {
       setError(cause.message);
       setSubmitState("inactivo");

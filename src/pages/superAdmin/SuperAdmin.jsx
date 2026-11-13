@@ -1,6 +1,8 @@
-import { useState } from "react";
-import { buildingColumnsIcon, penIcon, plusIcon, trashCanIcon } from "../../assets/icons";
-import { SummaryPill, Button, AgencyModal, Pagination, usePagination } from "../../components";
+import { useEffect, useState } from "react";
+import { buildingColumnsIcon, plusIcon, trashCanIcon } from "../../assets/icons";
+import { SummaryPill, Button, Pagination, usePagination } from "../../components";
+import AgencyModal from "./AgencyModal";
+import { api } from "../../services/api.js";
 import "./SuperAdmin.css";
 
 function BuildingIcon() {
@@ -22,85 +24,66 @@ function AgencyLogo({ agency }) {
   );
 }
 
-const initialAgencies = [
-  { name: "Inmobiliaria Alianza", code: "UA", admins: [] },
-  {
-    name: "Inmobiliaria S&T",
-    code: "ST",
-    admins: [
-      { name: "Ernesto Pesto", role: "Admin", initials: "EP" },
-      { name: "Misara Masara", role: "Admin", initials: "MM" },
-    ],
-  },
-];
+const agencyView = (agency, admins = []) => ({
+  ...agency,
+  code: agency.nombre.split(/\s+/).map((word) => word[0]).join("").slice(0, 2).toUpperCase(),
+  name: agency.nombre,
+  admins: admins.filter((admin) => admin.idInmobiliaria === agency.id).map((admin) => ({
+    ...admin,
+    name: `${admin.nombre || ""} ${admin.apellido || ""}`.trim() || `DNI ${admin.dni}`,
+    initials: "AD",
+    role: "Admin",
+  })),
+});
 
 export default function SuperAdmin() {
-  const [agencies, setAgencies] = useState(initialAgencies);
-  const [expanded, setExpanded] = useState({ "Inmobiliaria S&T": true });
+  const [agencies, setAgencies] = useState([]);
+  const [expanded, setExpanded] = useState({});
   const [modal, setModal] = useState(null);
+  const [activationUrl, setActivationUrl] = useState("");
+  const [error, setError] = useState("");
   const { page, totalPages, pageItems, setPage } = usePagination(agencies);
 
-  function saveAgency(name) {
-    if (modal.mode === "edit") {
-      setAgencies((current) =>
-        current.map((agency) => (agency.name === modal.agency.name ? { ...agency, name } : agency)),
-      );
-      setExpanded((current) => ({ ...current, [name]: current[modal.agency.name] }));
-    } else {
-      setAgencies((current) => [
-        {
-          name,
-          code: name
-            .split(/\s+/)
-            .map((word) => word[0])
-            .join("")
-            .slice(0, 2)
-            .toUpperCase(),
-          admins: [],
-        },
-        ...current,
-      ]);
-    }
+  useEffect(() => {
+    Promise.all([api.agencies(), api.admins()])
+      .then(([rows, administrators]) => setAgencies(rows.map((agency) => agencyView(agency, administrators))))
+      .catch((cause) => setError(cause.message));
+  }, []);
+
+  async function saveAgency(name) {
+    const created = await api.createAgency(name);
+    setAgencies((current) => [agencyView(created), ...current]);
     setModal(null);
   }
 
-  function addAdmin(dni) {
+  async function addAdmin(dni) {
+    const created = await api.createAdmin({ idInmobiliaria: modal.agency.id, dni });
+    const admin = agencyView(modal.agency, [created]).admins[0];
     setAgencies((current) =>
       current.map((agency) =>
-        agency.name === modal.agency.name
+        agency.id === modal.agency.id
           ? {
               ...agency,
               admins: [
                 ...agency.admins,
-                { name: `DNI ${dni}`, dni, role: "Admin", initials: "AD" },
+                admin,
               ],
             }
           : agency,
       ),
     );
+    setExpanded((current) => ({ ...current, [modal.agency.id]: true }));
+    setActivationUrl(created.activacion?.enlace || "");
     setModal(null);
   }
 
-  function removeAdmin(agencyName, adminName) {
+  async function removeAdmin(agencyId, adminId) {
+    try { await api.deleteAdmin(adminId); }
+    catch (cause) { setError(cause.message); return; }
     setAgencies((current) =>
       current.map((agency) =>
-        agency.name === agencyName
-          ? { ...agency, admins: agency.admins.filter((admin) => admin.name !== adminName) }
-          : agency,
-      ),
-    );
-  }
-
-  function changeRole(agencyName, adminName, role) {
-    setAgencies((current) =>
-      current.map((agency) =>
-        agency.name === agencyName
-          ? {
-              ...agency,
-              admins: agency.admins.map((admin) =>
-                admin.name === adminName ? { ...admin, role } : admin,
-              ),
-            }
+        agency.id === agencyId
+          ? { ...agency, admins: agency.admins.filter((admin) => admin.id !== adminId) }
           : agency,
       ),
     );
@@ -136,10 +119,12 @@ export default function SuperAdmin() {
           </div>
         </div>
         <section className="super-admin__agency-list" aria-label="Inmobiliarias registradas">
+          {error && <p role="alert">{error}</p>}
+          {activationUrl && <p role="status">Administrador creado. Compartí este enlace con su titular: <a href={activationUrl}>Abrir enlace de activación</a> <button type="button" onClick={() => navigator.clipboard.writeText(activationUrl)}>Copiar enlace</button></p>}
           {pageItems.map((agency) => (
             <article
-              className={`super-admin__agency${expanded[agency.name] ? " is-expanded" : ""}`}
-              key={agency.name}
+              className={`super-admin__agency${expanded[agency.id] ? " is-expanded" : ""}`}
+              key={agency.id}
             >
               <header>
                 <AgencyLogo agency={agency} />
@@ -153,24 +138,16 @@ export default function SuperAdmin() {
                     ＋ Añadir admin
                   </button>
                   <button
-                    className="super-admin__edit"
-                    type="button"
-                    onClick={() => setModal({ mode: "edit", agency })}
-                    aria-label={`Editar ${agency.name}`}
-                  >
-                    <img src={penIcon} alt="" />
-                  </button>
-                  <button
                     className="super-admin__expand"
                     type="button"
                     onClick={() =>
                       setExpanded((current) => ({
                         ...current,
-                        [agency.name]: !current[agency.name],
+                        [agency.id]: !current[agency.id],
                       }))
                     }
-                    aria-label={`${expanded[agency.name] ? "Contraer" : "Expandir"} ${agency.name}`}
-                    aria-expanded={Boolean(expanded[agency.name])}
+                    aria-label={`${expanded[agency.id] ? "Contraer" : "Expandir"} ${agency.name}`}
+                    aria-expanded={Boolean(expanded[agency.id])}
                   >
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                       <path d="m6 9 6 6 6-6" />
@@ -178,11 +155,11 @@ export default function SuperAdmin() {
                   </button>
                 </div>
               </header>
-              {expanded[agency.name] && (
+              {expanded[agency.id] && (
                 <div className="super-admin__admins">
                   {agency.admins.length ? (
                     agency.admins.map((admin) => (
-                      <article className="super-admin__admin" key={admin.name}>
+                      <article className="super-admin__admin" key={admin.id}>
                         <span
                           className={`super-admin__avatar${admin.initials === "EP" || admin.initials === "MM" ? ` super-admin__avatar--${admin.initials.toLowerCase()}` : ""}`}
                         >
@@ -193,30 +170,13 @@ export default function SuperAdmin() {
                         <button
                           className="super-admin__delete"
                           type="button"
-                          onClick={() => removeAdmin(agency.name, admin.name)}
+                          onClick={() => removeAdmin(agency.id, admin.id)}
                           aria-label={`Eliminar a ${admin.name}`}
                         >
                           <img src={trashCanIcon} alt="" />
                         </button>
                         <h3>{admin.name}</h3>
-                        <label
-                          className="super-admin__role-label"
-                          htmlFor={`role-${agency.code}-${admin.initials}`}
-                        >
-                          Rol
-                        </label>
-                        <select
-                          id={`role-${agency.code}-${admin.initials}`}
-                          value={admin.role}
-                          onChange={(event) =>
-                            changeRole(agency.name, admin.name, event.target.value)
-                          }
-                          aria-label={`Rol de ${admin.name}`}
-                        >
-                          <option>Admin</option>
-                          <option>Agente</option>
-                          <option>Propietario</option>
-                        </select>
+                        <span>Admin</span>
                       </article>
                     ))
                   ) : (

@@ -7,7 +7,6 @@ export { default as Dashboard } from "./dashboard/Dashboard";
 export { default as AgentDashboard } from "./agentDashboard/AgentDashboard";
 export { default as TenantDashboard } from "./tenantDashboard/TenantDashboard";
 export { default as DashboardOwner } from "./dashboardOwner/DashboardOwner";
-export { default as SuperAdminDashboard } from "./superAdminDashboard/SuperAdminDashboard";
 export { default as Login } from "./login/Login";
 export { default as Home } from "./Home/Home";
 export { default as Indec } from "./indec/Indec";

@@ -25,7 +25,6 @@ const personalFields = [
   { id: "telefono", label: "Teléfono", icon: phoneIcon },
   { id: "correo", label: "Correo", icon: envelopeIcon },
   { id: "direccion", label: "Dirección", icon: locationDotIcon },
-  { id: "dni", label: "DNI", icon: addressCardIcon },
 ];
 
 const passwordFields = [
@@ -48,7 +47,7 @@ const Field = memo(function Field({ field, placeholder }) {
       <span className="profile__field-label">{field.label}</span>
       <span className="profile__field-control">
         <img className="profile__field-icon" src={field.icon} alt="" />
-        <input id={field.id} name={field.id} placeholder={placeholder} required={field.required} />
+        <input id={field.id} name={field.id} placeholder={placeholder} value={field.id === "dni" ? (placeholder === "DNI" ? "" : placeholder) : undefined} readOnly={field.id === "dni"} required={field.required} />
       </span>
     </label>
   );
@@ -262,13 +261,11 @@ export default function Profile() {
                 />
               </label>
             </div>
-            <h1>
-              {profile.nombre} {profile.apellido}
-            </h1>
+            <h1>{`${profile.nombre || ""} ${profile.apellido || ""}`.trim() || profile.usuario || "Completá tu perfil"}</h1>
             <p className="profile__role">{profile.rol || "Usuario"}</p>
             <p className="profile__email">
               <img src={envelopeIcon} alt="" />
-              {profile.correo}
+              {profile.correo || "Correo pendiente"}
             </p>
             {photoUploading && (
               <p className="profile__photo-feedback" role="status">
@@ -328,6 +325,7 @@ export default function Profile() {
                   placeholder={profile[field.id] ? profile[field.id] : field.label}
                 />
               ))}
+              <Field field={{ id: "dni", label: "DNI", icon: addressCardIcon }} placeholder={profile.dni || "DNI"} />
             </div>
           </section>
 

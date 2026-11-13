@@ -1,22 +1,16 @@
 import { useState, useEffect } from "react";
 const idInmobi = import.meta.env.VITE_ID_INMOBILIARIA;
 import { Redirect, Route, Switch, useLocation } from "wouter";
-import { AboutUs, Agency, Agents, AgentDashboard, Chat, Collections, ConfirmRegister, Dashboard, DashboardOwner, Home, Indec, Login, MyProperties, Owners, Payments, PaymentsAndCollections, Professional, Profile, Properties, Property, PublicProperties, PublicProperty, Register, ReportsAgent, Schedule, SuperAdmin, SuperAdminDashboard, Tenant, TenantDashboard, Terms } from "./pages/index.js";
+import { AboutUs, Agency, Agents, AgentDashboard, Chat, Collections, ConfirmRegister, Dashboard, DashboardOwner, Home, Indec, Login, MyProperties, Owners, Payments, PaymentsAndCollections, Professional, Profile, Properties, Property, PublicProperties, PublicProperty, Register, ReportsAgent, Schedule, SuperAdmin, Tenant, TenantDashboard, Terms } from "./pages/index.js";
 
 import { Header, Navbar } from "./layouts/index.js";
+import { dashboardByRole } from "./layouts/navigation.js";
 import { getSession } from "./services/login.js";
 
 import "./App.css";
 import { api } from "./services/api.js";
 let yaSeHizo = false;
 const validar = ["/", "/public-properties", "/public-property", "/about-us", "/home"]
-const dashboardByRole = {
-  1: "/super-admin",
-  2: "/dashboard",
-  3: "/agent-dashboard",
-  4: "/owner-dashboard",
-  5: "/tenant-dashboard",
-};
 function AuthenticatedApp() {
   const [menuOpen, setMenuOpen] = useState(false);
   if (!getSession()?.token) {
@@ -68,7 +62,7 @@ function App() {
     if (yaSeHizo) return;
     yaSeHizo = true;
 
-    if (validar.includes(location)){
+    if (validar.includes(location)) {
       api.contVisita(idInmobi)
     }
   }, [location])
@@ -81,9 +75,8 @@ function App() {
       <Route path="/public-property" component={PublicProperty} />
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
-      <Route path="/activar" component={Register} />
+      <Route path="/activar" component={ConfirmRegister} />
       <Route path="/confirm-register" component={ConfirmRegister} />
-      <Route path="/super-admin-dashboard" component={SuperAdminDashboard} />
       <Route path="/" component={Home} />
       <Route>
         <AuthenticatedApp />

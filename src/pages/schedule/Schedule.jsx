@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { calendarIcon, plusIcon, userIcon } from "../../assets/icons";
-import { Button, VisitModal, Pagination, usePagination } from "../../components";
+import { Button, Pagination, usePagination } from "../../components";
+import VisitModal from "./VisitModal";
 import { api } from "../../services/api.js";
 import { getSession } from "../../services/login.js";
 import propertyImage from "/images (1).jpg";
@@ -456,12 +457,16 @@ export default function Schedule() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [upcomingOpen, setUpcomingOpen] = useState(false);
-  const canManage = getSession()?.usuario?.rol === 3;
+  const canManage = Number(getSession()?.usuario?.rol) === 3;
 
   useEffect(() => {
     let active = true;
-    Promise.all([api.allVisits(), api.properties(), api.propertyCatalogs(), api.visitClients()])
-      .then(([visitRows, propertyRows, catalogs, clientRows]) => {
+    const requests = canManage
+      ? Promise.all([api.allVisits(), api.properties(), api.propertyCatalogs(), api.visitClients()])
+      : Promise.all([api.allVisits()]);
+
+    requests
+      .then(([visitRows, propertyRows = [], catalogs = { agentes: [] }, clientRows = []]) => {
         if (!active) return;
         setVisits(visitRows.map(toVisit));
         setProperties(propertyRows);
@@ -471,7 +476,7 @@ export default function Schedule() {
       .catch((cause) => { if (active) setError(cause.message); })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
-  }, []);
+  }, [canManage]);
 
   useEffect(() => {
     if (!feedback) return undefined;

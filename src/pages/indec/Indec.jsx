@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { angleDownIcon, clockIcon, plusIcon } from "../../assets/icons";
-import { Button, IncreaseModal } from "../../components";
+import { Button } from "../../components";
+import IncreaseModal from "./IncreaseModal";
 import "./Indec.css";
 import { api } from "../../services/api";
 

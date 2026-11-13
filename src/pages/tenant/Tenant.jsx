@@ -13,7 +13,6 @@ import {
 } from "../../assets/icons";
 import {
   DropdownSelect,
-  TenantModal,
   ConfirmDeleteModal,
   EntityActions,
   Button,
@@ -21,6 +20,7 @@ import {
   Pagination,
   usePagination,
 } from "../../components";
+import TenantModal from "./TenantModal";
 import propertyImage from "/images.jpg";
 import "./Tenant.css";
 import { api } from "../../services/api.js";
@@ -96,7 +96,7 @@ function FilterControl({ filter, value, onChange }) {
 }
 
 function TenantRow({ tenant, onEdit, onDelete }) {
-  const name = `${tenant.nombre} ${tenant.apellido}`;
+  const name = `${tenant.nombre || ""} ${tenant.apellido || ""}`.trim() || `DNI ${tenant.dni}`;
   const status = !tenant.activo
     ? "Inactivo"
     : tenant.estadoCuenta === "PENDIENTE_ACTIVACION"
@@ -288,7 +288,7 @@ export default function Tenant() {
     try {
       await api.deleteTenant(pendingDelete.id);
       setTenants((current) => current.filter((tenant) => tenant.id !== pendingDelete.id));
-      setNotice(`${pendingDelete.nombre} ${pendingDelete.apellido} fue eliminado.`);
+      setNotice(`${`${pendingDelete.nombre || ""} ${pendingDelete.apellido || ""}`.trim() || `DNI ${pendingDelete.dni}`} fue eliminado.`);
       setActivationUrl("");
       window.setTimeout(() => setNotice(""), 2800);
     } catch (error) {
@@ -316,27 +316,24 @@ export default function Tenant() {
     setActionError("");
     const existing = modal.mode === "edit" ? modal.tenant : null;
     const body = {
-      nombre: form.firstName,
-      apellido: form.lastName,
+      nombre: form.firstName || null,
+      apellido: form.lastName || null,
       dni: form.dni || null,
       correo: form.email || null,
       telefono: form.phone || null,
       direccion: form.address || null,
     };
     const raw = existing
-      ? await api.updateTenant(existing.id, { ...body, activo: form.active })
-      : await api.createTenant({ ...body, usuario: form.email, password: crypto.randomUUID() });
+      ? await api.updateTenant(existing.id, { ...body, dni: undefined, activo: form.active })
+      : await api.createTenant({ dni: form.dni });
     const result = { tenant: raw, activationUrl: raw.activacion?.enlace };
     setTenants((current) =>
       existing
         ? current.map((tenant) => (tenant.id === existing.id ? result.tenant : tenant))
         : [result.tenant, ...current],
     );
-    setNotice(
-      existing
-        ? `Se actualizó la información de ${raw.nombre} ${raw.apellido}.`
-        : `Se creó el acceso de ${raw.nombre} ${raw.apellido}.`,
-    );
+    const titular = `${raw.nombre || ""} ${raw.apellido || ""}`.trim() || `DNI ${raw.dni}`;
+    setNotice(existing ? `Se actualizó la información de ${titular}.` : `Se creó el acceso de ${titular}. Compartí el enlace con su titular.`);
     setActivationUrl(result.activationUrl || "");
     if (!result.activationUrl) window.setTimeout(() => setNotice(""), 2800);
     closeTenantModal();
@@ -442,6 +439,7 @@ export default function Tenant() {
             <>
               {" "}
               <a href={activationUrl}>Abrir enlace de activación</a>
+              {" "}<button type="button" onClick={() => navigator.clipboard.writeText(activationUrl)}>Copiar enlace</button>
             </>
           )}
         </p>

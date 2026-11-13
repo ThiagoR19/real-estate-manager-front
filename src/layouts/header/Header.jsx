@@ -11,7 +11,6 @@ import brandLogo from "../../assets/logoAGI.png";
 import { accountRoleFor, allItems, isItemActive, pageLabels } from "../navigation";
 import { api } from "../../services/api.js";
 import initials from "../../utils/initials.js";
-import avatarClass from "../../utils/avatarClass.js";
 import "./Header.css";
 
 export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
@@ -56,6 +55,43 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
     };
     window.addEventListener("session-updated", syncUser);
     return () => window.removeEventListener("session-updated", syncUser);
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    const initialSession = api.getSession();
+    const userId = initialSession?.usuario?.id;
+    if (!initialSession?.token || userId == null) return undefined;
+
+    api.profile().then((profile) => {
+      if (!active) return;
+      const currentSession = api.getSession();
+      if (
+        !currentSession?.token ||
+        String(currentSession.usuario?.id) !== String(userId)
+      ) return;
+
+      const currentUser = currentSession.usuario;
+      const updatedUser = {
+        ...currentUser,
+        nombre: profile?.nombre ?? currentUser.nombre,
+        apellido: profile?.apellido ?? currentUser.apellido,
+        urlFotoPerfil: profile?.urlFotoPerfil ?? null,
+      };
+      if (
+        updatedUser.nombre !== currentUser.nombre ||
+        updatedUser.apellido !== currentUser.apellido ||
+        updatedUser.urlFotoPerfil !== currentUser.urlFotoPerfil
+      ) {
+        api.saveSession({ ...currentSession, usuario: updatedUser });
+      }
+    }).catch(() => {
+      // El header conserva el nombre y las iniciales aunque el perfil no esté disponible.
+    });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   useEffect(() => {
@@ -123,8 +159,10 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
     { 1: "Super admin", 2: "Administrador", 3: "Agente", 4: "Propietario", 5: "Inquilino" }[
     user?.rol
     ] || accountRole;
+  const accountName = user
+    ? (`${user.nombre || ""} ${user.apellido || ""}`.trim() || user.usuario || "Cuenta")
+    : "Cuenta";
   const userInitials = initials(user?.nombre, user?.apellido);
-  const userAvatarClass = avatarClass(user?.nombre, user?.apellido);
   const currentLabel = isPayments
     ? "Zona de pago"
     : pathname.startsWith("/property/")
@@ -202,9 +240,14 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
             </button>
           </div>
         )}
-        <Link href="/profile" className="navbar__account-link">
+        <Link
+          href="/profile"
+          className="navbar__account-link"
+          aria-label={`Mi perfil: ${accountName}`}
+          title="Mi perfil"
+        >
           <span>
-            {user ? `${user.nombre} ${user.apellido}` : "Cuenta"}
+            {accountName}
             <small>{roleName}</small>
           </span>
           {user?.urlFotoPerfil && !photoLoadError ? (
@@ -215,8 +258,8 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
               onError={() => setPhotoLoadError(true)}
             />
           ) : (
-            <span className={`navbar__account-avatar ${userAvatarClass}`} aria-hidden="true">
-              {userInitials}
+            <span className="navbar__account-avatar" aria-hidden="true">
+              {userInitials || "U"}
             </span>
           )}
         </Link>

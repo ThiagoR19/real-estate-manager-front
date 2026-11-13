@@ -28,6 +28,11 @@ export const login = (usuario, password) =>
 export const register = (body) =>
   request("/auth/registro", { method: "POST", body, auth: false }).then(({ data }) => data);
 
+export const verifyInvitationDni = (codigo, dni) =>
+  request(`/auth/invitacion/${encodeURIComponent(codigo)}/verificar`, {
+    method: "POST", body: { dni }, auth: false,
+  }).then(({ data }) => data);
+
 export async function logout() {
   try {
     await request("/auth/logout", { method: "POST" });

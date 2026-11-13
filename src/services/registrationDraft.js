@@ -1,5 +1,7 @@
-let draft = null;
+const key = "agi-registro-verificado";
 
-export const setRegistrationDraft = (value) => { draft = value; };
-export const getRegistrationDraft = () => draft;
-export const clearRegistrationDraft = () => { draft = null; };
+export const setRegistrationDraft = (value) => sessionStorage.setItem(key, JSON.stringify(value));
+export const getRegistrationDraft = () => {
+  try { return JSON.parse(sessionStorage.getItem(key)); } catch { return null; }
+};
+export const clearRegistrationDraft = () => sessionStorage.removeItem(key);

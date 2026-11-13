@@ -275,20 +275,34 @@
 .navbar__account-link {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 10px;
+  min-height: 48px;
+  padding: 4px 8px 4px 12px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.navbar__account-link:hover {
+  border-color: #e2eaf2;
+  background: #f5f8fc;
 }
 
 .navbar__account-link > span {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  font-size: 14px;
+  align-items: flex-end;
+  gap: 3px;
+  font-size: 13px;
+  font-weight: 650;
   line-height: 1.2;
   white-space: nowrap;
 }
 
 .navbar__account-link small {
-  font-size: 10px;
+  color: #77839b;
+  font-size: 11px;
+  font-weight: 500;
 }
 
 .navbar__account-avatar {
@@ -300,7 +314,8 @@
   background: #bbd7eb;
   color: #061b4a;
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 650;
+  box-shadow: inset 0 0 0 2px #ffffff, 0 0 0 1px #d9e4ef;
 }
 
 .navbar__header img.navbar__account-avatar--photo,
@@ -562,6 +577,14 @@
   .navbar__header .navbar__brand strong {
     font-size: 21px;
   }
+  .navbar__header .navbar__account-link {
+    min-height: 32px;
+    padding: 0 2px;
+  }
+  .navbar__header .navbar__account-avatar {
+    width: 32px;
+    height: 32px;
+  }
   .navbar__brand-caption {
     display: inline;
     margin-left: -4px;
@@ -575,7 +598,6 @@
     font-size: 15px;
   }
   .navbar__breadcrumb a,
-  .navbar__header .navbar__account-link,
   .navbar__search {
     display: none;
   }
@@ -773,8 +795,3 @@
   }
 }
 
-@media (max-width: 760px) {
-  .navbar__header--super-admin .navbar__account {
-    display: none;
-  }
-}

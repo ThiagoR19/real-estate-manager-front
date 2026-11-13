@@ -6,16 +6,16 @@ import {
   penIcon,
   plusIcon,
   trashCanIcon,
-} from "../../assets/icons";
+} from "../../assets/icons/index.js";
 import {
   DropdownSelect,
-  ProfessionalModal,
   ConfirmDeleteModal,
   EntityActions,
   Button,
   Pagination,
   usePagination,
-} from "../../components";
+} from "../../components/index.js";
+import ProfessionalModal from "./ProfessionalModal";
 import "./Professional.css";
 
 import { api } from "../../services/api.js";

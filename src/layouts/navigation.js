@@ -11,6 +11,14 @@ import {
   userIcon,
 } from "../assets/icons";
 
+export const dashboardByRole = {
+  1: "/super-admin",
+  2: "/dashboard",
+  3: "/agent-dashboard",
+  4: "/owner-dashboard",
+  5: "/tenant-dashboard",
+};
+
 export const primaryItems = [
   { href: "/dashboard", label: "Dashboard", icon: chartColumnIcon },
   {

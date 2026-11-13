@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { calendarIcon, percentIcon } from "../../assets/icons";
-import { ManagementModal, ModalActions, ModalField, ModalInput, ModalSelect } from "../index";
+import { ManagementModal, ModalActions, ModalField, ModalInput, ModalSelect } from "../../components";
 import "./IncreaseModal.css";
 
 const monthNames = [

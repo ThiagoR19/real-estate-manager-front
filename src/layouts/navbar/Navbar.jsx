@@ -168,7 +168,7 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
             </span>
           )}
           <span>
-            <strong>{user ? `${user.nombre} ${user.apellido}` : "Cuenta"}</strong>
+            <strong>{user ? (`${user.nombre || ""} ${user.apellido || ""}`.trim() || user.usuario || "Cuenta") : "Cuenta"}</strong>
             <small>{role}</small>
           </span>
         </Link>

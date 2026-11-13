@@ -1,12 +1,12 @@
 import {
   Skeleton,
   LandingNav,
-  PropertySearch,
   Statistics,
   SectionTitle,
-  PropertyCard,
   Footer,
 } from "../../components";
+import PropertySearch from "./PropertySearch";
+import PropertyCard from "./PropertyCard";
 
 import fondoInicio from "../../assets/homeHero.png";
 

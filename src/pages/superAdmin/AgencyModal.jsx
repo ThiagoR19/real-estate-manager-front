@@ -1,22 +1,26 @@
 import { useState } from "react";
 import { addressCardIcon, buildingColumnsIcon } from "../../assets/icons";
-import { ManagementModal, ModalActions, ModalField, ModalInput } from "../index";
+import { ManagementModal, ModalActions, ModalField, ModalInput } from "../../components";
 import "./AgencyModal.css";
 
 export default function AgencyModal({ mode = "create", agency, onClose, onSubmit }) {
   const isAdmin = mode === "admin";
   const isEditing = mode === "edit";
   const [value, setValue] = useState(isEditing ? agency?.name || "" : "");
+  const [error, setError] = useState("");
   const title = isAdmin
     ? "Agregar admin"
     : isEditing
       ? "Editar inmobiliaria"
       : "Agregar inmobiliaria";
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
     const trimmedValue = value.trim();
-    if (trimmedValue) onSubmit(trimmedValue);
+    if (trimmedValue) {
+      try { setError(""); await onSubmit(trimmedValue); }
+      catch (cause) { setError(cause.message || "No se pudo guardar."); }
+    }
   }
 
   return (
@@ -51,6 +55,7 @@ export default function AgencyModal({ mode = "create", agency, onClose, onSubmit
             </ModalField>
           </div>
         </div>
+        {error && <p role="alert">{error}</p>}
         <ModalActions
           onClose={onClose}
           submitText={

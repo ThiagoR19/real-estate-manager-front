@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { briefcaseIcon, envelopeIcon, phoneIcon, userIcon } from "../../assets/icons";
-import { Button } from "../index";
+import { Button } from "../../components";
 import "./ProfessionalModal.css";
 
 function getInitialForm(professional) {

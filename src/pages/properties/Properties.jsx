@@ -124,11 +124,13 @@ export default function Properties() {
   }
 
   function save(property, fileError) {
-    setProperties((current) =>
-      modal.mode === "edit"
-        ? current.map((item) => (item.id === property.id ? property : item))
-        : [property, ...current],
-    );
+    setProperties((current) => {
+      if (modal.mode === "edit") {
+        return current.map((item) => (item.id === property.id ? property : item))
+      } else {
+        return [property, ...current]
+      }
+    },);
     setModal(null);
     if (fileError)
       setError("La propiedad se guardó, pero hubo un problema con sus archivos: " + fileError);
@@ -143,8 +145,8 @@ export default function Properties() {
       setProperties((current) => current.filter((item) => item.id !== pendingDelete.id));
       setFeedback(pendingDelete.nombre + " se eliminó.");
       setPendingDelete(null);
-    } catch (cause) {
-      setError(cause.message);
+    } catch (error) {
+      setError(error.message);
       setPendingDelete(null);
     }
   }

@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import {
   clockIcon,
+  calendarIcon,
   envelopeIcon,
   locationDotIcon as locationIcon,
   magnifyingGlassIcon,
   peopleIcon,
   phoneIcon,
   plusIcon,
+  xIcon,
 } from "../../assets/icons";
 import {
   DropdownSelect,
@@ -16,6 +18,7 @@ import {
   ModalActions,
   ModalField,
   ModalInput,
+  ModalSelect,
   ConfirmDeleteModal,
   EntityActions,
   Pagination,
@@ -28,7 +31,7 @@ import "./Agents.css";
 function ZoneFilter({ value, onChange, zones }) {
   return (
     <DropdownSelect
-      label="Zona asignada"
+      label="Zona"
       placeholder="Zona"
       value={value}
       options={zones}
@@ -43,7 +46,7 @@ function ZoneFilter({ value, onChange, zones }) {
 }
 
 function AgentRow({ agent, onEdit, onDelete }) {
-  const name = `${agent.nombre} ${agent.apellido}`;
+  const name = `${agent.nombre || ""} ${agent.apellido || ""}`.trim() || `DNI ${agent.dni}`;
   return (
     <tr>
       <td data-label="Agente">
@@ -73,8 +76,8 @@ function AgentRow({ agent, onEdit, onDelete }) {
           {agent.telefono || "—"}
         </span>
       </td>
-      <td data-label="Zona asignada">
-        <strong>{agent.area || "Sin asignar"}</strong>
+      <td data-label="Zona">
+        <strong>{agent.zona || "Sin asignar"}</strong>
       </td>
       <td data-label="Acciones" className="agents__actions-cell">
         <EntityActions
@@ -88,19 +91,25 @@ function AgentRow({ agent, onEdit, onDelete }) {
   );
 }
 
-function AgentModal({ agent, onClose, onSubmit }) {
+function AgentModal({ agent, areas, onClose, onSubmit }) {
   const [error, setError] = useState("");
+  const [areaId, setAreaId] = useState(String(agent?.idArea ?? ""));
+  const selectedArea = areas.find((area) => String(area.id) === areaId);
 
   async function submit(event) {
     event.preventDefault();
     const body = Object.fromEntries(new FormData(event.currentTarget));
-    const photo = body.fotoPerfil;
-    delete body.fotoPerfil;
-    if (!body.password) delete body.password;
+    if (!agent) {
+      for (const key of Object.keys(body)) if (key !== "dni" && key !== "idArea") delete body[key];
+    } else {
+      delete body.dni;
+      for (const key of Object.keys(body)) if (body[key] === "") body[key] = null;
+    }
+    body.idArea = body.idArea ? Number(body.idArea) : null;
 
     try {
       setError("");
-      await onSubmit(body, photo?.size ? photo : null);
+      await onSubmit(body);
     } catch (cause) {
       setError(cause.message);
     }
@@ -111,7 +120,7 @@ function AgentModal({ agent, onClose, onSubmit }) {
       <form onSubmit={submit}>
         <div className="management-modal__card">
           <div className="management-modal__fields">
-            <ModalField label="Nombre">
+            {agent && <><ModalField label="Nombre">
               <ModalInput name="nombre" defaultValue={agent?.nombre || ""} />
             </ModalField>
             <ModalField label="Apellido">
@@ -126,17 +135,19 @@ function AgentModal({ agent, onClose, onSubmit }) {
             <ModalField label="Dirección">
               <ModalInput name="direccion" defaultValue={agent?.direccion || ""} />
             </ModalField>
+            </>}
             <ModalField label="DNI">
-              <ModalInput name="dni" defaultValue={agent?.dni || ""} />
+              <ModalInput name="dni" defaultValue={agent?.dni || ""} required pattern="[0-9]{7,8}" inputMode="numeric" readOnly={Boolean(agent)} />
             </ModalField>
-            <ModalField label="Usuario">
-              <ModalInput name="usuario" defaultValue={agent?.usuario || ""} />
-            </ModalField>
-            <ModalField label={agent ? "Nueva contraseña" : "Contraseña"}>
-              <ModalInput name="password" type="password" />
-            </ModalField>
-            <ModalField label="Foto de perfil">
-              <input name="fotoPerfil" type="file" accept="image/jpeg,image/png,image/webp" />
+            <ModalField label="Zona">
+              <input type="hidden" name="idArea" value={selectedArea ? areaId : ""} />
+              <ModalSelect
+                label="Zona"
+                icon={locationIcon}
+                options={["Sin asignar", ...areas.map((area) => area.nombre)]}
+                value={selectedArea?.nombre || "Sin asignar"}
+                onChange={(nombre) => setAreaId(nombre === "Sin asignar" ? "" : String(areas.find((area) => area.nombre === nombre)?.id ?? ""))}
+              />
             </ModalField>
           </div>
         </div>
@@ -149,6 +160,8 @@ function AgentModal({ agent, onClose, onSubmit }) {
 
 export default function Agents() {
   const [agents, setAgents] = useState([]);
+  const [areas, setAreas] = useState([]);
+  const [visits, setVisits] = useState([]);
   const [query, setQuery] = useState("");
   const [zone, setZone] = useState("Todas las zonas");
   const [modal, setModal] = useState(null);
@@ -157,48 +170,44 @@ export default function Agents() {
   const [activationUrl, setActivationUrl] = useState("");
 
   const [error, setError] = useState("");
-  const zones = ["Todas las zonas", ...new Set(agents.map((agent) => agent.area).filter(Boolean))];
+  const zones = ["Todas las zonas", ...new Set(areas.map((area) => area.nombre))];
   const visibleAgents = agents.filter(
     (agent) =>
-      [agent.nombre, agent.apellido, agent.dni, agent.correo, agent.area].some((value) =>
+      [agent.nombre, agent.apellido, agent.dni, agent.correo, agent.zona].some((value) =>
         String(value ?? "")
           .toLowerCase()
           .includes(query.toLowerCase()),
       ) &&
-      (zone === zones[0] || agent.area === zone),
+      (zone === zones[0] || agent.zona === zone),
   );
+  const today = new Date().toDateString();
+  const todayVisits = visits.filter((visit) => new Date(visit.fecha).toDateString() === today).length;
+  const cancelledVisits = visits.filter((visit) => visit.estado === "Cancelada").length;
   const { page, totalPages, pageItems, setPage, resetPage } = usePagination(visibleAgents);
 
   useEffect(() => {
-    api
-      .agents()
-      .then(setAgents)
+    Promise.all([api.agents(), api.areas(), api.allVisits()])
+      .then(([agentRows, areaRows, visitRows]) => {
+        setAgents(agentRows);
+        setAreas(areaRows);
+        setVisits(visitRows);
+      })
       .catch((cause) => setError(cause.message));
   }, []);
 
-  async function saveAgent(body, photo) {
+  async function saveAgent(body) {
     const result =
       modal.mode === "edit"
         ? await api.updateAgent(modal.person.id, body)
         : await api.createAgent(body);
-    let saved = result;
-    let photoError = "";
-    if (photo) {
-      try {
-        const uploaded = await api.updateAgentPhoto(result.id, photo);
-        saved = { ...result, urlFotoPerfil: uploaded.urlFotoPerfil };
-      } catch (cause) {
-        photoError = ` La foto no se subió: ${cause.message}`;
-      }
-    }
     setAgents((current) =>
       modal.mode === "edit"
-        ? current.map((agent) => (agent.id === result.id ? saved : agent))
-        : [...current, saved],
+        ? current.map((agent) => (agent.id === result.id ? result : agent))
+        : [...current, result],
     );
     setActivationUrl(result.activacion?.enlace || "");
     setNotice(
-      `${modal.mode === "edit" ? "Agente actualizado" : "Agente creado"} correctamente.${photoError}`,
+      `${modal.mode === "edit" ? "Agente actualizado" : "Agente creado"} correctamente.`,
     );
     setModal(null);
   }
@@ -236,6 +245,18 @@ export default function Agents() {
               icon={clockIcon}
               tone="warning"
             />
+            <SummaryPill
+              label="Visitas de hoy"
+              value={todayVisits}
+              icon={calendarIcon}
+              tone="info"
+            />
+            <SummaryPill
+              label="Visitas canceladas"
+              value={cancelledVisits}
+              icon={xIcon}
+              tone="danger"
+            />
           </div>
         </section>
 
@@ -267,7 +288,7 @@ export default function Agents() {
                   <th>Agente</th>
                   <th>Correo</th>
                   <th>Teléfono</th>
-                  <th>Zona asignada</th>
+                  <th>Zona</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -292,7 +313,7 @@ export default function Agents() {
 
       {notice && (
         <p className="agents__notice" role="status">
-          {notice} {activationUrl && <a href={activationUrl}>Abrir enlace de activación</a>}
+          {notice} {activationUrl && <><a href={activationUrl}>Abrir enlace de activación</a> <button type="button" onClick={() => navigator.clipboard.writeText(activationUrl)}>Copiar enlace</button></>}
         </p>
       )}
       {error && (
@@ -305,6 +326,7 @@ export default function Agents() {
         <AgentModal
           key={modal.person?.id ?? "new"}
           agent={modal.person}
+          areas={areas.filter((area) => !modal.person || area.idInmobiliaria === modal.person.idInmobiliaria)}
           onClose={() => setModal(null)}
           onSubmit={saveAgent}
         />

@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 
 import "./PropertySearch.css";
 
-import { FilterSelect } from "../index";
+import FilterSelect from "./FilterSelect";
 
 import ubicacionIcono from "../../assets/icons/location-dot-solid-full.svg";
 import camaIcono from "../../assets/icons/bed-solid-full.svg";
