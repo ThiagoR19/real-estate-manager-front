@@ -129,12 +129,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => {} }) {
               src={api.assetUrl(user.urlFotoPerfil)}
               alt=""
             />
-          ) : isSuperAdmin ? (
-            <i
-              className="navbar__account-avatar navbar__account-avatar--super-admin"
-              aria-hidden="true"
-            />
-          ) : (
+          ): (
             <i
               className="navbar__account-avatar"
               style={{ backgroundImage: `url(${referenceImage})` }}

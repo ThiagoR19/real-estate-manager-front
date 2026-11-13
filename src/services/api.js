@@ -10,6 +10,7 @@ import * as contVisitaService from "./contVisita.js";
 import * as visitService from "./visits.js";
 import * as agencyService from "./agencies.js";
 import * as chatService from "./chats.js";
+import * as myAgencyService from "./myAgency.js";
 
 export const api = {
   agents: agentService.agents,
@@ -68,4 +69,6 @@ export const api = {
   adminToAgent: agencyService.adminAAgente,
   agentToAdmin: agencyService.agenteAAdmin,
   sendChatMessage: chatService.sendChatMessage,
+  myAgency: myAgencyService.myAgency,
+  updateMyAgency: myAgencyService.updateMyAgency,
 };
