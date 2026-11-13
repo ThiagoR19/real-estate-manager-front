@@ -1,27 +1,27 @@
 import { useState, useEffect } from "react";
 const idInmobi = import.meta.env.VITE_ID_INMOBILIARIA;
 import { Redirect, Route, Switch, useLocation } from "wouter";
-import { AboutUs, Agency, Agents, AgentDashboard, Chat, Collections, ConfirmRegister, Dashboard, DashboardOwner, Home, Indec, Login, MyProperties, Owners, Payments, PaymentsAndCollections, Professional, Profile, Properties, Property, PublicProperties, PublicProperty, Register, ReportsAgent, Schedule, SuperAdmin, Tenant, TenantDashboard, Terms } from "./pages/index.js";
+import { SobreNosotros, Inmobiliaria, Agentes, DashboardAgente, Chat, Cobros, ConfirmarRegistro, Dashboard, DashboardPropietario, Inicio, Indec, Login, MisPropiedades, Propietarios, Pagos, PagosYCobros, Profesionales, Perfil, Propiedades, Propiedad, PropiedadesPublicas, PropiedadPublica, Registro, ReportesAgente, Agenda, SuperAdmin, Inquilinos, DashboardInquilino, Terminos } from "./pages/index.js";
 
 import { Header, Navbar } from "./layouts/index.js";
-import { dashboardByRole } from "./layouts/navigation.js";
-import { getSession } from "./services/login.js";
-import { ToastContainer } from "./components/index.js";
+import { dashboardPorRol } from "./layouts/navegacion.js";
+import { obtenerSesion } from "./services/login.js";
+import { ContenedorAvisos } from "./components/index.js";
 
 import "./App.css";
 import { api } from "./services/api.js";
 
 let yaSeHizo = false;
-const validar = ["/", "/public-properties", "/public-property", "/about-us", "/home"]
+const validar = ["/", "/propiedades-publicas", "/propiedad-publica", "/sobre-nosotros", "/inicio"]
 const dashboardsPorRol = {
   2: Dashboard,
-  3: AgentDashboard,
-  4: DashboardOwner,
-  5: TenantDashboard,
+  3: DashboardAgente,
+  4: DashboardPropietario,
+  5: DashboardInquilino,
 };
 
 function DashboardPorRol() {
-  const rol = Number(getSession()?.usuario?.rol);
+  const rol = Number(obtenerSesion()?.usuario?.rol);
   if (rol === 1) return <Redirect to="/super-admin" replace />;
 
   const DashboardDelRol = dashboardsPorRol[rol];
@@ -32,8 +32,8 @@ function DashboardPorRol() {
 
 function AuthenticatedApp() {
   const [menuOpen, setMenuOpen] = useState(false);
-  if (!getSession()?.token) {
-    return <Redirect to="/home" replace />;
+  if (!obtenerSesion()?.token) {
+    return <Redirect to="/inicio" replace />;
   }
 
   return (
@@ -43,33 +43,33 @@ function AuthenticatedApp() {
       <div id="app-content">
         <Route path="/admin-dashboard" component={DashboardPorRol} />
         <Route path="/dashboard" component={DashboardPorRol} />
-        <Route path="/agent-dashboard" component={AgentDashboard} />
-        <Route path="/tenant-dashboard" component={TenantDashboard} />
-        <Route path="/owner-dashboard" component={DashboardOwner} />
-        <Route path="/agents" component={Agents} />
-        <Route path="/tenant" component={Tenant} />
-        <Route path="/property/:id" component={Property} />
-        <Route path="/properties" component={Properties} />
-        <Route path="/owners" component={Owners} />
-        <Route path="/profile" component={Profile} />
-        <Route path="/reports-agent" component={ReportsAgent} />
-        <Route path="/reports">{() => <ReportsAgent allowCreate />}</Route>
+        <Route path="/dashboard-agente" component={DashboardAgente} />
+        <Route path="/dashboard-inquilino" component={DashboardInquilino} />
+        <Route path="/dashboard-propietario" component={DashboardPropietario} />
+        <Route path="/agentes" component={Agentes} />
+        <Route path="/inquilinos" component={Inquilinos} />
+        <Route path="/propiedad/:id" component={Propiedad} />
+        <Route path="/propiedades" component={Propiedades} />
+        <Route path="/propietarios" component={Propietarios} />
+        <Route path="/perfil" component={Perfil} />
+        <Route path="/reportes-agente" component={ReportesAgente} />
+        <Route path="/reportes">{() => <ReportesAgente allowCreate />}</Route>
         <Route path="/chat" component={Chat} />
-        <Route path="/agency" component={Agency} />
-        <Route path="/payments" component={Payments} />
-        <Route path="/collections">
-          {() => [1, 4].includes(Number(getSession()?.usuario?.rol))
-            ? <Collections />
-            : <Redirect to={dashboardByRole[Number(getSession()?.usuario?.rol)] ?? "/home"} replace />}
+        <Route path="/inmobiliaria" component={Inmobiliaria} />
+        <Route path="/pagos" component={Pagos} />
+        <Route path="/cobros">
+          {() => [1, 4].includes(Number(obtenerSesion()?.usuario?.rol))
+            ? <Cobros />
+            : <Redirect to={dashboardPorRol[Number(obtenerSesion()?.usuario?.rol)] ?? "/inicio"} replace />}
         </Route>
-        <Route path="/payments-collections" component={PaymentsAndCollections} />
+        <Route path="/pagos-cobros" component={PagosYCobros} />
         <Route path="/indec" component={Indec} />
-        <Route path="/my-properties" component={MyProperties} />
+        <Route path="/mis-propiedades" component={MisPropiedades} />
         <Route path="/super-admin" component={SuperAdmin} />
-        <Route path="/schedule" component={Schedule} />
-        <Route path="/about-us" component={AboutUs} />
-        <Route path="/terms" component={Terms} />
-        <Route path="/professional" component={Professional} />
+        <Route path="/agenda" component={Agenda} />
+        <Route path="/sobre-nosotros" component={SobreNosotros} />
+        <Route path="/terminos" component={Terminos} />
+        <Route path="/profesionales" component={Profesionales} />
       </div>
     </div>
   );
@@ -88,18 +88,18 @@ function App() {
 
   return (
     <Switch>
-      <Route path="/home" component={Home} />
-      <Route path="/about-us" component={AboutUs} />
-      <Route path="/public-properties" component={PublicProperties} />
-      <Route path="/public-property" component={PublicProperty} />
+      <Route path="/inicio" component={Inicio} />
+      <Route path="/sobre-nosotros" component={SobreNosotros} />
+      <Route path="/propiedades-publicas" component={PropiedadesPublicas} />
+      <Route path="/propiedad-publica" component={PropiedadPublica} />
       <Route path="/login" component={Login} />
-      <Route path="/register" component={Register} />
-      <Route path="/activar" component={ConfirmRegister} />
-      <Route path="/confirm-register" component={ConfirmRegister} />
-      <Route path="/" component={Home} />
+      <Route path="/registro" component={Registro} />
+      <Route path="/activar" component={ConfirmarRegistro} />
+      <Route path="/confirmar-registro" component={ConfirmarRegistro} />
+      <Route path="/" component={Inicio} />
       <Route>
         <AuthenticatedApp />
-        <ToastContainer />
+        <ContenedorAvisos />
       </Route>
     </Switch>
   );

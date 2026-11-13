@@ -21,14 +21,14 @@ const redes = [
 ];
 
 const navegacion = [
-  { texto: "Inicio", href: "/home" },
-  { texto: "Comprar", href: "/public-properties?filter=buy" },
-  { texto: "Alquilar", href: "/public-properties?filter=rent" },
-  { texto: "Nosotros", href: "/about-us" },
+  { texto: "Inicio", href: "/inicio" },
+  { texto: "Comprar", href: "/propiedades-publicas?filter=buy" },
+  { texto: "Alquilar", href: "/propiedades-publicas?filter=rent" },
+  { texto: "Nosotros", href: "/sobre-nosotros" },
   { texto: "Contacto", href: "#contacto" },
 ];
 
-const legales = [{ texto: "Términos y condiciones", href: "/terms" }];
+const legales = [{ texto: "Términos y condiciones", href: "/terminos" }];
 
 const contacto = [
   { icono: ubicacionIcono, texto: "Bielke 747" },

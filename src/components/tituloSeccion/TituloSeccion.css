@@ -1,0 +1,40 @@
+/* --------------------------------------------------------------------------------- */
+/* --------------------------------- TITULO SECCION -------------------------------- */
+/* --------------------------------------------------------------------------------- */
+
+.TituloSeccion {
+  text-align: center;
+}
+
+.TituloSeccion__titulo {
+  margin: 0;
+  font-family: "Roboto Serif", Georgia, serif;
+  font-stretch: 50%;
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--azulOsc);
+}
+
+.TituloSeccion__subtitulo {
+  max-width: 280px;
+  margin: 4px auto 0;
+  font-size: 10px;
+  line-height: 1.25;
+  color: var(--azulGris);
+}
+
+/* =================================================================================== */
+/* ================================ RESPONSIVE ======================================= */
+/* =================================================================================== */
+
+@media (max-width: 768px) {
+  .TituloSeccion__titulo {
+    font-size: 22px;
+  }
+
+  .TituloSeccion__subtitulo {
+    max-width: 300px;
+    font-size: 11px;
+  }
+}

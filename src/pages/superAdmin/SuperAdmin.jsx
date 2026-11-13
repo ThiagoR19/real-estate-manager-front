@@ -4,7 +4,7 @@ import { api } from "../../services/api";
 import initials from "../../utils/initials";
 import avatarClass from "../../utils/avatarClass";
 
-import { SummaryPill, Button, ConfirmDeleteModal, mostrarToast } from "../../components";
+import { PildoraResumen, Boton, ConfirmarEliminacionModal, mostrarAviso } from "../../components";
 import AgencyModal from "./AgencyModal";
 import { building, editSuper, plusIcon, trashCanIcon } from "../../assets/icons";
 import "./SuperAdmin.css";
@@ -12,14 +12,14 @@ import "./SuperAdmin.css";
 function AgencyLogo({ agency }) {
   if (agency.imagenLogo) {
     return (
-      <span className="super-admin__agency-logo" aria-hidden="true">
-        <img src={api.assetUrl(`/uploads/logos/${agency.imagenLogo}`)} alt="" />
+      <span className="super-admin__inmobiliaria-logo" aria-hidden="true">
+        <img src={api.urlRecurso(`/uploads/logos/${agency.imagenLogo}`)} alt="" />
       </span>
     );
   }
   const [primera = "", segunda = ""] = agency.nombre.split(/\s+/);
   return (
-    <span className="super-admin__agency-logo" aria-hidden="true">
+    <span className="super-admin__inmobiliaria-logo" aria-hidden="true">
       {initials(primera, segunda)}
     </span>
   );
@@ -30,7 +30,7 @@ function PersonAvatar({ persona }) {
   if (persona.urlFotoPerfil && !fotoRota) {
     return (
       <span className="super-admin__avatar">
-        <img src={api.assetUrl(persona.urlFotoPerfil)} alt="" onError={() => setFotoRota(true)} />
+        <img src={api.urlRecurso(persona.urlFotoPerfil)} alt="" onError={() => setFotoRota(true)} />
       </span>
     );
   }
@@ -58,12 +58,12 @@ export default function SuperAdmin() {
 
   const cargar = useCallback(() => {
     let activo = true;
-    api.superAdminPanel()
+    api.panelSuperAdmin()
       .then((inmobiliarias) => activo && setEstado({ inmobiliarias, mensaje: "" }))
       .catch((causa) => {
         if (!activo) return;
         setEstado({ inmobiliarias: [], mensaje: causa.message });
-        mostrarToast({ tipo: "error", titulo: "No se pudieron cargar las inmobiliarias", mensaje: causa.message });
+        mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar las inmobiliarias", mensaje: causa.message });
       })
       .finally(() => activo && setLoading(false));
     return () => {
@@ -82,15 +82,15 @@ export default function SuperAdmin() {
     try {
       await peticion();
       setModal(null);
-      mostrarToast({ tipo: "exito", titulo: exito });
+      mostrarAviso({ tipo: "exito", titulo: exito });
       cargar();
     } catch (causa) {
-      mostrarToast({ tipo: "error", titulo: "No se pudo completar la acción", mensaje: causa.message });
+      mostrarAviso({ tipo: "error", titulo: "No se pudo completar la acción", mensaje: causa.message });
     }
   }
 
   async function crearInmobiliaria(nombre) {
-    await ejecutar(() => api.createAgency({ nombre }), "Inmobiliaria creada");
+    await ejecutar(() => api.crearInmobiliaria({ nombre }), "Inmobiliaria creada");
   }
 
   function editarInmobiliaria(agency, nombre) {
@@ -98,22 +98,22 @@ export default function SuperAdmin() {
       setModal(null);
       return;
     }
-    ejecutar(() => api.renameAgency(agency.id, nombre), "Inmobiliaria actualizada");
+    ejecutar(() => api.renombrarInmobiliaria(agency.id, nombre), "Inmobiliaria actualizada");
   }
 
   async function agregarAdmin(agency, datos) {
     try {
-      const admin = await api.createAdmin({ ...datos, idInmobiliaria: agency.id });
+      const admin = await api.crearAdministrador({ ...datos, idInmobiliaria: agency.id });
       setModal(null);
       setActivationUrl(admin.activacion?.enlace || "");
-      mostrarToast({
+      mostrarAviso({
         tipo: "exito",
         titulo: "Admin creado",
         mensaje: "Compartí el enlace de activación con el administrador.",
       });
       cargar();
     } catch (causa) {
-      mostrarToast({ tipo: "error", titulo: "No se pudo crear el admin", mensaje: causa.message });
+      mostrarAviso({ tipo: "error", titulo: "No se pudo crear el admin", mensaje: causa.message });
     }
   }
 
@@ -130,11 +130,11 @@ export default function SuperAdmin() {
     const elemento = aEliminar;
     setAEliminar(null);
     if (elemento.tipo === "inmobiliaria") {
-      await ejecutar(() => api.deleteAgency(elemento.id), `Inmobiliaria ${elemento.nombre} eliminada`);
+      await ejecutar(() => api.eliminarInmobiliaria(elemento.id), `Inmobiliaria ${elemento.nombre} eliminada`);
       return;
     }
     const nombre = `${elemento.nombre} ${elemento.apellido}`;
-    await ejecutar(() => (elemento.tipo === "admin" ? api.deleteAdmin(elemento.id) : api.deleteAgent(elemento.id)), `${elemento.rol} ${nombre} eliminado`,
+    await ejecutar(() => (elemento.tipo === "admin" ? api.eliminarAdministrador(elemento.id) : api.eliminarAgente(elemento.id)), `${elemento.rol} ${nombre} eliminado`,
     );
   }
 
@@ -150,7 +150,7 @@ export default function SuperAdmin() {
     if (rol === persona.rol) return;
     const nombre = `${persona.nombre} ${persona.apellido}`;
     ejecutar(
-      () => (persona.tipo === "agente" ? api.agentToAdmin(persona.id) : api.adminToAgent(persona.id)),
+      () => (persona.tipo === "agente" ? api.agenteAAdministrador(persona.id) : api.administradorAAgente(persona.id)),
       `${nombre} ahora es ${rol}`,
     );
   }
@@ -181,13 +181,13 @@ export default function SuperAdmin() {
             <p>Administra la creación de inmobiliarias, a sus usuarios, etc.</p>
           </header>
           <div className="super-admin__actions">
-            <SummaryPill
+            <PildoraResumen
               icon={building}
               label="Inmobiliarias activas"
               value={inmobiliarias.length}
               tone="success"
             />
-            <Button
+            <Boton
               className="super-admin__new"
               icon={plusIcon}
               text="Nueva inmobiliaria"
@@ -195,7 +195,7 @@ export default function SuperAdmin() {
             />
           </div>
         </div>
-        <section className="super-admin__agency-list" aria-label="Inmobiliarias registradas">
+        <section className="super-admin__inmobiliaria-list" aria-label="Inmobiliarias registradas">
           {activationUrl && (
             <p role="status">
               Administrador creado. Compartí este enlace: <a href={activationUrl}>Abrir enlace de activación</a>{" "}
@@ -217,11 +217,11 @@ export default function SuperAdmin() {
             const personas = personasDe(agency);
             const abierta = Boolean(expanded[agency.id]);
             return (
-              <article className={`super-admin__agency${abierta ? " is-expanded" : ""}`} key={agency.id}>
+              <article className={`super-admin__inmobiliaria${abierta ? " is-expanded" : ""}`} key={agency.id}>
                 <header>
                   <AgencyLogo agency={agency} />
                   <h2>{agency.nombre}</h2>
-                  <div className="super-admin__agency-controls">
+                  <div className="super-admin__inmobiliaria-controls">
                     <button
                       className="super-admin__add-admin"
                       type="button"
@@ -307,7 +307,7 @@ export default function SuperAdmin() {
           onDelete={modal.mode === "edit" ? () => eliminarInmobiliaria(modal.agency) : undefined}
         />
       )}
-      <ConfirmDeleteModal
+      <ConfirmarEliminacionModal
         isOpen={Boolean(aEliminar)}
         title={tituloConfirmacion()}
         onClose={() => setAEliminar(null)}

@@ -1,0 +1,247 @@
+.ContenedorAvisos {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+  pointer-events: none;
+}
+
+.Aviso {
+  --aviso-lado: 70px;
+  --aviso-ancho: 300px;
+  --aviso-tiempo: 400ms;
+  display: grid;
+  grid-template-rows: 1fr;
+  pointer-events: auto;
+  transition: grid-template-rows 250ms ease;
+  animation: aviso-crecer 250ms ease-out;
+}
+
+.Aviso--exito {
+  --aviso-fondo: var(--verdeClaroInfo);
+  --aviso-color: var(--verdeOscInfo);
+}
+
+.Aviso--advertencia {
+  --aviso-fondo: var(--naranjClaroInfo);
+  --aviso-color: var(--naranjOscInfo);
+}
+
+.Aviso--error {
+  --aviso-fondo: var(--rojoClaroInfo);
+  --aviso-color: var(--rojoOscInfo);
+}
+
+.Aviso--info {
+  --aviso-fondo: var(--azulClaroInfo);
+  --aviso-color: var(--azulOscInfo);
+}
+
+.Aviso--recordatorio {
+  --aviso-fondo: var(--negroOscInfo);
+  --aviso-color: var(--blanc);
+}
+
+.Aviso__fila {
+  min-height: 0;
+  padding: 10px 0 4px;
+  overflow-x: visible;
+  overflow-y: clip;
+}
+
+.Aviso__modulo {
+  display: flex;
+  justify-content: flex-end;
+  min-height: var(--aviso-lado);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgb(20 32 87 / 14%);
+}
+
+.Aviso__icono {
+  display: grid;
+  flex: 0 0 var(--aviso-lado);
+  place-items: center;
+  width: var(--aviso-lado);
+  border-radius: 6px;
+  background: var(--aviso-fondo);
+  transition:
+    border-radius var(--aviso-tiempo) ease,
+    transform var(--aviso-tiempo) ease-in,
+    opacity var(--aviso-tiempo) ease-in;
+  animation: aviso-entrar var(--aviso-tiempo) ease-out;
+}
+
+.Aviso--abierto .Aviso__icono {
+  border-radius: 6px 0 0 6px;
+}
+
+.Aviso--saliendo .Aviso__icono {
+  opacity: 0;
+  transform: translateX(-60px);
+}
+
+.Aviso__flecha,
+.Aviso__x {
+  display: block;
+  background: var(--aviso-color);
+  mask: var(--aviso-simbolo) center / contain no-repeat;
+}
+
+.Aviso__simbolo {
+  display: block;
+  max-width: 40px;
+  max-height: 40px;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+.Aviso__cuerpo {
+  position: relative;
+  width: 0;
+  overflow: hidden;
+  border-radius: 0 6px 6px 0;
+  background: var(--blanc);
+  transition: width var(--aviso-tiempo) ease;
+}
+
+.Aviso--abierto .Aviso__cuerpo {
+  width: var(--aviso-ancho);
+}
+
+.Aviso__contenido {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: var(--aviso-ancho);
+  min-height: var(--aviso-lado);
+  padding: 6px 30px 6px 12px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.Aviso__titulo,
+.Aviso__mensaje {
+  margin: 0;
+}
+
+.Aviso__titulo {
+  color: var(--azulOsc);
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+.Aviso__mensaje {
+  margin-top: 3px;
+  color: var(--azulGris);
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.Aviso__accion {
+  display: inline-flex;
+  align-self: flex-end;
+  align-items: center;
+  gap: 3px;
+  margin-top: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--azulMedio);
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.Aviso__accion:hover {
+  text-decoration: underline;
+}
+
+.Aviso__flecha {
+  --aviso-color: currentColor;
+  width: 10px;
+  height: 10px;
+  transform: rotate(-90deg);
+}
+
+.Aviso__cerrar {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  cursor: pointer;
+}
+
+.Aviso__cerrar:hover {
+  background: var(--bordes2);
+}
+
+.Aviso__x {
+  --aviso-color: var(--azulOsc);
+  width: 15px;
+  height: 15px;
+}
+
+.Aviso__accion:focus-visible,
+.Aviso__cerrar:focus-visible {
+  outline: 2px solid var(--azulClaro);
+  outline-offset: 2px;
+}
+
+.Aviso--saliendo {
+  grid-template-rows: 0fr;
+  transition-delay: var(--aviso-tiempo);
+}
+
+@keyframes aviso-entrar {
+  from {
+    transform: translateX(calc(100% + 24px));
+  }
+}
+
+@keyframes aviso-crecer {
+  from {
+    grid-template-rows: 0fr;
+  }
+}
+
+/* Mobile */
+@media (max-width: 420px) {
+  .ContenedorAvisos {
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
+  }
+
+  .Aviso {
+    --aviso-ancho: calc(100vw - 20px - var(--aviso-lado));
+  }
+
+  .Aviso__titulo {
+    font-size: 15px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .Aviso,
+  .Aviso__icono,
+  .Aviso__cuerpo {
+    --aviso-tiempo: 1ms;
+    animation-duration: 1ms;
+    transition-duration: 1ms;
+  }
+}

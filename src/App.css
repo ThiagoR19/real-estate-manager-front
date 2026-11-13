@@ -14,45 +14,45 @@
 
 /* Keep authenticated views aligned to the same 1600px content frame as
    Professional, with matching page gutters at each screen size. */
-#tenant-dashboard,
-#agent-dashboard,
-#tenant,
-#agents,
+#dashboard-inquilino,
+#dashboard-agente,
+#inquilinos,
+#agentes,
 .dashboard-page,
-.owner-dashboard,
-#owner-properties,
-#owners,
-#schedule,
+.dashboard-propietario,
+#propiedades-propietario,
+#propietarios,
+#agenda,
 #chat,
-#properties,
-#agency {
+#propiedades,
+#inmobiliaria {
   padding-right: 25px;
   padding-left: 25px;
 }
 
-.tenant-dashboard__page,
-.agent-dashboard__page,
-.tenant__page,
-.agents__page,
+.dashboard-inquilino__page,
+.dashboard-agente__page,
+.inquilinos__page,
+.agentes__page,
 .dashboard-hero,
 .dashboard-content,
-.owner-dashboard__content,
-.owners__page,
-.schedule__content,
+.dashboard-propietario__content,
+.propietarios__page,
+.agenda__content,
 .chat__layout,
-.properties__top,
-.properties__grid,
-.agency__layout {
+.propiedades__top,
+.propiedades__grid,
+.inmobiliaria__layout {
   width: 100%;
   max-width: 1600px;
   margin-right: auto;
   margin-left: auto;
 }
 
-.tenant-dashboard__page,
-.agent-dashboard__page,
-.tenant__page,
-.agents__page {
+.dashboard-inquilino__page,
+.dashboard-agente__page,
+.inquilinos__page,
+.agentes__page {
   padding-top: 16px;
 }
 
@@ -69,24 +69,24 @@
   margin-top: 10px;
 }
 
-.schedule__content {
+.agenda__content {
   margin-bottom: 25px;
 }
 
-.owner-dashboard__content {
+.dashboard-propietario__content {
   padding-right: 0;
   padding-left: 0;
 }
 
-#owner-properties {
+#propiedades-propietario {
   padding-top: 18px;
 }
 
-.owners__page {
+.propietarios__page {
   margin-top: 18px;
 }
 
-.schedule__content {
+.agenda__content {
   padding: 18px 0 24px;
 }
 
@@ -95,36 +95,36 @@
   padding-bottom: 18px;
 }
 
-.properties__top {
+.propiedades__top {
   margin-top: 0;
   margin-bottom: 25px;
 }
 
-.properties__grid {
+.propiedades__grid {
   padding-right: 0;
   padding-left: 0;
 }
 
-#agency {
+#inmobiliaria {
   padding-top: 20px;
 }
 
-.agency__layout {
+.inmobiliaria__layout {
   margin-top: 0;
 }
 
-.reports__workspace {
+.reportes__workspace {
   width: calc(100% - 50px);
   max-width: 1600px;
   margin-right: auto;
   margin-left: auto;
 }
 
-.reports__workspace {
+.reportes__workspace {
   margin-top: 18px;
 }
 
-.profile__layout {
+.perfil__layout {
   width: 100%;
   max-width: 1600px;
   margin-right: auto;
@@ -163,7 +163,7 @@
 }
 
 @media (min-width: 761px) {
-  .terms__div {
+  .terminos__div {
     width: calc(100% - 50px);
     max-width: 1600px;
     margin: 18px auto 15px;
@@ -171,58 +171,58 @@
 }
 
 @media (max-width: 1100px) {
-  #tenant-dashboard,
-  #agent-dashboard,
-  #tenant,
-  #agents,
+  #dashboard-inquilino,
+  #dashboard-agente,
+  #inquilinos,
+  #agentes,
   .dashboard-page,
-  .owner-dashboard,
-  #owner-properties,
-  #owners,
-  #schedule,
+  .dashboard-propietario,
+  #propiedades-propietario,
+  #propietarios,
+  #agenda,
   #chat,
-  #properties,
-  #agency {
+  #propiedades,
+  #inmobiliaria {
     padding-right: 20px;
     padding-left: 20px;
   }
 
-  .profile__layout {
+  .perfil__layout {
     padding-right: 20px;
     padding-left: 20px;
   }
 }
 
 @media (max-width: 760px) {
-  #tenant-dashboard,
-  #agent-dashboard,
-  #tenant,
-  #agents,
+  #dashboard-inquilino,
+  #dashboard-agente,
+  #inquilinos,
+  #agentes,
   .dashboard-page,
-  .owner-dashboard,
-  #owner-properties,
-  #owners,
-  #schedule,
+  .dashboard-propietario,
+  #propiedades-propietario,
+  #propietarios,
+  #agenda,
   #chat,
-  #properties,
-  #agency {
+  #propiedades,
+  #inmobiliaria {
     padding-right: 10px;
     padding-left: 10px;
   }
 
-  .tenant-dashboard__page,
-  .agent-dashboard__page,
-  .tenant__page,
-  .agents__page,
+  .dashboard-inquilino__page,
+  .dashboard-agente__page,
+  .inquilinos__page,
+  .agentes__page,
   .dashboard-hero,
   .dashboard-content,
-  .owner-dashboard__content,
-  .owners__page,
-  .schedule__content,
+  .dashboard-propietario__content,
+  .propietarios__page,
+  .agenda__content,
   .chat__layout,
-  .properties__top,
-  .properties__grid,
-  .agency__layout {
+  .propiedades__top,
+  .propiedades__grid,
+  .inmobiliaria__layout {
     width: 100%;
   }
 
@@ -234,24 +234,24 @@
     margin-top: 10px;
   }
 
-  .schedule__content {
+  .agenda__content {
     padding: 14px 0 22px;
   }
 
-  .reports__hero,
-  .reports__workspace {
+  .reportes__hero,
+  .reportes__workspace {
     width: calc(100% - 20px);
   }
 
-  .reports__hero {
+  .reportes__hero {
     margin-top: 14px;
   }
 
-  .reports__workspace {
+  .reportes__workspace {
     margin-top: 14px;
   }
 
-  .profile__layout {
+  .perfil__layout {
     padding-right: 10px;
     padding-left: 10px;
   }

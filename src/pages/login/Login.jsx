@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
 
-import { Skeleton, ImagePanel, TextField, PrimaryButton, LegalText } from "../../components";
+import { Skeleton, PanelImagen, CampoTexto, BotonPrincipal, TextoLegal } from "../../components";
 
 import { api } from "../../services/api.js";
-import { dashboardByRole } from "../../layouts/navigation.js";
+import { dashboardPorRol } from "../../layouts/navegacion.js";
 
 import mailIcon from "../../assets/icons/loginMail.svg";
 import lockIcon from "../../assets/icons/loginLock.svg";
@@ -32,9 +32,9 @@ export default function Login() {
         String(form.get("email") || "").trim(),
         String(form.get("password") || ""),
       );
-      api.saveSession(session);
+      api.guardarSesion(session);
       setSubmitState("listo");
-      const destination = dashboardByRole[Number(session.usuario?.rol)] ?? "/dashboard";
+      const destination = dashboardPorRol[Number(session.usuario?.rol)] ?? "/dashboard";
       window.location.assign(destination);
     } catch (cause) {
       setError(cause.message);
@@ -44,7 +44,7 @@ export default function Login() {
 
   return (
     <Skeleton as="main" className="login" fondos={[fondo]}>
-      <ImagePanel conBrand className={`login__hero ${fromRegister ? "Skeleton-no" : ""}`} />
+      <PanelImagen conMarca className={`login__hero ${fromRegister ? "Skeleton-no" : ""}`} />
       <section className="login__panel">
         <form className="login__form" onSubmit={handleSubmit}>
           <header className="login__header">
@@ -52,7 +52,7 @@ export default function Login() {
             <p className="login__subtitle">Ingresa tus datos para continuar</p>
           </header>
 
-          <TextField
+          <CampoTexto
             id="email"
             label="Usuario"
             tipo="text"
@@ -63,7 +63,7 @@ export default function Login() {
             className="login__field"
           />
 
-          <TextField
+          <CampoTexto
             id="password"
             label="Contraseña"
             tipo="password"
@@ -73,9 +73,9 @@ export default function Login() {
             required
             conOjo
             className="login__field Login-pass"
-          ></TextField>
+          ></CampoTexto>
 
-          <PrimaryButton
+          <BotonPrincipal
             texto="Ingresar"
             textoEnviando="Ingresando"
             estado={submitState}
@@ -90,9 +90,9 @@ export default function Login() {
         </form>
 
         <div className="login__footer">
-          <LegalText className="login__terms" />
+          <TextoLegal className="login__terminos" />
           <p className="login__register">
-            ¿No tienes una cuenta? <Link href="/register">Regístrate</Link>
+            ¿No tienes una cuenta? <Link href="/registro">Regístrate</Link>
           </p>
         </div>
       </section>

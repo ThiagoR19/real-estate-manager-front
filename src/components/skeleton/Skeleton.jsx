@@ -7,7 +7,7 @@ import useLoadComplete from "../../hooks/useLoadComplete";
 // Envuelve la raíz de cualquier vista: mientras cargan fuentes e imágenes,
 // sus textos, imágenes, botones e inputs se muestran como skeleton.
 //
-// Uso:  <Skeleton as="main" className="Home" fondos={[fondoHero]}> ... </Skeleton>
+// Uso:  <Skeleton as="main" className="Inicio" fondos={[fondoHero]}> ... </Skeleton>
 //
 // - data-sk           -> fuerza a un elemento a verse como bloque
 // - data-sk-fondo     -> oculta su imagen de fondo mientras carga

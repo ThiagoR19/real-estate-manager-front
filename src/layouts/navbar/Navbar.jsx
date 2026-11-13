@@ -3,19 +3,19 @@ import { Link, useLocation } from "wouter";
 import { xIcon as closeIcon } from "../../assets/icons";
 import brandLogo from "../../assets/logoAGI.png";
 import {
-  allItems,
-  isItemActive,
-  navigationItemsForRole,
-  primaryItems,
-  secondaryItems,
-} from "../navigation";
+  todosLosElementos,
+  elementoActivo,
+  elementosNavegacionPorRol,
+  elementosPrincipales,
+  elementosSecundarios,
+} from "../navegacion";
 import { api } from "../../services/api.js";
 import initials from "../../utils/initials.js";
 import avatarClass from "../../utils/avatarClass.js";
 import "./Navbar.css";
 
-function NavigationItem({ item, pathname, onNavigate }) {
-  const active = isItemActive(pathname, item.href);
+function ElementoNavegacion({ item, pathname, onNavigate }) {
+  const active = elementoActivo(pathname, item.href);
 
   return (
     <Link
@@ -24,8 +24,8 @@ function NavigationItem({ item, pathname, onNavigate }) {
       aria-current={active ? "page" : undefined}
       onClick={onNavigate}
     >
-      <img className="navbar__drawer-link-icon" src={item.icon} alt="" />
-      <span>{item.label}</span>
+      <img className="navbar__drawer-link-icon" src={item.icono} alt="" />
+      <span>{item.etiqueta}</span>
     </Link>
   );
 }
@@ -33,12 +33,12 @@ function NavigationItem({ item, pathname, onNavigate }) {
 export default function Navbar({ menuOpen = false, onClose = () => {} }) {
   const [pathname] = useLocation();
   const [logoutError, setLogoutError] = useState("");
-  const [user, setUser] = useState(() => api.getSession()?.usuario);
+  const [user, setUser] = useState(() => api.obtenerSesion()?.usuario);
   const [photoLoadError, setPhotoLoadError] = useState(false);
 
   useEffect(() => {
     const syncUser = () => {
-      setUser(api.getSession()?.usuario);
+      setUser(api.obtenerSesion()?.usuario);
       setPhotoLoadError(false);
     };
     window.addEventListener("session-updated", syncUser);
@@ -52,13 +52,13 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
     4: "Propietario",
     5: "Inquilino",
   }[roleId] ?? "Usuario";
-  const desktopItems = navigationItemsForRole(roleId);
+  const desktopItems = elementosNavegacionPorRol(roleId);
 
   async function closeSession(event) {
     event.preventDefault();
     setLogoutError("");
     try {
-      await api.logout();
+      await api.cerrarSesion();
       onClose();
       window.location.assign("/login");
     } catch (error) {
@@ -67,31 +67,31 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
   }
   const mobilePaths =
     roleId === 4
-      ? ["/dashboard", "/my-properties", "/collections", "/reports-agent", "/chat"]
+      ? ["/dashboard", "/mis-propiedades", "/cobros", "/reportes-agente", "/chat"]
       : roleId === 5
-        ? ["/dashboard", "/payments", "/reports", "/chat"]
+        ? ["/dashboard", "/pagos", "/reportes", "/chat"]
         : [2, 3].includes(roleId)
           ? [
               "/dashboard",
-              "/owners",
-              "/tenant",
-              "/professional",
-              "/schedule",
+              "/propietarios",
+              "/inquilinos",
+              "/profesionales",
+              "/agenda",
               "/chat",
-              "/properties",
-              "/reports-agent",
+              "/propiedades",
+              "/reportes-agente",
             ]
           : [];
-  const mobilePrimary = roleId === 1 ? primaryItems.filter(({ href }) => href === "/super-admin") : mobilePaths.map((href) => {
+  const mobilePrimary = roleId === 1 ? elementosPrincipales.filter(({ href }) => href === "/super-admin") : mobilePaths.map((href) => {
     const item =
-      allItems.find((entry) => entry.href === href) ??
-      allItems.find((entry) => entry.href === "/reports-agent");
-    return { ...item, href, label: href.endsWith("dashboard") ? "Dashboard" : item.label };
+      todosLosElementos.find((entry) => entry.href === href) ??
+      todosLosElementos.find((entry) => entry.href === "/reportes-agente");
+    return { ...item, href, etiqueta: href === "/dashboard" ? "Dashboard" : item.etiqueta };
   });
   const mobileSecondary = roleId === 1
-    ? secondaryItems.filter(({ href }) => ["/profile", "/terms"].includes(href))
-    : desktopItems.secondary.filter(({ href }) =>
-        ["/profile", "/terms", "/agents", "/agency"].includes(href),
+    ? elementosSecundarios.filter(({ href }) => ["/perfil", "/terminos"].includes(href))
+    : desktopItems.secundarios.filter(({ href }) =>
+        ["/perfil", "/terminos", "/agentes", "/inmobiliaria"].includes(href),
       );
 
   useEffect(() => {
@@ -142,26 +142,26 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
         </div>
 
         <nav className="navbar__drawer-nav navbar__drawer-nav--desktop">
-          {desktopItems.primary.map((item) => (
-            <NavigationItem key={item.href} item={item} pathname={pathname} onNavigate={onClose} />
+          {desktopItems.principales.map((item) => (
+            <ElementoNavegacion key={item.href} item={item} pathname={pathname} onNavigate={onClose} />
           ))}
           <span className="navbar__drawer-divider" aria-hidden="true" />
-          {desktopItems.secondary.map((item) => (
-            <NavigationItem key={item.href} item={item} pathname={pathname} onNavigate={onClose} />
+          {desktopItems.secundarios.map((item) => (
+            <ElementoNavegacion key={item.href} item={item} pathname={pathname} onNavigate={onClose} />
           ))}
         </nav>
         <nav className="navbar__drawer-nav navbar__drawer-nav--mobile">
           {mobilePrimary.map((item) => (
-            <NavigationItem key={item.href} item={item} pathname={pathname} onNavigate={onClose} />
+            <ElementoNavegacion key={item.href} item={item} pathname={pathname} onNavigate={onClose} />
           ))}
           <span className="navbar__drawer-divider" aria-hidden="true" />
           {mobileSecondary.map((item) => (
-            <NavigationItem key={item.href} item={item} pathname={pathname} onNavigate={onClose} />
+            <ElementoNavegacion key={item.href} item={item} pathname={pathname} onNavigate={onClose} />
           ))}
         </nav>
-        <Link href="/profile" className="navbar__drawer-account" onClick={onClose}>
+        <Link href="/perfil" className="navbar__drawer-account" onClick={onClose}>
           {user?.urlFotoPerfil && !photoLoadError ? (
-            <img className="navbar__drawer-avatar" src={api.assetUrl(user.urlFotoPerfil)} alt="" onError={() => setPhotoLoadError(true)} />
+            <img className="navbar__drawer-avatar" src={api.urlRecurso(user.urlFotoPerfil)} alt="" onError={() => setPhotoLoadError(true)} />
           ) : (
             <span className={`navbar__drawer-avatar ${avatarClass(user?.nombre, user?.apellido)}`} aria-hidden="true">
               {initials(user?.nombre, user?.apellido)}

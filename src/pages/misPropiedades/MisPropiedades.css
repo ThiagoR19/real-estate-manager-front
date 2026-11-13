@@ -1,0 +1,707 @@
+#propiedades-propietario {
+  display: flex;
+  min-height: calc(100dvh - 61px);
+  flex-direction: column;
+  padding: 25px 37px 38px;
+  background: #f7f9fc;
+  color: #17235e;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+}
+
+#propiedades-propietario,
+#propiedades-propietario * {
+  box-sizing: border-box;
+}
+
+#propiedades-propietario button {
+  font: inherit;
+}
+
+#propiedades-propietario button:focus-visible {
+  outline: 2px solid #2178c4;
+  outline-offset: 3px;
+}
+
+.propiedades-propietario__overview {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 486px;
+  gap: 27px;
+  align-items: stretch;
+  margin-bottom: 17px;
+}
+
+.propiedades-propietario__hero {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  min-height: 110px;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  padding: 19px 25px;
+  border-radius: 21px;
+  background: #f7f9fc;
+}
+
+.propiedades-propietario__hero::after {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  width: 100%;
+  background: url("../../assets/fondoCasa.png") right center / cover no-repeat;
+  opacity: 0.4;
+  content: "";
+}
+
+.propiedades-propietario__hero h1 {
+  margin: 0 0 2px;
+  font-size: 31px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.propiedades-propietario__hero p {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.4;
+}
+
+.propiedades-propietario__summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: center;
+  gap: 9px 16px;
+}
+
+.propiedades-propietario__summary .pildora-resumen {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  min-height: 47px;
+  padding: 6px 12px;
+  border: 1px solid #cce9d5;
+  border-radius: 12px;
+  background: #effcf3;
+  box-shadow: 0 2px 4px #17235e14;
+}
+
+.propiedades-propietario__summary .pildora-resumen--danger {
+  border-color: #ffd3d6;
+  background: #ffe5e6;
+}
+
+.propiedades-propietario__summary .pildora-resumen--warning {
+  border-color: #f5dfb5;
+  background: #fff8ec;
+}
+
+.propiedades-propietario__summary .pildora-resumen:nth-child(3) {
+  background: #edf2ff;
+  border-color: #c8d6ff;
+}
+
+.propiedades-propietario__summary .pildora-resumen__icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 50%;
+  background: #21854b;
+}
+
+.propiedades-propietario__summary .pildora-resumen--danger .pildora-resumen__icon {
+  background: #bb3035;
+}
+
+.propiedades-propietario__summary .pildora-resumen--warning .pildora-resumen__icon {
+  background: #bc8617;
+}
+
+.propiedades-propietario__summary .pildora-resumen:nth-child(3) .pildora-resumen__icon {
+  background: #233a94;
+}
+
+.propiedades-propietario__summary .pildora-resumen__label {
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.propiedades-propietario__summary .pildora-resumen__value {
+  font-size: 20px;
+}
+
+.propiedades-propietario__layout {
+  display: grid;
+  flex: 1;
+  grid-template-columns: 375px minmax(400px, 1fr) minmax(330px, 0.9fr);
+  gap: 20px;
+  min-height: 488px;
+}
+
+.propiedades-propietario__list,
+.propiedades-propietario__detail,
+.propiedades-propietario__reportes {
+  min-width: 0;
+  border: 1px solid #dce6ef;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 2px 7px #17235e10;
+}
+
+.propiedades-propietario__list {
+  padding: 15px 6px;
+}
+
+.propiedades-propietario__list h2 {
+  margin: 0 0 14px;
+  padding-bottom: 3px;
+  text-align: center;
+  font-size: 27px;
+  font-weight: 600;
+  border-bottom: 2px solid #c8dff3;
+}
+
+.propiedades-propietario__propiedad {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  min-height: 49px;
+  padding: 0 17px;
+  border: 0;
+  border-radius: 10px;
+  background: #fff;
+  color: #17235e;
+  cursor: pointer;
+  font-size: 16px;
+  text-align: left;
+}
+
+.propiedades-propietario__propiedad.is-selected {
+  border-left: 6px solid #17235e;
+  background: #e1f0ff;
+}
+
+.propiedades-propietario__propiedad img {
+  width: 23px;
+  height: 23px;
+}
+
+.propiedades-propietario__detail {
+  padding: 16px 22px;
+}
+
+.propiedades-propietario__detail > header {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+}
+
+.propiedades-propietario__detail h2 {
+  margin: 0 0 11px;
+  font-size: 28px;
+}
+
+.propiedades-propietario__facts {
+  display: grid;
+  gap: 8px;
+}
+
+.propiedades-propietario__facts span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+}
+
+.propiedades-propietario__facts .propiedades-propietario__fact-icon {
+  display: grid;
+  flex: 0 0 25px;
+  place-items: center;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #e1efff;
+}
+
+.propiedades-propietario__facts .propiedades-propietario__fact-icon img {
+  width: 14px;
+  height: 14px;
+  padding: 0;
+  background: transparent;
+}
+
+.propiedades-propietario__facts--right {
+  min-width: 220px;
+  padding-top: 43px;
+}
+
+.propiedades-propietario__document {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 25px;
+  margin-top: 28px;
+}
+
+.propiedades-propietario__document > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  box-shadow: 0 6px 17px #17235e1e;
+}
+
+.propiedades-propietario__document > div {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  align-items: center;
+  column-gap: 10px;
+  width: min(315px, 100%);
+  min-height: 48px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: #f5f7f9;
+}
+
+.propiedades-propietario__document > div img {
+  grid-row: 1 / 3;
+  width: 24px;
+  height: 24px;
+}
+
+.propiedades-propietario__document strong {
+  font-size: 14px;
+}
+
+.propiedades-propietario__document small {
+  color: #627493;
+  font-size: 12px;
+}
+
+.propiedades-propietario__reportes {
+  padding: 14px 10px;
+}
+
+.propiedades-propietario__reportes > header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 8px 13px;
+}
+
+.propiedades-propietario__reportes > header img {
+  width: 23px;
+  height: 23px;
+}
+
+.propiedades-propietario__reportes h2 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.propiedades-propietario__reportes > header span {
+  margin-left: auto;
+  padding: 6px 10px;
+  border-radius: 15px;
+  background: #fff0df;
+  color: #8d4c21;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.propiedades-propietario__reportes > header .propiedades-propietario__pending {
+  margin-left: auto;
+}
+
+.propiedades-propietario__report {
+  display: block;
+  width: 100%;
+  margin: 0 0 10px;
+  padding: 12px;
+  border: 0;
+  border-radius: 7px;
+  background: #f7f8fa;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.propiedades-propietario__report-summary {
+  display: grid;
+  grid-template-columns: 62px minmax(0, 1fr) auto 17px;
+  grid-template-rows: auto auto;
+  align-items: center;
+  gap: 4px 10px;
+}
+
+.propiedades-propietario__report-dot {
+  grid-column: 3;
+  grid-row: 1;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #c52d36;
+}
+
+.propiedades-propietario__report-dot.is-warning {
+  background: #d38a16;
+}
+
+.propiedades-propietario__report strong {
+  grid-column: 2;
+  grid-row: 1;
+  font-size: 14px;
+}
+
+.propiedades-propietario__report small {
+  grid-column: 3;
+  grid-row: 1;
+  color: #71809a;
+  font-size: 11px;
+}
+
+.propiedades-propietario__report-chevron {
+  grid-column: 4;
+  grid-row: 1 / span 2;
+  width: 15px;
+  height: 15px;
+  object-fit: contain;
+  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg)
+    brightness(93%) contrast(99%);
+  transform: rotate(-90deg);
+  transition: transform 150ms ease;
+}
+
+.propiedades-propietario__report-chevron.is-open {
+  transform: rotate(0);
+}
+
+.propiedades-propietario__report-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 12px;
+  color: #596b8b;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.propiedades-propietario__report-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.propiedades-propietario__report-gallery img {
+  width: 100%;
+  height: 114px;
+  border-radius: 7px;
+  object-fit: cover;
+}
+
+.propiedades-propietario__report-propiedad {
+  font-weight: 650;
+}
+
+.propiedades-propietario__report-description {
+  font-weight: 600;
+}
+
+.propiedades-propietario__report-meta {
+  grid-column: 2 / 4;
+  grid-row: 2;
+  color: #71809a;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.propiedades-propietario__report-image {
+  display: block;
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  width: 62px;
+  height: 60px;
+  border-radius: 7px;
+  object-fit: cover;
+}
+
+.propiedades-propietario__icon {
+  display: block;
+  flex: 0 0 auto;
+  object-fit: contain;
+  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg)
+    brightness(93%) contrast(99%);
+}
+
+@media (max-width: 1260px) {
+  #propiedades-propietario {
+    padding: 22px;
+  }
+
+  .propiedades-propietario__overview {
+    grid-template-columns: minmax(0, 1fr) 400px;
+    gap: 17px;
+  }
+
+  .propiedades-propietario__layout {
+    grid-template-columns: 270px minmax(360px, 1fr);
+  }
+
+  .propiedades-propietario__reportes {
+    grid-column: 1 / -1;
+  }
+
+  .propiedades-propietario__report {
+    display: inline-block;
+    margin-right: 10px;
+    vertical-align: top;
+  }
+}
+
+@media (max-width: 860px) {
+  .propiedades-propietario__overview {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .propiedades-propietario__hero {
+    min-height: 125px;
+  }
+
+  .propiedades-propietario__summary {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .propiedades-propietario__summary .pildora-resumen {
+    grid-template-columns: 30px auto;
+    justify-content: center;
+    gap: 2px;
+    padding: 8px;
+    text-align: center;
+  }
+
+  .propiedades-propietario__summary .pildora-resumen__label {
+    display: none;
+  }
+
+  .propiedades-propietario__summary .pildora-resumen__value {
+    font-size: 18px;
+    min-width: 0;
+    padding-left: 0;
+    border-left: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  #propiedades-propietario {
+    padding: 14px;
+  }
+
+  .propiedades-propietario__hero h1 {
+    font-size: 27px;
+  }
+
+  .propiedades-propietario__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .propiedades-propietario__reportes {
+    grid-column: auto;
+  }
+
+  .propiedades-propietario__report {
+    display: block;
+    width: auto;
+    margin-right: 0;
+  }
+
+  .propiedades-propietario__detail > header {
+    flex-direction: column;
+  }
+
+  .propiedades-propietario__facts--right {
+    min-width: 0;
+    padding-top: 0;
+  }
+
+  .propiedades-propietario__document > img {
+    width: 80%;
+  }
+}
+
+@media (max-width: 560px) {
+  .propiedades-propietario__overview {
+    gap: 6px;
+  }
+
+  .propiedades-propietario__hero {
+    min-height: 68px;
+    padding: 12px 16px;
+    border-radius: 11px;
+  }
+
+  .propiedades-propietario__hero h1 {
+    font-size: 20px;
+  }
+
+  .propiedades-propietario__hero p {
+    font-size: 12px;
+  }
+
+  .propiedades-propietario__summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .propiedades-propietario__summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .propiedades-propietario__summary .pildora-resumen {
+    min-height: 43px;
+  }
+
+  .propiedades-propietario__detail {
+    padding: 15px;
+  }
+
+  .propiedades-propietario__detail h2 {
+    font-size: 23px;
+  }
+
+  .propiedades-propietario__facts span {
+    font-size: 14px;
+  }
+}
+
+.propiedades-propietario__layout {
+  position: relative;
+}
+
+.propiedades-propietario__propiedad-select {
+  display: none;
+}
+
+.propiedades-propietario__propiedad-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  height: 46px;
+  padding: 0 14px;
+  border: 2px solid #e3edf5;
+  border-radius: 10px;
+  background: #fff;
+  color: #17235e;
+  cursor: pointer;
+}
+
+.propiedades-propietario__propiedad-trigger .select-control__chevron {
+  width: 16px;
+  height: 16px;
+  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg)
+    brightness(93%) contrast(99%);
+}
+
+.propiedades-propietario__report-summary {
+  grid-template-columns: 62px minmax(0, 1fr) 9px auto 17px;
+}
+
+.propiedades-propietario__report-image {
+  display: block;
+}
+
+.propiedades-propietario__report-summary .propiedades-propietario__report-dot {
+  grid-column: 3;
+}
+
+.propiedades-propietario__report-summary strong {
+  grid-column: 2;
+}
+
+.propiedades-propietario__report-summary small {
+  grid-column: 4;
+}
+
+.propiedades-propietario__report-chevron {
+  grid-column: 5;
+  grid-row: 1 / span 2;
+}
+
+.propiedades-propietario__summary .pildora-resumen__icon img {
+  display: block;
+  width: 13px;
+  height: 13px;
+  margin: 0;
+  padding: 0;
+  object-fit: contain;
+  object-position: center;
+}
+
+@media (max-width: 760px) {
+  .propiedades-propietario__list h2,
+  .propiedades-propietario__propiedad {
+    display: none;
+  }
+
+  .propiedades-propietario__list {
+    padding: 12px;
+  }
+
+  .propiedades-propietario__propiedad-select {
+    display: block;
+  }
+
+  .propiedades-propietario__report-summary {
+    grid-template-columns: 58px minmax(0, 1fr) 9px auto 17px;
+    gap: 8px;
+  }
+
+  .propiedades-propietario__report-image {
+    display: block;
+    grid-row: 1 / span 2;
+    width: 58px;
+    height: 58px;
+    border-radius: 7px;
+    object-fit: cover;
+  }
+
+  .propiedades-propietario__report-summary strong,
+  .propiedades-propietario__report-summary small {
+    grid-column: 2;
+  }
+
+  .propiedades-propietario__report-summary .propiedades-propietario__report-dot {
+    grid-column: 3;
+  }
+
+  .propiedades-propietario__report-summary small {
+    grid-column: 4;
+  }
+
+  .propiedades-propietario__report-chevron {
+    grid-column: 5;
+    grid-row: 1 / span 2;
+  }
+
+  .propiedades-propietario__report-detail {
+    margin-left: 0;
+  }
+
+  .propiedades-propietario__report-meta {
+    grid-column: 2 / 5;
+  }
+
+  .propiedades-propietario__report-gallery img {
+    height: 88px;
+  }
+}
+.propiedades-propietario__message { margin: 14px; color: #42516d; }
+.propiedades-propietario__download { border: 0; background: transparent; color: #1766a6; text-decoration: underline; cursor: pointer; }

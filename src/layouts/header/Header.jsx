@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { ModalOverlay, NotificationPanel } from "../../components";
+import { CapaModal, PanelNotificaciones } from "../../components";
 import {
   barsIcon as menuIcon,
   bellIcon,
@@ -8,7 +8,7 @@ import {
   xIcon as closeIcon,
 } from "../../assets/icons";
 import brandLogo from "../../assets/logoAGI.png";
-import { accountRoleFor, allItems, isItemActive, pageLabels } from "../navigation";
+import { rolCuentaParaRuta, todosLosElementos, elementoActivo, etiquetasPagina } from "../navegacion";
 import { api } from "../../services/api.js";
 import initials from "../../utils/initials.js";
 import "./Header.css";
@@ -16,7 +16,7 @@ import "./Header.css";
 export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
   const [pathname] = useLocation();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const [user, setUser] = useState(() => api.getSession()?.usuario);
+  const [user, setUser] = useState(() => api.obtenerSesion()?.usuario);
   const [photoLoadError, setPhotoLoadError] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [notificationsLoading, setNotificationsLoading] = useState(false);
@@ -28,7 +28,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
     const requestId = ++notificationsRequest.current;
     setNotificationsLoading(true);
     try {
-      const items = await api.notifications();
+      const items = await api.notificaciones();
       if (requestId !== notificationsRequest.current) return;
       setNotifications(Array.isArray(items) ? items : []);
       setNotificationsError("");
@@ -41,7 +41,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
 
   useEffect(() => {
     const syncUser = () => {
-      const nextUser = api.getSession()?.usuario;
+      const nextUser = api.obtenerSesion()?.usuario;
       const nextIdentity = `${nextUser?.id}:${nextUser?.rol}`;
       if (nextIdentity !== notificationsIdentity.current) {
         notificationsIdentity.current = nextIdentity;
@@ -59,13 +59,13 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
 
   useEffect(() => {
     let active = true;
-    const initialSession = api.getSession();
+    const initialSession = api.obtenerSesion();
     const userId = initialSession?.usuario?.id;
     if (!initialSession?.token || userId == null) return undefined;
 
-    api.profile().then((profile) => {
+    api.perfil().then((profile) => {
       if (!active) return;
-      const currentSession = api.getSession();
+      const currentSession = api.obtenerSesion();
       if (
         !currentSession?.token ||
         String(currentSession.usuario?.id) !== String(userId)
@@ -83,7 +83,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
         updatedUser.apellido !== currentUser.apellido ||
         updatedUser.urlFotoPerfil !== currentUser.urlFotoPerfil
       ) {
-        api.saveSession({ ...currentSession, usuario: updatedUser });
+        api.guardarSesion({ ...currentSession, usuario: updatedUser });
       }
     }).catch(() => {
       // El header conserva el nombre y las iniciales aunque el perfil no esté disponible.
@@ -114,7 +114,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
     notificationsRequest.current += 1;
     setNotificationsLoading(false);
     try {
-      const updated = await api.markNotificationRead(id);
+      const updated = await api.marcarNotificacionLeida(id);
       if (!updated) throw new Error("La notificación no se pudo marcar como leída.");
       setNotifications((items) => items.map((item) =>
         item.id === id ? { ...item, leida: true } : item,
@@ -130,7 +130,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
     if (!unread.length) return;
     notificationsRequest.current += 1;
     setNotificationsLoading(false);
-    const results = await Promise.allSettled(unread.map((item) => api.markNotificationRead(item.id)));
+    const results = await Promise.allSettled(unread.map((item) => api.marcarNotificacionLeida(item.id)));
     const updatedIds = new Set(unread.filter((_, index) =>
       results[index].status === "fulfilled" && results[index].value,
     ).map((item) => item.id));
@@ -139,22 +139,22 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
     ));
     setNotificationsError(updatedIds.size === unread.length ? "" : "Algunas notificaciones no se pudieron marcar como leídas.");
   };
-  const currentItem = allItems.find(({ href }) => isItemActive(pathname, href));
-  const isPayments = pathname === "/payments" || pathname.startsWith("/payments/");
+  const currentItem = todosLosElementos.find(({ href }) => elementoActivo(pathname, href));
+  const isPayments = pathname === "/pagos" || pathname.startsWith("/pagos/");
   const isProperties =
-    pathname === "/properties" ||
-    pathname.startsWith("/properties/") ||
-    pathname === "/property" ||
-    pathname.startsWith("/property/");
+    pathname === "/propiedades" ||
+    pathname.startsWith("/propiedades/") ||
+    pathname === "/propiedad" ||
+    pathname.startsWith("/propiedad/");
   const isPaymentsAndCollections =
-    pathname === "/payments-collections" || pathname.startsWith("/payments-collections/");
+    pathname === "/pagos-cobros" || pathname.startsWith("/pagos-cobros/");
   const isOwnerDashboard =
-    pathname === "/owner-dashboard" || pathname === "/my-properties" || pathname === "/collections";
+    pathname === "/dashboard-propietario" || pathname === "/mis-propiedades" || pathname === "/cobros";
   const isAdminDashboard =
     pathname === "/admin-dashboard" || pathname === "/super-admin" || pathname === "/indec";
   const isSuperAdmin = pathname === "/super-admin";
   const isChat = pathname === "/chat";
-  const accountRole = accountRoleFor(pathname);
+  const accountRole = rolCuentaParaRuta(pathname);
   const roleName =
     { 1: "Super admin", 2: "Administrador", 3: "Agente", 4: "Propietario", 5: "Inquilino" }[
     user?.rol
@@ -165,20 +165,20 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
   const userInitials = initials(user?.nombre, user?.apellido);
   const currentLabel = isPayments
     ? "Zona de pago"
-    : pathname.startsWith("/property/")
+    : pathname.startsWith("/propiedad/")
       ? "Propiedad"
-      : (currentItem?.breadcrumbLabel ?? currentItem?.label ?? pageLabels[pathname] ?? "Dashboard");
+      : (currentItem?.etiquetaRuta ?? currentItem?.etiqueta ?? etiquetasPagina[pathname] ?? "Dashboard");
   const searchPlaceholder = isPaymentsAndCollections
     ? "Buscar propietario/locatario"
     : isProperties
       ? "Buscar propiedades..."
       : "Buscar contacto...";
   const showSearch =
-    isPaymentsAndCollections || pathname === "/properties" || pathname === "/professional";
+    isPaymentsAndCollections || pathname === "/propiedades" || pathname === "/profesionales";
 
   return (
     <header
-      className={`navbar__header${isPayments ? " navbar__header--payments" : ""}${isOwnerDashboard ? " navbar__header--dashboard-owner" : ""}${isAdminDashboard ? " navbar__header--dashboard" : ""}${isChat ? " navbar__header--chat" : ""}${isSuperAdmin ? " navbar__header--super-admin" : ""}`}
+      className={`navbar__header${isPayments ? " navbar__header--pagos" : ""}${isOwnerDashboard ? " navbar__header--dashboard-owner" : ""}${isAdminDashboard ? " navbar__header--dashboard" : ""}${isChat ? " navbar__header--chat" : ""}${isSuperAdmin ? " navbar__header--super-admin" : ""}`}
     >
       <button
         className="navbar__menu-button"
@@ -202,7 +202,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
       </Link>
 
       <nav className="navbar__breadcrumb" aria-label="Ubicación actual">
-        <Link href="/properties">Propiedades</Link>
+        <Link href="/propiedades">Propiedades</Link>
         <span aria-current="page">{currentLabel}</span>
       </nav>
 
@@ -217,7 +217,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
               isProperties
                 ? (event) =>
                   window.dispatchEvent(
-                    new CustomEvent("property-search", { detail: event.target.value }),
+                    new CustomEvent("propiedad-search", { detail: event.target.value }),
                   )
                 : undefined
             }
@@ -241,7 +241,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
           </div>
         )}
         <Link
-          href="/profile"
+          href="/perfil"
           className="navbar__account-link"
           aria-label={`Mi perfil: ${accountName}`}
           title="Mi perfil"
@@ -253,7 +253,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
           {user?.urlFotoPerfil && !photoLoadError ? (
             <img
               className="navbar__account-avatar navbar__account-avatar--photo"
-              src={api.assetUrl(user.urlFotoPerfil)}
+              src={api.urlRecurso(user.urlFotoPerfil)}
               alt=""
               onError={() => setPhotoLoadError(true)}
             />
@@ -264,13 +264,13 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
           )}
         </Link>
       </aside>
-      <ModalOverlay
+      <CapaModal
         abierto={notificationsOpen}
         onCerrar={() => setNotificationsOpen(false)}
         posicion="derecha"
         etiqueta="Notificaciones"
       >
-        <NotificationPanel
+        <PanelNotificaciones
           notificaciones={notifications}
           cargando={notificationsLoading}
           error={notificationsError}
@@ -279,7 +279,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
           onMarcarTodas={markAllNotificationsRead}
           onCerrar={() => setNotificationsOpen(false)}
         />
-      </ModalOverlay>
+      </CapaModal>
     </header>
   );
 }

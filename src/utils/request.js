@@ -1,5 +1,5 @@
 import axios from "axios";
-import { clearSession, getSession } from "../services/login.js";
+import { limpiarSesion, obtenerSesion } from "../services/login.js";
 
 export const apiBase = (import.meta.env.VITE_API_URL || "/api").replace(/\/$/, "");
 export const http = axios.create({ baseURL: apiBase });
@@ -7,7 +7,7 @@ export const http = axios.create({ baseURL: apiBase });
 export async function request(path, { method = "GET", body, auth = true } = {}) {
   const headers = {};
   if (auth) {
-    const token = getSession()?.token;
+    const token = obtenerSesion()?.token;
     if (token) headers.Authorization = `Bearer ${token}`;
   }
   try {
@@ -24,7 +24,7 @@ export async function request(path, { method = "GET", body, auth = true } = {}) 
   } catch (error) {
     const status = error.response?.status;
     if (status === 401 && auth) {
-      clearSession();
+      limpiarSesion();
       window.location.assign("/login");
     }
     if (error instanceof Error && !axios.isAxiosError(error)) throw error;

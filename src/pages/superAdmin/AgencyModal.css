@@ -1,4 +1,4 @@
-.management-modal--agency {
+.gestion-modal--inmobiliaria {
   padding-bottom: 17px;
 }
 
@@ -16,7 +16,7 @@
   padding: 12px 15px 30px;
 }
 
-.agency-modal__field .management-modal__label {
+.agency-modal__field .gestion-modal__label {
   text-align: center;
 }
 

@@ -1,37 +1,37 @@
-export { default as ActivityCard } from "./activityCard/ActivityCard";
-export { default as Brand } from "./brand/Brand";
-export { default as Button } from "./button/Button";
-export { default as ConfirmDeleteModal } from "./confirmDelete/ConfirmDeleteModal";
-export { default as EntityActions } from "./entityActions/EntityActions";
+export { default as TarjetaActividad } from "./tarjetaActividad/TarjetaActividad";
+export { default as Marca } from "./marca/Marca";
+export { default as Boton } from "./boton/Boton";
+export { default as ConfirmarEliminacionModal } from "./confirmarEliminacion/ConfirmarEliminacionModal";
+export { default as AccionesEntidad } from "./accionesEntidad/AccionesEntidad";
 export { default as Footer } from "./footer/Footer";
-export { default as GoogleSignIn } from "./googleSignIn/GoogleSignIn";
-export { Icon } from "./home/HomeIcon";
-export { default as ImagePanel } from "./imagePanel/ImagePanel";
-export { default as LandingNav } from "./landingNav/LandingNav";
-export { default as LegalText } from "./legalText/LegalText";
+export { default as AccesoGoogle } from "./accesoGoogle/AccesoGoogle";
+export { Icono } from "./inicio/IconoInicio";
+export { default as PanelImagen } from "./panelImagen/PanelImagen";
+export { default as NavegacionPortada } from "./navegacionPortada/NavegacionPortada";
+export { default as TextoLegal } from "./textoLegal/TextoLegal";
 export {
-  default as ManagementModal,
-  ModalActions,
-  ModalField,
-  ModalInput,
+  default as GestionModal,
+  AccionesModal,
+  CampoModal,
+  EntradaModal,
   ModalSelect,
-} from "./managementModal/ManagementModal";
-export { default as ModalOverlay } from "./modalOverlay/ModalOverlay";
+} from "./gestionModal/GestionModal";
+export { default as CapaModal } from "./capaModal/CapaModal";
 export { default as Navbar } from "./navbar/Navbar";
-export { default as NotificationPanel } from "./notificationPanel/NotificationPanel";
-export { default as Pagination } from "./pagination/Pagination";
-export { usePagination, PAGE_SIZE, PROPERTY_PAGE_SIZE } from "./pagination/usePagination";
-export { default as PerformanceCard } from "./performanceCard/PerformanceCard";
-export { default as PrimaryButton } from "./primaryButton/PrimaryButton";
-export { default as PropertyActions } from "./property/PropertyActions";
-export { default as PropertyModal } from "./property/PropertyModal";
-export { default as PropertyCardSimple } from "./propertyCardSimple/PropertyCardSimple";
-export { default as SectionTitle } from "./sectionTitle/SectionTitle";
-export { default as DropdownSelect } from "./select/DropdownSelect";
+export { default as PanelNotificaciones } from "./panelNotificaciones/PanelNotificaciones";
+export { default as Paginacion } from "./paginacion/Paginacion";
+export { usePaginacion, PAGE_SIZE, PROPERTY_PAGE_SIZE } from "./paginacion/usePaginacion";
+export { default as TarjetaRendimiento } from "./tarjetaRendimiento/TarjetaRendimiento";
+export { default as BotonPrincipal } from "./botonPrincipal/BotonPrincipal";
+export { default as AccionesPropiedad } from "./propiedad/AccionesPropiedad";
+export { default as PropiedadModal } from "./propiedad/PropiedadModal";
+export { default as TarjetaPropiedadSimple } from "./tarjetaPropiedadSimple/TarjetaPropiedadSimple";
+export { default as TituloSeccion } from "./tituloSeccion/TituloSeccion";
+export { default as SelectDesplegable } from "./select/SelectDesplegable";
 export { default as Skeleton } from "./skeleton/Skeleton";
-export { default as Statistics } from "./statistics/Statistics";
-export { default as SummaryPill } from "./summaryPill/SummaryPill";
-export { default as TextField } from "./textField/TextField";
-export { default as Toast } from "./toast/Toast";
-export { default as ToastContainer } from "./toast/ToastContainer";
-export { mostrarToast, quitarToast } from "./toast/toastStore";
+export { default as Estadisticas } from "./estadisticas/Estadisticas";
+export { default as PildoraResumen } from "./pildoraResumen/PildoraResumen";
+export { default as CampoTexto } from "./campoTexto/CampoTexto";
+export { default as Aviso } from "./avisos/Aviso";
+export { default as ContenedorAvisos } from "./avisos/ContenedorAvisos";
+export { mostrarAviso, quitarAviso } from "./avisos/almacenAvisos";

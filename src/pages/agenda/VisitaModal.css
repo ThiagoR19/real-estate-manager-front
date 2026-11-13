@@ -1,0 +1,135 @@
+.visita-modal__summary {
+  justify-content: space-between;
+  min-height: 52px;
+  padding: 5px 10px;
+}
+
+.visita-modal__summary .visita-modal__section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  color: #17235e;
+  font-size: 16px;
+}
+
+.visita-modal__section-title > span {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #e0f0fc;
+  font-size: 20px;
+}
+
+.visita-modal__date {
+  width: 265px;
+  max-width: 100%;
+}
+
+.visita-modal__date .gestion-modal__input-wrap {
+  height: 42px;
+}
+
+.visita-modal__fields {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  padding: 14px 18px 22px;
+}
+
+.visita-modal__time-row {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.visita-modal__error {
+  grid-column: 1 / -1;
+  margin: -6px 0 0;
+  color: #b8212d;
+  font-size: 12px;
+}
+
+.visita-modal .gestion-modal__actions {
+  padding-top: 22px;
+}
+
+@media (max-width: 650px) {
+  .visita-modal__summary {
+    align-items: center;
+    flex-direction: row;
+    gap: 8px;
+    min-height: 54px;
+    padding: 5px 10px;
+  }
+
+  .visita-modal__date {
+    width: 155px;
+    min-width: 0;
+  }
+
+  .visita-modal__date .gestion-modal__input-wrap {
+    padding-inline: 9px;
+  }
+  .visita-modal__date input {
+    font-size: 12px;
+  }
+
+  .visita-modal__fields {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    align-content: start;
+    padding: 14px 12px 20px;
+  }
+
+  .visita-modal__time-row {
+    grid-column: 1;
+    gap: 8px;
+  }
+
+  .visita-modal__time-row .gestion-modal__input-wrap {
+    gap: 5px;
+    padding-inline: 7px;
+  }
+
+  .visita-modal__time-row .gestion-modal__input-wrap > img {
+    width: 14px;
+    height: 14px;
+  }
+
+  .visita-modal__time-row input {
+    font-size: 12px;
+  }
+
+  .visita-modal__time-row .gestion-modal__label {
+    font-size: 12px;
+  }
+
+  .visita-modal .gestion-modal__actions {
+    padding-top: 18px;
+  }
+}
+
+@media (max-width: 370px) {
+  .visita-modal__fields {
+    padding-inline: 8px;
+  }
+  .visita-modal__summary .visita-modal__section-title {
+    gap: 7px;
+    font-size: 15px;
+  }
+  .visita-modal__date {
+    width: 140px;
+  }
+  .visita-modal__time-row .gestion-modal__input-wrap > img {
+    display: none;
+  }
+}
+.visita-modal__select-wrap { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 42px; padding: 0 10px; border: 1px solid #cdd8e6; border-radius: 8px; }
+.visita-modal__select-wrap img { width: 18px; height: 18px; }
+.visita-modal__select-wrap select { flex: 1; min-width: 0; border: 0; background: transparent; font: inherit; color: #17235e; }
+.visita-modal__reason { width: 100%; min-height: 72px; padding: 8px; border: 1px solid #cdd8e6; border-radius: 8px; font: inherit; }
+.visita-modal__new-client { display: grid; gap: 8px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.visita-modal__new-client input, .visita-modal__new-client select { width: 100%; min-height: 38px; border: 1px solid #cdd8e6; border-radius: 8px; padding: 6px; font: inherit; }

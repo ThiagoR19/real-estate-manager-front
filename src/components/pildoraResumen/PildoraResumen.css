@@ -1,0 +1,111 @@
+.pildora-resumen {
+  --pill-color: #142057;
+  --pill-ring: #7892e4;
+  --pill-bg: #f2f6ff;
+  --pill-border: #d6e1fc;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  min-height: 47px;
+  padding: 6px 15px;
+  border: 1px solid var(--pill-border);
+  border-radius: 12px;
+  background: var(--pill-bg);
+  box-shadow: 0 2px 3px #14205726;
+  color: #101a35;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+}
+.pildora-resumen--danger {
+  --pill-color: #991b1b;
+  --pill-ring: #ed9292;
+  --pill-bg: #fee2e2;
+  --pill-border: #fecaca;
+}
+.pildora-resumen--warning {
+  --pill-color: #b47c15;
+  --pill-ring: #e6c077;
+  --pill-bg: #fffaf1;
+  --pill-border: #f8e9cd;
+}
+.pildora-resumen--success {
+  --pill-color: #166534;
+  --pill-ring: #83cca0;
+  --pill-bg: #f2fbf5;
+  --pill-border: #d3efde;
+}
+.pildora-resumen__icon {
+  display: grid;
+  place-items: center;
+  width: 33px;
+  height: 33px;
+  border: 3px solid var(--pill-ring);
+  border-radius: 50%;
+  background: var(--pill-color);
+}
+.pildora-resumen .pildora-resumen__icon img {
+  width: 13px;
+  height: 13px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  object-fit: contain;
+  filter: brightness(0) invert(1) !important;
+}
+.pildora-resumen__label {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.15;
+}
+.pildora-resumen .pildora-resumen__value {
+  min-width: 36px;
+  padding-left: 12px;
+  border-left: 1px solid color-mix(in srgb, var(--pill-color) 25%, transparent);
+  color: var(--pill-color);
+  font-size: 21px;
+  font-weight: 400;
+  line-height: 1.1;
+  text-align: center;
+}
+@media (max-width: 860px) {
+  .inquilinos__overview .inquilinos__summary,
+  .propietarios__overview .propietarios__summary,
+  .agentes__overview .agentes__summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 560px) {
+  .inquilinos__overview .inquilinos__summary,
+  .propietarios__overview .propietarios__summary,
+  .agentes__overview .agentes__summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  :is(.inquilinos__summary, .propietarios__summary, .agentes__summary) .pildora-resumen {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    min-height: 40px;
+    padding: 6px 12px;
+    border-radius: 11px;
+  }
+  :is(.inquilinos__summary, .propietarios__summary, .agentes__summary) .pildora-resumen__label {
+    display: none;
+  }
+  :is(.inquilinos__summary, .propietarios__summary, .agentes__summary) .pildora-resumen__icon {
+    width: 20px;
+    height: 20px;
+    border-width: 2px;
+  }
+  :is(.inquilinos__summary, .propietarios__summary, .agentes__summary) .pildora-resumen__icon img {
+    width: 10px;
+    height: 10px;
+  }
+  :is(.inquilinos__summary, .propietarios__summary, .agentes__summary) .pildora-resumen__value {
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    font-size: 20px;
+  }
+}

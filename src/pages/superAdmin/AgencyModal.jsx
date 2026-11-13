@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { addressCardIcon, buildingColumnsIcon, envelopeIcon, trashCanIcon, userIcon } from "../../assets/icons";
-import { ManagementModal, ModalActions, ModalField, ModalInput } from "../../components";
+import { GestionModal, AccionesModal, CampoModal, EntradaModal } from "../../components";
 import "./AgencyModal.css";
 
 const adminVacio = { nombre: "", apellido: "", dni: "", correo: "" };
@@ -37,7 +37,7 @@ export default function AgencyModal({ mode = "create", agency, onClose, onSubmit
   }
 
   return (
-    <ManagementModal
+    <GestionModal
       title={title}
       subtitle={
         isAdmin
@@ -45,11 +45,11 @@ export default function AgencyModal({ mode = "create", agency, onClose, onSubmit
           : "Ingrese la info básica de la inmobiliaria"
       }
       onClose={onClose}
-      variant="agency"
+      variant="inmobiliaria"
     >
       <form onSubmit={handleSubmit}>
-        <div className="management-modal__card agency-modal__card">
-          <div className="management-modal__summary agency-modal__band" aria-hidden="true" />
+        <div className="gestion-modal__card agency-modal__card">
+          <div className="gestion-modal__summary agency-modal__band" aria-hidden="true" />
           {isEditing && onDelete && (
             <button
               className="super-admin__delete agency-modal__delete"
@@ -62,14 +62,14 @@ export default function AgencyModal({ mode = "create", agency, onClose, onSubmit
           )}
           {isAdmin ? (
             <div className="agency-modal__fields">
-              <ModalField label="Nombre">
-                <ModalInput icon={userIcon} name="nombre" value={admin.nombre} onChange={cambiarAdmin} placeholder="Nombre" maxLength={255} required autoComplete="off" />
-              </ModalField>
-              <ModalField label="Apellido">
-                <ModalInput icon={userIcon} name="apellido" value={admin.apellido} onChange={cambiarAdmin} placeholder="Apellido" maxLength={255} required autoComplete="off" />
-              </ModalField>
-              <ModalField label="DNI">
-                <ModalInput
+              <CampoModal label="Nombre">
+                <EntradaModal icon={userIcon} name="nombre" value={admin.nombre} onChange={cambiarAdmin} placeholder="Nombre" maxLength={255} required autoComplete="off" />
+              </CampoModal>
+              <CampoModal label="Apellido">
+                <EntradaModal icon={userIcon} name="apellido" value={admin.apellido} onChange={cambiarAdmin} placeholder="Apellido" maxLength={255} required autoComplete="off" />
+              </CampoModal>
+              <CampoModal label="DNI">
+                <EntradaModal
                   icon={addressCardIcon}
                   name="dni"
                   value={admin.dni}
@@ -82,15 +82,15 @@ export default function AgencyModal({ mode = "create", agency, onClose, onSubmit
                   autoComplete="off"
                   required
                 />
-              </ModalField>
-              <ModalField label="Correo (opcional)">
-                <ModalInput icon={envelopeIcon} type="email" name="correo" value={admin.correo} onChange={cambiarAdmin} placeholder="correo@ejemplo.com" maxLength={255} autoComplete="off" />
-              </ModalField>
+              </CampoModal>
+              <CampoModal label="Correo (opcional)">
+                <EntradaModal icon={envelopeIcon} type="email" name="correo" value={admin.correo} onChange={cambiarAdmin} placeholder="correo@ejemplo.com" maxLength={255} autoComplete="off" />
+              </CampoModal>
             </div>
           ) : (
             <div className="agency-modal__field">
-              <ModalField label="Nombre de inmobiliaria">
-                <ModalInput
+              <CampoModal label="Nombre de inmobiliaria">
+                <EntradaModal
                   icon={buildingColumnsIcon}
                   name="agencyName"
                   value={value}
@@ -100,17 +100,17 @@ export default function AgencyModal({ mode = "create", agency, onClose, onSubmit
                   required
                   autoComplete="off"
                 />
-              </ModalField>
+              </CampoModal>
             </div>
           )}
         </div>
-        <ModalActions
+        <AccionesModal
           onClose={onClose}
           submitText={
             isAdmin ? "Agregar admin" : isEditing ? "Guardar cambios" : "Crear inmobiliaria"
           }
         />
       </form>
-    </ManagementModal>
+    </GestionModal>
   );
 }

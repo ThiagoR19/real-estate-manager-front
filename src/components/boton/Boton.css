@@ -1,0 +1,33 @@
+.boton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 15px;
+  background: linear-gradient(to right, #001a48, #003fae);
+  color: white;
+  font: inherit;
+  font-weight: bold;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.boton__icon {
+  flex-shrink: 0;
+  height: 16px;
+  width: 16px;
+  object-fit: contain;
+  filter: brightness(0) invert(1) !important;
+}
+
+.boton:focus-visible {
+  outline: 2px solid #2178c4;
+  outline-offset: 3px;
+}
+
+.boton:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}

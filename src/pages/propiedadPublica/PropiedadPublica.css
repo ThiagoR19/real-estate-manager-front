@@ -1,0 +1,813 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap");
+
+.propiedad-publica {
+  --ink: #182866;
+  --muted: #7b89a7;
+  min-height: 100dvh;
+  background: #f3faff;
+  color: var(--ink);
+  font-family: "DM Sans", Arial, sans-serif;
+}
+
+.propiedad-publica *,
+.propiedad-publica *::before,
+.propiedad-publica *::after {
+  box-sizing: border-box;
+}
+
+.propiedad-publica a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.propiedad-publica button,
+.propiedad-publica input {
+  font: inherit;
+}
+
+.propiedad-publica button {
+  border: 0;
+  cursor: pointer;
+}
+
+.propiedad-publica .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.propiedad-publica__header {
+  min-height: 78px;
+  display: flex;
+  align-items: center;
+  gap: 34px;
+  padding: 0 28px;
+  background: #fff;
+  border-bottom: 1px solid #dfe5ec;
+  box-shadow: 0 2px 4px rgba(24, 40, 102, 0.12);
+}
+
+.propiedad-publica__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 184px;
+  color: #080808;
+}
+
+.propiedad-publica__brand > img {
+  display: block;
+  width: 136px;
+  height: 44px;
+  object-fit: contain;
+}
+
+.propiedad-publica__brand-mark {
+  width: 38px;
+  height: 43px;
+  display: inline-block;
+  position: relative;
+  transform: skew(-10deg);
+}
+
+.propiedad-publica__brand-mark::before,
+.propiedad-publica__brand-mark::after,
+.propiedad-publica__brand-mark span {
+  content: "";
+  position: absolute;
+  display: block;
+  border-radius: 99px 8px 99px 8px;
+}
+
+.propiedad-publica__brand-mark::before {
+  width: 9px;
+  height: 43px;
+  left: 11px;
+  top: 0;
+  background: #168dc8;
+  transform: rotate(-42deg);
+}
+
+.propiedad-publica__brand-mark::after {
+  width: 9px;
+  height: 32px;
+  left: 24px;
+  top: 6px;
+  background: #1750a3;
+  transform: rotate(48deg);
+}
+
+.propiedad-publica__brand-mark span:first-child {
+  width: 22px;
+  height: 8px;
+  left: 7px;
+  top: 26px;
+  background: #1e5fae;
+  transform: rotate(-14deg);
+}
+
+.propiedad-publica__brand-copy {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+  letter-spacing: 0.08em;
+}
+
+.propiedad-publica__brand-copy strong {
+  font-size: 25px;
+  letter-spacing: 0.1em;
+}
+
+.propiedad-publica__brand-copy small {
+  margin: 4px 0 0 10px;
+  font-size: 9px;
+  letter-spacing: 0.23em;
+}
+
+.propiedad-publica__nav {
+  display: flex;
+  align-self: stretch;
+  align-items: center;
+  gap: 34px;
+  flex: 1;
+  font-size: 13px;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+}
+
+.propiedad-publica__nav a {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  white-space: nowrap;
+}
+
+.propiedad-publica__nav a.is-active::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 5px;
+  border-radius: 4px 4px 0 0;
+  background: #08aed0;
+}
+
+.propiedad-publica__nav a:hover {
+  color: #0b6b9e;
+}
+
+.propiedad-publica__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 43px;
+}
+
+.propiedad-publica__quick-search {
+  width: 218px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+  border: 1px solid #e4eaf2;
+  border-radius: 18px;
+  color: var(--ink);
+}
+
+.propiedad-publica__quick-search input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.propiedad-publica__quick-search .icono-inicio {
+  width: 18px;
+}
+
+.propiedad-publica__login {
+  padding: 9px 20px;
+  border-radius: 20px;
+  background: #223e91;
+  color: #fff;
+  font-size: 12px;
+}
+
+.propiedad-publica .propiedad-publica__login {
+  color: #fff;
+}
+
+.propiedad-publica__login:hover {
+  background: #152e75;
+}
+
+.propiedad-publica__page {
+  max-width: 1520px;
+  margin: 15px auto;
+  padding: 4px 25px 23px;
+}
+
+.propiedad-publica__page > h1 {
+  margin: 0 0 15px;
+  color: var(--ink);
+  font-size: 30px;
+  line-height: 1.25;
+}
+
+.propiedad-publica__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.91fr) minmax(0, 1.09fr);
+  gap: 15px;
+  align-items: start;
+}
+
+.propiedad-publica__gallery-column {
+  min-width: 0;
+}
+
+.propiedad-publica__gallery-main {
+  position: relative;
+  height: clamp(280px, 31.2vw, 329px);
+  overflow: hidden;
+  border-radius: 10px;
+  background: #dce9f5;
+}
+
+.propiedad-publica__gallery-main > img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.propiedad-publica__gallery-arrow {
+  position: absolute;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  width: 41px;
+  height: 41px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--ink);
+  font:
+    39px/0.7 Georgia,
+    serif;
+  transform: translateY(-50%);
+  transition:
+    background-color 150ms ease,
+    transform 150ms ease;
+}
+
+.propiedad-publica__gallery-arrow:hover {
+  background: #e7f2ff;
+  transform: translateY(-50%) scale(1.04);
+}
+
+.propiedad-publica__gallery-arrow--previous {
+  left: 11px;
+  padding: 0 0 5px 1px;
+}
+
+.propiedad-publica__gallery-arrow--previous img {
+  height: 25px;
+  width: 25px;
+  transform: rotate(90deg) translate(3px, 1px);
+}
+
+.propiedad-publica__gallery-arrow--next img {
+  height: 25px;
+  width: 25px;
+  transform: rotate(-90deg) translate(-3px, 1px);
+}
+
+.propiedad-publica__gallery-arrow--next {
+  right: 12px;
+  padding: 0 0 5px 1px;
+}
+
+.propiedad-publica__gallery-counter {
+  position: absolute;
+  right: 11px;
+  bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 74px;
+  height: 31px;
+  padding: 0 10px;
+  border-radius: 7px;
+  background: #000000d9;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.propiedad-publica__icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg)
+    brightness(93%) contrast(99%);
+}
+
+.propiedad-publica__gallery-counter .propiedad-publica__icon {
+  width: 17px;
+  height: 17px;
+  filter: brightness(0) invert(1);
+}
+
+.propiedad-publica__thumbnails {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 11px;
+  margin-top: 10px;
+}
+
+.propiedad-publica__thumbnail {
+  height: clamp(78px, 8.8vw, 101px);
+  overflow: hidden;
+  padding: 0;
+  border: 3px solid transparent;
+  border-radius: 10px;
+  background: #e4edf6;
+}
+
+.propiedad-publica__thumbnail.is-active {
+  border-color: #0a60cc;
+}
+
+.propiedad-publica__thumbnail:hover:not(.is-active) {
+  border-color: #9ecdf2;
+}
+
+.propiedad-publica__thumbnail img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.propiedad-publica__stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 11px;
+  margin-top: 13px;
+}
+
+.propiedad-publica__stat-card {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  height: 60px;
+  padding: 7px 10px;
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(24, 40, 102, 0.04);
+}
+
+.propiedad-publica__stat-icon-wrap {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 35px;
+  height: 35px;
+  margin-right: 11px;
+  border-radius: 11px;
+  background: #e0efff;
+}
+
+.propiedad-publica__stat-icon-wrap .propiedad-publica__icon {
+  width: 20px;
+  height: 20px;
+}
+
+.propiedad-publica__stat-card strong {
+  min-width: 0;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.propiedad-publica__stat-value {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 35px;
+  height: 35px;
+  margin-left: auto;
+  border-radius: 50%;
+  background: #e0efff;
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.propiedad-publica__info-card {
+  padding: 17px 16px 0;
+  border: 2px solid #dfe8ef;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(24, 40, 102, 0.08);
+}
+
+.propiedad-publica__info-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.propiedad-publica__info-heading > strong {
+  color: #214198;
+  font-size: 49px;
+  line-height: 1;
+}
+
+.propiedad-publica__info-heading > button {
+  min-width: 212px;
+  height: 44px;
+  border-radius: 24px;
+  background: linear-gradient(to right, #001a48, #003fae);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.22);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.propiedad-publica__info-heading > small {
+  display: none;
+}
+
+.propiedad-publica__info-card h2 {
+  margin: 13px 0 10px;
+  color: var(--ink);
+  font-size: 21px;
+  line-height: 1.2;
+}
+
+.propiedad-publica__description {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.24;
+}
+
+.propiedad-publica__detail-row {
+  display: grid;
+  grid-template-columns: 27px 170px minmax(0, 1fr);
+  align-items: center;
+  min-height: 50px;
+  column-gap: 15px;
+  border-top: 2px solid #dcecff;
+  color: var(--ink);
+}
+
+.propiedad-publica__detail-row > .propiedad-publica__icon {
+  width: 21px;
+  height: 22px;
+  justify-self: center;
+}
+
+.propiedad-publica__detail-row strong {
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.propiedad-publica__detail-row span {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.propiedad-publica__contact {
+  display: flex;
+  align-items: center;
+  height: 42px;
+  gap: 10px;
+  padding: 0 14px;
+  border-radius: 11px;
+  background: #00c96b;
+  box-shadow: 0 4px 7px rgba(0, 0, 0, 0.18);
+  color: #fff;
+  font-size: 21px;
+  font-weight: bolder !important;
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+}
+
+.propiedad-publica__contact > span {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  font-size: 15px;
+}
+
+.propiedad-publica__contact:hover {
+  background: #00ad5b;
+}
+
+.propiedad-publica__contact-message {
+  min-height: 18px;
+  margin: 6px 0 0;
+  color: #087f4c;
+  font-size: 13px;
+  text-align: right;
+}
+
+@media (max-width: 1200px) {
+  .propiedad-publica__header {
+    gap: 18px;
+  }
+
+  .propiedad-publica__nav {
+    gap: 19px;
+  }
+
+  .propiedad-publica__header-actions {
+    gap: 15px;
+  }
+
+  .propiedad-publica__quick-search {
+    width: 175px;
+  }
+}
+
+@media (max-width: 1150px) {
+  .propiedad-publica__header {
+    flex-wrap: wrap;
+    gap: 0;
+    padding: 8px 10px 0;
+  }
+
+  .propiedad-publica__nav {
+    order: 3;
+    flex-basis: 100%;
+    min-height: 30px;
+    justify-content: center;
+  }
+
+  .propiedad-publica__header-actions {
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 1100px) {
+  .propiedad-publica__info-heading > strong {
+    font-size: 42px;
+  }
+
+  .propiedad-publica__info-heading > button {
+    min-width: 180px;
+  }
+}
+
+@media (max-width: 880px) {
+  .propiedad-publica__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .propiedad-publica__info-card {
+    min-height: 0;
+    padding-bottom: 1px;
+  }
+
+  .propiedad-publica__contact {
+    margin-top: 14px;
+  }
+}
+
+@media (max-width: 620px) {
+  .propiedad-publica {
+    background: #f8f9fa;
+  }
+
+  .propiedad-publica__header {
+    min-height: 78px;
+    gap: 0;
+    padding: 8px 10px 0;
+  }
+
+  .propiedad-publica__brand {
+    min-width: 0;
+  }
+
+  .propiedad-publica__brand > img {
+    width: 96px;
+    height: 35px;
+  }
+
+  .propiedad-publica__header-actions {
+    gap: 14px;
+    margin-left: auto;
+  }
+
+  .propiedad-publica__quick-search {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 5px;
+  }
+
+  .propiedad-publica__quick-search input {
+    display: none;
+  }
+
+  .propiedad-publica__login {
+    min-width: 84px;
+    padding: 8px 16px;
+    text-align: center;
+  }
+
+  .propiedad-publica__nav {
+    justify-content: space-evenly;
+    gap: 8px;
+    min-height: 30px;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+  }
+
+  .propiedad-publica__nav a.is-active::after {
+    height: 3px;
+  }
+
+  .propiedad-publica__page {
+    padding: 8px 15px 20px;
+  }
+
+  .propiedad-publica__page > h1 {
+    margin: 0 4px 9px;
+    font-size: 28px;
+  }
+
+  .propiedad-publica__layout {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .propiedad-publica__gallery-column {
+    display: contents;
+  }
+
+  .propiedad-publica__gallery {
+    order: 0;
+    width: calc(100% - 24px);
+    margin: 0 auto 20px;
+  }
+
+  .propiedad-publica__gallery-main {
+    height: auto;
+    aspect-ratio: 340 / 247;
+    border-radius: 9px;
+  }
+
+  .propiedad-publica .propiedad-publica__gallery-arrow {
+    width: 28px;
+    height: 36px;
+    background: transparent;
+    color: #fff;
+    font:
+      34px/1 Georgia,
+      serif;
+  }
+
+  .propiedad-publica__gallery-counter {
+    display: none;
+  }
+
+  .propiedad-publica__thumbnails {
+    gap: 10px;
+    margin-top: 5px;
+  }
+
+  .propiedad-publica .propiedad-publica__thumbnail {
+    height: auto;
+    aspect-ratio: 105 / 97;
+    border: 2px solid transparent;
+  }
+
+  .propiedad-publica .propiedad-publica__thumbnail.is-active {
+    border-color: #0a60cc;
+  }
+
+  .propiedad-publica__info-card {
+    order: 1;
+    width: 100%;
+    padding: 15px 15px 0;
+  }
+
+  .propiedad-publica__info-heading {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 2px 8px;
+    align-items: center;
+    margin: -15px -15px 16px;
+    padding: 13px 10px;
+    border-bottom: 1px solid #e8f0f6;
+  }
+
+  .propiedad-publica__info-heading > strong {
+    grid-column: 1;
+    font-size: 26px;
+  }
+
+  .propiedad-publica__info-heading > small {
+    display: block;
+    grid-column: 1;
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  .propiedad-publica__info-heading > button {
+    display: none;
+  }
+
+  .propiedad-publica__description {
+    line-height: 1.25;
+  }
+
+  .propiedad-publica__detail-row {
+    grid-template-columns: 27px minmax(0, 1fr) minmax(0, 0.8fr);
+    gap: 10px;
+    min-height: 52px;
+    padding-block: 13px;
+  }
+
+  .propiedad-publica__detail-row strong,
+  .propiedad-publica__detail-row span {
+    font-size: 14px;
+    white-space: normal;
+  }
+
+  .propiedad-publica__detail-row:last-child {
+    border-bottom: 0;
+  }
+
+  .propiedad-publica__stats {
+    order: 2;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    width: calc(100% - 68px);
+    margin: 36px auto 0;
+  }
+
+  .propiedad-publica__stat-card {
+    height: 68px;
+    padding: 8px 12px;
+  }
+
+  .propiedad-publica__stat-icon-wrap {
+    width: 55px;
+    height: 50px;
+    margin-right: 16px;
+  }
+
+  .propiedad-publica__stat-icon-wrap .propiedad-publica__icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .propiedad-publica__stat-card strong {
+    font-size: 14px;
+  }
+
+  .propiedad-publica__stat-value {
+    width: 49px;
+    height: 49px;
+    font-size: 20px;
+  }
+
+  .propiedad-publica__contact {
+    display: none;
+  }
+
+  .propiedad-publica__contact-message {
+    text-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .propiedad-publica__gallery-arrow {
+    transition: none;
+  }
+}

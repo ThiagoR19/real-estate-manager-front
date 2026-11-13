@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { angleDownIcon, clockIcon, plusIcon } from "../../assets/icons";
-import { Button } from "../../components";
-import IncreaseModal from "./IncreaseModal";
+import { Boton } from "../../components";
+import AumentoModal from "./AumentoModal";
 import "./Indec.css";
 import { api } from "../../services/api";
 
@@ -64,7 +64,7 @@ export default function Indec() {
     setLoading(true);
 
     try {
-      await api.createIndec({ anio, mes, porcentaje });
+      await api.crearIndec({ anio, mes, porcentaje });
       setYear(String(anio));
       setShowForm(false);
       setFeedback(`Porcentaje de ${month} ${anio} guardado.`);
@@ -110,7 +110,7 @@ export default function Indec() {
           <p>Tenga un registro de los porcentajes de aumento del indec</p>
         </header>
         <div className="indec__actions">
-          <Button
+          <Boton
             className="indec__new-button"
             icon={plusIcon}
             text="Nuevo porcentaje"
@@ -164,7 +164,7 @@ export default function Indec() {
         </p>
       )}
       {showForm && (
-        <IncreaseModal
+        <AumentoModal
           year={year}
           error={error}
           onClose={() => setShowForm(false)}

@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { buildingColumnsIcon, magnifyingGlassIcon, paperPlaneIcon, userIcon } from "../../assets/icons";
-import DropdownSelect from "../../components/select/DropdownSelect";
+import SelectDesplegable from "../../components/select/SelectDesplegable";
 import { api } from "../../services/api.js";
-import { getSession } from "../../services/login.js";
+import { obtenerSesion } from "../../services/login.js";
 import agiLogo from "../../assets/icons/agiLogo.svg";
 import "./Chat.css";
 
@@ -35,17 +35,17 @@ export default function Chat() {
   const endRef = useRef(null);
   const atBottomRef = useRef(true);
   const fileRef = useRef(null);
-  const session = getSession();
+  const session = obtenerSesion();
 
   async function refreshConversations() {
-    const rows = await api.conversations();
+    const rows = await api.conversaciones();
     setConversations(rows);
     setSelectedId((current) => current === 0 ? 0 : current && rows.some((row) => row.id === current) ? current : rows[0]?.id ?? null);
   }
 
   useEffect(() => {
     let active = true;
-    Promise.all([api.conversations(), api.chatContacts()])
+    Promise.all([api.conversaciones(), api.contactosChat()])
       .then(([rows, people]) => {
         if (!active) return;
         setConversations(rows);
@@ -55,7 +55,7 @@ export default function Chat() {
       .catch((cause) => { if (active) setError(cause.message); })
       .finally(() => { if (active) setLoading(false); });
     const interval = window.setInterval(() => {
-      api.conversations().then((rows) => {
+      api.conversaciones().then((rows) => {
         if (active) {
           setConversations(rows);
           setSelectedId((current) => current === 0 ? 0 : current && rows.some((row) => row.id === current) ? current : rows[0]?.id ?? null);
@@ -70,7 +70,7 @@ export default function Chat() {
     let active = true;
     async function refresh() {
       try {
-        const result = await api.chatMessages(selectedId);
+        const result = await api.mensajesChat(selectedId);
         if (!active) return;
         const recent = [...result.data].reverse();
         setMessages((current) => {
@@ -78,7 +78,7 @@ export default function Chat() {
           return [...current.filter((message) => !recentIds.has(message.id)), ...recent];
         });
         setHasMore(page < (result.paginacion?.paginas || 1));
-        await api.markChatRead(selectedId);
+        await api.marcarChatLeido(selectedId);
       } catch (cause) { if (active) setError(cause.message); }
     }
     refresh();
@@ -99,7 +99,7 @@ export default function Chat() {
   async function loadMore() {
     try {
       const next = page + 1;
-      const result = await api.chatMessages(selectedId, next);
+      const result = await api.mensajesChat(selectedId, next);
       setMessages((current) => [...result.data.reverse(), ...current]);
       setPage(next);
       setHasMore(next < (result.paginacion?.paginas || 1));
@@ -115,11 +115,11 @@ export default function Chat() {
     setError("");
     try {
       if (selectedId) {
-        const message = await api.sendChatMessage(selectedId, content, files);
+        const message = await api.enviarMensajeChat(selectedId, content, files);
         setMessages((current) => [...current, message]);
       } else {
         if (!newContactId || !content) throw new Error("Seleccioná un contacto y escribí un mensaje.");
-        const result = await api.startConversation(Number(newContactId), content);
+        const result = await api.iniciarConversacion(Number(newContactId), content);
         await refreshConversations();
         setSelectedId(result.conversacion.id);
         setNewContactId("");
@@ -135,7 +135,7 @@ export default function Chat() {
   return (
     <main id="chat" className="chat-page">
       {conversations.length > 0 && (
-        <DropdownSelect label="Conversación" value={selectedConversation ? `${personName(selectedConversation)} (#${selectedId})` : ""}
+        <SelectDesplegable label="Conversación" value={selectedConversation ? `${personName(selectedConversation)} (#${selectedId})` : ""}
           options={conversationOptions} onChange={(name) => { atBottomRef.current = true; setMessages([]); setPage(1); setSelectedId(Number(name.match(/#(\d+)\)$/)?.[1])); }}
           className="chat__mobile-select" triggerClassName="chat__mobile-select-trigger" chevronClassName="chat__mobile-select-chevron" blurOnSelect />
       )}
@@ -165,7 +165,7 @@ export default function Chat() {
             {selectedId && !messages.length && <p className="chat__empty-thread">Todavía no hay mensajes en esta conversación.</p>}
             {messages.map((message) => {
               const side = message.idUsuario === session?.usuario?.id ? "outgoing" : "incoming";
-              return <div className={`chat__message chat__message--${side}`} key={message.id}>{side === "incoming" && <ConversationAvatar kind={kind} className="chat__avatar--message" />}<div className="chat__message-content"><div className={`chat__bubble chat__bubble--${side}`}><span>{message.contenido}</span>{message.adjuntos?.map((attachment) => <button type="button" className="chat__attachment" key={attachment.id} onClick={() => api.downloadChatAttachment(selectedId, attachment).catch((cause) => setError(cause.message))}>📎 {attachment.nombreArchivo}</button>)}</div><time className="chat__message-time" dateTime={message.fecha}>{displayTime(message.fecha)}</time></div></div>;
+              return <div className={`chat__message chat__message--${side}`} key={message.id}>{side === "incoming" && <ConversationAvatar kind={kind} className="chat__avatar--message" />}<div className="chat__message-content"><div className={`chat__bubble chat__bubble--${side}`}><span>{message.contenido}</span>{message.adjuntos?.map((attachment) => <button type="button" className="chat__attachment" key={attachment.id} onClick={() => api.descargarAdjuntoChat(selectedId, attachment).catch((cause) => setError(cause.message))}>📎 {attachment.nombreArchivo}</button>)}</div><time className="chat__message-time" dateTime={message.fecha}>{displayTime(message.fecha)}</time></div></div>;
             })}
             <div ref={endRef} />
           </div>
