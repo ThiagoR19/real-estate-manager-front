@@ -14,31 +14,13 @@ import {
 export const dashboardByRole = {
   1: "/super-admin",
   2: "/dashboard",
-  3: "/agent-dashboard",
-  4: "/owner-dashboard",
-  5: "/tenant-dashboard",
+  3: "/dashboard",
+  4: "/dashboard",
+  5: "/dashboard",
 };
 
 export const primaryItems = [
   { href: "/dashboard", label: "Dashboard", icon: chartColumnIcon },
-  {
-    href: "/tenant-dashboard",
-    label: "Dashboard inquilinos",
-    breadcrumbLabel: "Dashboard",
-    icon: chartColumnIcon,
-  },
-  {
-    href: "/agent-dashboard",
-    label: "Dashboard agente",
-    breadcrumbLabel: "Dashboard",
-    icon: chartColumnIcon,
-  },
-  {
-    href: "/owner-dashboard",
-    label: "Dashboard propietarios",
-    breadcrumbLabel: "Dashboard",
-    icon: chartColumnIcon,
-  },
   {
     href: "/my-properties",
     label: "Mis propiedades",
@@ -79,7 +61,7 @@ export const secondaryItems = [
 export const allItems = [...primaryItems, ...secondaryItems];
 
 const navigationRoles = {
-  "/dashboard": [2],
+  "/dashboard": [2, 3, 4, 5],
   "/tenant-dashboard": [5],
   "/agent-dashboard": [3],
   "/owner-dashboard": [4],

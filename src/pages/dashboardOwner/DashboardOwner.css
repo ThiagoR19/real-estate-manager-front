@@ -84,8 +84,6 @@
   flex: 0 0 auto;
   width: 22px;
   height: 22px;
-  filter: brightness(0) saturate(100%) invert(17%) sepia(30%) saturate(2209%) hue-rotate(208deg)
-    brightness(87%) contrast(98%);
 }
 
 .owner-dashboard__card-header h2 {
@@ -187,7 +185,7 @@
   flex: 1;
   height: 43px;
   padding: 0 14px;
-  border: 1px solid #dfebf5;
+  border: 1px solid var(--bordes);
   border-radius: 22px;
   outline: 0;
   color: #17235e;
@@ -221,8 +219,6 @@
 .owner-dashboard__chat-form button img {
   width: 21px;
   height: 21px;
-  filter: brightness(0) saturate(100%) invert(17%) sepia(30%) saturate(2209%) hue-rotate(208deg)
-    brightness(87%) contrast(98%);
 }
 
 .owner-dashboard__status-card {
@@ -273,14 +269,19 @@
 .owner-dashboard__progress span {
   position: absolute;
   z-index: 1;
-  inset: 0;
-  min-width: 0;
+  inset: 0 auto 0 0;
+  width: max(var(--progreso, 0%), 48px);
+  padding-right: 9px;
   border-radius: inherit;
-  background: transparent;
+  background: #243f91;
+  text-align: right;
 }
 
-.owner-dashboard__progress--complete {
-  background: #243f91;
+.owner-dashboard__progress--empty span {
+  padding-left: 9px;
+  background: transparent;
+  color: #4b5a78;
+  text-align: left;
 }
 
 .owner-dashboard__properties-title {
@@ -333,6 +334,21 @@
   background: #fff2d4;
 }
 
+.owner-dashboard__property-status--reserved {
+  color: #2d5fc4;
+  background: #dfeaff;
+}
+
+.owner-dashboard__property-status--sold {
+  color: #6b35c9;
+  background: #eee3ff;
+}
+
+.owner-dashboard__property-status--inactive {
+  color: #5f6b80;
+  background: #e8ebf0;
+}
+
 .owner-dashboard__property p {
   margin: 7px 0 0;
   overflow: hidden;
@@ -359,43 +375,14 @@
 
 .owner-dashboard__reports-body p {
   margin: 0;
-  color: #17235e;
+  color: var(--azulOsc);
   font-size: 14px;
   font-weight: 700;
   line-height: 1.15;
 }
 
-.owner-dashboard__smile {
-  position: relative;
-  display: block;
-  width: 49px;
-  height: 49px;
-  margin-top: 13px;
-  border-radius: 50%;
-  background: #17235e;
-}
-
-.owner-dashboard__smile::before {
-  position: absolute;
-  top: 15px;
-  left: 14px;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #fff;
-  box-shadow: 14px 0 #fff;
-  content: "";
-}
-
-.owner-dashboard__smile::after {
-  position: absolute;
-  top: 24px;
-  left: 14px;
-  width: 20px;
-  height: 10px;
-  border-bottom: 3px solid #fff;
-  border-radius: 0 0 20px 20px;
-  content: "";
+.owner-dashboard__reports-body>img{
+  margin-top: 20px;
 }
 
 .owner-dashboard__reports-link {
@@ -495,55 +482,6 @@
   }
 }
 
-.owner-dashboard {
-  display: flex;
-  height: calc(100dvh - 61px);
-  min-height: 0;
-  flex-direction: column;
-}
-
-.owner-dashboard__content {
-  display: flex;
-  height: 100%;
-  min-height: 0;
-  flex-direction: column;
-}
-
-.owner-dashboard__welcome {
-  flex: 0 0 83px;
-}
-
-.owner-dashboard__grid {
-  flex: 1 1 0;
-  min-height: 0;
-  grid-template-rows: minmax(0, 1fr);
-}
-
-.owner-dashboard__card {
-  min-height: 0;
-}
-
-@media (max-width: 760px) {
-  .owner-dashboard {
-    height: calc(100dvh - 40px);
-    overflow-y: auto;
-  }
-
-  .owner-dashboard__content {
-    height: auto;
-    min-height: 100%;
-  }
-
-  .owner-dashboard__welcome {
-    flex-basis: auto;
-  }
-
-  .owner-dashboard__grid {
-    flex: 0 0 auto;
-    grid-template-rows: auto;
-  }
-}
-
 @media (max-width: 460px) {
   .owner-dashboard__card-header {
     padding-right: 13px;
@@ -598,51 +536,182 @@
   }
 }
 
-.owner-dashboard {
+.owner-dashboard__chat-title {
+  min-width: 0;
+}
+
+.owner-dashboard__chat-title p {
+  margin: 1px 0 0;
+  overflow: hidden;
+  color: #71809d;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.owner-dashboard__chat-form input:disabled,
+.owner-dashboard__chat-form button:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.owner-dashboard__message p {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.owner-dashboard__empty {
+  margin: 0;
+  color: #65738e;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.owner-dashboard__empty a {
+  color: #2860e3;
+  font-weight: 700;
+}
+
+.owner-dashboard__count {
+  margin-left: auto;
+  padding: 4px 11px;
+  border-radius: 99px;
+  background: #ffead7;
+  color: #73421e;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.owner-dashboard__reports-list {
   display: flex;
-  height: calc(100dvh - 61px);
+  flex: 1;
   min-height: 0;
   flex-direction: column;
+  gap: 9px;
+  margin: 6px 0 0;
+  padding: 0 17px;
+  overflow-y: auto;
+  list-style: none;
+  scrollbar-width: thin;
+}
+
+.owner-dashboard__reports-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  padding: 10px 12px;
+  border-radius: 7px;
+  background: #f6f8fa;
+}
+
+.owner-dashboard__reports-list strong,
+.owner-dashboard__reports-list span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.owner-dashboard__reports-list strong {
+  color: #1a2c63;
+  font-size: 12px;
+}
+
+.owner-dashboard__reports-list span,
+.owner-dashboard__reports-list small {
+  color: #7d8ba7;
+  font-size: 11px;
+}
+
+.owner-dashboard__status-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.owner-dashboard__status-content {
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.owner-dashboard__properties-title {
+  margin-top: 30px !important;
+}
+
+.owner-dashboard {
+  height: calc(100dvh - 61px);
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .owner-dashboard__content {
   display: flex;
-  height: 100%;
-  min-height: 0;
+  min-height: 100%;
   flex-direction: column;
 }
 
 .owner-dashboard__welcome {
-  flex: 0 0 83px;
+  flex: 0 0 auto;
 }
 
-.owner-dashboard__grid {
-  flex: 1 1 0;
-  min-height: 0;
-  grid-template-rows: minmax(0, 1fr);
+@media (min-width: 1121px) {
+  .owner-dashboard__content {
+    height: 100%;
+  }
+
+  .owner-dashboard__grid {
+    flex: 1 1 0;
+    min-height: 460px;
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  .owner-dashboard__card {
+    min-height: 0;
+  }
 }
 
-.owner-dashboard__card {
-  min-height: 0;
+@media (max-width: 1120px) {
+  .owner-dashboard__grid {
+    grid-template-columns: minmax(260px, 0.9fr) minmax(0, 1.4fr);
+    grid-template-rows: 520px auto;
+    min-height: 0;
+  }
+
+  .owner-dashboard__reports-card {
+    min-height: 0;
+    max-height: 360px;
+  }
+}
+
+@media (max-width: 860px) {
+  .owner-dashboard__grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 420px auto auto;
+  }
 }
 
 @media (max-width: 760px) {
   .owner-dashboard {
     height: calc(100dvh - 40px);
-    overflow-y: auto;
   }
 
-  .owner-dashboard__content {
-    height: auto;
-    min-height: 100%;
+  .owner-dashboard__status-content {
+    overflow: visible;
   }
 
-  .owner-dashboard__welcome {
-    flex-basis: auto;
+  .owner-dashboard__reports-card {
+    max-height: none;
   }
 
-  .owner-dashboard__grid {
-    flex: 0 0 auto;
-    grid-template-rows: auto;
+  .owner-dashboard__reports-list {
+    max-height: 320px;
+  }
+}
+
+@media (max-width: 1300px) and (min-width: 461px) {
+  .owner-dashboard__properties-list {
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
   }
 }

@@ -67,12 +67,12 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
   }
   const mobilePaths =
     roleId === 4
-      ? ["/owner-dashboard", "/my-properties", "/collections", "/reports-agent", "/chat"]
+      ? ["/dashboard", "/my-properties", "/collections", "/reports-agent", "/chat"]
       : roleId === 5
-        ? ["/tenant-dashboard", "/payments", "/reports", "/chat"]
+        ? ["/dashboard", "/payments", "/reports", "/chat"]
         : [2, 3].includes(roleId)
           ? [
-              roleId === 3 ? "/agent-dashboard" : "/dashboard",
+              "/dashboard",
               "/owners",
               "/tenant",
               "/professional",
@@ -82,14 +82,14 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
               "/reports-agent",
             ]
           : [];
-  const mobilePrimary = roleId === 1 ? primaryItems : mobilePaths.map((href) => {
+  const mobilePrimary = roleId === 1 ? primaryItems.filter(({ href }) => href === "/super-admin") : mobilePaths.map((href) => {
     const item =
       allItems.find((entry) => entry.href === href) ??
       allItems.find((entry) => entry.href === "/reports-agent");
     return { ...item, href, label: href.endsWith("dashboard") ? "Dashboard" : item.label };
   });
   const mobileSecondary = roleId === 1
-    ? secondaryItems
+    ? secondaryItems.filter(({ href }) => ["/profile", "/terms"].includes(href))
     : desktopItems.secondary.filter(({ href }) =>
         ["/profile", "/terms", "/agents", "/agency"].includes(href),
       );

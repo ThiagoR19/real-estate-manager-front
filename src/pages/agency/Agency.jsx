@@ -1,21 +1,11 @@
-import { useRef, useState } from "react";
-import {
-  cameraIcon,
-  checkIcon,
-  envelopeIcon,
-  imageIcon,
-  phoneIcon,
-  plusIcon,
-  userIcon,
-} from "../../assets/icons";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { cameraIcon, checkIcon, envelopeIcon, imageIcon, phoneIcon, plusIcon, userIcon, } from "../../assets/icons";
 import brandLogo from "../../assets/logoAGI.png";
-import { Button } from "../../components";
+import { Button, mostrarToast } from "../../components";
 import "./Agency.css";
+import { api } from "../../services/api";
 
-const initialAgency = {
-  name: "",
-  phone: "",
-};
+const initialAgency = {   name: "", phone: "" };
 
 function SectionHeading({ icon, title, description }) {
   return (
@@ -42,6 +32,7 @@ function UploadField({ label, name, value, onChange, wide = false }) {
       name,
       value: URL.createObjectURL(file),
       fileName: file.name,
+      file,
     });
   }
 
@@ -81,7 +72,29 @@ function UploadField({ label, name, value, onChange, wide = false }) {
 export default function Agency() {
   const [agency, setAgency] = useState(initialAgency);
   const [images, setImages] = useState({ banner: "", logo: "", principal: "" });
+  const [logoFile, setLogoFile] = useState(null);
   const [saved, setSaved] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const cargar = useCallback(() => {
+      let activo = true;
+      api.myAgency()
+        .then((data) => {
+          if (!activo) return;
+          setAgency({ name: data.nombre || "", phone: data.telefono || "" });
+          setImages((current) => ({ ...current, logo: data.urlLogo || "" }));
+        })
+        .catch((causa) => {
+          if (!activo) return;
+          mostrarToast({ tipo: "error", titulo: "No se pudo cargar la inmobiliaria", mensaje: causa.message });
+        })
+        .finally(() => activo && setLoading(false));
+      return () => {
+        activo = false;
+      };
+    }, []);
+
+    useEffect(() => cargar(), [cargar]);
 
   function updateAgency(event) {
     const { name, value } = event.target;
@@ -89,14 +102,23 @@ export default function Agency() {
     setSaved(false);
   }
 
-  function updateImage({ name, value }) {
+  function updateImage({ name, value, file }) {
     setImages((current) => ({ ...current, [name]: value }));
+    if (name === "logo") setLogoFile(file);
     setSaved(false);
   }
 
-  function saveChanges(event) {
+  async function saveChanges(event) {
     event.preventDefault();
-    setSaved(true);
+    try {
+      const updated = await api.updateMyAgency({ nombre: agency.name.trim(), telefono: agency.phone.trim() }, logoFile);
+      setAgency({ name: updated.nombre || "", phone: updated.telefono || "" });
+      setImages((current) => ({ ...current, logo: updated.urlLogo || "" }));
+      setLogoFile(null);
+      setSaved(true);
+    } catch (cause) {
+      mostrarToast({ tipo: "error", titulo: "No se pudieron guardar los cambios", mensaje: cause.message });
+    }
   }
 
   return (
@@ -196,6 +218,7 @@ export default function Agency() {
         icon={checkIcon}
         text={saved ? "Cambios guardados" : "Guardar cambios"}
         onClick={saveChanges}
+        disabled={loading}
         aria-live="polite"
       />
     </main>

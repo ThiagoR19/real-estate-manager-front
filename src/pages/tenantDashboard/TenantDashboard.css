@@ -306,8 +306,9 @@ body:has(#tenant-dashboard) .navbar__search {
 }
 
 .tenant-dashboard__progress::before {
+  min-width: 48px;
   position: absolute;
-  inset: 0 50% 0 0;
+  inset: 0 calc(100% - var(--progreso, 0%)) 0 0;
   border-radius: inherit;
   background: #263f90;
   content: "";
@@ -317,10 +318,12 @@ body:has(#tenant-dashboard) .navbar__search {
   position: relative;
   z-index: 1;
   display: block;
+  width: max(var(--progreso, 0%), 48px);
+  padding-right: 9px;
   color: #fff;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 20px;
-  text-align: center;
+  text-align: right;
 }
 
 .tenant-dashboard__contract-dates {
@@ -464,7 +467,7 @@ body:has(#tenant-dashboard) .navbar__search {
   justify-content: space-between;
   height: 30px;
   margin-top: auto;
-  padding: 0 108px 0 134px;
+  padding: 0 20px;
   border: 1px solid #c7ddff;
   border-radius: 6px;
   background: #b7d3ff;
@@ -713,10 +716,87 @@ body:has(#tenant-dashboard) .navbar__search {
   }
 }
 
-/* Keep the dashboard inside the viewport below the shared navigation. */
+.tenant-dashboard__count {
+  margin-left: auto;
+  padding: 5px 11px;
+  border-radius: 99px;
+  background: #ffead7;
+  color: #73421e;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.tenant-dashboard__empty {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  padding: 4px 2px;
+  background: #fff;
+  color: #65738e;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.tenant-dashboard__property {
+  margin: 0 0 10px;
+  overflow: hidden;
+  color: #213d92;
+  font-size: 14px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tenant-dashboard__property span {
+  color: #7c89a6;
+  font-weight: 500;
+}
+
+.tenant-dashboard__reports-list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin: 18px 0 14px;
+  padding: 0;
+  list-style: none;
+}
+
+.tenant-dashboard__reports-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px 12px;
+  border-radius: 7px;
+  background: #f6f8fa;
+}
+
+.tenant-dashboard__reports-list strong {
+  overflow: hidden;
+  color: #1a2c63;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tenant-dashboard__reports-list small {
+  color: #7d8ba7;
+  font-size: 11px;
+}
+
+.tenant-dashboard__reports-button {
+  flex: 0 0 auto;
+  justify-content: center;
+  gap: 24px;
+  white-space: nowrap;
+}
+
 #tenant-dashboard {
   height: calc(100dvh - 61px);
   min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 #tenant-dashboard::before {
@@ -731,42 +811,101 @@ body:has(#tenant-dashboard) .navbar__search {
   position: relative;
   z-index: 1;
   display: flex;
-  height: 100%;
+  min-height: 100%;
   flex-direction: column;
 }
 
 .tenant-dashboard__intro {
-  flex: 0 0 83px;
+  flex: 0 0 auto;
+  height: auto;
+  min-height: 83px;
 }
 
 .tenant-dashboard__grid {
-  flex: 1 1 0;
   height: auto;
   min-height: 0;
 }
 
 .tenant-dashboard__card {
   min-height: 0;
-  overflow: auto;
+}
+
+.tenant-dashboard__agenda,
+.tenant-dashboard__status,
+.tenant-dashboard__reports {
+  display: flex;
+  flex-direction: column;
+}
+
+.tenant-dashboard__timeline,
+.tenant-dashboard__reports-list {
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+@media (min-width: 1241px) {
+  .tenant-dashboard__page {
+    height: 100%;
+  }
+
+  .tenant-dashboard__grid {
+    flex: 1 1 0;
+    min-height: 480px;
+  }
+
+  .tenant-dashboard__status {
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 1240px) {
+  .tenant-dashboard__page {
+    width: calc(100% - 40px);
+  }
+
+  .tenant-dashboard__grid {
+    grid-template-columns: minmax(250px, 0.9fr) minmax(0, 1.55fr);
+    grid-template-rows: auto auto;
+  }
+
+  .tenant-dashboard__agenda {
+    max-height: 560px;
+  }
+
+  .tenant-dashboard__status {
+    padding: 14px 24px 24px;
+  }
+
+  .tenant-dashboard__reports {
+    min-height: 0;
+  }
+
+  .tenant-dashboard__reports-message {
+    margin: 24px 0 20px;
+  }
+}
+
+@media (max-width: 860px) {
+  .tenant-dashboard__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tenant-dashboard__agenda {
+    max-height: 420px;
+  }
 }
 
 @media (max-width: 760px) {
   #tenant-dashboard {
-    overflow: auto;
+    height: calc(100dvh - 40px);
   }
 
   #tenant-dashboard::before {
     display: none;
-    height: calc(100dvh - 61px);
-  }
-
-  .tenant-dashboard__page {
-    min-height: 100%;
-    height: auto;
   }
 
   .tenant-dashboard__intro {
-    flex-basis: auto;
     min-height: 112px;
     padding: 18px;
     border-radius: 12px;
@@ -776,6 +915,56 @@ body:has(#tenant-dashboard) .navbar__search {
   }
 
   .tenant-dashboard__grid {
-    flex: 0 0 auto;
+    margin-top: 12px;
+  }
+
+  .tenant-dashboard__status h3 {
+    white-space: normal;
+  }
+
+  .tenant-dashboard__progress span {
+    width: max(var(--progreso, 0%), 48px);
+  }
+
+  .tenant-dashboard__status h4 {
+    margin-left: 0;
+  }
+
+  .tenant-dashboard__payments {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .tenant-dashboard__status-content {
+    padding-inline: 8px;
+  }
+
+  .tenant-dashboard__reports {
+    min-height: 0;
+  }
+
+  .tenant-dashboard__reports-message {
+    gap: 24px;
+    margin: 32px 0 28px;
+  }
+}
+
+@media (max-width: 400px) {
+  .tenant-dashboard__payment {
+    grid-template-columns: 48px minmax(0, 1fr) 44px;
+  }
+
+  .tenant-dashboard__payment-icon {
+    margin-left: 12px;
+  }
+
+  .tenant-dashboard__payment strong {
+    font-size: 13px;
+  }
+
+  .tenant-dashboard__contract-dates {
+    flex-wrap: wrap;
+    font-size: 14px;
+    white-space: normal;
   }
 }

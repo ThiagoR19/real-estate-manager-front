@@ -1,99 +1,176 @@
-import { useEffect, useState } from "react";
-import { buildingColumnsIcon, plusIcon, trashCanIcon } from "../../assets/icons";
-import { SummaryPill, Button, Pagination, usePagination } from "../../components";
+import { useCallback, useEffect, useState } from "react";
+import { api } from "../../services/api";
+
+import initials from "../../utils/initials";
+import avatarClass from "../../utils/avatarClass";
+
+import { SummaryPill, Button, ConfirmDeleteModal, mostrarToast } from "../../components";
 import AgencyModal from "./AgencyModal";
-import { api } from "../../services/api.js";
+import { building, editSuper, plusIcon, trashCanIcon } from "../../assets/icons";
 import "./SuperAdmin.css";
 
-function BuildingIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
-      <path d="M4 2h16v20h-7v-4h-2v4H4V2Zm4 4v3h2V6H8Zm6 0v3h2V6h-2Zm-6 6v3h2v-3H8Zm6 0v3h2v-3h-2Z" />
-    </svg>
-  );
-}
-
 function AgencyLogo({ agency }) {
+  if (agency.imagenLogo) {
+    return (
+      <span className="super-admin__agency-logo" aria-hidden="true">
+        <img src={api.assetUrl(`/uploads/logos/${agency.imagenLogo}`)} alt="" />
+      </span>
+    );
+  }
+  const [primera = "", segunda = ""] = agency.nombre.split(/\s+/);
   return (
-    <span
-      className={`super-admin__agency-logo${agency.code === "UA" || agency.code === "ST" ? ` super-admin__agency-logo--${agency.code.toLowerCase()}` : ""}`}
-      aria-hidden="true"
-    >
-      {agency.code !== "UA" && agency.code !== "ST" ? agency.code : null}
+    <span className="super-admin__agency-logo" aria-hidden="true">
+      {initials(primera, segunda)}
     </span>
   );
 }
 
-const agencyView = (agency, admins = []) => ({
-  ...agency,
-  code: agency.nombre.split(/\s+/).map((word) => word[0]).join("").slice(0, 2).toUpperCase(),
-  name: agency.nombre,
-  admins: admins.filter((admin) => admin.idInmobiliaria === agency.id).map((admin) => ({
-    ...admin,
-    name: `${admin.nombre || ""} ${admin.apellido || ""}`.trim() || `DNI ${admin.dni}`,
-    initials: "AD",
-    role: "Admin",
-  })),
-});
+function PersonAvatar({ persona }) {
+  const [fotoRota, setFotoRota] = useState(false);
+  if (persona.urlFotoPerfil && !fotoRota) {
+    return (
+      <span className="super-admin__avatar">
+        <img src={api.assetUrl(persona.urlFotoPerfil)} alt="" onError={() => setFotoRota(true)} />
+      </span>
+    );
+  }
+  return (
+    <span className={`super-admin__avatar ${avatarClass(persona.nombre, persona.apellido)}`}>
+      {initials(persona.nombre, persona.apellido)}
+    </span>
+  );
+}
+
+function personasDe(agency) {
+  return [
+    ...agency.admins.map((admin) => ({ ...admin, tipo: "admin", rol: "Admin", clave: `admin-${admin.id}` })),
+    ...agency.agentes.map((agente) => ({ ...agente, tipo: "agente", rol: "Agente", clave: `agente-${agente.id}` })),
+  ];
+}
 
 export default function SuperAdmin() {
-  const [agencies, setAgencies] = useState([]);
+  const [estado, setEstado] = useState({ inmobiliarias: [], mensaje: "" });
+  const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState({});
   const [modal, setModal] = useState(null);
+  const [aEliminar, setAEliminar] = useState(null);
   const [activationUrl, setActivationUrl] = useState("");
-  const [error, setError] = useState("");
-  const { page, totalPages, pageItems, setPage } = usePagination(agencies);
 
-  useEffect(() => {
-    Promise.all([api.agencies(), api.admins()])
-      .then(([rows, administrators]) => setAgencies(rows.map((agency) => agencyView(agency, administrators))))
-      .catch((cause) => setError(cause.message));
+  const cargar = useCallback(() => {
+    let activo = true;
+    api.superAdminPanel()
+      .then((inmobiliarias) => activo && setEstado({ inmobiliarias, mensaje: "" }))
+      .catch((causa) => {
+        if (!activo) return;
+        setEstado({ inmobiliarias: [], mensaje: causa.message });
+        mostrarToast({ tipo: "error", titulo: "No se pudieron cargar las inmobiliarias", mensaje: causa.message });
+      })
+      .finally(() => activo && setLoading(false));
+    return () => {
+      activo = false;
+    };
   }, []);
 
-  async function saveAgency(name) {
-    const created = await api.createAgency(name);
-    setAgencies((current) => [agencyView(created), ...current]);
-    setModal(null);
+  useEffect(() => cargar(), [cargar]);
+
+  function reintentar() {
+    setLoading(true);
+    cargar();
   }
 
-  async function addAdmin(dni) {
-    const created = await api.createAdmin({ idInmobiliaria: modal.agency.id, dni });
-    const admin = agencyView(modal.agency, [created]).admins[0];
-    setAgencies((current) =>
-      current.map((agency) =>
-        agency.id === modal.agency.id
-          ? {
-              ...agency,
-              admins: [
-                ...agency.admins,
-                admin,
-              ],
-            }
-          : agency,
-      ),
-    );
-    setExpanded((current) => ({ ...current, [modal.agency.id]: true }));
-    setActivationUrl(created.activacion?.enlace || "");
-    setModal(null);
+  async function ejecutar(peticion, exito) {
+    try {
+      await peticion();
+      setModal(null);
+      mostrarToast({ tipo: "exito", titulo: exito });
+      cargar();
+    } catch (causa) {
+      mostrarToast({ tipo: "error", titulo: "No se pudo completar la acción", mensaje: causa.message });
+    }
   }
 
-  async function removeAdmin(agencyId, adminId) {
-    try { await api.deleteAdmin(adminId); }
-    catch (cause) { setError(cause.message); return; }
-    setAgencies((current) =>
-      current.map((agency) =>
-        agency.id === agencyId
-          ? { ...agency, admins: agency.admins.filter((admin) => admin.id !== adminId) }
-          : agency,
-      ),
+  async function crearInmobiliaria(nombre) {
+    await ejecutar(() => api.createAgency({ nombre }), "Inmobiliaria creada");
+  }
+
+  function editarInmobiliaria(agency, nombre) {
+    if (nombre === agency.nombre) {
+      setModal(null);
+      return;
+    }
+    ejecutar(() => api.renameAgency(agency.id, nombre), "Inmobiliaria actualizada");
+  }
+
+  async function agregarAdmin(agency, datos) {
+    try {
+      const admin = await api.createAdmin({ ...datos, idInmobiliaria: agency.id });
+      setModal(null);
+      setActivationUrl(admin.activacion?.enlace || "");
+      mostrarToast({
+        tipo: "exito",
+        titulo: "Admin creado",
+        mensaje: "Compartí el enlace de activación con el administrador.",
+      });
+      cargar();
+    } catch (causa) {
+      mostrarToast({ tipo: "error", titulo: "No se pudo crear el admin", mensaje: causa.message });
+    }
+  }
+
+  function eliminarPersona(persona) {
+    setAEliminar(persona);
+  }
+
+  function eliminarInmobiliaria(agency) {
+    setModal(null);
+    setAEliminar({ ...agency, tipo: "inmobiliaria" });
+  }
+
+  async function confirmarEliminar() {
+    const elemento = aEliminar;
+    setAEliminar(null);
+    if (elemento.tipo === "inmobiliaria") {
+      await ejecutar(() => api.deleteAgency(elemento.id), `Inmobiliaria ${elemento.nombre} eliminada`);
+      return;
+    }
+    const nombre = `${elemento.nombre} ${elemento.apellido}`;
+    await ejecutar(() => (elemento.tipo === "admin" ? api.deleteAdmin(elemento.id) : api.deleteAgent(elemento.id)), `${elemento.rol} ${nombre} eliminado`,
     );
   }
+
+  function tituloConfirmacion() {
+    if (!aEliminar) return "";
+    if (aEliminar.tipo === "inmobiliaria") {
+      return `¿Seguro que desea eliminar la inmobiliaria ${aEliminar.nombre}? Se borrarán todos sus datos.`;
+    }
+    return `¿Seguro que desea eliminar a ${aEliminar.nombre} ${aEliminar.apellido}?`;
+  }
+
+  function cambiarRol(persona, rol) {
+    if (rol === persona.rol) return;
+    const nombre = `${persona.nombre} ${persona.apellido}`;
+    ejecutar(
+      () => (persona.tipo === "agente" ? api.agentToAdmin(persona.id) : api.adminToAgent(persona.id)),
+      `${nombre} ahora es ${rol}`,
+    );
+  }
+
+  function guardarModal(valor) {
+    if (modal.mode === "admin") agregarAdmin(modal.agency, valor);
+    else if (modal.mode === "edit") editarInmobiliaria(modal.agency, valor);
+    else crearInmobiliaria(valor);
+  }
+
+  // Mientras carga no se muestra la página (acá va a ir el skeleton)
+  if (loading) return <main id="super-admin" aria-busy="true" />;
+
+  const { inmobiliarias, mensaje } = estado;
 
   return (
     <main id="super-admin">
       <aside className="super-admin__sidebar">
         <div className="super-admin__side-item is-active">
-          <BuildingIcon />
+          <img src={building} alt="" />
           Inmobiliarias
         </div>
       </aside>
@@ -105,9 +182,9 @@ export default function SuperAdmin() {
           </header>
           <div className="super-admin__actions">
             <SummaryPill
-              icon={buildingColumnsIcon}
+              icon={building}
               label="Inmobiliarias activas"
-              value={agencies.length}
+              value={inmobiliarias.length}
               tone="success"
             />
             <Button
@@ -119,87 +196,123 @@ export default function SuperAdmin() {
           </div>
         </div>
         <section className="super-admin__agency-list" aria-label="Inmobiliarias registradas">
-          {error && <p role="alert">{error}</p>}
-          {activationUrl && <p role="status">Administrador creado. Compartí este enlace con su titular: <a href={activationUrl}>Abrir enlace de activación</a> <button type="button" onClick={() => navigator.clipboard.writeText(activationUrl)}>Copiar enlace</button></p>}
-          {pageItems.map((agency) => (
-            <article
-              className={`super-admin__agency${expanded[agency.id] ? " is-expanded" : ""}`}
-              key={agency.id}
-            >
-              <header>
-                <AgencyLogo agency={agency} />
-                <h2>{agency.name}</h2>
-                <div className="super-admin__agency-controls">
-                  <button
-                    className="super-admin__add-admin"
-                    type="button"
-                    onClick={() => setModal({ mode: "admin", agency })}
-                  >
-                    ＋ Añadir admin
-                  </button>
-                  <button
-                    className="super-admin__expand"
-                    type="button"
-                    onClick={() =>
-                      setExpanded((current) => ({
-                        ...current,
-                        [agency.id]: !current[agency.id],
-                      }))
-                    }
-                    aria-label={`${expanded[agency.id] ? "Contraer" : "Expandir"} ${agency.name}`}
-                    aria-expanded={Boolean(expanded[agency.id])}
-                  >
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="m6 9 6 6 6-6" />
-                    </svg>
-                  </button>
-                </div>
-              </header>
-              {expanded[agency.id] && (
-                <div className="super-admin__admins">
-                  {agency.admins.length ? (
-                    agency.admins.map((admin) => (
-                      <article className="super-admin__admin" key={admin.id}>
-                        <span
-                          className={`super-admin__avatar${admin.initials === "EP" || admin.initials === "MM" ? ` super-admin__avatar--${admin.initials.toLowerCase()}` : ""}`}
-                        >
-                          {admin.initials === "EP" || admin.initials === "MM"
-                            ? null
-                            : admin.initials}
-                        </span>
-                        <button
-                          className="super-admin__delete"
-                          type="button"
-                          onClick={() => removeAdmin(agency.id, admin.id)}
-                          aria-label={`Eliminar a ${admin.name}`}
-                        >
-                          <img src={trashCanIcon} alt="" />
-                        </button>
-                        <h3>{admin.name}</h3>
-                        <span>Admin</span>
-                      </article>
-                    ))
-                  ) : (
-                    <p className="super-admin__no-admins">
-                      Esta inmobiliaria todavía no tiene administradores.
-                    </p>
-                  )}
-                </div>
-              )}
-            </article>
-          ))}
-          <Pagination page={page} totalPages={totalPages} total={agencies.length} onPageChange={setPage} />
+          {activationUrl && (
+            <p role="status">
+              Administrador creado. Compartí este enlace: <a href={activationUrl}>Abrir enlace de activación</a>{" "}
+              <button type="button" onClick={() => navigator.clipboard.writeText(activationUrl)}>Copiar enlace</button>
+            </p>
+          )}
+          {mensaje && (
+            <p className="super-admin__no-admins">
+              {mensaje}{" "}
+              <button className="super-admin__retry" type="button" onClick={reintentar}>
+                Reintentar
+              </button>
+            </p>
+          )}
+          {!mensaje && !inmobiliarias.length && (
+            <p className="super-admin__no-admins">Todavía no hay inmobiliarias registradas.</p>
+          )}
+          {inmobiliarias.map((agency) => {
+            const personas = personasDe(agency);
+            const abierta = Boolean(expanded[agency.id]);
+            return (
+              <article className={`super-admin__agency${abierta ? " is-expanded" : ""}`} key={agency.id}>
+                <header>
+                  <AgencyLogo agency={agency} />
+                  <h2>{agency.nombre}</h2>
+                  <div className="super-admin__agency-controls">
+                    <button
+                      className="super-admin__add-admin"
+                      type="button"
+                      onClick={() => setModal({ mode: "admin", agency })}
+                    >
+                      <span className="material-symbols-outlined">
+                        add
+                      </span>
+                      Añadir admin
+                    </button>
+                    <button
+                      className="super-admin__edit"
+                      type="button"
+                      onClick={() => setModal({ mode: "edit", agency })}
+                      aria-label={`Editar ${agency.nombre}`}
+                    >
+                      <img src={editSuper} alt="" />
+                    </button>
+                    <button
+                      className="super-admin__expand"
+                      type="button"
+                      onClick={() => setExpanded((current) => ({ ...current, [agency.id]: !current[agency.id] }))}
+                      aria-label={`${abierta ? "Contraer" : "Expandir"} ${agency.nombre}`}
+                      aria-expanded={abierta}
+                    >
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="m6 9 6 6 6-6" />
+                      </svg>
+                    </button>
+                  </div>
+                </header>
+                {abierta && (
+                  <div className="super-admin__admins">
+                    {personas.length ? (
+                      personas.map((persona) => (
+                        <article className="super-admin__admin" key={persona.clave}>
+                          <PersonAvatar persona={persona} />
+                          <button
+                            className="super-admin__delete"
+                            type="button"
+                            onClick={() => eliminarPersona(persona)}
+                            aria-label={`Eliminar a ${persona.nombre} ${persona.apellido}`}
+                          >
+                            <img src={trashCanIcon} alt="" />
+                          </button>
+                          <h3>
+                            {persona.nombre} {persona.apellido}
+                          </h3>
+                          <label className="super-admin__role-label" htmlFor={`rol-${persona.clave}`}>
+                            Rol
+                          </label>
+                          <select
+                            className={`super-admin__rol super-admin__rol--${persona.tipo}`}
+                            id={`rol-${persona.clave}`}
+                            value={persona.rol}
+                            onChange={(event) => cambiarRol(persona, event.target.value)}
+                            aria-label={`Rol de ${persona.nombre} ${persona.apellido}`}
+                          >
+                            <option>Admin</option>
+                            <option>Agente</option>
+                          </select>
+                        </article>
+                      ))
+                    ) : (
+                      <p className="super-admin__no-admins">
+                        Esta inmobiliaria todavía no tiene administradores ni agentes.
+                      </p>
+                    )}
+                  </div>
+                )}
+              </article>
+            );
+          })}
         </section>
       </section>
       {modal && (
         <AgencyModal
-          key={`${modal.mode}-${modal.agency?.name || "new"}`}
+          key={`${modal.mode}-${modal.agency?.id || "new"}`}
           mode={modal.mode}
-          agency={modal.agency}
+          agency={modal.agency && { ...modal.agency, name: modal.agency.nombre }}
           onClose={() => setModal(null)}
-          onSubmit={modal.mode === "admin" ? addAdmin : saveAgency}
+          onSubmit={guardarModal}
+          onDelete={modal.mode === "edit" ? () => eliminarInmobiliaria(modal.agency) : undefined}
         />
       )}
+      <ConfirmDeleteModal
+        isOpen={Boolean(aEliminar)}
+        title={tituloConfirmacion()}
+        onClose={() => setAEliminar(null)}
+        onConfirm={confirmarEliminar}
+      />
     </main>
   );
 }

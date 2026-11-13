@@ -1,88 +1,54 @@
+import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { calendarIcon, plusIconWhite, toolboxIcon, userIcon } from "../../assets/icons";
 import {
   ActivityCard as SharedActivityCard,
   PerformanceCard as SharedPerformanceCard,
-} from "../dashboard/DashboardWidgets";
+  mostrarToast,
+} from "../../components";
+import { api } from "../../services/api";
+import fotoPorDefecto from "/images (1).jpg";
 import "./AgentDashboard.css";
 
-const propertyPhotos = [
-  "/images (1).jpg",
-  "/ly-villa-costa-blanca-1_b02f5d33_900x900.jpg",
-  "/images.jpg",
-];
-
-const agendaItems = [
-  {
-    time: "10:00",
-    title: "Casa de San isidro",
-    address: "Av. Libertador 4500",
-    person: "Laura Gomez",
-    photo: propertyPhotos[1],
-  },
-  {
-    time: "11:00",
-    title: "Casa de San isidro",
-    address: "Av. Libertador 4500",
-    person: "Laura Gomez",
-    photo: propertyPhotos[0],
-  },
-  {
-    time: "14:00",
-    title: "Casa de San isidro",
-    address: "Av. Libertador 4500",
-    person: "Laura Gomez",
-    photo: propertyPhotos[2],
-  },
-  {
-    time: "15:30",
-    title: "Casa de San isidro",
-    address: "Av. Libertador 4500",
-    person: "Laura Gomez",
-    photo: propertyPhotos[0],
-  },
-  {
-    time: "16:00",
-    title: "Casa de San isidro",
-    address: "Av. Libertador 4500",
-    person: "Laura Gomez",
-    photo: propertyPhotos[1],
-  },
-  {
-    time: "17:00",
-    title: "Casa de San isidro",
-    address: "Av. Libertador 4500",
-    person: "Laura Gomez",
-    photo: propertyPhotos[2],
-  },
-];
-
-const reports = [
-  {
-    title: "Fuga de gas",
-    person: "Sofia Ramirez",
-    property: "Casa de san isidro",
-    photo: propertyPhotos[1],
-  },
-  {
-    title: "Pared hume...",
-    person: "Sofia Ramirez",
-    property: "Casa de san isidro",
-    photo: propertyPhotos[2],
-  },
-  {
-    title: "Humedad",
-    person: "Sofia Ramirez",
-    property: "Casa de san isidro",
-    photo: propertyPhotos[0],
-  },
-];
+const ZONA_HORARIA = "America/Argentina/Buenos_Aires";
+const PRIORIDADES_ALTAS = ["ALTA", "URGENTE"];
 
 function Icon({ src, className = "" }) {
   return <img className={className} src={src} alt="" aria-hidden="true" />;
 }
 
-function AgendaCard() {
+function imagen(carpeta, nombre) {
+  return nombre ? api.assetUrl(`/uploads/${carpeta}/${nombre}`) : fotoPorDefecto;
+}
+
+function fechaLarga(fecha) {
+  const [anio, mes, dia] = fecha.split("-").map(Number);
+  const texto = new Date(anio, mes - 1, dia).toLocaleDateString("es-AR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+  return texto.charAt(0).toUpperCase() + texto.slice(1);
+}
+
+function hora(fecha) {
+  return new Date(fecha).toLocaleTimeString("es-AR", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: ZONA_HORARIA,
+  });
+}
+
+function hace(fecha) {
+  const dias = Math.floor((Date.now() - new Date(fecha).getTime()) / 86400000);
+  if (dias <= 0) return "Hoy";
+  if (dias === 1) return "Hace 1 día";
+  return `Hace ${dias} días`;
+}
+
+function AgendaCard({ fecha, agenda }) {
   return (
     <section
       className="agent-dashboard__card agent-dashboard__agenda-card"
@@ -91,21 +57,30 @@ function AgendaCard() {
       <header className="agent-dashboard__section-heading">
         <Icon src={calendarIcon} />
         <h2 id="agent-agenda-title">Agenda del día</h2>
-        <time dateTime="2025-09-09">Martes, 9 de septiembre 2025</time>
+        <time dateTime={fecha}>{fechaLarga(fecha)}</time>
       </header>
 
       <div className="agent-dashboard__agenda-list">
-        {agendaItems.map((item) => (
-          <article className="agent-dashboard__agenda-item" key={`${item.time}-${item.title}`}>
-            <time>{item.time}</time>
+        {agenda.length === 0 && (
+          <p className="dashboard-activity-empty">No tenés visitas agendadas para hoy.</p>
+        )}
+        {agenda.map((visita) => (
+          <article className="agent-dashboard__agenda-item" key={visita.id}>
+            <time dateTime={visita.fecha}>{hora(visita.fecha)}</time>
             <span className="agent-dashboard__agenda-line" aria-hidden="true" />
-            <img className="agent-dashboard__agenda-photo" src={item.photo} alt="" />
+            <img
+              className="agent-dashboard__agenda-photo"
+              src={imagen("propiedades", visita.propiedadImagen)}
+              alt=""
+            />
             <div className="agent-dashboard__agenda-copy">
-              <strong>{item.title}</strong>
-              <span>{item.address}</span>
+              <strong>{visita.propiedad}</strong>
+              <span>{visita.propiedadUbicacion || "Sin ubicación"}</span>
               <small>
                 <Icon src={userIcon} />
-                {item.person}
+                {visita.clienteNombre
+                  ? `${visita.clienteNombre} ${visita.clienteApellido ?? ""}`
+                  : "Sin cliente"}
               </small>
             </div>
           </article>
@@ -119,7 +94,7 @@ function AgendaCard() {
   );
 }
 
-function ReportsCard() {
+function ReportsCard({ reportes }) {
   return (
     <section
       className="agent-dashboard__card agent-dashboard__reports-card"
@@ -128,24 +103,32 @@ function ReportsCard() {
       <header className="agent-dashboard__section-heading">
         <Icon src={toolboxIcon} />
         <h2 id="agent-reports-title">Reportes de inquilinos</h2>
-        <span className="agent-dashboard__pending">2 pendientes</span>
+        <span className="agent-dashboard__pending">
+          {reportes.total} {reportes.total === 1 ? "pendiente" : "pendientes"}
+        </span>
         <span className="agent-dashboard__heading-chevron" aria-hidden="true">
           ›
         </span>
       </header>
 
       <div className="agent-dashboard__reports-list">
-        {reports.map((report) => (
-          <Link className="agent-dashboard__report-item" href="/reports-agent" key={report.title}>
-            <img src={report.photo} alt="" />
+        {reportes.items.length === 0 && (
+          <p className="dashboard-activity-empty">No hay reportes sin revisar.</p>
+        )}
+        {reportes.items.map((reporte) => (
+          <Link className="agent-dashboard__report-item" href="/reports-agent" key={reporte.id}>
+            <img src={imagen("reportes", reporte.imagen)} alt="" />
             <span className="agent-dashboard__report-copy">
               <strong>
-                {report.title} <i aria-hidden="true" />
+                {reporte.titulo}
+                {PRIORIDADES_ALTAS.includes(reporte.prioridad) && (
+                  <i aria-label={`Prioridad ${reporte.prioridad.toLowerCase()}`} />
+                )}
               </strong>
-              <span>{report.person}</span>
-              <span>{report.property}</span>
+              <span>{reporte.personaReporta}</span>
+              <span>{reporte.propiedad}</span>
             </span>
-            <small>Hace 1 día</small>
+            <small>{hace(reporte.fecha)}</small>
             <b aria-hidden="true">›</b>
           </Link>
         ))}
@@ -159,12 +142,40 @@ function ReportsCard() {
 }
 
 export default function AgentDashboard() {
+  const [datos, setDatos] = useState(null);
+  const [error, setError] = useState(false);
+  const nombre = api.getSession()?.usuario?.nombre;
+
+  useEffect(() => {
+    let vigente = true;
+    api
+      .dashboard()
+      .then((respuesta) => {
+        if (vigente) setDatos(respuesta);
+      })
+      .catch((causa) => {
+        if (!vigente) return;
+        setError(true);
+        mostrarToast({
+          tipo: "error",
+          titulo: causa.codigo,
+          mensaje: causa.mensaje ?? causa.message,
+          accion: { texto: "Recargar", onclick: () => window.location.reload() },
+        });
+      });
+    return () => {
+      vigente = false;
+    };
+  }, []);
+
+  if (error || !datos) return null;
+
   return (
     <main id="agent-dashboard">
       <div className="agent-dashboard__page">
         <header className="agent-dashboard__intro">
           <div>
-            <h1>¡Hola, Thiago!</h1>
+            <h1>¡Hola{nombre ? `, ${nombre}` : ""}!</h1>
             <p>Aquí tienes un resumen de la actividad de la inmobiliaria</p>
           </div>
           <Link className="agent-dashboard__schedule-button" href="/schedule">
@@ -174,9 +185,13 @@ export default function AgentDashboard() {
         </header>
 
         <div className="agent-dashboard__grid">
-          <AgendaCard />
-          <SharedPerformanceCard className="agent-dashboard__performance-card" />
-          <ReportsCard />
+          <AgendaCard fecha={datos.fecha} agenda={datos.agenda} />
+          <SharedPerformanceCard
+            className="agent-dashboard__performance-card"
+            indicadores={datos.indicadores}
+            grafico={datos.rendimiento}
+          />
+          <ReportsCard reportes={datos.reportesSinRevisar} />
           <SharedActivityCard />
         </div>
       </div>

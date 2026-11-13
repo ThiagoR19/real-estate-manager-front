@@ -1,26 +1,39 @@
 import { useState } from "react";
-import { addressCardIcon, buildingColumnsIcon } from "../../assets/icons";
+import { addressCardIcon, buildingColumnsIcon, envelopeIcon, trashCanIcon, userIcon } from "../../assets/icons";
 import { ManagementModal, ModalActions, ModalField, ModalInput } from "../../components";
 import "./AgencyModal.css";
 
-export default function AgencyModal({ mode = "create", agency, onClose, onSubmit }) {
+const adminVacio = { nombre: "", apellido: "", dni: "", correo: "" };
+
+export default function AgencyModal({ mode = "create", agency, onClose, onSubmit, onDelete }) {
   const isAdmin = mode === "admin";
   const isEditing = mode === "edit";
   const [value, setValue] = useState(isEditing ? agency?.name || "" : "");
-  const [error, setError] = useState("");
+  const [admin, setAdmin] = useState(adminVacio);
   const title = isAdmin
     ? "Agregar admin"
     : isEditing
       ? "Editar inmobiliaria"
       : "Agregar inmobiliaria";
 
-  async function handleSubmit(event) {
+  function cambiarAdmin(event) {
+    setAdmin((actual) => ({ ...actual, [event.target.name]: event.target.value }));
+  }
+
+  function handleSubmit(event) {
     event.preventDefault();
-    const trimmedValue = value.trim();
-    if (trimmedValue) {
-      try { setError(""); await onSubmit(trimmedValue); }
-      catch (cause) { setError(cause.message || "No se pudo guardar."); }
+    if (isAdmin) {
+      // Los campos opcionales vacíos no se mandan
+      const datos = Object.fromEntries(
+        Object.entries(admin)
+          .map(([campo, valor]) => [campo, campo === "password" ? valor : valor.trim()])
+          .filter(([, valor]) => valor !== ""),
+      );
+      onSubmit(datos);
+      return;
     }
+    const trimmedValue = value.trim();
+    if (trimmedValue) onSubmit(trimmedValue);
   }
 
   return (
@@ -37,25 +50,60 @@ export default function AgencyModal({ mode = "create", agency, onClose, onSubmit
       <form onSubmit={handleSubmit}>
         <div className="management-modal__card agency-modal__card">
           <div className="management-modal__summary agency-modal__band" aria-hidden="true" />
-          <div className="agency-modal__field">
-            <ModalField label={isAdmin ? "DNI del admin" : "Nombre de inmobiliaria"}>
-              <ModalInput
-                icon={isAdmin ? addressCardIcon : buildingColumnsIcon}
-                name={isAdmin ? "dni" : "agencyName"}
-                value={value}
-                onChange={(event) => setValue(event.target.value)}
-                placeholder={isAdmin ? "DNI" : "Nombre de la inmobiliaria"}
-                inputMode={isAdmin ? "numeric" : "text"}
-                pattern={isAdmin ? "[0-9]{7,8}" : undefined}
-                maxLength={isAdmin ? 8 : 100}
-                title={isAdmin ? "Ingrese un DNI de 7 u 8 dígitos, sin puntos" : undefined}
-                required
-                autoComplete="off"
-              />
-            </ModalField>
-          </div>
+          {isEditing && onDelete && (
+            <button
+              className="super-admin__delete agency-modal__delete"
+              type="button"
+              onClick={onDelete}
+              aria-label={`Eliminar ${agency?.name || "la inmobiliaria"}`}
+            >
+              <img src={trashCanIcon} alt="" />
+            </button>
+          )}
+          {isAdmin ? (
+            <div className="agency-modal__fields">
+              <ModalField label="Nombre">
+                <ModalInput icon={userIcon} name="nombre" value={admin.nombre} onChange={cambiarAdmin} placeholder="Nombre" maxLength={255} required autoComplete="off" />
+              </ModalField>
+              <ModalField label="Apellido">
+                <ModalInput icon={userIcon} name="apellido" value={admin.apellido} onChange={cambiarAdmin} placeholder="Apellido" maxLength={255} required autoComplete="off" />
+              </ModalField>
+              <ModalField label="DNI">
+                <ModalInput
+                  icon={addressCardIcon}
+                  name="dni"
+                  value={admin.dni}
+                  onChange={cambiarAdmin}
+                  placeholder="DNI"
+                  inputMode="numeric"
+                  pattern="[0-9]{7,8}"
+                  maxLength={8}
+                  title="Ingrese un DNI de 7 u 8 dígitos, sin puntos"
+                  autoComplete="off"
+                  required
+                />
+              </ModalField>
+              <ModalField label="Correo (opcional)">
+                <ModalInput icon={envelopeIcon} type="email" name="correo" value={admin.correo} onChange={cambiarAdmin} placeholder="correo@ejemplo.com" maxLength={255} autoComplete="off" />
+              </ModalField>
+            </div>
+          ) : (
+            <div className="agency-modal__field">
+              <ModalField label="Nombre de inmobiliaria">
+                <ModalInput
+                  icon={buildingColumnsIcon}
+                  name="agencyName"
+                  value={value}
+                  onChange={(event) => setValue(event.target.value)}
+                  placeholder="Nombre de la inmobiliaria"
+                  maxLength={100}
+                  required
+                  autoComplete="off"
+                />
+              </ModalField>
+            </div>
+          )}
         </div>
-        {error && <p role="alert">{error}</p>}
         <ModalActions
           onClose={onClose}
           submitText={

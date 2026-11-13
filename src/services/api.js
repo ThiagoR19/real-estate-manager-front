@@ -1,7 +1,6 @@
 import * as dashboardService from "./dashboard.js";
 import * as agentService from "./agents.js";
 import * as ownerService from "./owners.js";
-import * as administrationService from "./administration.js";
 import * as loginService from "./login.js";
 import * as propertyService from "./properties.js";
 import * as profileService from "./profile.js";
@@ -15,6 +14,8 @@ import * as ownerPropertiesService from "./ownerProperties.js";
 import * as documentService from "./documents.js";
 import * as notificationService from "./notifications.js";
 import { assetUrl } from "../utils/assetUrl.js";
+import * as agencyService from "./agencies.js";
+import * as myAgencyService from "./myAgency.js";
 
 export const api = {
   agents: agentService.agents,
@@ -24,11 +25,11 @@ export const api = {
   createOwner: ownerService.createOwner,
   updateOwner: ownerService.updateOwner,
   deleteOwner: ownerService.deleteOwner,
-  agencies: administrationService.agencies,
-  admins: administrationService.admins,
-  createAgency: administrationService.createAgency,
-  createAdmin: administrationService.createAdmin,
-  deleteAdmin: administrationService.deleteAdmin,
+  agencies: agencyService.agencies,
+  admins: agencyService.allAdmins,
+  createAgency: agencyService.crearInmobi,
+  createAdmin: agencyService.crearAdmin,
+  deleteAdmin: agencyService.eliminarAdmin,
   updateAgent: agentService.updateAgent,
   deleteAgent: agentService.deleteAgent,
   getSession: loginService.getSession,
@@ -91,4 +92,13 @@ export const api = {
   downloadDocument: documentService.downloadDocument,
   notifications: notificationService.notifications,
   markNotificationRead: notificationService.markNotificationRead,
+  allAdmins: agencyService.allAdmins,
+  allAgents: agencyService.allAgents,
+  superAdminPanel: agencyService.superAdminPanel,
+  deleteAgency: agencyService.eliminarInmobi,
+  renameAgency: agencyService.renombrarInmobi,
+  adminToAgent: agencyService.adminAAgente,
+  agentToAdmin: agencyService.agenteAAdmin,
+  myAgency: myAgencyService.myAgency,
+  updateMyAgency: myAgencyService.updateMyAgency,
 };

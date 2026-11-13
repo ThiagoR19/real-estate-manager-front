@@ -6,11 +6,30 @@ import { AboutUs, Agency, Agents, AgentDashboard, Chat, Collections, ConfirmRegi
 import { Header, Navbar } from "./layouts/index.js";
 import { dashboardByRole } from "./layouts/navigation.js";
 import { getSession } from "./services/login.js";
+import { ToastContainer } from "./components/index.js";
 
 import "./App.css";
 import { api } from "./services/api.js";
+
 let yaSeHizo = false;
 const validar = ["/", "/public-properties", "/public-property", "/about-us", "/home"]
+const dashboardsPorRol = {
+  2: Dashboard,
+  3: AgentDashboard,
+  4: DashboardOwner,
+  5: TenantDashboard,
+};
+
+function DashboardPorRol() {
+  const rol = Number(getSession()?.usuario?.rol);
+  if (rol === 1) return <Redirect to="/super-admin" replace />;
+
+  const DashboardDelRol = dashboardsPorRol[rol];
+  if (!DashboardDelRol) return <Redirect to="/login" replace />;
+
+  return <DashboardDelRol />;
+}
+
 function AuthenticatedApp() {
   const [menuOpen, setMenuOpen] = useState(false);
   if (!getSession()?.token) {
@@ -22,8 +41,8 @@ function AuthenticatedApp() {
       <Header menuOpen={menuOpen} onToggleMenu={() => setMenuOpen((open) => !open)} />
       <Navbar menuOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       <div id="app-content">
-        <Route path="/admin-dashboard" component={Dashboard} />
-        <Route path="/dashboard" component={Dashboard} />
+        <Route path="/admin-dashboard" component={DashboardPorRol} />
+        <Route path="/dashboard" component={DashboardPorRol} />
         <Route path="/agent-dashboard" component={AgentDashboard} />
         <Route path="/tenant-dashboard" component={TenantDashboard} />
         <Route path="/owner-dashboard" component={DashboardOwner} />
@@ -80,6 +99,7 @@ function App() {
       <Route path="/" component={Home} />
       <Route>
         <AuthenticatedApp />
+        <ToastContainer />
       </Route>
     </Switch>
   );
