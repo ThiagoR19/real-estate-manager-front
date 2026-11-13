@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-import { useState } from "react";
-import { buildingColumnsIcon, penIcon, plusIcon, trashCanIcon } from "../../assets/icons";
-import { SummaryPill, Button, AgencyModal, Pagination, usePagination } from "../../components";
-=======
 import { useCallback, useEffect, useState } from "react";
 import { api } from "../../services/api";
 
@@ -11,7 +6,6 @@ import avatarClass from "../../utils/avatarClass";
 
 import { SummaryPill, Button, AgencyModal, ConfirmDeleteModal, mostrarToast } from "../../components";
 import { building, editSuper, plusIcon, trashCanIcon } from "../../assets/icons";
->>>>>>> develop-nahuel
 import "./SuperAdmin.css";
 
 function AgencyLogo({ agency }) {
