@@ -57,11 +57,7 @@ function AuthenticatedApp() {
         <Route path="/chat" component={Chat} />
         <Route path="/agency" component={Agency} />
         <Route path="/payments" component={Payments} />
-        <Route path="/collections">
-          {() => [1, 4].includes(Number(getSession()?.usuario?.rol))
-            ? <Collections />
-            : <Redirect to={dashboardByRole[Number(getSession()?.usuario?.rol)] ?? "/home"} replace />}
-        </Route>
+        <Route path="/collections" component={Collections}/>
         <Route path="/payments-collections" component={PaymentsAndCollections} />
         <Route path="/indec" component={Indec} />
         <Route path="/my-properties" component={MyProperties} />
