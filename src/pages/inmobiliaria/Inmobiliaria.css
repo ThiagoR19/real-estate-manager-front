@@ -71,9 +71,31 @@ body:has(#inmobiliaria) {
 }
 
 .inmobiliaria__identity-logo {
+  box-sizing: border-box;
   width: 168px;
   height: 168px;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgb(22 36 95 / 18%);
+  object-fit: cover;
   filter: none !important;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+/* Con el id para ganarle a "#inmobiliaria img { object-fit: contain }": el logo llena la esfera */
+#inmobiliaria .inmobiliaria__identity-logo {
+  object-fit: cover;
+}
+
+/* Sin logo: iniciales sobre el fondo de avatarClass */
+.inmobiliaria__identity-logo--iniciales {
+  display: grid;
+  place-items: center;
+  color: var(--blanc);
+  font-size: 56px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 25%);
 }
 
 .inmobiliaria__identity-camera {
@@ -284,8 +306,13 @@ body:has(#inmobiliaria) {
   display: none;
 }
 
-.inmobiliaria__upload-field > input {
+.inmobiliaria__upload-field > input,
+.inmobiliaria__identity-input {
   display: none;
+}
+
+.inmobiliaria__field--wide {
+  grid-column: 1 / -1;
 }
 
 .inmobiliaria__upload--filled {
@@ -456,8 +483,12 @@ body:has(#inmobiliaria) {
 
   .inmobiliaria__identity-logo-wrap,
   .inmobiliaria__identity-logo {
-    width: 132px;
+    width: 112px;
     height: 112px;
+  }
+
+  .inmobiliaria__identity-logo--iniciales {
+    font-size: 38px;
   }
 
   .inmobiliaria__identity-logo-wrap {
@@ -465,7 +496,7 @@ body:has(#inmobiliaria) {
   }
 
   .inmobiliaria__identity-camera {
-    right: 4px;
+    right: -4px;
     bottom: -2px;
     width: 31px;
     height: 31px;
