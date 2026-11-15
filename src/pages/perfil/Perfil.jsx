@@ -14,7 +14,7 @@ import {
   userIcon,
 } from "../../assets/icons";
 import "./Perfil.css";
-import { Boton } from "../../components";
+import { Boton, AccesoGoogle } from "../../components";
 import { api } from "../../services/api.js";
 import initials from "../../utils/initials.js";
 import avatarClass from "../../utils/avatarClass.js";
@@ -94,6 +94,7 @@ export default function Perfil() {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
   const [saveNotice, setSaveNotice] = useState("");
+  const [googleCredential, setGoogleCredential] = useState("");
   const [, navigate] = useLocation();
 
   const showProfile = useCallback((updated, token) => {
@@ -116,6 +117,8 @@ export default function Perfil() {
   const togglePassword = useCallback((id) => {
     setVisiblePasswords((current) => ({ ...current, [id]: !current[id] }));
   }, []);
+
+  const confirmarGoogle = useCallback((credential) => setGoogleCredential(credential), []);
 
   async function closeSession() {
     setLoggingOut(true);
@@ -149,6 +152,9 @@ export default function Perfil() {
     const confirmarContraseña = values["confirm-password"];
 
     try {
+      if ((contraseñaActual || contraseñaNueva || confirmarContraseña) && !profile.tieneContrasena && !googleCredential) {
+        throw new Error("Confirmá tu identidad con Google antes de crear la contraseña.");
+      }
       if (Object.keys(payload).length > 0) {
         const result = await api.actualizarPerfil(payload);
         showProfile(result.perfil, result.token);
@@ -158,7 +164,10 @@ export default function Perfil() {
           actual: contraseñaActual,
           nueva: contraseñaNueva,
           confirmacion: confirmarContraseña,
+          ...(!profile.tieneContrasena ? { credential: googleCredential } : {}),
         });
+        setProfile((current) => ({ ...current, tieneContrasena: 1 }));
+        setGoogleCredential("");
       }
       if (
         Object.keys(payload).length > 0 ||
@@ -262,6 +271,7 @@ export default function Perfil() {
               </label>
             </div>
             <h1>{`${profile.nombre || ""} ${profile.apellido || ""}`.trim() || profile.usuario || "Completá tu perfil"}</h1>
+            {profile.usuario && <p className="perfil__role">Usuario: {profile.usuario}</p>}
             <p className="perfil__role">{profile.rol || "Usuario"}</p>
             <p className="perfil__email">
               <img src={envelopeIcon} alt="" />
@@ -339,7 +349,9 @@ export default function Perfil() {
               </span>
               <div>
                 <h3 id="security-title">Seguridad</h3>
-                <p>Cambia tu contraseña periódicamente para mantener tu cuenta segura</p>
+                <p>{profile.googleVinculado && !profile.tieneContrasena
+                  ? "Confirmá tu identidad con Google para crear una contraseña. Dejá vacía la contraseña actual."
+                  : "Cambia tu contraseña periódicamente para mantener tu cuenta segura"}</p>
               </div>
             </div>
             <div className="perfil__fields perfil__fields--passwords">
@@ -352,6 +364,10 @@ export default function Perfil() {
                 />
               ))}
             </div>
+            {profile.googleVinculado && !profile.tieneContrasena && <div>
+              <AccesoGoogle modo="/perfil" onCredential={confirmarGoogle} />
+              {googleCredential && <p role="status">Identidad de Google confirmada. Ya podés guardar tu contraseña.</p>}
+            </div>}
           </section>
         </form>
       </div>

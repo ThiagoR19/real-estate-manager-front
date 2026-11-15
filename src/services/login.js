@@ -18,15 +18,21 @@ export function limpiarSesion() {
   window.dispatchEvent(new Event("session-updated"));
 }
 
-export const login = (usuario, password) =>
+export const login = (usuario, password, idUsuario) =>
   request("/auth/login", {
     method: "POST",
-    body: { usuario, password },
+    body: { usuario, password, ...(idUsuario ? { idUsuario } : {}) },
     auth: false,
   }).then(({ data }) => data);
 
 export const registrar = (body) =>
   request("/auth/registro", { method: "POST", body, auth: false }).then(({ data }) => data);
+
+export const registrarGoogle = (verificacion, credential) =>
+  request("/auth/registro/google", { method: "POST", body: { verificacion, credential }, auth: false }).then(({ data }) => data);
+
+export const loginGoogle = (credential, idUsuario) =>
+  request("/auth/login/google", { method: "POST", body: { credential, ...(idUsuario ? { idUsuario } : {}) }, auth: false }).then(({ data }) => data);
 
 export const verificarDniInvitacion = (codigo, dni) =>
   request(`/auth/invitacion/${encodeURIComponent(codigo)}/verificar`, {

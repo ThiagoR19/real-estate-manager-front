@@ -3,7 +3,10 @@ import { obtenerSesion } from "./login.js";
 
 export const conversaciones = () => request("/chat").then(({ data }) => data);
 export const contactos = () => request("/chat/contactos").then(({ data }) => data);
-export const mensajes = (id, page = 1) => request(`/chat/${id}/mensajes?page=${page}&limit=10`);
+export const mensajes = (id, { before } = {}) => {
+  const cursor = before ? `&before=${before}` : "";
+  return request(`/chat/${id}/mensajes?limit=10${cursor}`);
+};
 export const enviarMensaje = (id, contenido, files = []) => {
   const body = new FormData();
   if (contenido) body.append("contenido", contenido);

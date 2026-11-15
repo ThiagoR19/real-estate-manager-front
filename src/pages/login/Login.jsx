@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
-import { Link } from "wouter";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import { Skeleton, PanelImagen, CampoTexto, BotonPrincipal, TextoLegal } from "../../components";
+import { Skeleton, PanelImagen, CampoTexto, BotonPrincipal, TextoLegal, AccesoGoogle } from "../../components";
 
 import { api } from "../../services/api.js";
 import { dashboardPorRol } from "../../layouts/navegacion.js";
@@ -15,6 +14,10 @@ import "./Login.css";
 export default function Login() {
   const [submitState, setSubmitState] = useState("inactivo");
   const [error, setError] = useState("");
+  const [googleCredential, setGoogleCredential] = useState("");
+  const [cuentasGoogle, setCuentasGoogle] = useState([]);
+  const [cuentasPassword, setCuentasPassword] = useState([]);
+  const credencialesPassword = useRef(null);
 
   const [fromRegister] = useState(() => window.history.state?.fromRegister === true);
 
@@ -26,12 +29,18 @@ export default function Login() {
     e.preventDefault();
     setSubmitState("enviando");
     setError("");
+    setCuentasPassword([]);
     const form = new FormData(e.currentTarget);
+    const usuario = String(form.get("email") || "").trim();
+    const password = String(form.get("password") || "");
+    credencialesPassword.current = { usuario, password };
     try {
-      const session = await api.login(
-        String(form.get("email") || "").trim(),
-        String(form.get("password") || ""),
-      );
+      const session = await api.login(usuario, password);
+      if (session.cuentas) {
+        setCuentasPassword(session.cuentas);
+        setSubmitState("inactivo");
+        return;
+      }
       api.guardarSesion(session);
       setSubmitState("listo");
       const destination = dashboardPorRol[Number(session.usuario?.rol)] ?? "/dashboard";
@@ -41,6 +50,37 @@ export default function Login() {
       setSubmitState("inactivo");
     }
   };
+
+  const completarPassword = async (idUsuario) => {
+    if (!credencialesPassword.current) return;
+    setError("");
+    setSubmitState("enviando");
+    try {
+      const { usuario, password } = credencialesPassword.current;
+      const session = await api.login(usuario, password, idUsuario);
+      api.guardarSesion(session);
+      window.location.assign(dashboardPorRol[Number(session.usuario?.rol)] ?? "/dashboard");
+    } catch (cause) {
+      setError(cause.message);
+      setSubmitState("inactivo");
+    }
+  };
+
+  const completarGoogle = useCallback(async (credential, idUsuario) => {
+    setError("");
+    try {
+      const result = await api.loginGoogle(credential, idUsuario);
+      if (result.cuentas) {
+        setGoogleCredential(credential);
+        setCuentasGoogle(result.cuentas);
+        return;
+      }
+      api.guardarSesion(result);
+      window.location.assign(dashboardPorRol[Number(result.usuario?.rol)] ?? "/dashboard");
+    } catch (cause) {
+      setError(cause.message);
+    }
+  }, []);
 
   return (
     <Skeleton as="main" className="login" fondos={[fondo]}>
@@ -89,10 +129,23 @@ export default function Login() {
           )}
         </form>
 
+        {cuentasPassword.length > 0 && <div className="login__organizaciones">
+          <p>Elegí la inmobiliaria para continuar:</p>
+          {cuentasPassword.map((cuenta) => <button key={cuenta.idUsuario} type="button"
+            onClick={() => completarPassword(cuenta.idUsuario)} disabled={submitState === "enviando"}>{cuenta.inmobiliaria}</button>)}
+        </div>}
+
+        <AccesoGoogle texto="o continúa con" modo="/login" onCredential={completarGoogle} className="login__google" />
+        {cuentasGoogle.length > 0 && <div className="login__organizaciones">
+          <p>Elegí la inmobiliaria para continuar:</p>
+          {cuentasGoogle.map((cuenta) => <button key={cuenta.idUsuario} type="button"
+            onClick={() => completarGoogle(googleCredential, cuenta.idUsuario)}>{cuenta.inmobiliaria}</button>)}
+        </div>}
+
         <div className="login__footer">
           <TextoLegal className="login__terminos" />
           <p className="login__register">
-            ¿No tienes una cuenta? <Link href="/registro">Regístrate</Link>
+            ¿No tienes una cuenta? Solicitá un enlace de invitación a la inmobiliaria.
           </p>
         </div>
       </section>

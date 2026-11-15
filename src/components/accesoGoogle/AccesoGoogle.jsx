@@ -1,20 +1,74 @@
+import { useEffect, useRef, useState } from "react";
+import googleIcono from "../../assets/icons/loginGoogle.svg";
 import "./AccesoGoogle.css";
 
-import googleIcono from "../../assets/icons/loginGoogle.svg";
+const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const callbacks = new Map();
+let scriptPromise;
+let initialized = false;
 
-export default function AccesoGoogle({ texto, className = "" }) {
+function cargarGoogle() {
+  if (window.google?.accounts?.id) return Promise.resolve();
+  if (!scriptPromise) {
+    scriptPromise = new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = "https://accounts.google.com/gsi/client";
+      script.async = true;
+      script.onload = resolve;
+      script.onerror = () => reject(new Error("No se pudo cargar Google"));
+      document.head.appendChild(script);
+    });
+  }
+  return scriptPromise;
+}
+
+export default function AccesoGoogle({ texto, className = "", onCredential, onError, modo }) {
+  const container = useRef(null);
+  const [unavailable, setUnavailable] = useState(false);
+  const credentialHandler = useRef(onCredential);
+  const errorHandler = useRef(onError);
+  useEffect(() => {
+    credentialHandler.current = onCredential;
+    errorHandler.current = onError;
+  }, [onCredential, onError]);
+
+  useEffect(() => {
+    if (!clientId) return;
+    const handler = (credential) => credentialHandler.current?.(credential);
+    callbacks.set(modo, handler);
+    let active = true;
+    cargarGoogle().then(() => {
+      if (!active || !container.current) return;
+      if (!initialized) {
+        window.google.accounts.id.initialize({
+          client_id: clientId,
+          callback: ({ credential }) => callbacks.get(window.location.pathname)?.(credential),
+        });
+        initialized = true;
+      }
+      window.google.accounts.id.renderButton(container.current, {
+        type: "standard", theme: "outline", size: "large", text: "continue_with",
+        shape: "rectangular", width: 320,
+      });
+    }).catch((error) => {
+      if (active) {
+        setUnavailable(true);
+        errorHandler.current?.(error.message);
+      }
+    });
+    return () => {
+      active = false;
+      if (callbacks.get(modo) === handler) callbacks.delete(modo);
+    };
+  }, [modo]);
+
   return (
     <div className={`AccesoGoogle ${className}`}>
-      <div className="AccesoGoogle__separador">
-        <span>{texto}</span>
-      </div>
-
-      <button type="button" className="AccesoGoogle__boton">
-        <span className="AccesoGoogle__icono">
-          <img src={googleIcono} alt="" />
-        </span>
-        Google
-      </button>
+      {texto && <div className="AccesoGoogle__separador"><span>{texto}</span></div>}
+      {clientId && !unavailable ? <div className="AccesoGoogle__botonGoogle" ref={container} /> :
+        <div><button className="AccesoGoogle__boton" type="button" disabled>
+          <span className="AccesoGoogle__icono"><img src={googleIcono} alt="" /></span>Google
+        </button><p className="AccesoGoogle__noDisponible">Google no está disponible en este entorno.</p></div>}
     </div>
   );
 }

@@ -31,7 +31,7 @@ export default function Chat() {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
   const [hasMore, setHasMore] = useState(false);
-  const [page, setPage] = useState(1);
+  const loadedHistoryRef = useRef(false);
   const endRef = useRef(null);
   const atBottomRef = useRef(true);
   const fileRef = useRef(null);
@@ -66,6 +66,7 @@ export default function Chat() {
   }, []);
 
   useEffect(() => {
+    loadedHistoryRef.current = false;
     if (!selectedId) return undefined;
     let active = true;
     async function refresh() {
@@ -77,14 +78,14 @@ export default function Chat() {
           const recentIds = new Set(recent.map((message) => message.id));
           return [...current.filter((message) => !recentIds.has(message.id)), ...recent];
         });
-        setHasMore(page < (result.paginacion?.paginas || 1));
+        if (!loadedHistoryRef.current) setHasMore(Boolean(result.paginacion?.hayMas));
         await api.marcarChatLeido(selectedId);
       } catch (cause) { if (active) setError(cause.message); }
     }
     refresh();
     const interval = window.setInterval(refresh, 5000);
     return () => { active = false; window.clearInterval(interval); };
-  }, [selectedId, page]);
+  }, [selectedId]);
 
   useEffect(() => { if (atBottomRef.current) endRef.current?.scrollIntoView({ block: "end" }); }, [messages, selectedId]);
 
@@ -98,11 +99,16 @@ export default function Chat() {
 
   async function loadMore() {
     try {
-      const next = page + 1;
-      const result = await api.mensajesChat(selectedId, next);
-      setMessages((current) => [...result.data.reverse(), ...current]);
-      setPage(next);
-      setHasMore(next < (result.paginacion?.paginas || 1));
+      const oldestId = messages[0]?.id;
+      if (!oldestId) return;
+      const result = await api.mensajesChat(selectedId, { before: oldestId });
+      atBottomRef.current = false;
+      setMessages((current) => {
+        const conocidos = new Set(current.map((message) => message.id));
+        return [...result.data.reverse().filter((message) => !conocidos.has(message.id)), ...current];
+      });
+      loadedHistoryRef.current = true;
+      setHasMore(Boolean(result.paginacion?.hayMas));
     } catch (cause) { setError(cause.message); }
   }
 
@@ -121,6 +127,9 @@ export default function Chat() {
         if (!newContactId || !content) throw new Error("Seleccioná un contacto y escribí un mensaje.");
         const result = await api.iniciarConversacion(Number(newContactId), content);
         await refreshConversations();
+        loadedHistoryRef.current = false;
+        setHasMore(false);
+        setMessages([]);
         setSelectedId(result.conversacion.id);
         setNewContactId("");
       }
@@ -136,18 +145,18 @@ export default function Chat() {
     <main id="chat" className="chat-page">
       {conversations.length > 0 && (
         <SelectDesplegable label="Conversación" value={selectedConversation ? `${personName(selectedConversation)} (#${selectedId})` : ""}
-          options={conversationOptions} onChange={(name) => { atBottomRef.current = true; setMessages([]); setPage(1); setSelectedId(Number(name.match(/#(\d+)\)$/)?.[1])); }}
+          options={conversationOptions} onChange={(name) => { atBottomRef.current = true; loadedHistoryRef.current = false; setHasMore(false); setMessages([]); setSelectedId(Number(name.match(/#(\d+)\)$/)?.[1])); }}
           className="chat__mobile-select" triggerClassName="chat__mobile-select-trigger" chevronClassName="chat__mobile-select-chevron" blurOnSelect />
       )}
-      <button className="chat__mobile-new" type="button" onClick={() => { atBottomRef.current = true; setSelectedId(0); setMessages([]); setPage(1); setDraft(""); }}>+ Nueva conversación</button>
+      <button className="chat__mobile-new" type="button" onClick={() => { atBottomRef.current = true; loadedHistoryRef.current = false; setHasMore(false); setSelectedId(0); setMessages([]); setDraft(""); }}>+ Nueva conversación</button>
       <div className="chat__layout">
         <aside className="chat__conversations" aria-label="Conversaciones">
           <div className="chat__sidebar-heading"><h1>Conversaciones</h1><span className="chat__total">{conversations.length}</span></div>
           <label className="chat__search"><img src={magnifyingGlassIcon} alt="" /><input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar conversación" aria-label="Buscar conversación" /></label>
-          <button className="chat__new" type="button" onClick={() => { atBottomRef.current = true; setSelectedId(0); setMessages([]); setPage(1); setDraft(""); }}>+ Nueva conversación</button>
+          <button className="chat__new" type="button" onClick={() => { atBottomRef.current = true; loadedHistoryRef.current = false; setHasMore(false); setSelectedId(0); setMessages([]); setDraft(""); }}>+ Nueva conversación</button>
           <div className="chat__conversation-list" role="list">
             {filteredConversations.map((conversation) => (
-              <button className={`chat__conversation${conversation.id === selectedId ? " is-selected" : ""}`} key={conversation.id} type="button" onClick={() => { atBottomRef.current = true; setSelectedId(conversation.id); setMessages([]); setPage(1); setDraft(""); }} aria-current={conversation.id === selectedId ? "page" : undefined}>
+              <button className={`chat__conversation${conversation.id === selectedId ? " is-selected" : ""}`} key={conversation.id} type="button" onClick={() => { atBottomRef.current = true; loadedHistoryRef.current = false; setHasMore(false); setSelectedId(conversation.id); setMessages([]); setDraft(""); }} aria-current={conversation.id === selectedId ? "page" : undefined}>
                 <ConversationAvatar kind={conversation.rol?.toLowerCase().includes("admin") ? "administration" : "agent"} />
                 <span className="chat__conversation-copy"><span className="chat__conversation-name">{personName(conversation)} {conversation.noLeidos > 0 && <strong>({conversation.noLeidos})</strong>}</span><span className="chat__conversation-preview">{conversation.ultimoMensaje || "Todavía no hay mensajes"}</span></span>
               </button>

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link, useLocation } from "wouter";
 
@@ -9,6 +9,7 @@ import {
   CampoTexto,
   BotonPrincipal,
   TextoLegal,
+  AccesoGoogle,
 } from "../../components";
 import Login from "../login/Login";
 import { limpiarBorradorRegistro, obtenerBorradorRegistro } from "../../services/borradorRegistro.js";
@@ -66,6 +67,21 @@ export default function Registro() {
       setStatus("inactivo");
     }
   };
+
+  const registrarConGoogle = useCallback(async (credential) => {
+    if (!draft?.verificacion) return;
+    setError("");
+    setStatus("enviando");
+    try {
+      const session = await api.registrarGoogle(draft.verificacion, credential);
+      api.guardarSesion(session);
+      limpiarBorradorRegistro();
+      window.location.assign("/perfil");
+    } catch (cause) {
+      setError(cause.message);
+      setStatus("inactivo");
+    }
+  }, [draft?.verificacion]);
 
   const irALogin = (e) => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -148,6 +164,8 @@ export default function Registro() {
           {error && <p className="Registro__error" role="alert">{error}</p>}
           {draft?.verificacion && <BotonPrincipal texto="Crear cuenta" textoEnviando="Creando cuenta" estado={status} className="Registro__boton" />}
         </form>
+
+        {draft?.verificacion && <AccesoGoogle texto="o regístrate con" modo="/registro" onCredential={registrarConGoogle} />}
 
         <footer className="Registro__pie">
           <TextoLegal className="Registro__legal" />

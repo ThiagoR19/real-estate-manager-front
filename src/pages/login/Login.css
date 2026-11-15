@@ -29,9 +29,15 @@
 .login__form {
   width: 100%;
   max-width: 480px;
-  margin: auto 0;
+  margin: auto 0 0;
   padding-top: clamp(16px, 4vh, 40px);
 }
+
+.login__google, .login__organizaciones { width: 100%; max-width: 480px; }
+.login__organizaciones { color: var(--azulOsc); font-size: 14px; text-align: center; }
+.login__organizaciones button { display: block; width: 100%; padding: 10px; margin: 6px 0; border: 1px solid var(--bordes); border-radius: 6px; background: var(--blanc); cursor: pointer; }
+.login__organizaciones button:hover { background: var(--casiBlanc); }
+.login__footer { margin-top: auto; }
 
 .login__header {
   margin-bottom: clamp(20px, 5.6vh, 39px);
