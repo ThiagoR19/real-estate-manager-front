@@ -50,36 +50,10 @@
   color: var(--azulOsc);
 }
 
-.Footer__redes {
-  display: flex;
-  gap: 18px;
-  margin: 26px 0 0 12px;
-  padding: 0;
-  list-style: none;
-}
-
-.Footer__red {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
+/* Ocupa el lugar de las redes que se quitaron */
+.Footer__redes-hueco {
   height: 40px;
-  border-radius: 50%;
-  background-color: var(--blanc);
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
-  transition: transform 0.2s ease;
-}
-
-.Footer__red:hover {
-  transform: translateY(-2px);
-}
-
-.Footer__red img {
-  width: 55%;
-  height: 55%;
-
-  -webkit-user-drag: none;
-  user-select: none;
+  margin-top: 26px;
 }
 
 .Footer__columna {
@@ -122,41 +96,9 @@
   color: var(--azulClaro);
 }
 
-.Footer__columna--contacto {
-  align-self: stretch;
-  padding-right: 26px;
-  border-right: 1px solid color-mix(in srgb, var(--azulGris) 40%, transparent);
-}
-
-.Footer__columna--contacto .Footer__lista {
-  gap: 16px;
-}
-
-.Footer__contacto {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  white-space: nowrap;
-}
-
-.Footer__contacto-icono {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background-color: var(--blanc);
-  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.15);
-}
-
-.Footer__contacto-icono img {
-  width: 12px;
-  height: 12px;
-
-  -webkit-user-drag: none;
-  user-select: none;
+/* Ocupa el lugar de la columna Contacto que se quitó */
+.Footer__hueco {
+  width: 210.6px;
 }
 
 .Footer__agi {
@@ -221,10 +163,6 @@
     padding: 45px 40px 0;
   }
 
-  .Footer__columna--contacto {
-    border-right: none;
-  }
-
   .Footer__agi {
     grid-column: 1 / -1;
     max-width: 640px;
@@ -238,6 +176,11 @@
 
   .Footer__marca {
     grid-column: 1 / -1;
+  }
+
+  /* Contacto era el bloque más alto de esta fila */
+  .Footer__hueco {
+    height: 222px;
   }
 }
 
@@ -276,22 +219,13 @@
     line-height: 1.8;
   }
 
-  .Footer__redes {
-    gap: 18px;
-    margin: 10px 0 0;
-  }
-
-  .Footer__red {
-    width: 34px;
+  .Footer__redes-hueco {
     height: 34px;
+    margin-top: 10px;
   }
 
   .Footer__columna {
     padding-top: 6px;
-  }
-
-  .Footer__columna--contacto {
-    padding-right: 0;
   }
 
   .Footer__lista {
@@ -299,15 +233,9 @@
     margin-top: 22px;
   }
 
-  .Footer__columna--contacto .Footer__lista {
-    gap: 14px;
-    margin-top: 16px;
-    font-size: 12px;
-  }
-
-  .Footer__contacto {
-    white-space: normal;
-    overflow-wrap: anywhere;
+  .Footer__hueco {
+    width: auto;
+    height: 188px;
   }
 
   .Footer__agi {

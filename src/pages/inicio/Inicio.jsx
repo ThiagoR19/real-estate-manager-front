@@ -1,10 +1,4 @@
-import {
-  Skeleton,
-  NavegacionPortada,
-  Estadisticas,
-  TituloSeccion,
-  Footer,
-} from "../../components";
+import { Skeleton, NavegacionPortada, Estadisticas, TituloSeccion, Footer, } from "../../components";
 import BuscadorPropiedades from "./BuscadorPropiedades";
 import TarjetaPropiedad from "./TarjetaPropiedad";
 
@@ -103,7 +97,7 @@ const propiedades = [
 
 export default function Inicio() {
   return (
-    <Skeleton className="Inicio" fondos={[fondoInicio]}>
+    <Skeleton fondos={[fondoInicio]}>
       <section className="Inicio" data-sk-fondo>
         <NavegacionPortada />
 

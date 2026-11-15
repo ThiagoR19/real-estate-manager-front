@@ -4,21 +4,6 @@ import "./Footer.css";
 
 import kaikenLogo from "../../assets/icons/kaiken.svg";
 import agiLogo from "../../assets/icons/agiLogo.svg";
-import facebookIcono from "../../assets/icons/redFacebook.svg";
-import instagramIcono from "../../assets/icons/redInstagram.svg";
-import linkedinIcono from "../../assets/icons/redLinkedin.svg";
-import youtubeIcono from "../../assets/icons/redYoutube.svg";
-import ubicacionIcono from "../../assets/icons/ubiLlenoIcon.svg";
-import telefonoIcono from "../../assets/icons/callIcon.svg";
-import correoIcono from "../../assets/icons/mailHomeIcon.svg";
-import relojIcono from "../../assets/icons/relojHomeIcon.svg";
-
-const redes = [
-  { nombre: "Facebook", icono: facebookIcono, href: "#" },
-  { nombre: "Instagram", icono: instagramIcono, href: "#" },
-  { nombre: "LinkedIn", icono: linkedinIcono, href: "#" },
-  { nombre: "YouTube", icono: youtubeIcono, href: "#" },
-];
 
 const navegacion = [
   { texto: "Inicio", href: "/inicio" },
@@ -29,13 +14,6 @@ const navegacion = [
 ];
 
 const legales = [{ texto: "Términos y condiciones", href: "/terminos" }];
-
-const contacto = [
-  { icono: ubicacionIcono, texto: "Bielke 747" },
-  { icono: telefonoIcono, texto: "+54 9 2901 6018 01", href: "tel:+5492901601801" },
-  { icono: correoIcono, texto: "nahuel.odi.tv@gmail.com", href: "mailto:nahuel.odi.tv@gmail.com" },
-  { icono: relojIcono, texto: "Lun a Vie: 9:00 a 20:00 hs" },
-];
 
 function ColumnaEnlaces({ titulo, enlaces }) {
   return (
@@ -75,41 +53,15 @@ export default function Footer({ className = "" }) {
             confianza y seguridad en cada operación
           </p>
 
-          <ul className="Footer__redes">
-            {redes.map(({ nombre, icono, href }) => (
-              <li key={nombre}>
-                <a href={href} className="Footer__red" aria-label={nombre}>
-                  <img src={icono} alt="" />
-                </a>
-              </li>
-            ))}
-          </ul>
+          {/* Lugar que ocupaban las redes: mantiene la altura del bloque */}
+          <div className="Footer__redes-hueco" aria-hidden="true" />
         </div>
 
         <ColumnaEnlaces titulo="Navegación" enlaces={navegacion} />
 
         <ColumnaEnlaces titulo="Legal & soporte" enlaces={legales} />
 
-        <div className="Footer__columna Footer__columna--contacto">
-          <h3 className="Footer__titulo">Contacto</h3>
-
-          <ul className="Footer__lista">
-            {contacto.map(({ icono, texto, href }) => (
-              <li key={texto} className="Footer__contacto">
-                <span className="Footer__contacto-icono">
-                  <img src={icono} alt="" />
-                </span>
-                {href ? (
-                  <a href={href} className="Footer__enlace">
-                    {texto}
-                  </a>
-                ) : (
-                  texto
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
+        <div className="Footer__hueco" aria-hidden="true" />
 
         <aside className="Footer__agi">
           <span className="Footer__agi-logo">
