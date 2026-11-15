@@ -2,7 +2,6 @@ import { Link, useLocation } from "wouter";
 
 import "./NavegacionPortada.css";
 
-import kaikenLogo from "../../assets/icons/kaiken.svg";
 import lupaIcono from "../../assets/icons/search.svg";
 
 // "#contacto" lleva al footer de la misma página (ver Footer)
@@ -14,7 +13,7 @@ const enlaces = [
   { texto: "Contacto", href: "#contacto" },
 ];
 
-export default function NavegacionPortada({ className = "" }) {
+export default function NavegacionPortada({ className = "", URLLogo }) {
   const [ubicacion] = useLocation();
 
   const buscar = (e) => {
@@ -29,7 +28,7 @@ export default function NavegacionPortada({ className = "" }) {
   return (
     <header className={`NavegacionPortada ${className}`}>
       <Link href="/inicio" className="NavegacionPortada__marca" aria-label="Kaiken Propiedades, inicio">
-        <img src={kaikenLogo} alt="Kaiken Propiedades" />
+        <img src={URLLogo} alt="Logo" />
       </Link>
 
       <nav className="NavegacionPortada__nav" aria-label="Navegación principal">

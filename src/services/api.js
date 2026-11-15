@@ -16,6 +16,7 @@ import * as servicioNotificaciones from "./notificaciones.js";
 import { assetUrl } from "../utils/assetUrl.js";
 import * as servicioInmobiliarias from "./inmobiliarias.js";
 import * as servicioMiInmobiliaria from "./miInmobiliaria.js";
+import * as servicioInfoInmobiliaria from "./infoInmobiliaria.js";
 
 export const api = {
   agentes: servicioAgentes.agentes,
@@ -102,4 +103,6 @@ export const api = {
   agenteAAdministrador: servicioInmobiliarias.agenteAAdministrador,
   miInmobiliaria: servicioMiInmobiliaria.miInmobiliaria,
   actualizarMiInmobiliaria: servicioMiInmobiliaria.actualizarMiInmobiliaria,
+  infoInmobiliaria: servicioInfoInmobiliaria.infoInmobiliaria,
+  propiedadesDestacadas: servicioInfoInmobiliaria.propiedadesDestacadas,
 };
