@@ -1,106 +1,50 @@
-import { Skeleton, NavegacionPortada, Estadisticas, TituloSeccion, Footer, } from "../../components";
+import { Skeleton, Estadisticas, TituloSeccion } from "../../components";
 import BuscadorPropiedades from "./BuscadorPropiedades";
 import TarjetaPropiedad from "./TarjetaPropiedad";
 
 import fondoInicio from "../../assets/homeHero.png";
 
 import "./Inicio.css";
+import { useCallback, useEffect, useState } from "react";
+import { api } from "../../services/api";
 
+// Cantidad de propiedades que se muestran en "Propiedades destacadas"
+const CANTIDAD_DESTACADAS = 8;
 
-const imagenCasa = "/images%20(1).jpg";
-const imagenTerraza = "/images.jpg";
-const imagenVilla = "/ly-villa-costa-blanca-1_b02f5d33_900x900.jpg";
+// Tarjetas de relleno que se ven en skeleton mientras llegan las destacadas
+const TARJETAS_RELLENO = Array.from({ length: 4 }, (_, indice) => ({
+  id: `relleno-${indice}`,
+  titulo: "Propiedad destacada",
+  direccion: "Dirección de la propiedad",
+  dormitorios: "-",
+  banos: "-",
+  superficie: "-",
+  operacion: "Venta",
+}));
 
+// loading y datos vienen de LayoutPublico (datos de la inmobiliaria); acá solo se piden las destacadas.
+// Mientras falte cualquiera de las dos cosas la vista se muestra en skeleton.
+export default function Inicio({ loading, datos }) {
+  const [cargandoPropiedades, setCargandoPropiedades] = useState(true);
+  const [propiedades, setPropiedades] = useState([]);
+  const cargando = loading || cargandoPropiedades;
 
-const propiedades = [
-  {
-    id: 1,
-    titulo: "Departamento en Belgrano",
-    direccion: "Av. Cabildo 2450, CABA",
-    imagen: imagenTerraza,
-    dormitorios: 2,
-    banos: 2,
-    superficie: 80,
-    operacion: "Alquiler",
-  },
-  {
-    id: 2,
-    titulo: "Casa en Nordelta",
-    direccion: "Av. de los Lagos 7010, Tigre",
-    imagen: imagenCasa,
-    dormitorios: 4,
-    banos: 3,
-    superficie: 240,
-    operacion: "Venta",
-  },
-  {
-    id: 3,
-    titulo: "PH en Palermo",
-    direccion: "Gorriti 4870, CABA",
-    imagen: imagenVilla,
-    dormitorios: 3,
-    banos: 2,
-    superficie: 110,
-    operacion: "Alquiler",
-  },
-  {
-    id: 4,
-    titulo: "Casa en Pilar",
-    direccion: "Ruta 8 Km 50, Pilar",
-    imagen: imagenCasa,
-    dormitorios: 5,
-    banos: 4,
-    superficie: 320,
-    operacion: "Venta",
-  },
-  {
-    id: 5,
-    titulo: "Departamento en Núñez",
-    direccion: "Av. del Libertador 7200, CABA",
-    imagen: imagenTerraza,
-    dormitorios: 2,
-    banos: 1,
-    superficie: 65,
-    operacion: "Alquiler",
-  },
-  {
-    id: 6,
-    titulo: "Loft en Recoleta",
-    direccion: "Ayacucho 1650, CABA",
-    imagen: imagenVilla,
-    dormitorios: 1,
-    banos: 1,
-    superficie: 55,
-    operacion: "Alquiler",
-  },
-  {
-    id: 7,
-    titulo: "Casa en Ushuaia",
-    direccion: "Bielke 747, Ushuaia",
-    imagen: imagenCasa,
-    dormitorios: 3,
-    banos: 2,
-    superficie: 150,
-    operacion: "Venta",
-  },
-  {
-    id: 8,
-    titulo: "Departamento en Caballito",
-    direccion: "Av. Rivadavia 5100, CABA",
-    imagen: imagenTerraza,
-    dormitorios: 3,
-    banos: 2,
-    superficie: 90,
-    operacion: "Venta",
-  },
-];
+  const cargar = useCallback(() => {
+    let activo = true;
+    api.propiedadesDestacadas(CANTIDAD_DESTACADAS)
+      .then((lista) => activo && setPropiedades(lista))
+      .catch((causa) => console.error(causa))
+      .finally(() => activo && setCargandoPropiedades(false));
+    return () => {
+      activo = false;
+    };
+  }, []);
 
-export default function Inicio() {
+  useEffect(() => cargar(), [cargar]);
+
   return (
-    <Skeleton fondos={[fondoInicio]}>
+    <Skeleton fondos={[fondoInicio]} cargando={cargando}>
       <section className="Inicio" data-sk-fondo>
-        <NavegacionPortada />
-
         <div className="Inicio__contenido">
           <h1 className="Inicio__titulo">
             Encuentra el hogar <span>de tus sueños</span>
@@ -113,24 +57,30 @@ export default function Inicio() {
       </section>
 
       <main>
-        <Estadisticas />
+        <Estadisticas
+          anios={datos?.aniosExperiencia}
+          vendidas={datos?.propiedadesVendidas}
+          activas={datos?.propiedadesActivas}
+        />
 
         <section className="Propiedades" aria-labelledby="propiedades-titulo">
           <TituloSeccion
             id="propiedades-titulo"
-            titulo="Propiedades disponibles"
+            titulo="Propiedades destacadas"
             subtitulo="Las mejores opciones disponibles"
           />
 
-          <div className="Propiedades__lista">
-            {propiedades.map((propiedad) => (
-              <TarjetaPropiedad key={propiedad.id} propiedad={propiedad} />
-            ))}
-          </div>
+          {cargando || propiedades.length ? (
+            <div className="Propiedades__lista">
+              {(cargando ? TARJETAS_RELLENO : propiedades).map((propiedad) => (
+                <TarjetaPropiedad key={propiedad.id} propiedad={propiedad} />
+              ))}
+            </div>
+          ) : (
+            <p className="Propiedades__vacio">Todavía no hay propiedades publicadas.</p>
+          )}
         </section>
       </main>
-
-      <Footer />
     </Skeleton>
   );
 }

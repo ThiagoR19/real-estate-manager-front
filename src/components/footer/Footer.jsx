@@ -2,7 +2,6 @@ import { Link } from "wouter";
 
 import "./Footer.css";
 
-import kaikenLogo from "../../assets/icons/kaiken.svg";
 import agiLogo from "../../assets/icons/agiLogo.svg";
 
 const navegacion = [
@@ -39,14 +38,14 @@ function ColumnaEnlaces({ titulo, enlaces }) {
   );
 }
 
-export default function Footer({ className = "" }) {
-  const anio = new Date().getFullYear();
+export default function Footer({ className = "", anios, URLLogo, inmobiliaria }) {
+  const anio = (new Date().getFullYear()) - anios
 
   return (
     <footer className={`Footer ${className}`} id="contacto" data-sk-fondo>
       <div className="Footer__contenido">
         <div className="Footer__marca">
-          <img className="Footer__logo" src={kaikenLogo} alt="Kaiken Propiedades" />
+          <img className="Footer__logo" src={URLLogo} alt="Kaiken Propiedades" />
 
           <p className="Footer__lema">
             Te acompañamos en cada paso para encontrar el hogar de tus sueños. Trayectoria,
@@ -78,7 +77,7 @@ export default function Footer({ className = "" }) {
 
       <div className="Footer__legal">
         <p className="Footer__copy">
-          © {anio} KAIKEN PROPIEDADES. <span>Todos los derechos reservados.</span>
+          © {anio} {inmobiliaria}. <span>Todos los derechos reservados.</span>
         </p>
 
         <p className="Footer__autor">Diseñado y desarrollado por Séptimo Studios.</p>

@@ -254,6 +254,7 @@ body:has(#perfil) {
   height: 34px;
   padding: 7px;
   border: 2px solid #fff;
+  background-color: var(--azulOsc);
   border-radius: 50%;
   cursor: pointer;
 }

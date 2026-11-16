@@ -65,6 +65,12 @@
   margin-top: 36px;
 }
 
+.Propiedades__vacio {
+  margin: 36px 0 0;
+  color: var(--azulGris);
+  text-align: center;
+}
+
 @media (max-width: 1250px) {
   .Propiedades__lista {
     grid-template-columns: repeat(3, minmax(0, 1fr));

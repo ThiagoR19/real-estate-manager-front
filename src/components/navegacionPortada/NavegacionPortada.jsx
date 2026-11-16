@@ -2,8 +2,8 @@ import { Link, useLocation } from "wouter";
 
 import "./NavegacionPortada.css";
 
-import kaikenLogo from "../../assets/icons/kaiken.svg";
 import lupaIcono from "../../assets/icons/search.svg";
+import useBuscadorZona from "../../hooks/useBuscadorZona";
 
 
 const enlaces = [
@@ -14,12 +14,9 @@ const enlaces = [
   { texto: "Contacto", href: "#contacto" },
 ];
 
-export default function NavegacionPortada({ className = "" }) {
+export default function NavegacionPortada({ className = "", URLLogo }) {
   const [ubicacion] = useLocation();
-
-  const buscar = (e) => {
-    e.preventDefault();
-  };
+  const { texto, setTexto, abierto, inputRef, buscar, cerrarSiSale, cerrarConEscape } = useBuscadorZona();
 
   const irAContacto = (e) => {
     e.preventDefault();
@@ -29,7 +26,7 @@ export default function NavegacionPortada({ className = "" }) {
   return (
     <header className={`NavegacionPortada ${className}`}>
       <Link href="/inicio" className="NavegacionPortada__marca" aria-label="Kaiken Propiedades, inicio">
-        <img src={kaikenLogo} alt="Kaiken Propiedades" />
+        <img src={URLLogo} alt="Logo" />
       </Link>
 
       <nav className="NavegacionPortada__nav" aria-label="Navegación principal">
@@ -60,12 +57,21 @@ export default function NavegacionPortada({ className = "" }) {
       </nav>
 
       <div className="NavegacionPortada__acciones">
-        <form className="NavegacionPortada__buscar" role="search" onSubmit={buscar}>
+        <form
+          className={`NavegacionPortada__buscar${abierto ? " is-abierto" : ""}`}
+          role="search"
+          onSubmit={buscar}
+          onBlur={cerrarSiSale}
+          onKeyDown={cerrarConEscape}
+        >
           <input
+            ref={inputRef}
             type="search"
             className="NavegacionPortada__buscar-input"
             placeholder="Buscar por zona"
             aria-label="Buscar por zona"
+            value={texto}
+            onChange={(event) => setTexto(event.target.value)}
           />
 
           <button type="submit" className="NavegacionPortada__buscar-boton" aria-label="Buscar">

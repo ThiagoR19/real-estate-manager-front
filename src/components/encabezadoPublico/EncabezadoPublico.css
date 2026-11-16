@@ -1,0 +1,248 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap");
+
+.EncabezadoPublico {
+  --ink: #182866;
+  position: relative;
+  min-height: 78px;
+  display: flex;
+  align-items: center;
+  gap: 34px;
+  padding: 0 28px;
+  background: #fff;
+  border-bottom: 1px solid #dfe3e9;
+  box-shadow: 0 2px 4px rgba(24, 40, 102, 0.12);
+  color: var(--ink);
+  font-family: "DM Sans", Arial, sans-serif;
+}
+
+.EncabezadoPublico a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.EncabezadoPublico input {
+  font: inherit;
+}
+
+.EncabezadoPublico__oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.EncabezadoPublico__marca {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 185px;
+  color: #080808;
+}
+
+.EncabezadoPublico__marca > img {
+  display: block;
+  width: 136px;
+  height: 44px;
+  object-fit: contain;
+
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+.EncabezadoPublico__nav {
+  display: flex;
+  align-self: stretch;
+  align-items: center;
+  gap: 34px;
+  flex: 1;
+  font-size: 13px;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+}
+
+.EncabezadoPublico__nav a {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  white-space: nowrap;
+}
+
+.EncabezadoPublico__nav a.is-active::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 5px;
+  border-radius: 4px 4px 0 0;
+  background: #08aed0;
+}
+
+.EncabezadoPublico__nav a:hover {
+  color: #0b6b9e;
+}
+
+.EncabezadoPublico__acciones {
+  display: flex;
+  align-items: center;
+  gap: 43px;
+}
+
+.EncabezadoPublico__buscar {
+  width: 218px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+  border: 1px solid #e4eaf2;
+  border-radius: 18px;
+  color: var(--ink);
+}
+
+.EncabezadoPublico__buscar input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.EncabezadoPublico__buscar button {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.EncabezadoPublico__buscar .icono-inicio {
+  width: 18px;
+}
+
+.EncabezadoPublico .EncabezadoPublico__ingresar {
+  padding: 9px 20px;
+  border-radius: 20px;
+  background: #223e91;
+  color: #fff;
+  font-size: 12px;
+}
+
+.EncabezadoPublico .EncabezadoPublico__ingresar:hover {
+  background: #152e75;
+}
+
+@media (max-width: 1200px) {
+  .EncabezadoPublico {
+    gap: 18px;
+  }
+
+  .EncabezadoPublico__nav {
+    gap: 19px;
+  }
+
+  .EncabezadoPublico__acciones {
+    gap: 15px;
+  }
+
+  .EncabezadoPublico__buscar {
+    width: 175px;
+  }
+}
+
+@media (max-width: 1150px) {
+  .EncabezadoPublico {
+    flex-wrap: wrap;
+    gap: 0;
+    padding: 8px 10px 0;
+  }
+
+  .EncabezadoPublico__nav {
+    order: 3;
+    flex-basis: 100%;
+    min-height: 30px;
+    justify-content: center;
+  }
+
+  .EncabezadoPublico__acciones {
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 620px) {
+  .EncabezadoPublico {
+    min-height: 78px;
+  }
+
+  .EncabezadoPublico__marca {
+    min-width: 0;
+  }
+
+  .EncabezadoPublico__marca > img {
+    width: 96px;
+    height: 35px;
+  }
+
+  .EncabezadoPublico__acciones {
+    gap: 14px;
+  }
+
+  .EncabezadoPublico__buscar {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 5px;
+  }
+
+  .EncabezadoPublico__buscar input {
+    display: none;
+  }
+
+  .EncabezadoPublico__buscar.is-abierto {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    left: 10px;
+    z-index: 3;
+    display: flex;
+    width: auto;
+    height: 38px;
+    padding: 0 12px;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(24, 40, 102, 0.18);
+  }
+
+  .EncabezadoPublico__buscar.is-abierto input {
+    display: block;
+    font-size: 16px;
+  }
+
+  .EncabezadoPublico .EncabezadoPublico__ingresar {
+    min-width: 84px;
+    padding: 8px 16px;
+    text-align: center;
+  }
+
+  .EncabezadoPublico__nav {
+    justify-content: space-evenly;
+    gap: 8px;
+    min-height: 30px;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+  }
+
+  .EncabezadoPublico__nav a.is-active::after {
+    height: 3px;
+  }
+}

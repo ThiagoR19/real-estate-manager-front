@@ -1,163 +1,78 @@
 import { useEffect, useState } from "react";
-import { Link } from "wouter";
-import { Footer, Icono, TarjetaPropiedadSimple, Paginacion, usePaginacion, PROPERTY_PAGE_SIZE } from "../../components";
-import kaikenLogo from "../../assets/icons/kaiken.svg";
+import { Link, useSearchParams } from "wouter";
+import { TarjetaPropiedadSimple, Paginacion } from "../../components";
+import { api } from "../../services/api";
 import filterIcon from "../../assets/icons/options.svg";
 import "./PropiedadesPublicas.css";
 
-const properties = [
-  {
-    id: 1,
-    image: "/images.jpg",
-    title: "Departamento en Belgrano",
-    location: "Av. Cabildo 2450, CABA",
-    operation: "rent",
-    type: "Departamento",
-    rooms: 2,
-    baths: 2,
-    area: 80,
-  },
-  {
-    id: 2,
-    image: "/images.jpg",
-    title: "Departamento en Belgrano",
-    location: "Av. Cabildo 2450, CABA",
-    operation: "rent",
-    type: "Departamento",
-    rooms: 2,
-    baths: 2,
-    area: 80,
-  },
-  {
-    id: 3,
-    image: "/images (1).jpg",
-    title: "Casa moderna en Palermo",
-    location: "Av. Dorrego 1800, CABA",
-    operation: "buy",
-    type: "Casa",
-    rooms: 3,
-    baths: 2,
-    area: 145,
-  },
-  {
-    id: 4,
-    image: "/ly-villa-costa-blanca-1_b02f5d33_900x900.jpg",
-    title: "Casa con jardín en Nordelta",
-    location: "Los Alamos 120, Tigre",
-    operation: "rent",
-    type: "Casa",
-    rooms: 4,
-    baths: 3,
-    area: 220,
-  },
-  {
-    id: 5,
-    image: "/images.jpg",
-    title: "Departamento en Belgrano",
-    location: "Av. Cabildo 2450, CABA",
-    operation: "rent",
-    type: "Departamento",
-    rooms: 2,
-    baths: 2,
-    area: 80,
-  },
-  {
-    id: 6,
-    image: "/images (1).jpg",
-    title: "Casa moderna en Palermo",
-    location: "Av. Dorrego 1800, CABA",
-    operation: "buy",
-    type: "Casa",
-    rooms: 3,
-    baths: 2,
-    area: 145,
-  },
-  {
-    id: 7,
-    image: "/ly-villa-costa-blanca-1_b02f5d33_900x900.jpg",
-    title: "Casa con jardín en Nordelta",
-    location: "Los Alamos 120, Tigre",
-    operation: "rent",
-    type: "Casa",
-    rooms: 4,
-    baths: 3,
-    area: 220,
-  },
-  {
-    id: 8,
-    image: "/images.jpg",
-    title: "Departamento en Belgrano",
-    location: "Av. Cabildo 2450, CABA",
-    operation: "rent",
-    type: "Departamento",
-    rooms: 2,
-    baths: 2,
-    area: 80,
-  },
-  {
-    id: 9,
-    image: "/images (1).jpg",
-    title: "Casa moderna en Palermo",
-    location: "Av. Dorrego 1800, CABA",
-    operation: "buy",
-    type: "Casa",
-    rooms: 3,
-    baths: 2,
-    area: 145,
-  },
+const DORMITORIOS = ["Todos", "1", "2", "3", "4+"];
+const MONEDAS = [
+  { texto: "Pesos", valor: "ARS" },
+  { texto: "USD", valor: "USD" },
 ];
+const ORDENES = [
+  { texto: "Más recientes", valor: "recientes" },
+  { texto: "Menor precio", valor: "menorPrecio" },
+  { texto: "Mayor precio", valor: "mayorPrecio" },
+];
+const PARAMS_FILTRO = ["ubicacion", "tipo", "moneda", "precioMin", "precioMax", "habitaciones"];
 
-function Marca() {
-  return (
-    <Link href="/inicio" className="propiedades-publicas__brand" aria-label="Kaiken Propiedades, inicio">
-      <img src={kaikenLogo} alt="Kaiken Propiedades" />
-    </Link>
-  );
+function useFiltrosUrl() {
+  const [params, setParams] = useSearchParams();
+
+  const cambiarFiltros = (cambios) => {
+    setParams(
+      (actuales) => {
+        const siguientes = new URLSearchParams(actuales);
+        Object.entries(cambios).forEach(([clave, valor]) => {
+          if (valor === "" || valor == null) siguientes.delete(clave);
+          else siguientes.set(clave, valor);
+        });
+        siguientes.delete("pagina");
+        return siguientes;
+      },
+      { replace: true },
+    );
+  };
+
+  const cambiarPagina = (pagina) => {
+    setParams((actuales) => {
+      const siguientes = new URLSearchParams(actuales);
+      if (pagina === 1) siguientes.delete("pagina");
+      else siguientes.set("pagina", pagina);
+      return siguientes;
+    });
+  };
+
+  return { params, cambiarFiltros, cambiarPagina };
 }
 
-function EncabezadoPublico({ operation, setOperation }) {
-  return (
-    <header className="propiedades-publicas__header">
-      <Marca />
-      <nav className="propiedades-publicas__nav" aria-label="Navegación pública">
-        <Link href="/inicio">Inicio</Link>
-        <Link
-          className={operation === "buy" ? "is-active" : ""}
-          href="/propiedades-publicas?filter=buy"
-          onClick={() => setOperation("buy")}
-        >
-          Comprar
-        </Link>
-        <Link
-          className={operation === "rent" ? "is-active" : ""}
-          href="/propiedades-publicas?filter=rent"
-          onClick={() => setOperation("rent")}
-        >
-          Alquilar
-        </Link>
-        <Link href="/inicio#contacto">Contacto</Link>
-      </nav>
-      <div className="propiedades-publicas__header-actions">
-        <label className="propiedades-publicas__quick-search">
-          <span className="sr-only">Buscar por zona</span>
-          <input placeholder="Buscar por zona" />
-          <Icono name="search" />
-        </label>
-        <Link className="propiedades-publicas__login" href="/login">
-          Ingresar
-        </Link>
-      </div>
-    </header>
-  );
-}
+function BarraLateralFiltros({ params, cambiarFiltros, tipos, operation, open, onClose }) {
+  const ubicacion = params.get("ubicacion") ?? "";
+  const tiposElegidos = (params.get("tipo") ?? "").split(",").filter(Boolean);
+  const moneda = params.get("moneda") === "USD" ? "USD" : "ARS";
+  const precioMin = params.get("precioMin") ?? "";
+  const precioMax = params.get("precioMax") ?? "";
+  const habitaciones = params.get("habitaciones") ?? "Todos";
 
-function BarraLateralFiltros({ operation, setOperation, open, onClose }) {
-  const [location, setLocation] = useState("");
-  const [type, setType] = useState({ Casa: false, Departamento: false, Terreno: false });
-  const [priceCurrency, setPriceCurrency] = useState("Pesos");
-  const [bedrooms, setBedrooms] = useState("Todos");
+  const alternarTipo = (tipo) => {
+    const elegidos = tiposElegidos.includes(tipo)
+      ? tiposElegidos.filter((elegido) => elegido !== tipo)
+      : [...tiposElegidos, tipo];
+    cambiarFiltros({ tipo: elegidos.join(",") });
+  };
 
-  const toggleType = (name) => setType((current) => ({ ...current, [name]: !current[name] }));
+  const cambiarPrecio = (clave) => (event) =>
+    cambiarFiltros({ [clave]: event.target.value.replace(/\D/g, "") });
+
+  const limpiar = () => cambiarFiltros(Object.fromEntries(PARAMS_FILTRO.map((clave) => [clave, ""])));
+
+  const hrefOperacion = (valor) => {
+    const siguientes = new URLSearchParams(params);
+    siguientes.set("filter", valor);
+    siguientes.delete("pagina");
+    return `/propiedades-publicas?${siguientes}`;
+  };
 
   return (
     <aside
@@ -183,19 +98,17 @@ function BarraLateralFiltros({ operation, setOperation, open, onClose }) {
       >
         <Link
           className={operation === "buy" ? "is-active" : ""}
-          href="/propiedades-publicas?filter=buy"
+          href={hrefOperacion("buy")}
           role="tab"
           aria-selected={operation === "buy"}
-          onClick={() => setOperation("buy")}
         >
           Venta
         </Link>
         <Link
           className={operation === "rent" ? "is-active" : ""}
-          href="/propiedades-publicas?filter=rent"
+          href={hrefOperacion("rent")}
           role="tab"
           aria-selected={operation === "rent"}
-          onClick={() => setOperation("rent")}
         >
           Alquiler
         </Link>
@@ -207,17 +120,21 @@ function BarraLateralFiltros({ operation, setOperation, open, onClose }) {
       <input
         id="public-location"
         className="propiedades-publicas__text-input"
-        value={location}
-        onChange={(event) => setLocation(event.target.value)}
+        value={ubicacion}
+        onChange={(event) => cambiarFiltros({ ubicacion: event.target.value })}
         placeholder="Ubicación (ej. Palermo, CABA)"
       />
 
       <fieldset>
         <legend>Tipo de propiedad</legend>
-        {Object.keys(type).map((item) => (
-          <label className="propiedades-publicas__checkbox" key={item}>
-            <input type="checkbox" checked={type[item]} onChange={() => toggleType(item)} />
-            <span>{item}</span>
+        {tipos.map((tipo) => (
+          <label className="propiedades-publicas__checkbox" key={tipo}>
+            <input
+              type="checkbox"
+              checked={tiposElegidos.includes(tipo)}
+              onChange={() => alternarTipo(tipo)}
+            />
+            <span>{tipo}</span>
           </label>
         ))}
       </fieldset>
@@ -225,34 +142,46 @@ function BarraLateralFiltros({ operation, setOperation, open, onClose }) {
       <fieldset className="propiedades-publicas__price-fieldset">
         <legend>Precio</legend>
         <div className="propiedades-publicas__currency-options">
-          {["Pesos", "USD"].map((currency) => (
-            <label key={currency} className="propiedades-publicas__currency">
+          {MONEDAS.map(({ texto, valor }) => (
+            <label key={valor} className="propiedades-publicas__currency">
               <input
                 type="radio"
                 name="currency"
-                checked={priceCurrency === currency}
-                onChange={() => setPriceCurrency(currency)}
+                checked={moneda === valor}
+                onChange={() => cambiarFiltros({ moneda: valor })}
               />
-              <span>{currency}</span>
+              <span>{texto}</span>
             </label>
           ))}
         </div>
         <div className="propiedades-publicas__price-inputs">
-          <input placeholder="Min" aria-label="Precio mínimo" />
+          <input
+            placeholder="Min"
+            aria-label="Precio mínimo"
+            inputMode="numeric"
+            value={precioMin}
+            onChange={cambiarPrecio("precioMin")}
+          />
           <span>—</span>
-          <input placeholder="Max" aria-label="Precio máximo" />
+          <input
+            placeholder="Max"
+            aria-label="Precio máximo"
+            inputMode="numeric"
+            value={precioMax}
+            onChange={cambiarPrecio("precioMax")}
+          />
         </div>
       </fieldset>
 
       <fieldset>
         <legend>Dormitorios</legend>
         <div className="propiedades-publicas__bedroom-options">
-          {["Todos", "1", "2", "3", "4+"].map((item) => (
+          {DORMITORIOS.map((item) => (
             <button
-              className={bedrooms === item ? "is-active" : ""}
+              className={habitaciones === item ? "is-active" : ""}
               key={item}
               type="button"
-              onClick={() => setBedrooms(item)}
+              onClick={() => cambiarFiltros({ habitaciones: item === "Todos" ? "" : item })}
             >
               {item}
             </button>
@@ -263,16 +192,7 @@ function BarraLateralFiltros({ operation, setOperation, open, onClose }) {
       <button className="propiedades-publicas__apply" type="button" onClick={onClose}>
         Aplicar filtros
       </button>
-      <button
-        className="propiedades-publicas__clear"
-        type="button"
-        onClick={() => {
-          setLocation("");
-          setType({ Casa: false, Departamento: false, Terreno: false });
-          setPriceCurrency("Pesos");
-          setBedrooms("Todos");
-        }}
-      >
+      <button className="propiedades-publicas__clear" type="button" onClick={limpiar}>
         Limpiar filtros
       </button>
     </aside>
@@ -280,12 +200,39 @@ function BarraLateralFiltros({ operation, setOperation, open, onClose }) {
 }
 
 export default function PropiedadesPublicas() {
-  const queryFilter = new URLSearchParams(window.location.search).get("filter");
-  const [operation, setOperation] = useState(queryFilter === "rent" ? "rent" : "buy");
+  const { params, cambiarFiltros, cambiarPagina } = useFiltrosUrl();
+  const busqueda = params.toString();
+  const operation = params.get("filter") === "rent" ? "rent" : "buy";
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const visibleProperties = properties.filter((property) => property.operation === operation);
-  const { page, totalPages, pageItems, setPage, resetPage } = usePaginacion(visibleProperties, PROPERTY_PAGE_SIZE);
-  const changeOperation = (value) => { setOperation(value); resetPage(); };
+  const [resultado, setResultado] = useState({ propiedades: [], paginacion: null, tipos: [] });
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState(false);
+  const total = resultado.paginacion?.total ?? 0;
+
+  useEffect(() => {
+    let activo = true;
+    const espera = window.setTimeout(() => {
+      setCargando(true);
+      api.catalogoPropiedades(new URLSearchParams(busqueda))
+        .then((datos) => {
+          if (!activo) return;
+          setResultado(datos);
+          setError(false);
+        })
+        .catch((causa) => {
+          console.error(causa);
+          if (!activo) return;
+          setResultado((anterior) => ({ ...anterior, propiedades: [], paginacion: null }));
+          setError(true);
+        })
+        .finally(() => activo && setCargando(false));
+    }, 300);
+
+    return () => {
+      activo = false;
+      window.clearTimeout(espera);
+    };
+  }, [busqueda]);
 
   useEffect(() => {
     if (!filtersOpen) return undefined;
@@ -301,9 +248,13 @@ export default function PropiedadesPublicas() {
     };
   }, [filtersOpen]);
 
+  const irAPagina = (pagina) => {
+    cambiarPagina(pagina);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <main className="propiedades-publicas">
-      <EncabezadoPublico operation={operation} setOperation={changeOperation} />
       <div className="propiedades-publicas__layout">
         {filtersOpen && (
           <button
@@ -314,8 +265,10 @@ export default function PropiedadesPublicas() {
           />
         )}
         <BarraLateralFiltros
+          params={params}
+          cambiarFiltros={cambiarFiltros}
+          tipos={resultado.tipos}
           operation={operation}
-          setOperation={changeOperation}
           open={filtersOpen}
           onClose={() => setFiltersOpen(false)}
         />
@@ -325,14 +278,21 @@ export default function PropiedadesPublicas() {
               <h1 id="propiedades-publicas-title">
                 Propiedades en {operation === "buy" ? "venta" : "alquiler"}
               </h1>
-              <span>{visibleProperties.length} propiedades encontradas</span>
+              <span>{cargando ? "Buscando..." : `${total} propiedades encontradas`}</span>
             </div>
             <label>
               Ordenar por:
-              <select defaultValue="recommended">
-                <option value="recommended">Recomendados</option>
-                <option value="price-low">Menor precio</option>
-                <option value="price-high">Mayor precio</option>
+              <select
+                value={params.get("orden") ?? "recientes"}
+                onChange={(event) =>
+                  cambiarFiltros({ orden: event.target.value === "recientes" ? "" : event.target.value })
+                }
+              >
+                {ORDENES.map(({ texto, valor }) => (
+                  <option key={valor} value={valor}>
+                    {texto}
+                  </option>
+                ))}
               </select>
             </label>
             <button
@@ -346,15 +306,33 @@ export default function PropiedadesPublicas() {
               <img src={filterIcon} alt="" />
             </button>
           </div>
+
+          {!cargando && error && (
+            <p className="propiedades-publicas__vacio">
+              No pudimos cargar las propiedades. Probá de nuevo más tarde.
+            </p>
+          )}
+          {!cargando && !error && !total && (
+            <p className="propiedades-publicas__vacio">No encontramos propiedades con esos filtros.</p>
+          )}
+
           <div className="propiedades-publicas__grid">
-            {pageItems.map((property) => (
+            {resultado.propiedades.map((property) => (
               <TarjetaPropiedadSimple key={property.id} property={property} variant="public" />
             ))}
           </div>
-          <Paginacion page={page} totalPages={totalPages} total={visibleProperties.length} onPageChange={setPage} pageSize={PROPERTY_PAGE_SIZE} />
+
+          {resultado.paginacion && (
+            <Paginacion
+              page={resultado.paginacion.pagina}
+              totalPages={resultado.paginacion.paginas}
+              total={total}
+              onPageChange={irAPagina}
+              pageSize={resultado.paginacion.limite}
+            />
+          )}
         </section>
       </div>
-      <Footer />
     </main>
   );
 }

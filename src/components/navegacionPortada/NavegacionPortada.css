@@ -171,6 +171,24 @@
   .NavegacionPortada__buscar-boton {
     position: static;
   }
+
+  .NavegacionPortada__buscar.is-abierto {
+    position: absolute;
+    top: 22px;
+    right: 24px;
+    z-index: 3;
+    justify-content: flex-start;
+    width: min(320px, calc(100% - 48px));
+    background-color: var(--azulOsc);
+  }
+
+  .NavegacionPortada__buscar.is-abierto .NavegacionPortada__buscar-input {
+    display: block;
+  }
+
+  .NavegacionPortada__buscar.is-abierto .NavegacionPortada__buscar-boton {
+    position: absolute;
+  }
 }
 
 @media (max-width: 960px) {
@@ -189,5 +207,16 @@
 
   .NavegacionPortada__acciones {
     gap: 13px;
+  }
+
+  .NavegacionPortada__buscar.is-abierto {
+    top: 14px;
+    right: 10px;
+    width: calc(100% - 20px);
+    height: 34px;
+  }
+
+  .NavegacionPortada__buscar.is-abierto .NavegacionPortada__buscar-input {
+    font-size: 16px;
   }
 }

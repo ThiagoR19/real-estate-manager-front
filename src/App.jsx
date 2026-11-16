@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 const idInmobi = import.meta.env.VITE_ID_INMOBILIARIA;
 import { Redirect, Route, Switch, useLocation } from "wouter";
-import { SobreNosotros, Inmobiliaria, Agentes, DashboardAgente, Chat, Cobros, ConfirmarRegistro, Dashboard, DashboardPropietario, Inicio, Indec, Login, MisPropiedades, Propietarios, Pagos, PagosYCobros, Profesionales, Perfil, Propiedades, Propiedad, PropiedadesPublicas, PropiedadPublica, Registro, ReportesAgente, Agenda, SuperAdmin, Inquilinos, DashboardInquilino, Terminos } from "./pages/index.js";
+import { SobreNosotros, Inmobiliaria, Agentes, DashboardAgente, Chat, Cobros, ConfirmarRegistro, Dashboard, DashboardPropietario, Indec, Login, MisPropiedades, Propietarios, Pagos, PagosYCobros, Profesionales, Perfil, Propiedades, Propiedad, Registro, ReportesAgente, Agenda, SuperAdmin, Inquilinos, DashboardInquilino, Terminos } from "./pages/index.js";
 
-import { Header, Navbar } from "./layouts/index.js";
+import { Header, Navbar, LayoutPublico } from "./layouts/index.js";
 import { dashboardPorRol } from "./layouts/navegacion.js";
 import { obtenerSesion } from "./services/login.js";
 import { ContenedorAvisos } from "./components/index.js";
@@ -13,6 +13,8 @@ import { api } from "./services/api.js";
 
 let yaSeHizo = false;
 const validar = ["/", "/propiedades-publicas", "/propiedad-publica", "/sobre-nosotros", "/inicio"]
+// Las vistas de la landing van todas dentro de LayoutPublico (header, datos de la inmobiliaria y footer)
+const RUTAS_LANDING = /^\/(inicio|sobre-nosotros|propiedades-publicas|propiedad-publica)?\/?$/
 const dashboardsPorRol = {
   2: Dashboard,
   3: DashboardAgente,
@@ -100,20 +102,18 @@ function App() {
 
   return (
     <Switch>
-      <Route path="/inicio"><VistaConTransicion><Inicio /></VistaConTransicion></Route>
-      <Route path="/sobre-nosotros"><VistaConTransicion><SobreNosotros /></VistaConTransicion></Route>
-      <Route path="/propiedades-publicas"><VistaConTransicion><PropiedadesPublicas /></VistaConTransicion></Route>
-      <Route path="/propiedad-publica"><VistaConTransicion><PropiedadPublica /></VistaConTransicion></Route>
+      <Route path={RUTAS_LANDING}>
+        <VistaConTransicion><LayoutPublico /></VistaConTransicion>
+      </Route>
       <Route path="/login"><VistaConTransicion><Login /></VistaConTransicion></Route>
       <Route path="/registro"><VistaConTransicion><Registro /></VistaConTransicion></Route>
       <Route path="/activar"><VistaConTransicion><ConfirmarRegistro /></VistaConTransicion></Route>
       <Route path="/confirmar-registro"><VistaConTransicion><ConfirmarRegistro /></VistaConTransicion></Route>
-      <Route path="/"><VistaConTransicion><Inicio /></VistaConTransicion></Route>
       <Route>
         <AuthenticatedApp />
         <ContenedorAvisos />
       </Route>
-    </Switch>
+    </Switch >
   );
 }
 
