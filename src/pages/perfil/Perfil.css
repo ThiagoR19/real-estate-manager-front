@@ -473,6 +473,29 @@ body:has(#perfil) {
   opacity: 1;
 }
 
+.perfil__field-control--readonly {
+  background: #f7f9fc;
+  cursor: default;
+}
+
+.perfil__readonly-value {
+  flex: 1;
+  min-width: 0;
+  padding-left: 12px;
+  color: #52617e;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.perfil__readonly-note {
+  flex-shrink: 0;
+  padding-left: 8px;
+  border-left: 1px solid #dfe5eb;
+  color: #7e8aa6;
+  font-size: 10px;
+  line-height: 1.2;
+}
+
 .perfil__field-icon {
   flex-shrink: 0;
   width: 18px;

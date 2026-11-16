@@ -325,7 +325,7 @@ export default function Inquilinos() {
     };
     const raw = existing
       ? await api.actualizarInquilino(existing.id, { ...body, dni: undefined, activo: form.active })
-      : await api.crearInquilino({ dni: form.dni });
+      : await api.crearInquilino(body);
     const result = { tenant: raw, activationUrl: raw.activacion?.enlace };
     setTenants((current) =>
       existing

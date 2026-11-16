@@ -69,7 +69,7 @@ export default function PersonaModal({ kind, mode, person, zones = [], onClose, 
     <GestionModal
       onClose={onClose}
       title={`${isEditing ? "Editar" : "Crear"} ${noun}`}
-      subtitle={`Actualiza la información principal del ${noun}`}
+      subtitle={isEditing ? `Actualiza la información principal del ${noun}` : `Completá los datos del ${noun} para crear su cuenta.`}
       variant={isOwner ? "person-owner" : "person-agent"}
     >
       <form onSubmit={submit}>
@@ -84,7 +84,7 @@ export default function PersonaModal({ kind, mode, person, zones = [], onClose, 
             </span>
           </div>
           <div className="gestion-modal__fields">
-            {isEditing && <><CampoModal label="Nombre">
+            <CampoModal label="Nombre">
               <EntradaModal
                 icon={userIcon}
                 name="firstName"
@@ -92,6 +92,7 @@ export default function PersonaModal({ kind, mode, person, zones = [], onClose, 
                 onChange={updateField}
                 placeholder="Nombre"
                 autoComplete="given-name"
+                required={!isEditing}
               />
             </CampoModal>
             <CampoModal label="Apellido">
@@ -102,6 +103,7 @@ export default function PersonaModal({ kind, mode, person, zones = [], onClose, 
                 onChange={updateField}
                 placeholder="Apellido"
                 autoComplete="family-name"
+                required={!isEditing}
               />
             </CampoModal>
             <CampoModal label="Correo">
@@ -136,7 +138,6 @@ export default function PersonaModal({ kind, mode, person, zones = [], onClose, 
                 autoComplete="street-address"
               />
             </CampoModal>
-            </>}
             <CampoModal label="DNI">
               <EntradaModal
                 icon={addressCardIcon}
@@ -150,7 +151,7 @@ export default function PersonaModal({ kind, mode, person, zones = [], onClose, 
                 readOnly={isEditing}
               />
             </CampoModal>
-            {isOwner && isEditing && (
+            {isOwner && (
               <>
                 <CampoModal label="CBU">
                   <EntradaModal
@@ -199,7 +200,7 @@ export default function PersonaModal({ kind, mode, person, zones = [], onClose, 
           </div>
         </div>
         {error && <p role="alert">{error}</p>}
-        <AccionesModal onClose={onClose} />
+        <AccionesModal onClose={onClose} submitText={isEditing ? "Guardar cambios" : `Crear ${noun}`} />
       </form>
     </GestionModal>
   );

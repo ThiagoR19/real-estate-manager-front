@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { houseIcon, xIcon } from "../../assets/icons";
 import { SelectDesplegable, Boton } from "../../components";
 import useClosingTransition from "../../hooks/useClosingTransition.js";
@@ -103,7 +104,7 @@ export default function ReporteModal({ isOpen, onClose, onSubmit }) {
     });
   }
 
-  return (
+  return createPortal(
     <div
       className={`reporte-modal__overlay${isClosing ? " is-closing" : ""}`}
       aria-hidden={isClosing}
@@ -231,6 +232,7 @@ export default function ReporteModal({ isOpen, onClose, onSubmit }) {
           </footer>
         </form>
       </section>
-    </div>
+    </div>,
+    document.body,
   );
 }

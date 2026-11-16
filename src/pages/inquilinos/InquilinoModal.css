@@ -346,24 +346,6 @@
     padding-left: 11px;
   }
 
-  .inquilino-modal__field:nth-child(-n + 3) {
-    order: 1;
-  }
-  .inquilino-modal__field:nth-child(4) {
-    order: 6;
-  }
-  .inquilino-modal__field:nth-child(5) {
-    order: 4;
-  }
-  .inquilino-modal__field:nth-child(6) {
-    order: 7;
-  }
-  .inquilino-modal__field:nth-child(7) {
-    order: 5;
-  }
-  .inquilino-modal__field:nth-child(8) {
-    order: 8;
-  }
 
   .inquilino-modal__actions {
     display: grid;

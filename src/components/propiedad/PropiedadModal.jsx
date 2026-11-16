@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   bathIcon,
   bedIcon,
@@ -165,7 +166,7 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
     }
   }
 
-  return (
+  return createPortal(
     <div
       className={`propiedad-modal__overlay${isClosing ? " is-closing" : ""}`}
       aria-hidden={isClosing}
@@ -481,6 +482,7 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
           </footer>
         </form>
       </section>
-    </div>
+    </div>,
+    document.body,
   );
 }

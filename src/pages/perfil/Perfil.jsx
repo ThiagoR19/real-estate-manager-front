@@ -47,9 +47,27 @@ const Campo = memo(function Campo({ field, placeholder }) {
       <span className="perfil__field-label">{field.label}</span>
       <span className="perfil__field-control">
         <img className="perfil__field-icon" src={field.icon} alt="" />
-        <input id={field.id} name={field.id} placeholder={placeholder} value={field.id === "dni" ? (placeholder === "DNI" ? "" : placeholder) : undefined} readOnly={field.id === "dni"} required={field.required} />
+        <input id={field.id} name={field.id} placeholder={placeholder} required={field.required} />
       </span>
     </label>
+  );
+});
+
+const CampoSoloLectura = memo(function CampoSoloLectura({ field, value }) {
+  return (
+    <div className="perfil__field">
+      <span className="perfil__field-label" id={`${field.id}-label`}>{field.label}</span>
+      <span
+        className="perfil__field-control perfil__field-control--readonly"
+        role="group"
+        aria-labelledby={`${field.id}-label`}
+        title="El DNI no se puede modificar"
+      >
+        <img className="perfil__field-icon" src={field.icon} alt="" />
+        <span className="perfil__readonly-value">{value || "No informado"}</span>
+        <span className="perfil__readonly-note">No editable</span>
+      </span>
+    </div>
   );
 });
 
@@ -238,6 +256,7 @@ export default function Perfil() {
   const iniciales = initials(profile.nombre, profile.apellido);
   const profilePhotoUrl =
     profile.urlFotoPerfil && !photoLoadError ? api.urlRecurso(profile.urlFotoPerfil) : "";
+  const requiereVinculoGoogle = Number(profile.googleVinculado) === 1 && Number(profile.tieneContrasena) !== 1;
 
   return (
     <main id="perfil">
@@ -335,7 +354,7 @@ export default function Perfil() {
                   placeholder={profile[field.id] ? profile[field.id] : field.label}
                 />
               ))}
-              <Campo field={{ id: "dni", label: "DNI", icon: addressCardIcon }} placeholder={profile.dni || "DNI"} />
+              <CampoSoloLectura field={{ id: "dni", label: "DNI", icon: addressCardIcon }} value={profile.dni} />
             </div>
           </section>
 
@@ -349,7 +368,7 @@ export default function Perfil() {
               </span>
               <div>
                 <h3 id="security-title">Seguridad</h3>
-                <p>{profile.googleVinculado && !profile.tieneContrasena
+                <p>{requiereVinculoGoogle
                   ? "Confirmá tu identidad con Google para crear una contraseña. Dejá vacía la contraseña actual."
                   : "Cambia tu contraseña periódicamente para mantener tu cuenta segura"}</p>
               </div>
@@ -364,7 +383,7 @@ export default function Perfil() {
                 />
               ))}
             </div>
-            {profile.googleVinculado && !profile.tieneContrasena && <div>
+            {requiereVinculoGoogle && <div>
               <AccesoGoogle modo="/perfil" onCredential={confirmarGoogle} />
               {googleCredential && <p role="status">Identidad de Google confirmada. Ya podés guardar tu contraseña.</p>}
             </div>}

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { briefcaseIcon, envelopeIcon, phoneIcon, userIcon } from "../../assets/icons";
 import { Boton } from "../../components";
 import useClosingTransition from "../../hooks/useClosingTransition.js";
@@ -105,7 +106,7 @@ export default function ProfesionalModal({ isOpen, mode, professional, onClose, 
     }
   }
 
-  return (
+  return createPortal(
     <div
       className={`profesional-modal__overlay${isClosing ? " is-closing" : ""}`}
       aria-hidden={isClosing}
@@ -219,6 +220,7 @@ export default function ProfesionalModal({ isOpen, mode, professional, onClose, 
           </footer>
         </form>
       </section>
-    </div>
+    </div>,
+    document.body,
   );
 }

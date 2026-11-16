@@ -132,7 +132,16 @@ export default function Propietarios() {
           direccion: data.address || null, cbu: data.cbu || null,
           alias: data.alias || null, activo: data.status !== "Inactivo",
         })
-      : await api.crearPropietario({ dni: data.dni });
+      : await api.crearPropietario({
+          nombre: data.firstName,
+          apellido: data.lastName,
+          dni: data.dni,
+          correo: data.email || null,
+          telefono: data.phone || null,
+          direccion: data.address || null,
+          cbu: data.cbu || null,
+          alias: data.alias || null,
+        });
     const saved = displayOwner(raw);
     setOwners((current) => modal.mode === "edit"
       ? current.map((owner) => owner.id === saved.id ? saved : owner)

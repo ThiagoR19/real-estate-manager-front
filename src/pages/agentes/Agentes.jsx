@@ -111,9 +111,7 @@ function AgenteModal({ agent, areas, onClose, onSubmit }) {
   async function submit(event) {
     event.preventDefault();
     const body = Object.fromEntries(new FormData(event.currentTarget));
-    if (!agent) {
-      for (const key of Object.keys(body)) if (key !== "dni" && key !== "idArea") delete body[key];
-    } else {
+    if (agent) {
       delete body.dni;
       for (const key of Object.keys(body)) if (body[key] === "") body[key] = null;
     }
@@ -132,14 +130,14 @@ function AgenteModal({ agent, areas, onClose, onSubmit }) {
       <form onSubmit={submit}>
         <div className="gestion-modal__card">
           <div className="gestion-modal__fields">
-            {agent && <><CampoModal label="Nombre">
-              <EntradaModal name="nombre" defaultValue={agent?.nombre || ""} />
+            <CampoModal label="Nombre">
+              <EntradaModal name="nombre" defaultValue={agent?.nombre || ""} required={!agent} />
             </CampoModal>
             <CampoModal label="Apellido">
-              <EntradaModal name="apellido" defaultValue={agent?.apellido || ""} />
+              <EntradaModal name="apellido" defaultValue={agent?.apellido || ""} required={!agent} />
             </CampoModal>
             <CampoModal label="Correo">
-              <EntradaModal name="correo" defaultValue={agent?.correo || ""} />
+              <EntradaModal name="correo" type="email" defaultValue={agent?.correo || ""} />
             </CampoModal>
             <CampoModal label="Teléfono">
               <EntradaModal name="telefono" defaultValue={agent?.telefono || ""} />
@@ -147,7 +145,6 @@ function AgenteModal({ agent, areas, onClose, onSubmit }) {
             <CampoModal label="Dirección">
               <EntradaModal name="direccion" defaultValue={agent?.direccion || ""} />
             </CampoModal>
-            </>}
             <CampoModal label="DNI">
               <EntradaModal name="dni" defaultValue={agent?.dni || ""} required pattern="[0-9]{7,8}" inputMode="numeric" readOnly={Boolean(agent)} />
             </CampoModal>

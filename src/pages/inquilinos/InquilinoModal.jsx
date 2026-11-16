@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   addressCardIcon,
   envelopeIcon,
@@ -130,7 +131,7 @@ export default function InquilinoModal({ isOpen, mode, tenant, onClose, onSubmit
     }
   }
 
-  return (
+  return createPortal(
     <div
       className={`inquilino-modal__overlay${isClosing ? " is-closing" : ""}`}
       aria-hidden={isClosing}
@@ -154,7 +155,7 @@ export default function InquilinoModal({ isOpen, mode, tenant, onClose, onSubmit
           <p>
             {isEditing
               ? "Actualiza la información de contacto y el estado del inquilino."
-              : "Ingresá el DNI para generar un enlace de activación."}
+              : "Completá los datos del inquilino para crear su cuenta."}
           </p>
         </header>
 
@@ -171,7 +172,7 @@ export default function InquilinoModal({ isOpen, mode, tenant, onClose, onSubmit
             </div>
 
             <div className="inquilino-modal__fields">
-              {isEditing && <><Campo label="Nombre">
+              <Campo label="Nombre">
                 <EntradaConIcono
                   icon={userIcon}
                   name="firstName"
@@ -179,6 +180,7 @@ export default function InquilinoModal({ isOpen, mode, tenant, onClose, onSubmit
                   onChange={updateField}
                   placeholder="Nombre"
                   autoComplete="given-name"
+                  required={!isEditing}
                 />
               </Campo>
 
@@ -190,6 +192,7 @@ export default function InquilinoModal({ isOpen, mode, tenant, onClose, onSubmit
                   onChange={updateField}
                   placeholder="Apellido"
                   autoComplete="family-name"
+                  required={!isEditing}
                 />
               </Campo>
 
@@ -197,7 +200,7 @@ export default function InquilinoModal({ isOpen, mode, tenant, onClose, onSubmit
                 <EntradaConIcono
                   icon={envelopeIcon}
                   name="email"
-                  type="text"
+                  type="email"
                   value={form.email}
                   onChange={updateField}
                   placeholder="ejemplo@gmail.com"
@@ -228,7 +231,6 @@ export default function InquilinoModal({ isOpen, mode, tenant, onClose, onSubmit
                 />
               </Campo>
 
-              </>}
               <Campo label="DNI">
                 <EntradaConIcono
                   icon={addressCardIcon}
@@ -287,6 +289,7 @@ export default function InquilinoModal({ isOpen, mode, tenant, onClose, onSubmit
           </footer>
         </form>
       </section>
-    </div>
+    </div>,
+    document.body,
   );
 }

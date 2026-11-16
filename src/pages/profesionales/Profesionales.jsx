@@ -5,12 +5,12 @@ import {
   phoneIcon,
   penIcon,
   plusIcon,
+  starIcon,
   trashCanIcon,
 } from "../../assets/icons/index.js";
 import {
   SelectDesplegable,
   ConfirmarEliminacionModal,
-  AccionesEntidad,
   Boton,
   Paginacion,
   usePaginacion,
@@ -127,6 +127,7 @@ export default function Profesionales() {
               <col className="profesionales__column profesionales__column--profesionales" />
               <col className="profesionales__column profesionales__column--email" />
               <col className="profesionales__column profesionales__column--phone" />
+              <col className="profesionales__column profesionales__column--rating" />
               <col className="profesionales__column profesionales__column--actions" />
             </colgroup>
             <thead>
@@ -134,6 +135,7 @@ export default function Profesionales() {
                 <th scope="col">Profesional</th>
                 <th scope="col">Email</th>
                 <th scope="col">Teléfono</th>
+                <th scope="col">Rating</th>
                 <th scope="col">Acciones</th>
               </tr>
             </thead>
@@ -166,16 +168,48 @@ export default function Profesionales() {
                       <span>{professional.telefono}</span>
                     </span>
                   </td>
+                  <td data-label="Rating">
+                    {(() => {
+                      const rating = Number(professional.ratingPromedio) || 0;
+                      const reviewCount = Number(professional.cantidadResenas) || 0;
+                      const roundedRating = Math.round(rating);
+
+                      return (
+                        <div className="profesionales__rating">
+                          <span
+                            className="profesionales__rating-stars"
+                            role="img"
+                            aria-label={`${rating.toFixed(1)} de 5 estrellas`}
+                          >
+                            {Array.from({ length: 5 }, (_, index) => (
+                              <span
+                                className={`profesionales__rating-star${index < roundedRating ? " is-active" : ""}`}
+                                key={index}
+                                aria-hidden="true"
+                              >
+                                ★
+                              </span>
+                            ))}
+                          </span>
+                          <strong>{rating.toFixed(1)}</strong>
+                          <small>({reviewCount}) Reseñas</small>
+                        </div>
+                      );
+                    })()}
+                  </td>
                   <td data-label="Acciones">
                     <div className="profesionales__actions">
-                      <AccionesEntidad
-                        entity="profesional"
-                        name={`${professional.nombre} ${professional.apellido}`}
-                        onEdit={() => editProfessional(professional)}
-                        onDelete={() => setPendingDelete(professional)}
-                      />
                       <button
-                        className="profesionales__mobile-action profesionales__mobile-action--edit"
+                        className="profesionales__rate"
+                        type="button"
+                        aria-label={`Valorar a ${professional.nombre} ${professional.apellido}`}
+                        onClick={() => setFeedback("La función para valorar profesionales todavía no está disponible.")}
+                      >
+                        <img src={starIcon} alt="" />
+                        <span>Valorar</span>
+                      </button>
+                      <button
+                        className="profesionales__action profesionales__action--edit"
                         type="button"
                         aria-label={`Editar profesional: ${professional.nombre} ${professional.apellido}`}
                         onClick={() => editProfessional(professional)}
@@ -183,7 +217,7 @@ export default function Profesionales() {
                         <img src={penIcon} alt="" />
                       </button>
                       <button
-                        className="profesionales__mobile-action profesionales__mobile-action--delete"
+                        className="profesionales__action profesionales__action--delete"
                         type="button"
                         aria-label={`Eliminar profesional: ${professional.nombre} ${professional.apellido}`}
                         onClick={() => setPendingDelete(professional)}
