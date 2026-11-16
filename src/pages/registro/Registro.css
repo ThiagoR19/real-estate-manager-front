@@ -150,7 +150,7 @@
   transition: transform var(--duracion-salida) var(--curva-salida);
 }
 
-/* La marca queda por encima y termina en el mismo lugar que en Login */
+
 .Registro--saliendo .Registro__marca {
   --marca-logo: 35px;
   --marca-nombre: 33px;
@@ -174,9 +174,9 @@
     font-size var(--duracion-salida) var(--curva-salida);
 }
 
-/* =================================================================================== */
-/* ================================ RESPONSIVE ======================================= */
-/* =================================================================================== */
+
+
+
 
 @media (max-width: 1100px) {
   .Registro {
@@ -184,7 +184,7 @@
   }
 }
 
-/* ---------- MOBILE ---------- */
+
 
 @media (max-width: 768px) {
   .Registro {
@@ -205,7 +205,7 @@
     background-color: var(--casiBlanc);
   }
 
-  /* ---------- IMAGEN ---------- */
+
 
   .Registro__imagen {
     position: absolute;
@@ -221,7 +221,7 @@
     display: none;
   }
 
-  /* ---------- TARJETA ---------- */
+
 
   .Registro__panel {
     position: relative;
@@ -295,9 +295,9 @@
     margin-top: clamp(2px, 0.6vh, 6px);
   }
 
-  /* ---------- TRANSICION A LOGIN ---------- */
 
-  /* La tarjeta sale por la izquierda y el hero sube a la franja de Login */
+
+
   .Registro--saliendo .Registro__panel {
     transform: translateX(calc(-1 * var(--salida)));
     transition: transform var(--duracion-salida) var(--curva-salida);
@@ -316,7 +316,7 @@
       background-position var(--duracion-salida) var(--curva-salida);
   }
 
-  /* La marca compensa el movimiento de la tarjeta para quedarse en su lugar */
+
   .Registro--saliendo .Registro__marca {
     --marca-logo: 32px;
     --marca-nombre: 26px;
@@ -336,7 +336,7 @@
   }
 }
 
-/* ---------- MOBILE BAJO ---------- */
+
 
 @media (max-width: 768px) and (max-height: 520px) {
   .Registro {
@@ -361,7 +361,7 @@
   }
 }
 
-/* ---------- PANTALLAS BAJAS: CREAR Y GOOGLE EN LA MISMA FILA ---------- */
+
 
 @media (max-height: 440px), (max-width: 768px) and (max-height: 520px) {
   .Registro__formulario {

@@ -40,7 +40,7 @@ function Icono({ src, className = "" }) {
   return <img className={`dashboard-icon ${className}`} src={src} alt="" aria-hidden="true" />;
 }
 
-// Etiqueta del eje X según el período: "Lun 9", "9" o "Nov"
+
 function pointLabel(point, period) {
   if (period === "anio") return months[point.mes - 1];
   const [year, month, day] = point.fecha.split("-").map(Number);
@@ -54,14 +54,14 @@ function tooltipLabel(point, period) {
   return `${weekDays[new Date(year, month - 1, day).getDay()]} ${day} de ${fullMonths[month - 1].toLowerCase()}`;
 }
 
-// Valor de una serie en un punto; null si el día o el mes todavía no llegó
+
 function pointValue(point, key) {
   const future = point.contratosVigentes === null;
   if (future && key !== "visitasPropiedades") return null;
   return point[key] ?? null;
 }
 
-// Máximo redondeado del eje Y para que queden 4 divisiones con números enteros
+
 function chartMax(values) {
   const max = Math.max(4, ...values);
   const rough = max / 4;

@@ -33,7 +33,7 @@ export default function Registro() {
   const draft = obtenerBorradorRegistro();
   const [, navegar] = useLocation();
 
-  // Cuando termina la animación del hero, cambia a Login
+
   useEffect(() => {
     if (!saliendo) return;
 
@@ -93,7 +93,7 @@ export default function Registro() {
     const marca = panel.querySelector(".Registro__marca").getBoundingClientRect();
     const esMobile = window.matchMedia("(max-width: 768px)").matches;
 
-    // Donde está la marca en Login (padding del hero)
+
     const destinoX = esMobile ? 12 : Math.min(Math.max(24, window.innerWidth * 0.038), 58);
     const destinoY = esMobile ? 14 : Math.min(Math.max(20, window.innerHeight * 0.043), 27);
 
@@ -181,7 +181,7 @@ export default function Registro() {
 
       <PanelImagen className="Registro__imagen" />
 
-      {/* Login en modo skeleton: lo descubre el hero mientras se desliza */}
+      { }
       {saliendo &&
         createPortal(
           <div

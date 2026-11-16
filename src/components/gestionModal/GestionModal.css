@@ -9,6 +9,10 @@
   animation: gestion-modal-fade-in 160ms ease-out;
 }
 
+.gestion-modal__overlay.is-closing {
+  animation: gestion-modal-fade-out 160ms ease-in forwards;
+}
+
 .gestion-modal {
   width: min(100%, 920px);
   max-height: calc(100dvh - 48px);
@@ -23,6 +27,10 @@
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   animation: gestion-modal-slide-in 180ms ease-out;
+}
+
+.gestion-modal.is-closing {
+  animation: gestion-modal-slide-out 160ms ease-in forwards;
 }
 
 .gestion-modal--compact {
@@ -239,6 +247,19 @@
     transform: none;
   }
 }
+
+@keyframes gestion-modal-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes gestion-modal-slide-out {
+  to {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+  }
+}
 @media (max-width: 650px) {
   .gestion-modal__overlay {
     padding: 12px 8px;
@@ -336,6 +357,11 @@
 @media (prefers-reduced-motion: reduce) {
   .gestion-modal__overlay,
   .gestion-modal {
+    animation: none;
+  }
+
+  .gestion-modal__overlay.is-closing,
+  .gestion-modal.is-closing {
     animation: none;
   }
 }

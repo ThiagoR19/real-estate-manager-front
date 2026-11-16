@@ -214,14 +214,14 @@
   }
 }
 
-/* ---------- MOBILE ---------- */
+
 
 @media (max-width: 768px) {
   .Nosotros {
     background-color: var(--casiBlanc);
   }
 
-  /* ---------- PORTADA ---------- */
+
 
   .Portada {
     height: auto;

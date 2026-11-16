@@ -41,13 +41,13 @@ export default function BuscadorPropiedades({ className = "" }) {
   const [, navegar] = useLocation();
   const [operacion, setOperacion] = useState(operaciones[0]);
   const [direccion, setDireccion] = useState("derecha");
-  // null hasta la primera medición: así no se anima desde 0 al cargar
+
   const [indicador, setIndicador] = useState(null);
 
   const pestanasRef = useRef(null);
   const botonesRef = useRef({});
 
-  // El indicador se mide sobre la pestaña activa (sirve para cualquier ancho de pantalla)
+
   useLayoutEffect(() => {
     const medir = () => {
       const boton = botonesRef.current[operacion];
@@ -103,7 +103,7 @@ export default function BuscadorPropiedades({ className = "" }) {
         ))}
       </div>
 
-      {/* key: al cambiar de operación la fila se vuelve a montar y entra deslizándose */}
+
       <div
         key={operacion}
         className={`BuscadorPropiedades__campos BuscadorPropiedades__campos--desde-${direccion}`}

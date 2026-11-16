@@ -38,7 +38,7 @@ export default function Notificacion({ notificacion, expandida, destacada = fals
 
       <p className="Notificacion__resumen">{resumen}</p>
 
-      {/* grid 0fr → 1fr: anima la altura sin saber cuánto mide */}
+
       <div className="Notificacion__detalle" id={idDetalle}>
         <div className="Notificacion__detalle-interno">
           {detalle.map((linea) => (

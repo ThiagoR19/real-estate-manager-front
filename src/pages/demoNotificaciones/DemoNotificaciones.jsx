@@ -4,8 +4,8 @@ import { CapaModal, PanelNotificaciones } from "../../components";
 
 import "./DemoNotificaciones.css";
 
-// Página solo de desarrollo (ruta /demo/notificaciones) para probar el panel
-// TODO: reemplazar por los datos de la API
+
+
 import notificaciones from "../../data/notifications";
 
 export default function DemoNotificaciones() {

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { houseIcon, xIcon } from "../../assets/icons";
 import { SelectDesplegable, Boton } from "../../components";
+import useClosingTransition from "../../hooks/useClosingTransition.js";
 import "./ReporteModal.css";
 
 const typeOptions = ["Tipo", "Plomería", "Electricidad", "Gas", "Pintura", "Carpintería", "Otro"];
@@ -26,6 +27,7 @@ export default function ReporteModal({ isOpen, onClose, onSubmit }) {
   const [form, setForm] = useState(getInitialForm);
   const [photos, setPhotos] = useState([]);
   const photosRef = useRef([]);
+  const { isClosing, close } = useClosingTransition(onClose);
 
   useEffect(() => {
     if (!isOpen) {
@@ -34,7 +36,7 @@ export default function ReporteModal({ isOpen, onClose, onSubmit }) {
 
     function closeWithEscape(event) {
       if (event.key === "Escape") {
-        onClose();
+        close();
       }
     }
 
@@ -46,7 +48,7 @@ export default function ReporteModal({ isOpen, onClose, onSubmit }) {
       document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", closeWithEscape);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, close]);
 
   useEffect(
     () => () => {
@@ -103,16 +105,18 @@ export default function ReporteModal({ isOpen, onClose, onSubmit }) {
 
   return (
     <div
-      className="reporte-modal__overlay"
+      className={`reporte-modal__overlay${isClosing ? " is-closing" : ""}`}
+      aria-hidden={isClosing}
+      inert={isClosing}
       role="presentation"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) {
-          onClose();
+          close();
         }
       }}
     >
       <section
-        className="reporte-modal"
+        className={`reporte-modal${isClosing ? " is-closing" : ""}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="reporte-modal-title"
@@ -219,7 +223,7 @@ export default function ReporteModal({ isOpen, onClose, onSubmit }) {
           <footer className="reporte-modal__actions">
             <p>Nota: una vez creado el reporte no podrá editarlo ni eliminarlo</p>
             <div>
-              <button className="reporte-modal__cancel" type="button" onClick={onClose}>
+              <button className="reporte-modal__cancel" type="button" onClick={close}>
                 Cancelar
               </button>
               <Boton className="reporte-modal__submit" type="submit" text="Crear reporte" />

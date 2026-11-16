@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { briefcaseIcon, envelopeIcon, phoneIcon, userIcon } from "../../assets/icons";
 import { Boton } from "../../components";
+import useClosingTransition from "../../hooks/useClosingTransition.js";
 import "./ProfesionalModal.css";
 
 function getInitialForm(professional) {
@@ -59,6 +60,7 @@ function EntradaConIcono({ icon, ...props }) {
 export default function ProfesionalModal({ isOpen, mode, professional, onClose, onSubmit }) {
   const [form, setForm] = useState(() => getInitialForm(professional));
   const [error, setError] = useState("");
+  const { isClosing, close } = useClosingTransition(onClose);
   const isEditing = mode === "edit";
   const displayName = isEditing ? professional?.name || "Profesional" : "Profesional";
   const displaySpecialty = isEditing ? professional?.specialty || "Profesión" : "Profesión";
@@ -70,7 +72,7 @@ export default function ProfesionalModal({ isOpen, mode, professional, onClose, 
 
     function closeWithEscape(event) {
       if (event.key === "Escape") {
-        onClose();
+        close();
       }
     }
 
@@ -82,7 +84,7 @@ export default function ProfesionalModal({ isOpen, mode, professional, onClose, 
       document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", closeWithEscape);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, close]);
 
   if (!isOpen) {
     return null;
@@ -105,16 +107,18 @@ export default function ProfesionalModal({ isOpen, mode, professional, onClose, 
 
   return (
     <div
-      className="profesional-modal__overlay"
+      className={`profesional-modal__overlay${isClosing ? " is-closing" : ""}`}
+      aria-hidden={isClosing}
+      inert={isClosing}
       role="presentation"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) {
-          onClose();
+          close();
         }
       }}
     >
       <section
-        className="profesional-modal"
+        className={`profesional-modal${isClosing ? " is-closing" : ""}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="profesional-modal-title"
@@ -204,7 +208,7 @@ export default function ProfesionalModal({ isOpen, mode, professional, onClose, 
 
           {error && <p role="alert">{error}</p>}
           <footer className="profesional-modal__actions">
-            <button className="profesional-modal__cancel" type="button" onClick={onClose}>
+            <button className="profesional-modal__cancel" type="button" onClick={close}>
               Cancelar
             </button>
             <Boton

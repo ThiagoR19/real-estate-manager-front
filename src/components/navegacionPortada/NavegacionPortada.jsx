@@ -5,7 +5,7 @@ import "./NavegacionPortada.css";
 import kaikenLogo from "../../assets/icons/kaiken.svg";
 import lupaIcono from "../../assets/icons/search.svg";
 
-// "#contacto" lleva al footer de la misma página (ver Footer)
+
 const enlaces = [
   { texto: "Inicio", href: "/inicio" },
   { texto: "Comprar", href: "/propiedades-publicas?filter=buy" },

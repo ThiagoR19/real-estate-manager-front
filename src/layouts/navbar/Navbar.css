@@ -337,6 +337,11 @@
   border: 0;
   background: #00000080;
   cursor: default;
+  animation: navbar-backdrop-in 180ms ease-out both;
+}
+
+.navbar__backdrop.is-closing {
+  animation: navbar-backdrop-out 160ms ease-in forwards;
 }
 
 .navbar__drawer {
@@ -354,6 +359,10 @@
   background: #fff;
   box-shadow: 5px 0 20px #17235e24;
   animation: navbar-drawer-in 180ms ease-out;
+}
+
+.navbar__drawer.is-closing {
+  animation: navbar-drawer-out 160ms ease-in forwards;
 }
 
 .navbar__drawer-brand {
@@ -459,6 +468,29 @@
   to {
     opacity: 1;
     transform: translateX(0);
+  }
+}
+
+@keyframes navbar-drawer-out {
+  to {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+}
+
+@keyframes navbar-backdrop-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes navbar-backdrop-out {
+  to {
+    opacity: 0;
   }
 }
 
@@ -728,6 +760,15 @@
   }
 
   .navbar__drawer {
+    animation: none;
+  }
+
+  .navbar__backdrop {
+    animation: none;
+  }
+
+  .navbar__drawer.is-closing,
+  .navbar__backdrop.is-closing {
     animation: none;
   }
 }

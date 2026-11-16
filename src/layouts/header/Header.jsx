@@ -86,7 +86,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
         api.guardarSesion({ ...currentSession, usuario: updatedUser });
       }
     }).catch(() => {
-      // El header conserva el nombre y las iniciales aunque el perfil no esté disponible.
+
     });
 
     return () => {

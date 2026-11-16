@@ -154,7 +154,7 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
         try {
           current = await api.obtenerPropiedad(saved.id);
         } catch {
-          /* La propiedad ya se guardó. */
+
         }
         await onSubmit(current, cause.message);
       } else setError(cause.message);

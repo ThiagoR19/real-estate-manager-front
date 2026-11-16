@@ -177,7 +177,7 @@ body:has(#terminos) {
   font-size: 10px;
 }
 
-/* Reuse the supplied reference's portrait and building as image sprites. */
+
 .terminos__aside-a-i {
   display: block;
   width: 42px;

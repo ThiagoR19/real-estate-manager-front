@@ -3,8 +3,8 @@ import { createPortal } from "react-dom";
 
 import "./CapaModal.css";
 
-// Capa oscura detrás de cualquier modal. Cierra con clic afuera o Escape.
-// posicion: "centro" (modal clásico) | "derecha" (panel lateral, ej: notificaciones)
+
+
 export default function CapaModal({
   abierto,
   onCerrar,
@@ -14,7 +14,7 @@ export default function CapaModal({
 }) {
   const contenidoRef = useRef(null);
 
-  // En una ref para que una función nueva en cada render no reinicie el efecto
+
   const onCerrarRef = useRef(onCerrar);
 
   useEffect(() => {

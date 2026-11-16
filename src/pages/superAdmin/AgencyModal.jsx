@@ -23,7 +23,7 @@ export default function AgencyModal({ mode = "create", agency, onClose, onSubmit
   function handleSubmit(event) {
     event.preventDefault();
     if (isAdmin) {
-      // Los campos opcionales vacíos no se mandan
+
       const datos = Object.fromEntries(
         Object.entries(admin)
           .map(([campo, valor]) => [campo, campo === "password" ? valor : valor.trim()])

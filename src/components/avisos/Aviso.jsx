@@ -19,14 +19,14 @@ const iconos = {
   recordatorio: clockToastIcon,
 };
 
-// Línea de tiempo en milisegundos desde que aparece
+
 const EXPANDIR = 500;
 const CONTRAER = 5000;
 const SALIR = CONTRAER + 3000;
 const ANIMACION = 400;
 const COLAPSO = 250;
 
-// Fases: "entrando" → "abierto" → "contraido" → "saliendo"
+
 export default function Aviso({ tipo = "exito", titulo, mensaje, accion, onFin }) {
   const [fase, setFase] = useState("entrando");
   const timers = useRef([]);

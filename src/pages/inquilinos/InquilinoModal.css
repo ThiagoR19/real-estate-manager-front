@@ -371,4 +371,9 @@
     animation: none;
     transition: none;
   }
+
+  .inquilino-modal__overlay.is-closing,
+  .inquilino-modal.is-closing {
+    animation: none;
+  }
 }

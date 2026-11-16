@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { xIcon as closeIcon } from "../../assets/icons";
 import brandLogo from "../../assets/logoAGI.png";
@@ -35,6 +35,9 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
   const [logoutError, setLogoutError] = useState("");
   const [user, setUser] = useState(() => api.obtenerSesion()?.usuario);
   const [photoLoadError, setPhotoLoadError] = useState(false);
+  const [rendered, setRendered] = useState(menuOpen);
+  const [closing, setClosing] = useState(false);
+  const closeTimer = useRef(null);
 
   useEffect(() => {
     const syncUser = () => {
@@ -95,6 +98,40 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
       );
 
   useEffect(() => {
+    if (menuOpen) {
+      window.clearTimeout(closeTimer.current);
+      setRendered(true);
+      setClosing(false);
+      return undefined;
+    }
+
+    if (!rendered) return undefined;
+
+    setClosing(true);
+    const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    closeTimer.current = window.setTimeout(() => {
+      setRendered(false);
+      setClosing(false);
+    }, reduceMotion ? 0 : 180);
+    return () => window.clearTimeout(closeTimer.current);
+  }, [menuOpen]);
+
+  useEffect(
+    () => () => window.clearTimeout(closeTimer.current),
+    [],
+  );
+
+  useEffect(() => {
+    if (!rendered) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [rendered]);
+
+  useEffect(() => {
     if (!menuOpen) return undefined;
 
     function closeOnEscape(event) {
@@ -102,25 +139,32 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
     }
 
     document.addEventListener("keydown", closeOnEscape);
-    document.body.style.overflow = "hidden";
 
     return () => {
       document.removeEventListener("keydown", closeOnEscape);
-      document.body.style.overflow = "";
     };
   }, [menuOpen, onClose]);
 
-  if (!menuOpen) return null;
+  if (!rendered) return null;
 
   return (
     <>
       <button
-        className="navbar__backdrop"
+        className={`navbar__backdrop${closing ? " is-closing" : ""}`}
         type="button"
         aria-label="Cerrar menú"
+        aria-hidden={!menuOpen}
+        disabled={!menuOpen}
+        tabIndex={menuOpen ? 0 : -1}
         onClick={onClose}
       />
-      <aside className="navbar__drawer" id="main-navigation" aria-label="Navegación principal">
+      <aside
+        className={`navbar__drawer${closing ? " is-closing" : ""}`}
+        id="main-navigation"
+        aria-label="Navegación principal"
+        aria-hidden={!menuOpen}
+        inert={!menuOpen}
+      >
         <div className="navbar__drawer-brand">
           <Link
             href="/dashboard"

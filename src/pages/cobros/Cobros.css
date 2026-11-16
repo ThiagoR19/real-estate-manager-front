@@ -695,15 +695,35 @@
   border-radius: 16px;
   background: #f6f9fc;
   box-shadow: 0 16px 50px #17235e40;
+  opacity: 0;
+  transform: translateY(6px) scale(0.99);
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease,
+    display 160ms allow-discrete;
 }
 
 .cobros__receipt-dialog[open] {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   place-items: center;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+@starting-style {
+  .cobros__receipt-dialog[open] {
+    opacity: 0;
+    transform: translateY(6px) scale(0.99);
+  }
 }
 
 .cobros__receipt-dialog::backdrop {
+  background: rgb(16 26 53 / 0%);
+  transition: background-color 160ms ease;
+}
+
+.cobros__receipt-dialog[open]::backdrop {
   background: #101a35a6;
 }
 
@@ -1076,7 +1096,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   .cobros__chevron,
-  .cobros__month {
+  .cobros__month,
+  .cobros__receipt-dialog,
+  .cobros__receipt-dialog::backdrop {
     transition: none;
   }
 }

@@ -121,7 +121,7 @@
     brightness(83%) contrast(100%);
 }
 
-/* Íconos que ya traen su color en el svg */
+
 .dashboard-icon--original {
   filter: none;
 }
@@ -1024,7 +1024,7 @@
   }
 }
 
-/* Fit the dashboard to the viewport area below the navigation. */
+
 .dashboard-page {
   display: flex;
   height: calc(100dvh - 61px);
@@ -1043,7 +1043,7 @@
   grid-template-rows: minmax(320px, 1fr) minmax(126px, 0.38fr);
 }
 
-/* Tablet: tres filas */
+
 @media (max-width: 1300px) {
   .dashboard-hero {
     flex-basis: auto;

@@ -24,12 +24,12 @@ export default function PanelNotificaciones({
   className = "",
 }) {
   const [filtro, setFiltro] = useState("todas");
-  // id → si estaba sin leer al expandirla (esas se ven en azul oscuro; las ya leídas siguen en gris)
+
   const [expandidas, setExpandidas] = useState(() => new Map());
 
   const visibles = notificaciones.filter(filtros.find((f) => f.id === filtro).cumple);
 
-  // Al expandir una notificación pasa a estar leída
+
   const alternar = (id) => {
     const abrir = !expandidas.has(id);
     const sinLeer = !notificaciones.find((n) => n.id === id)?.leida;

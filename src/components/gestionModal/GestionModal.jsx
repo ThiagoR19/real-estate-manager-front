@@ -1,7 +1,10 @@
-import { useEffect, useId, useRef } from "react";
+import { createContext, useContext, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Boton, SelectDesplegable } from "../index";
 import "./GestionModal.css";
+
+const ModalCloseContext = createContext(null);
+const MODAL_TRANSITION_MS = 160;
 
 export default function GestionModal({
   isOpen = true,
@@ -15,13 +18,52 @@ export default function GestionModal({
   const descriptionId = useId();
   const dialogRef = useRef(null);
   const closeRef = useRef(onClose);
+  const closeTimer = useRef(null);
+  const [rendered, setRendered] = useState(isOpen);
+  const [closing, setClosing] = useState(false);
+  const closingRef = useRef(closing);
+  closingRef.current = closing;
 
   useEffect(() => {
     closeRef.current = onClose;
   }, [onClose]);
 
   useEffect(() => {
-    if (!isOpen) return undefined;
+    if (isOpen) {
+      window.clearTimeout(closeTimer.current);
+      setRendered(true);
+      setClosing(false);
+      return undefined;
+    }
+
+    if (!rendered) return undefined;
+
+    setClosing(true);
+    closeTimer.current = window.setTimeout(() => {
+      setRendered(false);
+      setClosing(false);
+    }, MODAL_TRANSITION_MS);
+    return () => window.clearTimeout(closeTimer.current);
+  }, [isOpen, rendered]);
+
+  useEffect(
+    () => () => window.clearTimeout(closeTimer.current),
+    [],
+  );
+
+  function requestClose() {
+    if (closingRef.current || !rendered) return;
+    closingRef.current = true;
+    setClosing(true);
+    window.clearTimeout(closeTimer.current);
+    closeTimer.current = window.setTimeout(() => {
+      setRendered(false);
+      closeRef.current?.();
+    }, MODAL_TRANSITION_MS);
+  }
+
+  useEffect(() => {
+    if (!rendered) return undefined;
 
     const previousFocus = document.activeElement;
     const previousOverflow = document.body.style.overflow;
@@ -36,7 +78,7 @@ export default function GestionModal({
     (focusable()[0] || dialog).focus();
 
     function handleKeyDown(event) {
-      if (event.key === "Escape" && !event.defaultPrevented) closeRef.current?.();
+      if (event.key === "Escape" && !event.defaultPrevented) requestClose();
       if (event.key !== "Tab") return;
       const controls = focusable();
       const first = controls[0];
@@ -65,41 +107,47 @@ export default function GestionModal({
       document.removeEventListener("keydown", handleKeyDown);
       if (previousFocus?.isConnected) previousFocus.focus?.();
     };
-  }, [isOpen]);
+  }, [rendered]);
 
-  if (!isOpen) return null;
+  if (!rendered) return null;
 
   return createPortal(
-    <div
-      className="gestion-modal__overlay"
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget) onClose();
-      }}
-    >
-      <section
-        ref={dialogRef}
-        className={`gestion-modal${variant ? ` gestion-modal--${variant}` : ""}`}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={titleId}
-        aria-describedby={subtitle ? descriptionId : undefined}
-        tabIndex={-1}
+    <ModalCloseContext.Provider value={requestClose}>
+      <div
+        className={`gestion-modal__overlay${closing ? " is-closing" : ""}`}
+        aria-hidden={closing}
+        inert={closing}
+        onMouseDown={(event) => {
+          if (event.target === event.currentTarget) requestClose();
+        }}
       >
-        <header className="gestion-modal__header">
-          <h2 id={titleId}>{title}</h2>
-          {subtitle && <p id={descriptionId}>{subtitle}</p>}
-        </header>
-        {children}
-      </section>
-    </div>,
+        <section
+          ref={dialogRef}
+          className={`gestion-modal${variant ? ` gestion-modal--${variant}` : ""}${closing ? " is-closing" : ""}`}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={titleId}
+          aria-describedby={subtitle ? descriptionId : undefined}
+          tabIndex={-1}
+        >
+          <header className="gestion-modal__header">
+            <h2 id={titleId}>{title}</h2>
+            {subtitle && <p id={descriptionId}>{subtitle}</p>}
+          </header>
+          {children}
+        </section>
+      </div>
+    </ModalCloseContext.Provider>,
     document.body,
   );
 }
 
 export function AccionesModal({ onClose, submitText = "Guardar cambios", disabled = false }) {
+  const closeModal = useContext(ModalCloseContext);
+
   return (
     <footer className="gestion-modal__actions">
-      <button className="gestion-modal__cancel" type="button" onClick={onClose}>
+      <button className="gestion-modal__cancel" type="button" onClick={closeModal ?? onClose}>
         Cancelar
       </button>
       <Boton className="gestion-modal__submit" type="submit" text={submitText} disabled={disabled} />

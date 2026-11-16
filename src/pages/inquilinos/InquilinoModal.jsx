@@ -7,6 +7,7 @@ import {
   userIcon,
 } from "../../assets/icons";
 import { SelectDesplegable, Boton } from "../../components";
+import useClosingTransition from "../../hooks/useClosingTransition.js";
 import "./InquilinoModal.css";
 
 const statusOptions = ["Activo", "Inactivo"];
@@ -70,6 +71,7 @@ export default function InquilinoModal({ isOpen, mode, tenant, onClose, onSubmit
   const [form, setForm] = useState(() => getInitialForm(tenant));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const { isClosing, close } = useClosingTransition(onClose);
   const isEditing = mode === "edit";
   const displayName = isEditing
     ? `${tenant?.nombre || ""} ${tenant?.apellido || ""}`.trim() || `DNI ${tenant?.dni}`
@@ -89,7 +91,7 @@ export default function InquilinoModal({ isOpen, mode, tenant, onClose, onSubmit
 
     function closeWithEscape(event) {
       if (event.key === "Escape") {
-        onClose();
+        close();
       }
     }
 
@@ -101,7 +103,7 @@ export default function InquilinoModal({ isOpen, mode, tenant, onClose, onSubmit
       document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", closeWithEscape);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, close]);
 
   if (!isOpen) {
     return null;
@@ -130,16 +132,18 @@ export default function InquilinoModal({ isOpen, mode, tenant, onClose, onSubmit
 
   return (
     <div
-      className="inquilino-modal__overlay"
+      className={`inquilino-modal__overlay${isClosing ? " is-closing" : ""}`}
+      aria-hidden={isClosing}
+      inert={isClosing}
       role="presentation"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) {
-          onClose();
+          close();
         }
       }}
     >
       <section
-        className="inquilino-modal"
+        className={`inquilino-modal${isClosing ? " is-closing" : ""}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="inquilino-modal-title"
@@ -269,7 +273,7 @@ export default function InquilinoModal({ isOpen, mode, tenant, onClose, onSubmit
             <button
               className="inquilino-modal__cancel"
               type="button"
-              onClick={onClose}
+              onClick={close}
               disabled={saving}
             >
               Cancelar

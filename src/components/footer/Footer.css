@@ -50,7 +50,7 @@
   color: var(--azulOsc);
 }
 
-/* Ocupa el lugar de las redes que se quitaron */
+
 .Footer__redes-hueco {
   height: 40px;
   margin-top: 26px;
@@ -96,7 +96,7 @@
   color: var(--azulClaro);
 }
 
-/* Ocupa el lugar de la columna Contacto que se quitó */
+
 .Footer__hueco {
   width: 210.6px;
 }
@@ -178,7 +178,7 @@
     grid-column: 1 / -1;
   }
 
-  /* Contacto era el bloque más alto de esta fila */
+
   .Footer__hueco {
     height: 222px;
   }

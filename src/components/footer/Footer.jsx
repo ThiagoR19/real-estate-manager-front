@@ -53,7 +53,7 @@ export default function Footer({ className = "" }) {
             confianza y seguridad en cada operación
           </p>
 
-          {/* Lugar que ocupaban las redes: mantiene la altura del bloque */}
+
           <div className="Footer__redes-hueco" aria-hidden="true" />
         </div>
 

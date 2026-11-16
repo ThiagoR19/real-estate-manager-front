@@ -161,7 +161,7 @@ export default function SuperAdmin() {
     else crearInmobiliaria(valor);
   }
 
-  // Mientras carga no se muestra la página (acá va a ir el skeleton)
+
   if (loading) return <main id="super-admin" aria-busy="true" />;
 
   const { inmobiliarias, mensaje } = estado;

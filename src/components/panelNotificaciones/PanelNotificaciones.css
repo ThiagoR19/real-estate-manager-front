@@ -1,4 +1,4 @@
-/* Solo la lista scrollea: encabezado y filtros quedan siempre a la vista */
+
 .PanelNotificaciones {
   display: flex;
   flex-direction: column;
@@ -16,7 +16,7 @@
   box-shadow: -8px 0 30px rgba(15, 23, 42, 0.18);
 }
 
-/* Encabezado */
+
 
 .PanelNotificaciones__encabezado {
   position: relative;
@@ -115,7 +115,7 @@
   cursor: pointer;
 }
 
-/* Filtros */
+
 
 .PanelNotificaciones__filtros {
   display: flex;
@@ -185,7 +185,7 @@
   background-color: var(--blanc);
 }
 
-/* Lista */
+
 
 .PanelNotificaciones__lista {
   flex: 1;
@@ -204,7 +204,7 @@
   color: var(--azulGris);
 }
 
-/* Mobile: pantalla completa, los filtros pasan abajo */
+
 
 @media (max-width: 768px) {
   .PanelNotificaciones {

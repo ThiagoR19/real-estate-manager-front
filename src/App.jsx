@@ -30,6 +30,16 @@ function DashboardPorRol() {
   return <DashboardDelRol />;
 }
 
+function VistaConTransicion({ children }) {
+  const [pathname] = useLocation();
+
+  return (
+    <div className="view-transition" key={pathname}>
+      {children}
+    </div>
+  );
+}
+
 function AuthenticatedApp() {
   const [menuOpen, setMenuOpen] = useState(false);
   if (!obtenerSesion()?.token) {
@@ -41,6 +51,7 @@ function AuthenticatedApp() {
       <Header menuOpen={menuOpen} onToggleMenu={() => setMenuOpen((open) => !open)} />
       <Navbar menuOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       <div id="app-content">
+        <VistaConTransicion>
         <Route path="/admin-dashboard" component={DashboardPorRol} />
         <Route path="/dashboard" component={DashboardPorRol} />
         <Route path="/dashboard-agente" component={DashboardAgente} />
@@ -70,6 +81,7 @@ function AuthenticatedApp() {
         <Route path="/sobre-nosotros" component={SobreNosotros} />
         <Route path="/terminos" component={Terminos} />
         <Route path="/profesionales" component={Profesionales} />
+        </VistaConTransicion>
       </div>
     </div>
   );
@@ -88,15 +100,15 @@ function App() {
 
   return (
     <Switch>
-      <Route path="/inicio" component={Inicio} />
-      <Route path="/sobre-nosotros" component={SobreNosotros} />
-      <Route path="/propiedades-publicas" component={PropiedadesPublicas} />
-      <Route path="/propiedad-publica" component={PropiedadPublica} />
-      <Route path="/login" component={Login} />
-      <Route path="/registro" component={Registro} />
-      <Route path="/activar" component={ConfirmarRegistro} />
-      <Route path="/confirmar-registro" component={ConfirmarRegistro} />
-      <Route path="/" component={Inicio} />
+      <Route path="/inicio"><VistaConTransicion><Inicio /></VistaConTransicion></Route>
+      <Route path="/sobre-nosotros"><VistaConTransicion><SobreNosotros /></VistaConTransicion></Route>
+      <Route path="/propiedades-publicas"><VistaConTransicion><PropiedadesPublicas /></VistaConTransicion></Route>
+      <Route path="/propiedad-publica"><VistaConTransicion><PropiedadPublica /></VistaConTransicion></Route>
+      <Route path="/login"><VistaConTransicion><Login /></VistaConTransicion></Route>
+      <Route path="/registro"><VistaConTransicion><Registro /></VistaConTransicion></Route>
+      <Route path="/activar"><VistaConTransicion><ConfirmarRegistro /></VistaConTransicion></Route>
+      <Route path="/confirmar-registro"><VistaConTransicion><ConfirmarRegistro /></VistaConTransicion></Route>
+      <Route path="/"><VistaConTransicion><Inicio /></VistaConTransicion></Route>
       <Route>
         <AuthenticatedApp />
         <ContenedorAvisos />

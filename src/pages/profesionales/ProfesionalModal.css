@@ -353,4 +353,9 @@
     animation: none;
     transition: none;
   }
+
+  .profesional-modal__overlay.is-closing,
+  .profesional-modal.is-closing {
+    animation: none;
+  }
 }

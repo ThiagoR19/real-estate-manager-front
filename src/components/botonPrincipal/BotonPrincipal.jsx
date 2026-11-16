@@ -4,7 +4,7 @@ import flechaIcono from "../../assets/icons/loginArrow.svg";
 import avionIcono from "../../assets/icons/paper-plane-regular-full.svg";
 import checkIcono from "../../assets/icons/check-solid-full.svg";
 
-// estado: "inactivo" | "enviando" | "listo"
+
 export default function BotonPrincipal({
   texto,
   textoEnviando = "Enviando",

@@ -9,6 +9,10 @@
   animation: reporte-modal-fade-in 160ms ease-out;
 }
 
+.reporte-modal__overlay.is-closing {
+  animation: reporte-modal-fade-out 160ms ease-in forwards;
+}
+
 .reporte-modal,
 .reporte-modal * {
   box-sizing: border-box;
@@ -27,6 +31,10 @@
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   animation: reporte-modal-slide-in 180ms ease-out;
+}
+
+.reporte-modal.is-closing {
+  animation: reporte-modal-slide-out 160ms ease-in forwards;
 }
 
 .reporte-modal button:not(.boton),
@@ -413,6 +421,19 @@
   }
 }
 
+@keyframes reporte-modal-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes reporte-modal-slide-out {
+  to {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+  }
+}
+
 @media (max-width: 650px) {
   .reporte-modal__overlay {
     padding: 10px;
@@ -465,6 +486,11 @@
   .reporte-modal__actions button {
     animation: none;
     transition: none;
+  }
+
+  .reporte-modal__overlay.is-closing,
+  .reporte-modal.is-closing {
+    animation: none;
   }
 }
 

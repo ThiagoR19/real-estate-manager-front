@@ -6,12 +6,12 @@ import fondoInicio from "../../assets/homeHero.png";
 
 import "./Inicio.css";
 
-// TODO: imágenes provisorias (public/), reemplazar por las de cada propiedad
+
 const imagenCasa = "/images%20(1).jpg";
 const imagenTerraza = "/images.jpg";
 const imagenVilla = "/ly-villa-costa-blanca-1_b02f5d33_900x900.jpg";
 
-// TODO: reemplazar por los datos de la API
+
 const propiedades = [
   {
     id: 1,

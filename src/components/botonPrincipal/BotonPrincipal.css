@@ -1,6 +1,6 @@
-/* --------------------------------------------------------------------------------- */
-/* -------------------------------- BOTON PRINCIPAL -------------------------------- */
-/* --------------------------------------------------------------------------------- */
+
+
+
 
 .BotonPrincipal {
   position: relative;
@@ -34,7 +34,7 @@
   cursor: default;
 }
 
-/* ------------------------------------- CAPAS ------------------------------------- */
+
 
 .BotonPrincipal__capa {
   position: absolute;
@@ -67,7 +67,7 @@
   transform: none;
 }
 
-/* ------------------------------------- ICONOS ------------------------------------ */
+
 
 .BotonPrincipal__icono,
 .BotonPrincipal__avion,
@@ -82,7 +82,7 @@
   transition: transform 0.35s ease;
 }
 
-/* La flecha "sale disparada" al enviar */
+
 .BotonPrincipal--enviando .BotonPrincipal__icono {
   transform: translateX(40px);
 }
@@ -108,7 +108,7 @@
   filter: brightness(0) invert(1);
 }
 
-/* ------------------------------------ ENVIANDO ----------------------------------- */
+
 
 .BotonPrincipal--enviando .BotonPrincipal__avion {
   animation: BotonPrincipal-volar 1s ease-in-out infinite;
@@ -176,7 +176,7 @@
   }
 }
 
-/* Barra que recorre el botón mientras viajan los datos */
+
 .BotonPrincipal__progreso {
   position: absolute;
   left: 0;
@@ -204,7 +204,7 @@
   }
 }
 
-/* -------------------------------------- LISTO ------------------------------------ */
+
 
 .BotonPrincipal--listo .BotonPrincipal__check {
   animation: BotonPrincipal-check 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
@@ -220,7 +220,7 @@
   }
 }
 
-/* ---------- MOVIMIENTO REDUCIDO ---------- */
+
 
 @media (prefers-reduced-motion: reduce) {
   .BotonPrincipal__capa,

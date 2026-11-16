@@ -546,7 +546,7 @@ body:has(#chat) {
   }
 }
 
-/* Conversation details keep the original navy and pale blue palette. */
+
 .chat__sidebar-heading {
   display: flex;
   align-items: center;

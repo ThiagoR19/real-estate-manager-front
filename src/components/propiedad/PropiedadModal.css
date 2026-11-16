@@ -9,6 +9,10 @@
   animation: propiedad-modal-fade-in 160ms ease-out;
 }
 
+.propiedad-modal__overlay.is-closing {
+  animation: propiedad-modal-fade-out 160ms ease-in forwards;
+}
+
 .propiedad-modal,
 .propiedad-modal * {
   box-sizing: border-box;
@@ -27,6 +31,10 @@
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   animation: propiedad-modal-slide-in 180ms ease-out;
+}
+
+.propiedad-modal.is-closing {
+  animation: propiedad-modal-slide-out 160ms ease-in forwards;
 }
 
 .propiedad-modal button:not(.boton),
@@ -703,6 +711,19 @@
   }
 }
 
+@keyframes propiedad-modal-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes propiedad-modal-slide-out {
+  to {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+  }
+}
+
 @media (max-width: 980px) {
   .propiedad-modal__header {
     grid-template-columns: 1fr;
@@ -793,6 +814,11 @@
   .propiedad-modal__actions button {
     animation: none;
     transition: none;
+  }
+
+  .propiedad-modal__overlay.is-closing,
+  .propiedad-modal.is-closing {
+    animation: none;
   }
 }
 
