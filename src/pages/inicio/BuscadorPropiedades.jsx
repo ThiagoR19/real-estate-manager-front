@@ -11,36 +11,72 @@ import monedasIcono from "../../assets/icons/monedas.svg";
 
 const operaciones = ["Alquilar", "Comprar"];
 
+// valor del presupuesto: "mínimo-máximo" (sin máximo = "mínimo-")
 const presupuestos = {
-  Alquilar: ["Hasta $500.000 / mes", "$500.000 a $1.000.000 / mes", "Más de $1.000.000 / mes"],
-  Comprar: ["Hasta USD 100.000", "USD 100.000 a 250.000", "Más de USD 250.000"],
+  Alquilar: [
+    { texto: "Hasta $500.000 / mes", valor: "0-500000" },
+    { texto: "$500.000 a $1.000.000 / mes", valor: "500000-1000000" },
+    { texto: "Más de $1.000.000 / mes", valor: "1000000-" },
+  ],
+  Comprar: [
+    { texto: "Hasta USD 100.000", valor: "0-100000" },
+    { texto: "USD 100.000 a 250.000", valor: "100000-250000" },
+    { texto: "Más de USD 250.000", valor: "250000-" },
+  ],
 };
+
+const monedas = { Alquilar: "ARS", Comprar: "USD" };
 
 const filtrosDe = (operacion) => [
   {
     id: "buscador-ubicacion",
+    name: "ubicacion",
     etiqueta: "Ubicación",
     icono: ubicacionIcono,
     opciones: ["CABA", "Belgrano", "Palermo", "Recoleta", "Núñez"],
   },
   {
     id: "buscador-habitaciones",
+    name: "habitaciones",
     etiqueta: "Habitaciones",
     icono: camaIcono,
-    opciones: ["1", "2", "3", "4 o más"],
+    opciones: ["1", "2", "3", { texto: "4 o más", valor: "4+" }],
   },
   {
     id: "buscador-presupuesto",
+    name: "presupuesto",
     etiqueta: "Presupuesto",
     icono: monedasIcono,
     opciones: presupuestos[operacion],
   },
 ];
 
+// Arma los query params de la búsqueda: solo agrega lo que se eligió
+function paramsDeBusqueda(operacion, formulario) {
+  const datos = new FormData(formulario);
+  const params = new URLSearchParams({ filter: operacion === "Alquilar" ? "rent" : "buy" });
+
+  const ubicacion = datos.get("ubicacion");
+  const habitaciones = datos.get("habitaciones");
+  const presupuesto = datos.get("presupuesto");
+
+  if (ubicacion) params.set("ubicacion", ubicacion);
+  if (habitaciones) params.set("habitaciones", habitaciones);
+  if (presupuesto) {
+    const [minimo, maximo] = presupuesto.split("-");
+    params.set("precioMin", minimo);
+    if (maximo) params.set("precioMax", maximo);
+    params.set("moneda", monedas[operacion]);
+  }
+
+  return params.toString();
+}
+
 export default function BuscadorPropiedades({ className = "" }) {
   const [, navegar] = useLocation();
   const [operacion, setOperacion] = useState(operaciones[0]);
   const [direccion, setDireccion] = useState("derecha");
+  
   // null hasta la primera medición: así no se anima desde 0 al cargar
   const [indicador, setIndicador] = useState(null);
 
@@ -73,7 +109,7 @@ export default function BuscadorPropiedades({ className = "" }) {
 
   const buscar = (e) => {
     e.preventDefault();
-    navegar(`/propiedades-publicas?filter=${operacion === "Alquilar" ? "rent" : "buy"}`);
+    navegar(`/propiedades-publicas?${paramsDeBusqueda(operacion, e.currentTarget)}`);
   };
 
   return (
@@ -91,9 +127,7 @@ export default function BuscadorPropiedades({ className = "" }) {
           <button
             key={nombre}
             type="button"
-            ref={(boton) => {
-              botonesRef.current[nombre] = boton;
-            }}
+            ref={(boton) => {botonesRef.current[nombre] = boton;}}
             className={`BuscadorPropiedades__pestana ${operacion === nombre ? "BuscadorPropiedades__pestana--activa" : ""}`}
             aria-pressed={operacion === nombre}
             onClick={() => elegir(nombre)}
@@ -103,7 +137,6 @@ export default function BuscadorPropiedades({ className = "" }) {
         ))}
       </div>
 
-      {/* key: al cambiar de operación la fila se vuelve a montar y entra deslizándose */}
       <div
         key={operacion}
         className={`BuscadorPropiedades__campos BuscadorPropiedades__campos--desde-${direccion}`}

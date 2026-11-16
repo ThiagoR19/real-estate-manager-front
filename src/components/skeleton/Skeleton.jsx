@@ -12,15 +12,17 @@ import useLoadComplete from "../../hooks/useLoadComplete";
 // - data-sk           -> fuerza a un elemento a verse como bloque
 // - data-sk-fondo     -> oculta su imagen de fondo mientras carga
 // - className="Skeleton-no" -> excluye ese elemento y su contenido
+// - cargando          -> lo mantiene en skeleton mientras la vista espera sus datos
 export default function Skeleton({
   as: Etiqueta = "div",
   className = "",
   fondos = [],
+  cargando = false,
   children,
   ...props
 }) {
   const ref = useRef(null);
-  const loaded = useLoadComplete(ref, fondos);
+  const loaded = useLoadComplete(ref, fondos) && !cargando;
 
   return (
     <Etiqueta

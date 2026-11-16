@@ -12,6 +12,7 @@ import {
   phoneIcon,
   trashCanIcon,
   userIcon,
+  infoToastIcon
 } from "../../assets/icons";
 import "./Perfil.css";
 import { Boton, AccesoGoogle } from "../../components";
@@ -295,7 +296,7 @@ export default function Perfil() {
           </section>
 
           <section className="perfil__password-hint" aria-labelledby="password-hint-title">
-            <img src={lockIcon} alt="" />
+            <img src={infoToastIcon} alt="" />
             <div>
               <h2 id="password-hint-title">Tu contraseña debe incluir</h2>
               <ul>

@@ -1,12 +1,50 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { cameraIcon, checkIcon, envelopeIcon, imageIcon, phoneIcon, plusIcon, userIcon, } from "../../assets/icons";
-import brandLogo from "../../assets/logoAGI.png";
-import { Boton, mostrarAviso } from "../../components";
+import { useRef } from "react";
+import { cameraIcon, checkIcon, imageIcon, locationDotIcon, phoneIcon, plusIcon, userIcon } from "../../assets/icons";
+import { Boton } from "../../components";
+import useMiInmobiliaria, { FORMATOS_IMAGEN } from "../../hooks/useMiInmobiliaria";
+import initials from "../../utils/initials";
+import avatarClass from "../../utils/avatarClass";
 import "./Inmobiliaria.css";
-import { api } from "../../services/api";
 
-const initialAgency = {   name: "", phone: "" };
+const CAMPOS = [
+  { name: "nombre", label: "Nombre inmobiliaria", icon: userIcon, maxLength: 255, sinDato: "Nombre de la inmobiliaria" },
+  { name: "telefono", label: "Teléfono", icon: phoneIcon, maxLength: 20, inputMode: "tel", sinDato: "Teléfono" },
+  { name: "ubicacion", label: "Ubicación", icon: locationDotIcon, maxLength: 255, ancho: true, sinDato: "Ubicación" },
+];
 
+const IMAGENES = [
+  { name: "banner", label: "Banner", ancho: true },
+  { name: "logo", label: "Logo" },
+  { name: "principal", label: "Principal" },
+];
+
+const TEXTO_BOTON = { guardando: "Guardando...", guardado: "Cambios guardados" };
+
+// Pasa el archivo elegido en un input file a onElegir y limpia el input
+function leerArchivo(event, onElegir) {
+  const file = event.target.files?.[0];
+  event.target.value = "";
+  if (file) onElegir(file);
+}
+
+// Esfera de la tarjeta: el logo llenando el círculo o, si no hay, las iniciales con el estilo de avatar
+function EsferaLogo({ logo, nombre }) {
+  const [primera = "", segunda = ""] = nombre.trim().split(/\s+/);
+  if (logo) {
+    return <img className="inmobiliaria__identity-logo" src={logo} alt={`Logo de ${nombre || "la inmobiliaria"}`} />;
+  }
+  return (
+    <span
+      className={`inmobiliaria__identity-logo inmobiliaria__identity-logo--iniciales ${avatarClass(primera, segunda)}`}
+      role="img"
+      aria-label={`Iniciales de ${nombre || "la inmobiliaria"}`}
+    >
+      {initials(primera, segunda)}
+    </span>
+  );
+}
+
+// Título de cada sección del formulario
 function EncabezadoSeccion({ icon, title, description }) {
   return (
     <div className="inmobiliaria__section-heading">
@@ -21,36 +59,45 @@ function EncabezadoSeccion({ icon, title, description }) {
   );
 }
 
-function CampoCarga({ label, name, value, onChange, wide = false }) {
+// Input de texto: vacío, con el dato guardado como placeholder
+function CampoTexto({ campo, valor, guardado, onChange, disabled }) {
+  return (
+    <label className={`inmobiliaria__field${campo.ancho ? " inmobiliaria__field--wide" : ""}`}>
+      <span>{campo.label}</span>
+      <span className="inmobiliaria__field-control">
+        <img src={campo.icon} alt="" />
+        <input
+          name={campo.name}
+          value={valor}
+          onChange={onChange}
+          placeholder={guardado || campo.sinDato}
+          aria-label={campo.label}
+          maxLength={campo.maxLength}
+          inputMode={campo.inputMode}
+          disabled={disabled}
+        />
+      </span>
+    </label>
+  );
+}
+
+// Recuadro para subir una imagen, con su vista previa
+function CampoCarga({ imagen, url, onElegir, disabled }) {
   const inputRef = useRef(null);
-
-  function handleFileChange(event) {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    onChange({
-      name,
-      value: URL.createObjectURL(file),
-      fileName: file.name,
-      file,
-    });
-  }
+  const etiqueta = imagen.label.toLowerCase();
 
   return (
-    <div className={`inmobiliaria__upload-field${wide ? " inmobiliaria__upload-field--wide" : ""}`}>
-      <label htmlFor={`inmobiliaria-upload-${name}`}>{label}</label>
+    <div className={`inmobiliaria__upload-field${imagen.ancho ? " inmobiliaria__upload-field--wide" : ""}`}>
+      <label htmlFor={`inmobiliaria-upload-${imagen.name}`}>{imagen.label}</label>
       <button
-        className={`inmobiliaria__upload${value ? " inmobiliaria__upload--filled" : ""}`}
+        className={`inmobiliaria__upload${url ? " inmobiliaria__upload--filled" : ""}`}
         type="button"
         onClick={() => inputRef.current?.click()}
-        aria-label={`${value ? "Cambiar" : "Subir"} imagen de ${label.toLowerCase()}`}
+        disabled={disabled}
+        aria-label={`${url ? "Cambiar" : "Subir"} imagen de ${etiqueta}`}
       >
-        {value ? (
-          <img
-            className="inmobiliaria__upload-preview"
-            src={value}
-            alt={`Vista previa de ${label.toLowerCase()}`}
-          />
+        {url ? (
+          <img className="inmobiliaria__upload-preview" src={url} alt={`Vista previa de ${etiqueta}`} />
         ) : (
           <>
             <img className="inmobiliaria__upload-plus" src={plusIcon} alt="" />
@@ -60,88 +107,57 @@ function CampoCarga({ label, name, value, onChange, wide = false }) {
       </button>
       <input
         ref={inputRef}
-        id={`inmobiliaria-upload-${name}`}
+        id={`inmobiliaria-upload-${imagen.name}`}
         type="file"
-        accept="image/*"
-        onChange={handleFileChange}
+        accept={FORMATOS_IMAGEN.join(",")}
+        onChange={(event) => leerArchivo(event, (file) => onElegir(imagen.name, file))}
       />
     </div>
   );
 }
 
+// Vista Mi inmobiliaria: tarjeta con logo, nombre y ubicación, y formulario de datos e imágenes
 export default function Inmobiliaria() {
-  const [agency, setAgency] = useState(initialAgency);
-  const [images, setImages] = useState({ banner: "", logo: "", principal: "" });
-  const [logoFile, setLogoFile] = useState(null);
-  const [saved, setSaved] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  const cargar = useCallback(() => {
-      let activo = true;
-      api.miInmobiliaria()
-        .then((data) => {
-          if (!activo) return;
-          setAgency({ name: data.nombre || "", phone: data.telefono || "" });
-          setImages((current) => ({ ...current, logo: data.urlLogo || "" }));
-        })
-        .catch((causa) => {
-          if (!activo) return;
-          mostrarAviso({ tipo: "error", titulo: "No se pudo cargar la inmobiliaria", mensaje: causa.message });
-        })
-        .finally(() => activo && setLoading(false));
-      return () => {
-        activo = false;
-      };
-    }, []);
-
-    useEffect(() => cargar(), [cargar]);
-
-  function updateAgency(event) {
-    const { name, value } = event.target;
-    setAgency((current) => ({ ...current, [name]: value }));
-    setSaved(false);
-  }
-
-  function updateImage({ name, value, file }) {
-    setImages((current) => ({ ...current, [name]: value }));
-    if (name === "logo") setLogoFile(file);
-    setSaved(false);
-  }
-
-  async function saveChanges(event) {
-    event.preventDefault();
-    try {
-      const updated = await api.actualizarMiInmobiliaria({ nombre: agency.name.trim(), telefono: agency.phone.trim() }, logoFile);
-      setAgency({ name: updated.nombre || "", phone: updated.telefono || "" });
-      setImages((current) => ({ ...current, logo: updated.urlLogo || "" }));
-      setLogoFile(null);
-      setSaved(true);
-    } catch (cause) {
-      mostrarAviso({ tipo: "error", titulo: "No se pudieron guardar los cambios", mensaje: cause.message });
-    }
-  }
+  const { guardado, campos, imagenes, estado, cambiarCampo, cambiarImagen, guardar } = useMiInmobiliaria();
+  const logoInputRef = useRef(null);
+  const cargando = estado === "cargando";
+  const nombre = campos.nombre || guardado.nombre;
+  const ubicacion = campos.ubicacion || guardado.ubicacion;
 
   return (
     <main id="inmobiliaria">
       <div className="inmobiliaria__layout">
         <aside className="inmobiliaria__identity-card" aria-label="Resumen de la inmobiliaria">
           <div className="inmobiliaria__identity-logo-wrap">
-            <img className="inmobiliaria__identity-logo" src={brandLogo} alt="Logo de AGI Propiedades" />
+            <EsferaLogo logo={imagenes.logo} nombre={nombre} />
             <Boton
               className="inmobiliaria__identity-camera"
               icon={cameraIcon}
+              onClick={() => logoInputRef.current?.click()}
+              disabled={cargando}
               aria-label="Cambiar logo de la inmobiliaria"
             />
+            <input
+              ref={logoInputRef}
+              className="inmobiliaria__identity-input"
+              type="file"
+              accept={FORMATOS_IMAGEN.join(",")}
+              onChange={(event) => leerArchivo(event, (file) => cambiarImagen("logo", file))}
+              tabIndex={-1}
+              aria-hidden="true"
+            />
           </div>
-          <h1>AGI Propiedades</h1>
+          <h1>{nombre || "Mi inmobiliaria"}</h1>
           <p className="inmobiliaria__identity-type">Inmobiliaria</p>
-          <p className="inmobiliaria__identity-email">
-            <img src={envelopeIcon} alt="" />
-            <span>agipropiedades@gmail.com</span>
-          </p>
+          {ubicacion && (
+            <p className="inmobiliaria__identity-email">
+              <img src={locationDotIcon} alt="" />
+              <span>{ubicacion}</span>
+            </p>
+          )}
         </aside>
 
-        <form className="inmobiliaria__form-card" onSubmit={saveChanges}>
+        <form className="inmobiliaria__form-card" onSubmit={guardar}>
           <header className="inmobiliaria__form-header">
             <h1>Mi inmobiliaria</h1>
             <p>Administra tu información personal, seguridad y preferencias de cuenta</p>
@@ -154,33 +170,16 @@ export default function Inmobiliaria() {
               description="Mantené tu información actualizada. Estos datos se utilizan en la plataforma y en las comunicaciones del sistema"
             />
             <div className="inmobiliaria__fields">
-              <label className="inmobiliaria__field">
-                <span>Nombre inmobiliaria</span>
-                <span className="inmobiliaria__field-control">
-                  <img src={userIcon} alt="" />
-                  <input
-                    name="name"
-                    value={agency.name}
-                    onChange={updateAgency}
-                    placeholder="AGI Propiedades"
-                    aria-label="Nombre inmobiliaria"
-                  />
-                </span>
-              </label>
-              <label className="inmobiliaria__field">
-                <span>Teléfono</span>
-                <span className="inmobiliaria__field-control">
-                  <img src={phoneIcon} alt="" />
-                  <input
-                    name="phone"
-                    value={agency.phone}
-                    onChange={updateAgency}
-                    placeholder="1231231298"
-                    aria-label="Teléfono"
-                    inputMode="tel"
-                  />
-                </span>
-              </label>
+              {CAMPOS.map((campo) => (
+                <CampoTexto
+                  key={campo.name}
+                  campo={campo}
+                  valor={campos[campo.name]}
+                  guardado={guardado[campo.name]}
+                  onChange={cambiarCampo}
+                  disabled={cargando}
+                />
+              ))}
             </div>
           </section>
 
@@ -194,20 +193,15 @@ export default function Inmobiliaria() {
               description="Actualiza las imágenes que identifican a tu inmobiliaria en la plataforma"
             />
             <div className="inmobiliaria__uploads">
-              <CampoCarga
-                label="Banner"
-                name="banner"
-                value={images.banner}
-                onChange={updateImage}
-                wide
-              />
-              <CampoCarga label="Logo" name="logo" value={images.logo} onChange={updateImage} />
-              <CampoCarga
-                label="Principal"
-                name="principal"
-                value={images.principal}
-                onChange={updateImage}
-              />
+              {IMAGENES.map((imagen) => (
+                <CampoCarga
+                  key={imagen.name}
+                  imagen={imagen}
+                  url={imagenes[imagen.name]}
+                  onElegir={cambiarImagen}
+                  disabled={cargando}
+                />
+              ))}
             </div>
           </section>
         </form>
@@ -216,9 +210,9 @@ export default function Inmobiliaria() {
       <Boton
         className="inmobiliaria__save"
         icon={checkIcon}
-        text={saved ? "Cambios guardados" : "Guardar cambios"}
-        onClick={saveChanges}
-        disabled={loading}
+        text={TEXTO_BOTON[estado] || "Guardar cambios"}
+        onClick={guardar}
+        disabled={cargando || estado === "guardando"}
         aria-live="polite"
       />
     </main>

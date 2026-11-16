@@ -1,4 +1,4 @@
-import { Skeleton, NavegacionPortada, Estadisticas, TituloSeccion, Footer } from "../../components";
+import { Skeleton, Estadisticas, TituloSeccion } from "../../components";
 
 import fondoPortada from "../../assets/nosotrosHero.png";
 import confianzaIcono from "../../assets/icons/manosIcon.svg";
@@ -45,7 +45,6 @@ export default function SobreNosotros() {
   return (
     <Skeleton className="Nosotros" fondos={[fondoPortada]}>
       <section className="Portada" data-sk-fondo>
-        <NavegacionPortada />
 
         <div className="Portada__contenido">
           <h1 className="Portada__titulo">
@@ -97,7 +96,6 @@ export default function SobreNosotros() {
         </section>
       </main>
 
-      <Footer />
     </Skeleton>
   );
 }

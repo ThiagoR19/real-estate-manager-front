@@ -1,3 +1,5 @@
+import { Link } from "wouter";
+
 import "./TarjetaPropiedad.css";
 
 import ubicacionIcono from "../../assets/icons/ubiIcon.svg";
@@ -6,18 +8,33 @@ import banoIcono from "../../assets/icons/duchaIcon.svg";
 import superficieIcono from "../../assets/icons/medidaIcon.svg";
 import ojoIcono from "../../assets/icons/ojoVistoIcon.svg";
 
+// Imagen que se muestra si la propiedad no tiene foto o la foto no carga
+const IMAGEN_POR_DEFECTO = "/images%20(1).jpg";
+
+// Cambia una foto que no cargó por la imagen por defecto (una sola vez)
+function usarImagenPorDefecto(event) {
+  if (event.currentTarget.dataset.porDefecto) return;
+  event.currentTarget.dataset.porDefecto = "true";
+  event.currentTarget.src = IMAGEN_POR_DEFECTO;
+}
+
 export default function TarjetaPropiedad({ propiedad, className = "" }) {
   const { titulo, direccion, imagen, dormitorios, banos, superficie, operacion } = propiedad;
 
   const caracteristicas = [
     { icono: camaIcono, valor: dormitorios, nombre: "Dormitorios" },
     { icono: banoIcono, valor: banos, nombre: "Baños" },
-    { icono: superficieIcono, valor: `${superficie} m²`, nombre: "Superficie" },
+    { icono: superficieIcono, valor: superficie === "-" ? "-" : `${superficie} m²`, nombre: "Superficie" },
   ];
 
   return (
     <article className={`TarjetaPropiedad ${className}`}>
-      <img className="TarjetaPropiedad__imagen" src={imagen} alt={titulo} />
+      <img
+        className="TarjetaPropiedad__imagen"
+        src={imagen || IMAGEN_POR_DEFECTO}
+        alt={titulo}
+        onError={usarImagenPorDefecto}
+      />
 
       <div className="TarjetaPropiedad__cuerpo">
         <h3 className="TarjetaPropiedad__titulo">{titulo}</h3>
@@ -48,12 +65,12 @@ export default function TarjetaPropiedad({ propiedad, className = "" }) {
           </span>
         </div>
 
-        <a href="/propiedad-publica" className="TarjetaPropiedad__detalle">
+        <Link href={`/propiedad-publica?id=${propiedad.id}`} className="TarjetaPropiedad__detalle">
           <span className="TarjetaPropiedad__detalle-icono">
             <img src={ojoIcono} alt="" />
           </span>
           Ver detalle
-        </a>
+        </Link>
       </div>
     </article>
   );

@@ -16,6 +16,10 @@ import * as servicioNotificaciones from "./notificaciones.js";
 import { assetUrl } from "../utils/assetUrl.js";
 import * as servicioInmobiliarias from "./inmobiliarias.js";
 import * as servicioMiInmobiliaria from "./miInmobiliaria.js";
+import * as servicioInfoInmobiliaria from "./infoInmobiliaria.js";
+import * as servicioPagos from "./pagos.js";
+import * as servicioCobros from "./cobros.js";
+import * as servicioPagosYCobros from "./pagosYCobros.js";
 
 export const api = {
   agentes: servicioAgentes.agentes,
@@ -104,4 +108,32 @@ export const api = {
   agenteAAdministrador: servicioInmobiliarias.agenteAAdministrador,
   miInmobiliaria: servicioMiInmobiliaria.miInmobiliaria,
   actualizarMiInmobiliaria: servicioMiInmobiliaria.actualizarMiInmobiliaria,
+  infoInmobiliaria: servicioInfoInmobiliaria.infoInmobiliaria,
+  propiedadesDestacadas: servicioInfoInmobiliaria.propiedadesDestacadas,
+  catalogoPropiedades: servicioInfoInmobiliaria.catalogoPropiedades,
+  propiedadPublica: servicioInfoInmobiliaria.propiedadPublica,
+  pagos: servicioPagos.pagos,
+  pago: servicioPagos.pago,
+  subirComprobantePago: servicioPagos.subirComprobantePago,
+  marcarPagoPagado: servicioPagos.marcarPagoPagado,
+  descargarComprobantePago: servicioPagos.descargarComprobantePago,
+  cobros: servicioCobros.cobros,
+  cobro: servicioCobros.cobro,
+  descargarComprobanteCobro: servicioCobros.descargarComprobanteCobro,
+  conceptosPago: servicioPagosYCobros.conceptosPago,
+  crearConceptoPago: servicioPagosYCobros.crearConceptoPago,
+  inquilinosConAlquiler: servicioPagosYCobros.inquilinosConAlquiler,
+  propietariosConAlquiler: servicioPagosYCobros.propietariosConAlquiler,
+  prepararPago: servicioPagosYCobros.prepararPago,
+  crearPago: servicioPagosYCobros.crearPago,
+  modificarPago: servicioPagosYCobros.modificarPago,
+  eliminarPago: servicioPagosYCobros.eliminarPago,
+  aprobarPago: servicioPagosYCobros.aprobarPago,
+  rechazarPago: servicioPagosYCobros.rechazarPago,
+  prepararCobro: servicioPagosYCobros.prepararCobro,
+  crearCobro: servicioPagosYCobros.crearCobro,
+  modificarCobro: servicioPagosYCobros.modificarCobro,
+  eliminarCobro: servicioPagosYCobros.eliminarCobro,
+  subirComprobanteCobro: servicioPagosYCobros.subirComprobanteCobro,
+  marcarCobroPagado: servicioPagosYCobros.marcarCobroPagado,
 };
