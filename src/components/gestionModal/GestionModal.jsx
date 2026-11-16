@@ -6,6 +6,12 @@ import "./GestionModal.css";
 const ModalCloseContext = createContext(null);
 const MODAL_TRANSITION_MS = 160;
 
+function transitionDuration() {
+  return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+    ? 0
+    : MODAL_TRANSITION_MS;
+}
+
 export default function GestionModal({
   isOpen = true,
   onClose,
@@ -42,7 +48,7 @@ export default function GestionModal({
     closeTimer.current = window.setTimeout(() => {
       setRendered(false);
       setClosing(false);
-    }, MODAL_TRANSITION_MS);
+    }, transitionDuration());
     return () => window.clearTimeout(closeTimer.current);
   }, [isOpen, rendered]);
 
@@ -59,7 +65,7 @@ export default function GestionModal({
     closeTimer.current = window.setTimeout(() => {
       setRendered(false);
       closeRef.current?.();
-    }, MODAL_TRANSITION_MS);
+    }, transitionDuration());
   }
 
   useEffect(() => {
@@ -78,6 +84,7 @@ export default function GestionModal({
     (focusable()[0] || dialog).focus();
 
     function handleKeyDown(event) {
+      if (closingRef.current) return;
       if (event.key === "Escape" && !event.defaultPrevented) requestClose();
       if (event.key !== "Tab") return;
       const controls = focusable();

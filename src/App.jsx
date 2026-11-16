@@ -52,35 +52,35 @@ function AuthenticatedApp() {
       <Navbar menuOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       <div id="app-content">
         <VistaConTransicion>
-        <Route path="/admin-dashboard" component={DashboardPorRol} />
-        <Route path="/dashboard" component={DashboardPorRol} />
-        <Route path="/dashboard-agente" component={DashboardAgente} />
-        <Route path="/dashboard-inquilino" component={DashboardInquilino} />
-        <Route path="/dashboard-propietario" component={DashboardPropietario} />
-        <Route path="/agentes" component={Agentes} />
-        <Route path="/inquilinos" component={Inquilinos} />
-        <Route path="/propiedad/:id" component={Propiedad} />
-        <Route path="/propiedades" component={Propiedades} />
-        <Route path="/propietarios" component={Propietarios} />
-        <Route path="/perfil" component={Perfil} />
-        <Route path="/reportes-agente" component={ReportesAgente} />
-        <Route path="/reportes">{() => <ReportesAgente allowCreate />}</Route>
-        <Route path="/chat" component={Chat} />
-        <Route path="/inmobiliaria" component={Inmobiliaria} />
-        <Route path="/pagos" component={Pagos} />
-        <Route path="/cobros">
-          {() => [1, 4].includes(Number(obtenerSesion()?.usuario?.rol))
-            ? <Cobros />
-            : <Redirect to={dashboardPorRol[Number(obtenerSesion()?.usuario?.rol)] ?? "/inicio"} replace />}
-        </Route>
-        <Route path="/pagos-cobros" component={PagosYCobros} />
-        <Route path="/indec" component={Indec} />
-        <Route path="/mis-propiedades" component={MisPropiedades} />
-        <Route path="/super-admin" component={SuperAdmin} />
-        <Route path="/agenda" component={Agenda} />
-        <Route path="/sobre-nosotros" component={SobreNosotros} />
-        <Route path="/terminos" component={Terminos} />
-        <Route path="/profesionales" component={Profesionales} />
+          <Route path="/admin-dashboard" component={DashboardPorRol} />
+          <Route path="/dashboard" component={DashboardPorRol} />
+          <Route path="/dashboard-agente" component={DashboardAgente} />
+          <Route path="/dashboard-inquilino" component={DashboardInquilino} />
+          <Route path="/dashboard-propietario" component={DashboardPropietario} />
+          <Route path="/agentes" component={Agentes} />
+          <Route path="/inquilinos" component={Inquilinos} />
+          <Route path="/propiedad/:id" component={Propiedad} />
+          <Route path="/propiedades" component={Propiedades} />
+          <Route path="/propietarios" component={Propietarios} />
+          <Route path="/perfil" component={Perfil} />
+          <Route path="/reportes-agente" component={ReportesAgente} />
+          <Route path="/reportes">{() => <ReportesAgente allowCreate />}</Route>
+          <Route path="/chat" component={Chat} />
+          <Route path="/inmobiliaria" component={Inmobiliaria} />
+          <Route path="/pagos" component={Pagos} />
+          <Route path="/cobros">
+            {() => [1, 4].includes(Number(obtenerSesion()?.usuario?.rol))
+              ? <Cobros />
+              : <Redirect to={dashboardPorRol[Number(obtenerSesion()?.usuario?.rol)] ?? "/inicio"} replace />}
+          </Route>
+          <Route path="/pagos-cobros" component={PagosYCobros} />
+          <Route path="/indec" component={Indec} />
+          <Route path="/mis-propiedades" component={MisPropiedades} />
+          <Route path="/super-admin" component={SuperAdmin} />
+          <Route path="/agenda" component={Agenda} />
+          <Route path="/sobre-nosotros" component={SobreNosotros} />
+          <Route path="/terminos" component={Terminos} />
+          <Route path="/profesionales" component={Profesionales} />
         </VistaConTransicion>
       </div>
     </div>
