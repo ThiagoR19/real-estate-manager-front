@@ -8,6 +8,7 @@ export { default as AccesoGoogle } from "./accesoGoogle/AccesoGoogle";
 export { Icono } from "./inicio/IconoInicio";
 export { default as PanelImagen } from "./panelImagen/PanelImagen";
 export { default as NavegacionPortada } from "./navegacionPortada/NavegacionPortada";
+export { default as EncabezadoPublico } from "./encabezadoPublico/EncabezadoPublico";
 export { default as TextoLegal } from "./textoLegal/TextoLegal";
 export {
   default as GestionModal,

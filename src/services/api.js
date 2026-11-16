@@ -105,4 +105,6 @@ export const api = {
   actualizarMiInmobiliaria: servicioMiInmobiliaria.actualizarMiInmobiliaria,
   infoInmobiliaria: servicioInfoInmobiliaria.infoInmobiliaria,
   propiedadesDestacadas: servicioInfoInmobiliaria.propiedadesDestacadas,
+  catalogoPropiedades: servicioInfoInmobiliaria.catalogoPropiedades,
+  propiedadPublica: servicioInfoInmobiliaria.propiedadPublica,
 };

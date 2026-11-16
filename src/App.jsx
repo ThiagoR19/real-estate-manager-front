@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 const idInmobi = import.meta.env.VITE_ID_INMOBILIARIA;
 import { Redirect, Route, Switch, useLocation } from "wouter";
-import { SobreNosotros, Inmobiliaria, Agentes, DashboardAgente, Chat, Cobros, ConfirmarRegistro, Dashboard, DashboardPropietario, Inicio, Indec, Login, MisPropiedades, Propietarios, Pagos, PagosYCobros, Profesionales, Perfil, Propiedades, Propiedad, PropiedadesPublicas, PropiedadPublica, Registro, ReportesAgente, Agenda, SuperAdmin, Inquilinos, DashboardInquilino, Terminos } from "./pages/index.js";
+import { SobreNosotros, Inmobiliaria, Agentes, DashboardAgente, Chat, Cobros, ConfirmarRegistro, Dashboard, DashboardPropietario, Indec, Login, MisPropiedades, Propietarios, Pagos, PagosYCobros, Profesionales, Perfil, Propiedades, Propiedad, Registro, ReportesAgente, Agenda, SuperAdmin, Inquilinos, DashboardInquilino, Terminos } from "./pages/index.js";
 
-import { Header, Navbar } from "./layouts/index.js";
+import { Header, Navbar, LayoutPublico } from "./layouts/index.js";
 import { dashboardPorRol } from "./layouts/navegacion.js";
 import { obtenerSesion } from "./services/login.js";
 import { ContenedorAvisos } from "./components/index.js";
@@ -13,6 +13,8 @@ import { api } from "./services/api.js";
 
 let yaSeHizo = false;
 const validar = ["/", "/propiedades-publicas", "/propiedad-publica", "/sobre-nosotros", "/inicio"]
+// Las vistas de la landing van todas dentro de LayoutPublico (header, datos de la inmobiliaria y footer)
+const RUTAS_LANDING = /^\/(inicio|sobre-nosotros|propiedades-publicas|propiedad-publica)?\/?$/
 const dashboardsPorRol = {
   2: Dashboard,
   3: DashboardAgente,
@@ -88,15 +90,11 @@ function App() {
 
   return (
     <Switch>
-      <Route path="/inicio" component={Inicio} />
-      <Route path="/sobre-nosotros" component={SobreNosotros} />
-      <Route path="/propiedades-publicas" component={PropiedadesPublicas} />
-      <Route path="/propiedad-publica" component={PropiedadPublica} />
+      <Route path={RUTAS_LANDING} component={LayoutPublico} />
       <Route path="/login" component={Login} />
       <Route path="/registro" component={Registro} />
       <Route path="/activar" component={ConfirmarRegistro} />
       <Route path="/confirmar-registro" component={ConfirmarRegistro} />
-      <Route path="/" component={Inicio} />
       <Route>
         <AuthenticatedApp />
         <ContenedorAvisos />

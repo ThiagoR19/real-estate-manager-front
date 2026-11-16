@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "wouter";
+import { Link, useSearchParams } from "wouter";
 import {
   bathIcon,
   bedIcon,
@@ -12,68 +12,9 @@ import {
   whatsappIcon,
   angleDownIcon,
 } from "../../assets/icons";
-import { Footer, Icono } from "../../components";
+import { api } from "../../services/api";
 import propertyImage from "../../assets/fondoCasa.png";
-import kaikenLogo from "../../assets/icons/kaiken.svg";
 import "./PropiedadPublica.css";
-
-const galleryImages = [
-  { src: propertyImage, alt: "Vista exterior de la propiedad Valdez" },
-  { src: propertyImage, alt: "Vista exterior de la propiedad Valdez" },
-  { src: propertyImage, alt: "Vista exterior de la propiedad Valdez" },
-];
-
-const details = [
-  { label: "Tipo", value: "Casa", icon: houseIcon },
-  {
-    label: "Ubicación",
-    value: "Av. Libertador 2450, Vicente López, buenos Aires",
-    icon: locationIcon,
-  },
-  { label: "Dueño / Propietario", value: "Martin Valdez", icon: userIcon },
-  { label: "Agente asignado", value: "Martin Valdez", icon: userIcon },
-];
-
-const stats = [
-  { label: "Habitaciones", value: "10", icon: bedIcon },
-  { label: "Antigüedad (años)", value: "5", icon: calendarIcon },
-  { label: "Baños", value: "10", icon: bathIcon },
-  { label: "Superficie (m²)", value: "120", icon: rulerIcon },
-];
-
-function Marca() {
-  return (
-    <Link href="/inicio" className="propiedad-publica__brand" aria-label="Kaiken Propiedades, inicio">
-      <img src={kaikenLogo} alt="Kaiken Propiedades" />
-    </Link>
-  );
-}
-
-function EncabezadoPublico() {
-  return (
-    <header className="propiedad-publica__header">
-      <Marca />
-      <nav className="propiedad-publica__nav" aria-label="Navegación pública">
-        <Link href="/inicio">Inicio</Link>
-        <Link className="is-active" href="/propiedades-publicas?filter=buy">
-          Comprar
-        </Link>
-        <Link href="/propiedades-publicas?filter=rent">Alquilar</Link>
-        <Link href="/inicio#contacto">Contacto</Link>
-      </nav>
-      <div className="propiedad-publica__header-actions">
-        <label className="propiedad-publica__quick-search">
-          <span className="sr-only">Buscar por zona</span>
-          <input placeholder="Buscar por zona" />
-          <Icono name="search" />
-        </label>
-        <Link className="propiedad-publica__login" href="/login">
-          Ingresar
-        </Link>
-      </div>
-    </header>
-  );
-}
 
 function IconoPropiedad({ src, className = "" }) {
   return (
@@ -81,137 +22,209 @@ function IconoPropiedad({ src, className = "" }) {
   );
 }
 
-export default function PropiedadPublica() {
+function usarImagenPorDefecto(event) {
+  if (event.currentTarget.dataset.porDefecto) return;
+  event.currentTarget.dataset.porDefecto = "true";
+  event.currentTarget.src = propertyImage;
+}
+
+function formatearPrecio(precio, moneda) {
+  if (precio === null) return "Precio a consultar";
+  return `${moneda} ${new Intl.NumberFormat("es-AR").format(precio)}`;
+}
+
+function linkWhatsapp(telefono, nombrePropiedad) {
+  const numero = telefono.replace(/\D/g, "");
+  const texto = encodeURIComponent(`Hola, me interesa la propiedad "${nombrePropiedad}".`);
+  return `https://wa.me/${numero}?text=${texto}`;
+}
+
+function DetallePropiedad({ propiedad }) {
   const [activeImage, setActiveImage] = useState(0);
   const [contactMessage, setContactMessage] = useState("");
+  const fotos = propiedad.imagenes.length ? propiedad.imagenes : [propertyImage];
+  const variasFotos = fotos.length > 1;
+
+  const stats = [
+    { label: "Habitaciones", value: propiedad.habitaciones, icon: bedIcon },
+    { label: "Antigüedad (años)", value: propiedad.antiguedad, icon: calendarIcon },
+    { label: "Baños", value: propiedad.banios, icon: bathIcon },
+    { label: "Superficie (m²)", value: propiedad.tamanio, icon: rulerIcon },
+  ];
+
+  const details = [
+    { label: "Tipo", value: propiedad.tipo, icon: houseIcon },
+    { label: "Ubicación", value: propiedad.ubicacion || "A consultar", icon: locationIcon },
+    { label: "Agente asignado", value: propiedad.agente || "A confirmar", icon: userIcon },
+  ];
 
   useEffect(() => {
     const previousTitle = document.title;
-    document.title = "Propiedad Valdez | Kaiken Propiedades";
+    document.title = propiedad.nombre;
     return () => {
       document.title = previousTitle;
     };
-  }, []);
+  }, [propiedad.nombre]);
 
   function changeImage(direction) {
-    setActiveImage(
-      (current) => (current + direction + galleryImages.length) % galleryImages.length,
-    );
+    setActiveImage((current) => (current + direction + fotos.length) % fotos.length);
   }
 
   function contactAgent() {
+    if (propiedad.telefonoAgente) {
+      window.open(linkWhatsapp(propiedad.telefonoAgente, propiedad.nombre), "_blank", "noopener");
+      return;
+    }
     setContactMessage("Un asesor se pondrá en contacto con vos.");
     window.setTimeout(() => setContactMessage(""), 3000);
   }
 
   return (
-    <main className="propiedad-publica">
-      <EncabezadoPublico />
-      <div className="propiedad-publica__page">
-        <h1>Propiedad Valdez</h1>
+    <>
+      <h1>{propiedad.nombre}</h1>
 
-        <div className="propiedad-publica__layout">
-          <div className="propiedad-publica__gallery-column">
-            <section
-              className="propiedad-publica__gallery"
-              aria-label="Galería de fotos de la propiedad"
-            >
-              <div className="propiedad-publica__gallery-main">
-                <img src={galleryImages[activeImage].src} alt={galleryImages[activeImage].alt} />
-                <button
-                  className="propiedad-publica__gallery-arrow propiedad-publica__gallery-arrow--previous"
-                  type="button"
-                  aria-label="Imagen anterior"
-                  onClick={() => changeImage(-1)}
-                >
-                  <img className="izquierda" src={angleDownIcon} alt="" />
-                </button>
-                <button
-                  className="propiedad-publica__gallery-arrow propiedad-publica__gallery-arrow--next"
-                  type="button"
-                  aria-label="Imagen siguiente"
-                  onClick={() => changeImage(1)}
-                >
-                  <img className="derecha" src={angleDownIcon} alt="" />
-                </button>
-                <span className="propiedad-publica__gallery-counter">
-                  <IconoPropiedad src={cameraIcon} />
-                  {activeImage + 1}/{galleryImages.length}
-                </span>
-              </div>
-              <div
-                className="propiedad-publica__thumbnails"
-                role="list"
-                aria-label="Seleccionar foto"
-              >
-                {galleryImages.map((image, index) => (
+      <div className="propiedad-publica__layout">
+        <div className="propiedad-publica__gallery-column">
+          <section className="propiedad-publica__gallery" aria-label="Galería de fotos de la propiedad">
+            <div className="propiedad-publica__gallery-main">
+              <img
+                src={fotos[activeImage]}
+                alt={`Foto ${activeImage + 1} de ${propiedad.nombre}`}
+                onError={usarImagenPorDefecto}
+              />
+              {variasFotos && (
+                <>
+                  <button
+                    className="propiedad-publica__gallery-arrow propiedad-publica__gallery-arrow--previous"
+                    type="button"
+                    aria-label="Imagen anterior"
+                    onClick={() => changeImage(-1)}
+                  >
+                    <img className="izquierda" src={angleDownIcon} alt="" />
+                  </button>
+                  <button
+                    className="propiedad-publica__gallery-arrow propiedad-publica__gallery-arrow--next"
+                    type="button"
+                    aria-label="Imagen siguiente"
+                    onClick={() => changeImage(1)}
+                  >
+                    <img className="derecha" src={angleDownIcon} alt="" />
+                  </button>
+                </>
+              )}
+              <span className="propiedad-publica__gallery-counter">
+                <IconoPropiedad src={cameraIcon} />
+                {activeImage + 1}/{fotos.length}
+              </span>
+            </div>
+            {variasFotos && (
+              <div className="propiedad-publica__thumbnails" role="list" aria-label="Seleccionar foto">
+                {fotos.map((foto, index) => (
                   <button
                     className={`propiedad-publica__thumbnail${activeImage === index ? " is-active" : ""}`}
                     type="button"
                     role="listitem"
                     aria-label={`Ver foto ${index + 1}`}
                     aria-current={activeImage === index ? "true" : undefined}
-                    key={`${image.src}-${index}`}
+                    key={`${foto}-${index}`}
                     onClick={() => setActiveImage(index)}
                   >
-                    <img src={image.src} alt="" />
+                    <img src={foto} alt="" onError={usarImagenPorDefecto} />
                   </button>
                 ))}
               </div>
-            </section>
+            )}
+          </section>
 
-            <section className="propiedad-publica__stats" aria-label="Características principales">
-              {stats.map((stat) => (
-                <article className="propiedad-publica__stat-card" key={stat.label}>
-                  <span className="propiedad-publica__stat-icon-wrap">
-                    <IconoPropiedad src={stat.icon} />
-                  </span>
-                  <strong>{stat.label}</strong>
-                  <span className="propiedad-publica__stat-value">{stat.value}</span>
-                </article>
-              ))}
-            </section>
-          </div>
-
-          <section
-            className="propiedad-publica__info-card"
-            aria-labelledby="propiedad-publica-description"
-          >
-            <div className="propiedad-publica__info-heading">
-              <strong>USD 10.00</strong>
-              <small>Casa · Alquiler</small>
-              <button type="button" onClick={contactAgent}>
-                Alquiler / Venta
-              </button>
-            </div>
-            <h2 id="propiedad-publica-description">Descripción</h2>
-            <p className="propiedad-publica__description">
-              It is a long established fact that a reader will be distracted by the readable content
-              of a page when looking at its layout. The point of using Lorem Ipsum is that it has a
-              more-or-less normal distribution of letters, as opposed to using &quot;Content here,
-              content here&quot;, making it look like
-            </p>
-            <div className="propiedad-publica__details">
-              {details.map((detail) => (
-                <div className="propiedad-publica__detail-row" key={detail.label}>
-                  <IconoPropiedad src={detail.icon} />
-                  <strong>{detail.label}</strong>
-                  <span>{detail.value}</span>
-                </div>
-              ))}
-            </div>
+          <section className="propiedad-publica__stats" aria-label="Características principales">
+            {stats.map((stat) => (
+              <article className="propiedad-publica__stat-card" key={stat.label}>
+                <span className="propiedad-publica__stat-icon-wrap">
+                  <IconoPropiedad src={stat.icon} />
+                </span>
+                <strong>{stat.label}</strong>
+                <span className="propiedad-publica__stat-value">{stat.value ?? "-"}</span>
+              </article>
+            ))}
           </section>
         </div>
 
-        <button className="propiedad-publica__contact" type="button" onClick={contactAgent}>
-          <img src={whatsappIcon} alt="" />
-          Contactar
-        </button>
-        <p className="propiedad-publica__contact-message" role="status" aria-live="polite">
-          {contactMessage}
-        </p>
+        <section className="propiedad-publica__info-card" aria-labelledby="propiedad-publica-description">
+          <div className="propiedad-publica__info-heading">
+            <strong>{formatearPrecio(propiedad.precio, propiedad.moneda)}</strong>
+            <small>
+              {propiedad.tipo} · {propiedad.operacion}
+            </small>
+            <button type="button" onClick={contactAgent}>
+              {propiedad.operacion}
+            </button>
+          </div>
+          <h2 id="propiedad-publica-description">Descripción</h2>
+          <p className="propiedad-publica__description">
+            {propiedad.descripcion || "Esta propiedad todavía no tiene descripción."}
+          </p>
+          <div className="propiedad-publica__details">
+            {details.map((detail) => (
+              <div className="propiedad-publica__detail-row" key={detail.label}>
+                <IconoPropiedad src={detail.icon} />
+                <strong>{detail.label}</strong>
+                <span>{detail.value}</span>
+              </div>
+            ))}
+          </div>
+        </section>
       </div>
-      <Footer />
+
+      <button className="propiedad-publica__contact" type="button" onClick={contactAgent}>
+        <img src={whatsappIcon} alt="" />
+        Contactar
+      </button>
+      <p className="propiedad-publica__contact-message" role="status" aria-live="polite">
+        {contactMessage}
+      </p>
+    </>
+  );
+}
+
+function SinPropiedad({ mensaje }) {
+  return (
+    <div className="propiedad-publica__estado">
+      <p>{mensaje}</p>
+      <Link href="/propiedades-publicas">Ver todas las propiedades</Link>
+    </div>
+  );
+}
+
+export default function PropiedadPublica() {
+  const [params] = useSearchParams();
+  const id = params.get("id");
+  const [estado, setEstado] = useState({ id: null, propiedad: null });
+  const cargando = estado.id !== id;
+
+  useEffect(() => {
+    if (!id) return undefined;
+    let activo = true;
+    api.propiedadPublica(id)
+      .then((propiedad) => activo && setEstado({ id, propiedad }))
+      .catch((causa) => {
+        console.error(causa);
+        if (activo) setEstado({ id, propiedad: null });
+      });
+    return () => {
+      activo = false;
+    };
+  }, [id]);
+
+  function contenido() {
+    if (!id) return <SinPropiedad mensaje="No se indicó qué propiedad mostrar." />;
+    if (cargando) return <p className="propiedad-publica__estado">Cargando propiedad...</p>;
+    if (!estado.propiedad) return <SinPropiedad mensaje="La propiedad no existe o ya no está publicada." />;
+    return <DetallePropiedad key={estado.propiedad.id} propiedad={estado.propiedad} />;
+  }
+
+  return (
+    <main className="propiedad-publica">
+      <div className="propiedad-publica__page">{contenido()}</div>
     </main>
   );
 }

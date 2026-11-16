@@ -19,9 +19,6 @@ export function infoInmobiliaria(id = ID_INMOBILIARIA) {
   }));
 }
 
-// La base no guarda si es venta o alquiler: se toma del estado comercial
-const OPERACION_POR_ESTADO = { Alquilada: "Alquiler", Vendida: "Venta" };
-
 // GET /infoInmobiliaria/:id/propiedades?limit=N (público): propiedades publicadas para la landing,
 // ya con la forma que usa TarjetaPropiedad. limite: de 1 a 12 (6 por defecto).
 export function propiedadesDestacadas(limite = 6, id = ID_INMOBILIARIA) {
@@ -37,10 +34,55 @@ export function propiedadesDestacadas(limite = 6, id = ID_INMOBILIARIA) {
       dormitorios: propiedad.habitaciones ?? 0,
       banos: propiedad.banios ?? 0,
       superficie: propiedad.tamanio ?? "-",
-      operacion: OPERACION_POR_ESTADO[propiedad.estado] || propiedad.estado,
+      operacion: propiedad.operacion,
       tipo: propiedad.tipo,
       precio: propiedad.precio,
       moneda: propiedad.moneda,
     })),
   );
+}
+
+const PARAMS_CATALOGO = ["ubicacion", "tipo", "moneda", "precioMin", "precioMax", "habitaciones", "orden", "pagina"];
+
+export function catalogoPropiedades(params, id = ID_INMOBILIARIA) {
+  if (!id) {
+    return Promise.reject(new Error("Falta VITE_ID_INMOBILIARIA en el .env"));
+  }
+
+  const query = new URLSearchParams({
+    operacion: params.get("filter") === "rent" ? "Alquiler" : "Venta",
+    limite: 12,
+  });
+  PARAMS_CATALOGO.forEach((clave) => {
+    const valor = params.get(clave);
+    if (valor) query.set(clave, valor);
+  });
+  if ((query.has("precioMin") || query.has("precioMax")) && !query.has("moneda")) {
+    query.set("moneda", "ARS");
+  }
+
+  return request(`/infoInmobiliaria/${id}/catalogo?${query}`, { auth: false }).then(({ data }) => ({
+    propiedades: data.items.map((propiedad) => ({
+      id: propiedad.id,
+      title: propiedad.nombre,
+      location: propiedad.ubicacion || "Ubicación a consultar",
+      image: assetUrl(propiedad.urlImagen),
+      rooms: propiedad.habitaciones ?? "-",
+      baths: propiedad.banios ?? "-",
+      area: propiedad.tamanio ?? "-",
+      operation: propiedad.operacion === "Alquiler" ? "rent" : "buy",
+    })),
+    paginacion: data.paginacion,
+    tipos: data.tipos,
+  }));
+}
+
+export function propiedadPublica(idPropiedad, id = ID_INMOBILIARIA) {
+  if (!id) {
+    return Promise.reject(new Error("Falta VITE_ID_INMOBILIARIA en el .env"));
+  }
+  return request(`/infoInmobiliaria/${id}/propiedades/${idPropiedad}`, { auth: false }).then(({ data }) => ({
+    ...data,
+    imagenes: data.imagenes.map(assetUrl),
+  }));
 }

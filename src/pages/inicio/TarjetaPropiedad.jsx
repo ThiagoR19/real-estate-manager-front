@@ -1,3 +1,5 @@
+import { Link } from "wouter";
+
 import "./TarjetaPropiedad.css";
 
 import ubicacionIcono from "../../assets/icons/ubiIcon.svg";
@@ -63,12 +65,12 @@ export default function TarjetaPropiedad({ propiedad, className = "" }) {
           </span>
         </div>
 
-        <a href="/propiedad-publica" className="TarjetaPropiedad__detalle">
+        <Link href={`/propiedad-publica?id=${propiedad.id}`} className="TarjetaPropiedad__detalle">
           <span className="TarjetaPropiedad__detalle-icono">
             <img src={ojoIcono} alt="" />
           </span>
           Ver detalle
-        </a>
+        </Link>
       </div>
     </article>
   );

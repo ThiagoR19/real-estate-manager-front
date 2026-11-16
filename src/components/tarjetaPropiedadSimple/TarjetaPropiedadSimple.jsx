@@ -48,6 +48,11 @@ export default function TarjetaPropiedadSimple({
         className={isPublic ? undefined : "propiedades__card-image"}
         src={image}
         alt={isPublic ? title : "Interior de la propiedad"}
+        onError={(event) => {
+          if (event.currentTarget.dataset.porDefecto) return;
+          event.currentTarget.dataset.porDefecto = "true";
+          event.currentTarget.src = propertyImage;
+        }}
       />
       <div className={isPublic ? "propiedades-publicas__card-body" : "propiedades__card-content"}>
         <h2 className={isPublic ? undefined : "propiedades__card-title"}>{title}</h2>
@@ -100,7 +105,7 @@ export default function TarjetaPropiedadSimple({
         </div>
 
         {isPublic ? (
-          <Link className="propiedades-publicas__details" href="/propiedad-publica">
+          <Link className="propiedades-publicas__details" href={`/propiedad-publica?id=${property.id}`}>
             <img src={eyeIcon} alt="" aria-hidden="true" />
             Ver detalle
           </Link>
