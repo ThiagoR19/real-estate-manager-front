@@ -9,6 +9,10 @@
   animation: profesional-modal-fade-in 160ms ease-out;
 }
 
+.profesional-modal__overlay.is-closing {
+  animation: profesional-modal-fade-out 160ms ease-in forwards;
+}
+
 .profesional-modal,
 .profesional-modal * {
   box-sizing: border-box;
@@ -27,6 +31,10 @@
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   animation: profesional-modal-slide-in 180ms ease-out;
+}
+
+.profesional-modal.is-closing {
+  animation: profesional-modal-slide-out 160ms ease-in forwards;
 }
 
 .profesional-modal button:not(.boton),
@@ -300,6 +308,19 @@
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes profesional-modal-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes profesional-modal-slide-out {
+  to {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
   }
 }
 

@@ -11,6 +11,7 @@ import {
 } from "../../assets/icons";
 import { Boton } from "../index";
 import { api } from "../../services/api.js";
+import useClosingTransition from "../../hooks/useClosingTransition.js";
 import "./PropiedadModal.css";
 
 function initialForm(property, catalogs) {
@@ -54,6 +55,7 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
   const [section, setSection] = useState("information");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const { isClosing, close } = useClosingTransition(onClose);
   const photoInput = useRef(null);
   const documentInput = useRef(null);
   const objectUrls = useRef([]);
@@ -63,14 +65,14 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const escape = (event) => {
-      if (event.key === "Escape" && !saving) onClose();
+      if (event.key === "Escape" && !saving) close();
     };
     document.addEventListener("keydown", escape);
     return () => {
       document.body.style.overflow = previous;
       document.removeEventListener("keydown", escape);
     };
-  }, [isOpen, onClose, saving]);
+  }, [isOpen, close, saving]);
 
   useEffect(
     () => () => {
@@ -165,14 +167,16 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
 
   return (
     <div
-      className="propiedad-modal__overlay"
+      className={`propiedad-modal__overlay${isClosing ? " is-closing" : ""}`}
+      aria-hidden={isClosing}
+      inert={isClosing}
       role="presentation"
       onMouseDown={(event) => {
-        if (event.target === event.currentTarget && !saving) onClose();
+        if (event.target === event.currentTarget && !saving) close();
       }}
     >
       <section
-        className="propiedad-modal"
+        className={`propiedad-modal${isClosing ? " is-closing" : ""}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="propiedad-modal-title"
@@ -462,7 +466,7 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
               className="propiedad-modal__cancel"
               type="button"
               disabled={saving}
-              onClick={onClose}
+              onClick={close}
             >
               Cancelar
             </button>

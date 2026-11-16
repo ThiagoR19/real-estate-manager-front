@@ -9,6 +9,10 @@
   animation: inquilino-modal-fade-in 160ms ease-out;
 }
 
+.inquilino-modal__overlay.is-closing {
+  animation: inquilino-modal-fade-out 160ms ease-in forwards;
+}
+
 .inquilino-modal,
 .inquilino-modal * {
   box-sizing: border-box;
@@ -27,6 +31,10 @@
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   animation: inquilino-modal-slide-in 180ms ease-out;
+}
+
+.inquilino-modal.is-closing {
+  animation: inquilino-modal-slide-out 160ms ease-in forwards;
 }
 
 .inquilino-modal button:not(.boton),
@@ -299,6 +307,19 @@
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes inquilino-modal-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes inquilino-modal-slide-out {
+  to {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
   }
 }
 
