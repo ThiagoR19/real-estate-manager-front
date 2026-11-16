@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 import "./NavegacionPortada.css";
 
 import lupaIcono from "../../assets/icons/search.svg";
+import useBuscadorZona from "../../hooks/useBuscadorZona";
 
 // "#contacto" lleva al footer de la misma página (ver Footer)
 const enlaces = [
@@ -15,10 +16,7 @@ const enlaces = [
 
 export default function NavegacionPortada({ className = "", URLLogo }) {
   const [ubicacion] = useLocation();
-
-  const buscar = (e) => {
-    e.preventDefault();
-  };
+  const { texto, setTexto, abierto, inputRef, buscar, cerrarSiSale, cerrarConEscape } = useBuscadorZona();
 
   const irAContacto = (e) => {
     e.preventDefault();
@@ -59,12 +57,21 @@ export default function NavegacionPortada({ className = "", URLLogo }) {
       </nav>
 
       <div className="NavegacionPortada__acciones">
-        <form className="NavegacionPortada__buscar" role="search" onSubmit={buscar}>
+        <form
+          className={`NavegacionPortada__buscar${abierto ? " is-abierto" : ""}`}
+          role="search"
+          onSubmit={buscar}
+          onBlur={cerrarSiSale}
+          onKeyDown={cerrarConEscape}
+        >
           <input
+            ref={inputRef}
             type="search"
             className="NavegacionPortada__buscar-input"
             placeholder="Buscar por zona"
             aria-label="Buscar por zona"
+            value={texto}
+            onChange={(event) => setTexto(event.target.value)}
           />
 
           <button type="submit" className="NavegacionPortada__buscar-boton" aria-label="Buscar">

@@ -1,6 +1,6 @@
-import { useRef, useState } from "react";
 import { Link, useLocation, useSearchParams } from "wouter";
 import { Icono } from "../inicio/IconoInicio";
+import useBuscadorZona from "../../hooks/useBuscadorZona";
 import "./EncabezadoPublico.css";
 
 const enlaces = [
@@ -11,38 +11,16 @@ const enlaces = [
 ];
 
 function BuscadorZona({ filtroActivo }) {
-  const [, navegar] = useLocation();
-  const [texto, setTexto] = useState("");
-  const [abierto, setAbierto] = useState(false);
-  const inputRef = useRef(null);
-
-  const buscar = (event) => {
-    event.preventDefault();
-    const zona = texto.trim();
-
-    if (!zona) {
-      setAbierto(true);
-      inputRef.current?.focus();
-      return;
-    }
-
-    const params = new URLSearchParams({ filter: filtroActivo ?? "buy", ubicacion: zona });
-    navegar(`/propiedades-publicas?${params}`);
-    setTexto("");
-    setAbierto(false);
-  };
-
-  const cerrarSiSaleDelBuscador = (event) => {
-    if (!event.currentTarget.contains(event.relatedTarget)) setAbierto(false);
-  };
+  const { texto, setTexto, abierto, inputRef, buscar, cerrarSiSale, cerrarConEscape } =
+    useBuscadorZona(filtroActivo ?? "buy");
 
   return (
     <form
       className={`EncabezadoPublico__buscar${abierto ? " is-abierto" : ""}`}
       role="search"
       onSubmit={buscar}
-      onBlur={cerrarSiSaleDelBuscador}
-      onKeyDown={(event) => event.key === "Escape" && setAbierto(false)}
+      onBlur={cerrarSiSale}
+      onKeyDown={cerrarConEscape}
     >
       <label className="EncabezadoPublico__oculto" htmlFor="buscar-zona">
         Buscar por zona
