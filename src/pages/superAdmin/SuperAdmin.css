@@ -153,7 +153,19 @@
   user-select: none;
 }
 
+.super-admin__inmobiliaria-logo:has(img) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
 .super-admin__inmobiliaria-logo img {
+  min-width: 0;
+  min-height: 0;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
 }
 
