@@ -288,7 +288,7 @@
   background: #f5f8fc;
 }
 
-.navbar__account-link > span {
+.navbar__account-link > span:not(.navbar__account-avatar) {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -534,7 +534,7 @@
     padding-right: 8px;
   }
 
-  .navbar__account-link > span {
+  .navbar__account-link > span:not(.navbar__account-avatar) {
     display: none;
   }
 }
@@ -827,7 +827,7 @@
   .navbar__header--super-admin .navbar__account-link {
     gap: 14px;
   }
-  .navbar__header--super-admin .navbar__account-link > span {
+  .navbar__header--super-admin .navbar__account-link > span:not(.navbar__account-avatar) {
     align-items: flex-end;
     font-size: 14px;
   }

@@ -21,10 +21,12 @@ import {
   ModalSelect,
   ConfirmarEliminacionModal,
   AccionesEntidad,
+  AvisoEnlaceActivacion,
   Paginacion,
   usePaginacion,
 } from "../../components";
 import { api } from "../../services/api.js";
+import PageSkeleton from "../../components/skeleton/PageSkeleton";
 import initials from "../../utils/initials.js";
 import "./Agentes.css";
 
@@ -87,16 +89,16 @@ function FilaAgente({ agent, onEdit, onDelete, onGenerateActivation }) {
         <strong>{agent.zona || "Sin asignar"}</strong>
       </td>
       <td data-label="Acciones" className="agentes__actions-cell">
-        {agent.estadoCuenta === "PENDIENTE_ACTIVACION" && (
-          <button type="button" className="agentes__activation-button" onClick={() => onGenerateActivation(agent)}>
-            Generar enlace
-          </button>
-        )}
         <AccionesEntidad
           entity="agente"
           name={name}
           onEdit={() => onEdit(agent)}
           onDelete={() => onDelete(agent)}
+          onGenerateActivation={
+            agent.estadoCuenta === "PENDIENTE_ACTIVACION"
+              ? () => onGenerateActivation(agent)
+              : undefined
+          }
         />
       </td>
     </tr>
@@ -131,22 +133,22 @@ function AgenteModal({ agent, areas, onClose, onSubmit }) {
         <div className="gestion-modal__card">
           <div className="gestion-modal__fields">
             <CampoModal label="Nombre">
-              <EntradaModal name="nombre" defaultValue={agent?.nombre || ""} required={!agent} />
+              <EntradaModal name="nombre" defaultValue={agent?.nombre || ""} placeholder="Nombre" required={!agent} />
             </CampoModal>
             <CampoModal label="Apellido">
-              <EntradaModal name="apellido" defaultValue={agent?.apellido || ""} required={!agent} />
+              <EntradaModal name="apellido" defaultValue={agent?.apellido || ""} placeholder="Apellido" required={!agent} />
             </CampoModal>
             <CampoModal label="Correo">
-              <EntradaModal name="correo" type="email" defaultValue={agent?.correo || ""} />
+              <EntradaModal name="correo" type="email" defaultValue={agent?.correo || ""} placeholder="ejemplo@gmail.com" />
             </CampoModal>
             <CampoModal label="Teléfono">
-              <EntradaModal name="telefono" defaultValue={agent?.telefono || ""} />
+              <EntradaModal name="telefono" defaultValue={agent?.telefono || ""} placeholder="2133 123123" />
             </CampoModal>
             <CampoModal label="Dirección">
-              <EntradaModal name="direccion" defaultValue={agent?.direccion || ""} />
+              <EntradaModal name="direccion" defaultValue={agent?.direccion || ""} placeholder="Av. San Martín 12" />
             </CampoModal>
             <CampoModal label="DNI">
-              <EntradaModal name="dni" defaultValue={agent?.dni || ""} required pattern="[0-9]{7,8}" inputMode="numeric" readOnly={Boolean(agent)} />
+              <EntradaModal name="dni" defaultValue={agent?.dni || ""} placeholder="12123123" required pattern="[0-9]{7,8}" inputMode="numeric" readOnly={Boolean(agent)} />
             </CampoModal>
             <CampoModal label="Zona">
               <input type="hidden" name="idArea" value={selectedArea ? areaId : ""} />
@@ -179,6 +181,7 @@ export default function Agentes() {
   const [activationUrl, setActivationUrl] = useState("");
 
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
   const zones = ["Todas las zonas", ...new Set(areas.map((area) => area.nombre))];
   const visibleAgents = agents.filter(
     (agent) =>
@@ -195,13 +198,17 @@ export default function Agentes() {
   const { page, totalPages, pageItems, setPage, resetPage } = usePaginacion(visibleAgents);
 
   useEffect(() => {
+    let active = true;
     Promise.all([api.agentes(), api.areas(), api.todasLasVisitas()])
       .then(([agentRows, areaRows, visitRows]) => {
+        if (!active) return;
         setAgents(agentRows);
         setAreas(areaRows);
         setVisits(visitRows);
       })
-      .catch((cause) => setError(cause.message));
+      .catch((cause) => { if (active) setError(cause.message); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
   }, []);
 
   async function saveAgent(body) {
@@ -245,6 +252,8 @@ export default function Agentes() {
       setError(cause.message);
     }
   }
+
+  if (loading) return <PageSkeleton variant="table" title="agentes" />;
 
   return (
     <main id="agentes">
@@ -335,13 +344,11 @@ export default function Agentes() {
       </div>
 
       {notice && (
-        <div className="agentes__notice" role="status">
-          <p>{notice}</p>
-          {activationUrl && <div className="agentes__activation-link">
-            <input aria-label="Enlace de activación" readOnly value={activationUrl} onFocus={(event) => event.currentTarget.select()} />
-            <button type="button" onClick={() => navigator.clipboard.writeText(activationUrl)}>Copiar enlace</button>
-          </div>}
-        </div>
+        <AvisoEnlaceActivacion
+          message={notice}
+          url={activationUrl}
+          onDismiss={() => { setNotice(""); setActivationUrl(""); }}
+        />
       )}
       {error && (
         <p className="agentes__notice" role="alert">

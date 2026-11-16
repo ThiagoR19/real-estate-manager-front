@@ -7,6 +7,7 @@ import {
   mostrarAviso,
 } from "../../components";
 import { api } from "../../services/api";
+import PageSkeleton from "../../components/skeleton/PageSkeleton";
 import fotoPorDefecto from "/images (1).jpg";
 import "./DashboardAgente.css";
 
@@ -168,7 +169,8 @@ export default function DashboardAgente() {
     };
   }, []);
 
-  if (error || !datos) return null;
+  if (error) return null;
+  if (!datos) return <PageSkeleton variant="dashboard" title="agente" />;
 
   return (
     <main id="dashboard-agente">

@@ -159,13 +159,13 @@ export default function Profesionales() {
                   <td data-label="Contacto">
                     <span className="profesionales__contact">
                       <img src={envelopeIcon} alt="" />
-                      <span>{professional.correo}</span>
+                      <span title={professional.correo}>{professional.correo}</span>
                     </span>
                   </td>
                   <td data-label="Teléfono">
                     <span className="profesionales__contact">
                       <img src={phoneIcon} alt="" />
-                      <span>{professional.telefono}</span>
+                      <span title={professional.telefono}>{professional.telefono}</span>
                     </span>
                   </td>
                   <td data-label="Rating">

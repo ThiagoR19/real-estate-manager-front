@@ -334,7 +334,7 @@ body:has(#propietarios) {
 
 .propietarios__person,
 .propietarios__propiedad,
-.propietarios__contact span,
+.propietarios__contact > span,
 .propietarios__person-copy,
 .propietarios__propiedad > span {
   display: flex;
@@ -344,6 +344,7 @@ body:has(#propietarios) {
 .propietarios__propiedad {
   align-items: center;
   gap: 14px;
+  min-width: 0;
 }
 
 .propietarios__contact,
@@ -354,12 +355,20 @@ body:has(#propietarios) {
 
 .propietarios__contact {
   gap: 7px;
+  min-width: 0;
 }
 
-.propietarios__contact span {
+.propietarios__contact > span {
   align-items: center;
   gap: 11px;
+  min-width: 0;
   color: #7e8aa6;
+}
+
+.propietarios__contact-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
@@ -400,8 +409,10 @@ body:has(#propietarios) {
 
 .propietarios__person-copy small,
 .propietarios__propiedad small {
+  overflow: hidden;
   color: #7e8aa6;
   font-size: 12px;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
@@ -415,8 +426,11 @@ body:has(#propietarios) {
 }
 
 .propietarios__muted-value {
+  display: block;
+  overflow: hidden;
   color: #7e8aa6;
   font-size: 12px;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
@@ -678,14 +692,19 @@ body:has(#propietarios) .navbar__search {
     display: flex;
   }
 
-  .propietarios__contact span {
+  .propietarios__contact > span {
     gap: 14px;
-    white-space: normal;
-    overflow-wrap: anywhere;
     font-size: 12px;
   }
 
+  .propietarios__contact-text {
+    overflow: visible;
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
   .propietarios__muted-value {
+    overflow: visible;
     white-space: normal;
     overflow-wrap: anywhere;
   }
@@ -695,8 +714,10 @@ body:has(#propietarios) .navbar__search {
     height: 26px;
   }
 
-  .propietarios__propiedad strong {
+  .propietarios__propiedad strong,
+  .propietarios__propiedad small {
     white-space: normal;
+    overflow-wrap: anywhere;
   }
 }
 

@@ -446,16 +446,6 @@ body:has(#agentes) {
   display: flex;
 }
 
-.agentes__activation-button {
-  margin-right: 8px;
-  padding: 6px 8px;
-  border: 1px solid #2178c4;
-  border-radius: 6px;
-  background: #fff;
-  color: #174d85;
-  cursor: pointer;
-}
-
 .agentes__empty {
   margin: 0;
   padding: 34px;
@@ -481,16 +471,6 @@ body:has(#agentes) {
 
 .agentes__notice p {
   margin: 0 0 8px;
-}
-
-.agentes__activation-link {
-  display: flex;
-  gap: 8px;
-}
-
-.agentes__activation-link input {
-  min-width: 0;
-  flex: 1;
 }
 
 body:has(#agentes) .navbar__search {

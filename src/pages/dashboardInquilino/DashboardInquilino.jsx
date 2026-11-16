@@ -13,6 +13,7 @@ import {
 } from "../../assets/icons";
 import { mostrarAviso } from "../../components";
 import { api } from "../../services/api";
+import PageSkeleton from "../../components/skeleton/PageSkeleton";
 import "./DashboardInquilino.css";
 
 const ZONA_HORARIA = "America/Argentina/Buenos_Aires";
@@ -274,7 +275,8 @@ export default function DashboardInquilino() {
     };
   }, []);
 
-  if (error || !datos) return null;
+  if (error) return null;
+  if (!datos) return <PageSkeleton variant="dashboard" title="inquilino" />;
 
   return (
     <main id="dashboard-inquilino">

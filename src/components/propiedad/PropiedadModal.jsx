@@ -231,6 +231,7 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
                         name="name"
                         value={form.name}
                         onChange={change}
+                        placeholder="Nombre de la propiedad"
                       />
                     </Campo>
                     <Campo label="Tipo">
@@ -261,7 +262,7 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
                     <Campo label="Ubicación">
                       <span className="propiedad-modal__input-wrap">
                         <img src={locationDotIcon} alt="" />
-                        <input name="location" value={form.location} onChange={change} />
+                        <input name="location" value={form.location} onChange={change} placeholder="Ubicación de la propiedad" />
                       </span>
                     </Campo>
                     <Campo label="Agente">

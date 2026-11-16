@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { buildingColumnsIcon, magnifyingGlassIcon, paperPlaneIcon, userIcon } from "../../assets/icons";
 import SelectDesplegable from "../../components/select/SelectDesplegable";
 import { api } from "../../services/api.js";
+import PageSkeleton from "../../components/skeleton/PageSkeleton";
 import { obtenerSesion } from "../../services/login.js";
 import agiLogo from "../../assets/icons/agiLogo.svg";
 import "./Chat.css";
@@ -25,16 +26,12 @@ export default function Chat() {
   const [messages, setMessages] = useState([]);
   const [search, setSearch] = useState("");
   const [draft, setDraft] = useState("");
-  const [files, setFiles] = useState([]);
   const [newContactId, setNewContactId] = useState("");
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
-  const [hasMore, setHasMore] = useState(false);
-  const loadedHistoryRef = useRef(false);
   const endRef = useRef(null);
   const atBottomRef = useRef(true);
-  const fileRef = useRef(null);
   const session = obtenerSesion();
 
   async function refreshConversations() {
@@ -66,7 +63,6 @@ export default function Chat() {
   }, []);
 
   useEffect(() => {
-    loadedHistoryRef.current = false;
     if (!selectedId) return undefined;
     let active = true;
     async function refresh() {
@@ -78,7 +74,6 @@ export default function Chat() {
           const recentIds = new Set(recent.map((message) => message.id));
           return [...current.filter((message) => !recentIds.has(message.id)), ...recent];
         });
-        if (!loadedHistoryRef.current) setHasMore(Boolean(result.paginacion?.hayMas));
         await api.marcarChatLeido(selectedId);
       } catch (cause) { if (active) setError(cause.message); }
     }
@@ -97,66 +92,49 @@ export default function Chat() {
   const conversationOptions = conversations.map((item) => `${personName(item)} (#${item.id})`);
   const kind = selectedConversation?.rol?.toLowerCase().includes("admin") ? "administration" : "agent";
 
-  async function loadMore() {
-    try {
-      const oldestId = messages[0]?.id;
-      if (!oldestId) return;
-      const result = await api.mensajesChat(selectedId, { before: oldestId });
-      atBottomRef.current = false;
-      setMessages((current) => {
-        const conocidos = new Set(current.map((message) => message.id));
-        return [...result.data.reverse().filter((message) => !conocidos.has(message.id)), ...current];
-      });
-      loadedHistoryRef.current = true;
-      setHasMore(Boolean(result.paginacion?.hayMas));
-    } catch (cause) { setError(cause.message); }
-  }
-
   async function sendMessage(event) {
     event.preventDefault();
     const content = draft.trim();
-    if ((!content && !files.length) || sending) return;
+    if (!content || sending) return;
     setSending(true);
     atBottomRef.current = true;
     setError("");
     try {
       if (selectedId) {
-        const message = await api.enviarMensajeChat(selectedId, content, files);
+        const message = await api.enviarMensajeChat(selectedId, content);
         setMessages((current) => [...current, message]);
       } else {
         if (!newContactId || !content) throw new Error("Seleccioná un contacto y escribí un mensaje.");
         const result = await api.iniciarConversacion(Number(newContactId), content);
         await refreshConversations();
-        loadedHistoryRef.current = false;
-        setHasMore(false);
         setMessages([]);
         setSelectedId(result.conversacion.id);
         setNewContactId("");
       }
       setDraft("");
-      setFiles([]);
-      if (fileRef.current) fileRef.current.value = "";
       await refreshConversations();
     } catch (cause) { setError(cause.message); }
     finally { setSending(false); }
   }
 
+  if (loading) return <PageSkeleton variant="chat" />;
+
   return (
     <main id="chat" className="chat-page">
       {conversations.length > 0 && (
         <SelectDesplegable label="Conversación" value={selectedConversation ? `${personName(selectedConversation)} (#${selectedId})` : ""}
-          options={conversationOptions} onChange={(name) => { atBottomRef.current = true; loadedHistoryRef.current = false; setHasMore(false); setMessages([]); setSelectedId(Number(name.match(/#(\d+)\)$/)?.[1])); }}
+          options={conversationOptions} onChange={(name) => { atBottomRef.current = true; setMessages([]); setSelectedId(Number(name.match(/#(\d+)\)$/)?.[1])); }}
           className="chat__mobile-select" triggerClassName="chat__mobile-select-trigger" chevronClassName="chat__mobile-select-chevron" blurOnSelect />
       )}
-      <button className="chat__mobile-new" type="button" onClick={() => { atBottomRef.current = true; loadedHistoryRef.current = false; setHasMore(false); setSelectedId(0); setMessages([]); setDraft(""); }}>+ Nueva conversación</button>
+      <button className="chat__mobile-new" type="button" onClick={() => { atBottomRef.current = true; setSelectedId(0); setMessages([]); setDraft(""); }}>+ Nueva conversación</button>
       <div className="chat__layout">
         <aside className="chat__conversations" aria-label="Conversaciones">
           <div className="chat__sidebar-heading"><h1>Conversaciones</h1><span className="chat__total">{conversations.length}</span></div>
           <label className="chat__search"><img src={magnifyingGlassIcon} alt="" /><input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar conversación" aria-label="Buscar conversación" /></label>
-          <button className="chat__new" type="button" onClick={() => { atBottomRef.current = true; loadedHistoryRef.current = false; setHasMore(false); setSelectedId(0); setMessages([]); setDraft(""); }}>+ Nueva conversación</button>
+          <button className="chat__new" type="button" onClick={() => { atBottomRef.current = true; setSelectedId(0); setMessages([]); setDraft(""); }}>+ Nueva conversación</button>
           <div className="chat__conversation-list" role="list">
             {filteredConversations.map((conversation) => (
-              <button className={`chat__conversation${conversation.id === selectedId ? " is-selected" : ""}`} key={conversation.id} type="button" onClick={() => { atBottomRef.current = true; loadedHistoryRef.current = false; setHasMore(false); setSelectedId(conversation.id); setMessages([]); setDraft(""); }} aria-current={conversation.id === selectedId ? "page" : undefined}>
+              <button className={`chat__conversation${conversation.id === selectedId ? " is-selected" : ""}`} key={conversation.id} type="button" onClick={() => { atBottomRef.current = true; setSelectedId(conversation.id); setMessages([]); setDraft(""); }} aria-current={conversation.id === selectedId ? "page" : undefined}>
                 <ConversationAvatar kind={conversation.rol?.toLowerCase().includes("admin") ? "administration" : "agent"} />
                 <span className="chat__conversation-copy"><span className="chat__conversation-name">{personName(conversation)} {conversation.noLeidos > 0 && <strong>({conversation.noLeidos})</strong>}</span><span className="chat__conversation-preview">{conversation.ultimoMensaje || "Todavía no hay mensajes"}</span></span>
               </button>
@@ -170,16 +148,14 @@ export default function Chat() {
           {error && <p className="chat__error" role="alert">{error}</p>}
           {!selectedId && <label className="chat__contact-picker">Contacto <select value={newContactId} onChange={(event) => setNewContactId(event.target.value)}><option value="">Seleccioná un contacto</option>{contacts.map((contact) => <option value={contact.idUsuario} key={contact.idUsuario}>{personName(contact)} · {contact.rol}</option>)}</select></label>}
           <div className="chat__messages" aria-live="polite" aria-label={selectedConversation ? `Mensajes con ${personName(selectedConversation)}` : "Nueva conversación"} onScroll={(event) => { const node = event.currentTarget; atBottomRef.current = node.scrollHeight - node.scrollTop - node.clientHeight < 80; }}>
-            {selectedId && hasMore && <button type="button" className="chat__load-more" onClick={loadMore}>Ver mensajes anteriores</button>}
             {selectedId && !messages.length && <p className="chat__empty-thread">Todavía no hay mensajes en esta conversación.</p>}
             {messages.map((message) => {
               const side = message.idUsuario === session?.usuario?.id ? "outgoing" : "incoming";
-              return <div className={`chat__message chat__message--${side}`} key={message.id}>{side === "incoming" && <ConversationAvatar kind={kind} className="chat__avatar--message" />}<div className="chat__message-content"><div className={`chat__bubble chat__bubble--${side}`}><span>{message.contenido}</span>{message.adjuntos?.map((attachment) => <button type="button" className="chat__attachment" key={attachment.id} onClick={() => api.descargarAdjuntoChat(selectedId, attachment).catch((cause) => setError(cause.message))}>📎 {attachment.nombreArchivo}</button>)}</div><time className="chat__message-time" dateTime={message.fecha}>{displayTime(message.fecha)}</time></div></div>;
+              return <div className={`chat__message chat__message--${side}`} key={message.id}>{side === "incoming" && <ConversationAvatar kind={kind} className="chat__avatar--message" />}<div className="chat__message-content"><div className={`chat__bubble chat__bubble--${side}`}><span>{message.contenido}</span></div><time className="chat__message-time" dateTime={message.fecha}>{displayTime(message.fecha)}</time></div></div>;
             })}
             <div ref={endRef} />
           </div>
-          <form className="chat__composer" onSubmit={sendMessage}><input value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Escribe tu mensaje..." aria-label="Escribe tu mensaje" maxLength={5000} /><label className="chat__attach" title="Adjuntar archivos">📎<input ref={fileRef} className="chat__file-input" type="file" multiple accept="image/jpeg,image/png,image/webp,application/pdf" onChange={(event) => setFiles([...event.target.files].slice(0, 5))} aria-label="Adjuntar archivos" disabled={!selectedId} /></label><button type="submit" disabled={sending} aria-label="Enviar mensaje" title="Enviar mensaje"><img src={paperPlaneIcon} alt="" /></button></form>
-          {files.length > 0 && <p className="chat__composer-hint">{files.length} archivo(s) seleccionado(s)</p>}
+          <form className="chat__composer" onSubmit={sendMessage}><input value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Escribe tu mensaje..." aria-label="Escribe tu mensaje" maxLength={5000} /><button type="submit" disabled={sending || !draft.trim()} aria-label="Enviar mensaje" title="Enviar mensaje"><img src={paperPlaneIcon} alt="" /></button></form>
           <p className="chat__composer-hint">Presiona Enter para enviar</p>
         </section>
       </div>

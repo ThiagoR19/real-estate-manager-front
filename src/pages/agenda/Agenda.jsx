@@ -3,6 +3,7 @@ import { calendarIcon, plusIcon, userIcon } from "../../assets/icons";
 import { Boton, Paginacion, usePaginacion } from "../../components";
 import VisitaModal from "./VisitaModal";
 import { api } from "../../services/api.js";
+import PageSkeleton from "../../components/skeleton/PageSkeleton";
 import { obtenerSesion } from "../../services/login.js";
 import propertyImage from "/images (1).jpg";
 import "./Agenda.css";
@@ -116,7 +117,7 @@ function TarjetaVisita({ visit, onEdit }) {
 
 function EncabezadoAgenda({ view, onViewChange, onCreate, onUpcomingOpen, canManage }) {
   return (
-    <div className="agenda__topbar">
+    <div className={`agenda__topbar${canManage ? " has-new-visit" : ""}`}>
       <header className="agenda__hero">
         <h1>Agenda</h1>
         <p>Organizá tus visitas y seguí cada encuentro con tus clientes.</p>
@@ -534,9 +535,11 @@ export default function Agenda() {
         (first.time || "").localeCompare(second.time || ""),
     );
 
+  if (loading) return <PageSkeleton variant="agenda" />;
+
   return (
     <main id="agenda">
-      <div className="agenda__content">
+      <div className={`agenda__content${loading || error ? " has-message" : ""}`}>
         <EncabezadoAgenda
           canManage={canManage}
           view={view}
@@ -544,8 +547,12 @@ export default function Agenda() {
           onCreate={() => { if (canManage) setModal({ visit: null }); }}
           onUpcomingOpen={() => setUpcomingOpen(true)}
         />
-        {loading && <p className="agenda__message" role="status">Cargando visitas…</p>}
-        {error && <p className="agenda__message" role="alert">{error}</p>}
+        {(loading || error) && (
+          <div className="agenda__messages">
+            {loading && <p className="agenda__message" role="status">Cargando visitas…</p>}
+            {error && <p className="agenda__message" role="alert">{error}</p>}
+          </div>
+        )}
         {view === "day" && (
           <VistaDia visits={visits} date={date} onEdit={editVisit} onDateChange={setDate} />
         )}

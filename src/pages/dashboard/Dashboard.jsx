@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { api } from "../../services/api";
+import PageSkeleton from "../../components/skeleton/PageSkeleton";
 
 import { TarjetaActividad as SharedActivityCard, TarjetaRendimiento as SharedPerformanceCard } from "../../components";
 import initials from "../../utils/initials"
@@ -79,6 +80,7 @@ export default function Dashboard() {
       .finally(() => setLoading(false));
   }, []);
   if (error) return <main className="dashboard-page"><p role="alert">{error}</p></main>;
+  if (loading) return <PageSkeleton variant="dashboard" title="administrador" />;
   if (!loading) {
     return (
       <main className="dashboard-page">

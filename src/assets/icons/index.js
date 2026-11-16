@@ -40,6 +40,7 @@ export { default as iconsIcon } from "./icons.svg";
 export { default as imageIcon } from "./image-regular-full.svg";
 export { default as infoToastIcon } from "./info-toatsvg.svg";
 export { default as locationDotIcon } from "./location-dot-solid-full.svg";
+export { default as linkIcon } from "./link.svg";
 export { default as keyDashboardIcon } from "./key-dashboard-adminsvg.svg";
 export { default as lockIcon } from "./lock-solid-full.svg";
 export { default as magnifyingGlassIcon } from "./magnifying-glass-solid-full.svg";

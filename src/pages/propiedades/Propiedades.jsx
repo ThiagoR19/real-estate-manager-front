@@ -12,6 +12,7 @@ import {
   PROPERTY_PAGE_SIZE,
 } from "../../components";
 import { api } from "../../services/api.js";
+import PageSkeleton from "../../components/skeleton/PageSkeleton";
 import "./Propiedades.css";
 
 function FiltroSelect({ filter, value, onChange }) {
@@ -150,6 +151,8 @@ export default function Propiedades() {
       setPendingDelete(null);
     }
   }
+
+  if (loading) return <PageSkeleton variant="properties" />;
 
   return (
     <main id="propiedades">

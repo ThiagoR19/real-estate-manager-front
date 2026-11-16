@@ -4,6 +4,7 @@ import { Boton } from "../../components";
 import AumentoModal from "./AumentoModal";
 import "./Indec.css";
 import { api } from "../../services/api";
+import PageSkeleton from "../../components/skeleton/PageSkeleton";
 
 const monthNames = [
   "Enero",
@@ -101,6 +102,8 @@ export default function Indec() {
       active = false;
     };
   }, [year]);
+
+  if (loading) return <PageSkeleton variant="indec" />;
 
   return (
     <main id="indec">

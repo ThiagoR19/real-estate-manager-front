@@ -60,7 +60,7 @@
 .acciones-entidad__menu {
   position: fixed;
   z-index: 120;
-  width: 156px;
+  width: 176px;
   max-width: calc(100vw - 16px);
   padding: 2px;
   border: 1px solid #e3edf5;

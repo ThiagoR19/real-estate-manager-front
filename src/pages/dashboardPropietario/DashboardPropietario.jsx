@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { circleInfoIcon, commentsIcon, paperPlaneIcon, smailing, toolplumbing } from "../../assets/icons";
 import { mostrarAviso } from "../../components";
 import { api } from "../../services/api";
+import PageSkeleton from "../../components/skeleton/PageSkeleton";
 import "./DashboardPropietario.css";
 
 const ZONA_HORARIA = "America/Argentina/Buenos_Aires";
@@ -307,7 +308,8 @@ export default function DashboardPropietario() {
     };
   }, []);
 
-  if (error || !datos) return null;
+  if (error) return null;
+  if (!datos) return <PageSkeleton variant="dashboard" title="propietario" />;
 
   return (
     <main className="dashboard-propietario">

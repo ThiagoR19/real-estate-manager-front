@@ -34,5 +34,6 @@ export { default as Estadisticas } from "./estadisticas/Estadisticas";
 export { default as PildoraResumen } from "./pildoraResumen/PildoraResumen";
 export { default as CampoTexto } from "./campoTexto/CampoTexto";
 export { default as Aviso } from "./avisos/Aviso";
+export { default as AvisoEnlaceActivacion } from "./avisos/AvisoEnlaceActivacion";
 export { default as ContenedorAvisos } from "./avisos/ContenedorAvisos";
 export { mostrarAviso, quitarAviso } from "./avisos/almacenAvisos";

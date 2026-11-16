@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import PageSkeleton from "../../components/skeleton/PageSkeleton";
 import {
   calendarIcon,
   clockIcon,
@@ -15,6 +16,7 @@ import {
   SelectDesplegable,
   ConfirmarEliminacionModal,
   AccionesEntidad,
+  AvisoEnlaceActivacion,
   Boton,
   PildoraResumen,
   Paginacion,
@@ -44,6 +46,13 @@ function parseDate(value) {
     ? new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]))
     : new Date(value);
   return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function enlaceActivacion(activacion) {
+  if (activacion?.enlace) return activacion.enlace;
+  return activacion?.codigo
+    ? `${window.location.origin}/activar?codigo=${encodeURIComponent(activacion.codigo)}`
+    : "";
 }
 
 function formatDate(value) {
@@ -95,7 +104,7 @@ function ControlFiltro({ filter, value, onChange }) {
   );
 }
 
-function FilaInquilino({ tenant, onEdit, onDelete }) {
+function FilaInquilino({ tenant, onEdit, onDelete, onGenerateActivation }) {
   const name = `${tenant.nombre || ""} ${tenant.apellido || ""}`.trim() || `DNI ${tenant.dni}`;
   const status = !tenant.activo
     ? "Inactivo"
@@ -119,11 +128,15 @@ function FilaInquilino({ tenant, onEdit, onDelete }) {
         <div className="inquilinos__contact">
           <span>
             <img src={envelopeIcon} alt="" />
-            {tenant.correo || "Correo sin especificar"}
+            <span className="inquilinos__contact-text" title={tenant.correo || "Correo sin especificar"}>
+              {tenant.correo || "Correo sin especificar"}
+            </span>
           </span>
           <span>
             <img src={phoneIcon} alt="" />
-            {tenant.telefono || "Teléfono sin especificar"}
+            <span className="inquilinos__contact-text" title={tenant.telefono || "Teléfono sin especificar"}>
+              {tenant.telefono || "Teléfono sin especificar"}
+            </span>
           </span>
         </div>
       </td>
@@ -164,6 +177,11 @@ function FilaInquilino({ tenant, onEdit, onDelete }) {
           name={name}
           onEdit={() => onEdit(tenant)}
           onDelete={() => onDelete(tenant)}
+          onGenerateActivation={
+            tenant.estadoCuenta === "PENDIENTE_ACTIVACION"
+              ? () => onGenerateActivation(tenant)
+              : undefined
+          }
         />
       </td>
     </tr>
@@ -298,6 +316,18 @@ export default function Inquilinos() {
     }
   }
 
+  async function generateActivation(tenant) {
+    setActionError("");
+    try {
+      const activacion = await api.generarEnlaceInquilino(tenant.id);
+      const titular = `${tenant.nombre || ""} ${tenant.apellido || ""}`.trim() || `DNI ${tenant.dni}`;
+      setActivationUrl(enlaceActivacion(activacion));
+      setNotice(`Enlace nuevo para ${titular}. Compartilo con el inquilino para activar su cuenta.`);
+    } catch (error) {
+      setActionError(error.message || "No se pudo generar el enlace de activación.");
+    }
+  }
+
   function openCreateModal() {
     setActionError("");
     setModal({ isOpen: true, mode: "create", tenant: null });
@@ -326,7 +356,7 @@ export default function Inquilinos() {
     const raw = existing
       ? await api.actualizarInquilino(existing.id, { ...body, dni: undefined, activo: form.active })
       : await api.crearInquilino(body);
-    const result = { tenant: raw, activationUrl: raw.activacion?.enlace };
+    const result = { tenant: raw, activationUrl: enlaceActivacion(raw.activacion) };
     setTenants((current) =>
       existing
         ? current.map((tenant) => (tenant.id === existing.id ? result.tenant : tenant))
@@ -345,6 +375,8 @@ export default function Inquilinos() {
       current.map((item, itemIndex) => (itemIndex === index ? value : item)),
     );
   }
+
+  if (loading) return <PageSkeleton variant="table" title="inquilinos" />;
 
   return (
     <main id="inquilinos">
@@ -409,6 +441,7 @@ export default function Inquilinos() {
                     tenant={tenant}
                     onEdit={editTenant}
                     onDelete={setPendingDelete}
+                    onGenerateActivation={generateActivation}
                   />
                 ))}
               </tbody>
@@ -433,16 +466,11 @@ export default function Inquilinos() {
         </p>
       )}
       {notice && (
-        <p className="inquilinos__notice" role="status">
-          {notice}
-          {activationUrl && (
-            <>
-              {" "}
-              <a href={activationUrl}>Abrir enlace de activación</a>
-              {" "}<button type="button" onClick={() => navigator.clipboard.writeText(activationUrl)}>Copiar enlace</button>
-            </>
-          )}
-        </p>
+        <AvisoEnlaceActivacion
+          message={notice}
+          url={activationUrl}
+          onDismiss={() => { setNotice(""); setActivationUrl(""); }}
+        />
       )}
 
       <ConfirmarEliminacionModal

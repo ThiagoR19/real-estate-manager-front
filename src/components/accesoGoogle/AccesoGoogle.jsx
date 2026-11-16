@@ -3,6 +3,7 @@ import googleIcono from "../../assets/icons/loginGoogle.svg";
 import "./AccesoGoogle.css";
 
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const clientIdValido = /^[^\s]+\.apps\.googleusercontent\.com$/.test(clientId ?? "");
 const callbacks = new Map();
 let scriptPromise;
 let initialized = false;
@@ -25,6 +26,11 @@ function cargarGoogle() {
 export default function AccesoGoogle({ texto, className = "", onCredential, onError, modo }) {
   const container = useRef(null);
   const [unavailable, setUnavailable] = useState(false);
+  const mensajeNoDisponible = !clientId
+    ? "Falta configurar VITE_GOOGLE_CLIENT_ID en el .env del frontend. Reiniciá Vite después de agregarla."
+    : !clientIdValido
+      ? "VITE_GOOGLE_CLIENT_ID debe ser el ID de cliente web (...apps.googleusercontent.com), no el secreto. Reiniciá Vite después de corregirlo."
+      : "No se pudo cargar Google. Revisá la conexión y el Client ID configurado.";
   const credentialHandler = useRef(onCredential);
   const errorHandler = useRef(onError);
   useEffect(() => {
@@ -33,7 +39,7 @@ export default function AccesoGoogle({ texto, className = "", onCredential, onEr
   }, [onCredential, onError]);
 
   useEffect(() => {
-    if (!clientId) return;
+    if (!clientIdValido) return;
     const handler = (credential) => credentialHandler.current?.(credential);
     callbacks.set(modo, handler);
     let active = true;
@@ -65,10 +71,10 @@ export default function AccesoGoogle({ texto, className = "", onCredential, onEr
   return (
     <div className={`AccesoGoogle ${className}`}>
       {texto && <div className="AccesoGoogle__separador"><span>{texto}</span></div>}
-      {clientId && !unavailable ? <div className="AccesoGoogle__botonGoogle" ref={container} /> :
+      {clientIdValido && !unavailable ? <div className="AccesoGoogle__botonGoogle" ref={container} /> :
         <div><button className="AccesoGoogle__boton" type="button" disabled>
           <span className="AccesoGoogle__icono"><img src={googleIcono} alt="" /></span>Google
-        </button><p className="AccesoGoogle__noDisponible">Google no está disponible en este entorno.</p></div>}
+        </button><p className="AccesoGoogle__noDisponible">{mensajeNoDisponible}</p></div>}
     </div>
   );
 }
