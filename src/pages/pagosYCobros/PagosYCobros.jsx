@@ -1,39 +1,97 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   angleDownIcon,
   checkIcon,
   circleInfoIcon,
   fileLinesIcon,
   imageIcon,
-  magnifyingGlassIcon,
   paperPlaneIcon,
   plusIconWhite,
   xIcon,
 } from "../../assets/icons";
+import { PanelDeslizable } from "../../components";
+import useConsultaMedia from "../../hooks/useConsultaMedia";
 import "./PagosYCobros.css";
 
 const people = [
   {
+    id: "persona-1",
+    name: "Enrrique Moyano",
+    type: "Locatario",
+    properties: [
+      {
+        id: "propiedad-1",
+        name: "Departamento Belgrano 4A",
+        amount: "320000",
+        status: "Sin enviar",
+        update: "15/12/26",
+        services: false,
+        receipt: null,
+      },
+    ],
+  },
+  {
+    id: "persona-2",
     name: "Maria Shakira",
     type: "Locatario",
-    property: "Propiedad baldez B2",
-    amount: "14933.10",
-    status: "Sin enviar",
+    properties: [
+      {
+        id: "propiedad-2",
+        name: "Propiedad baldez B2",
+        amount: "14933.10",
+        status: "Sin enviar",
+        update: "20/10/26",
+        services: false,
+        receipt: null,
+      },
+      {
+        id: "propiedad-3",
+        name: "Casa de San Isidro",
+        amount: "600.000,10",
+        status: "Revisión",
+        update: "01/03/27",
+        services: true,
+        receipt: { date: "06/02/2023 - 14:32 hs" },
+      },
+    ],
   },
   {
+    id: "persona-3",
     name: "Sofia Ramirez",
     type: "Locatario",
-    property: "Casa de San Isidro",
-    amount: "600.000,10",
-    status: "Pendiente",
+    properties: [
+      {
+        id: "propiedad-4",
+        name: "Depto Palermo 2B",
+        amount: "410.500,00",
+        status: "Pago",
+        update: "10/08/27",
+        services: false,
+        receipt: { date: "02/11/2026 - 09:15 hs" },
+      },
+    ],
   },
   {
+    id: "persona-4",
     name: "Juan Pérez",
     type: "Propietario",
-    property: "Bielke 454",
-    amount: "550.000,10",
-    status: "Aprobado",
+    properties: [
+      {
+        id: "propiedad-5",
+        name: "Bielke 454",
+        amount: "550.000,10",
+        status: "Pago",
+        update: "05/05/27",
+        services: true,
+        receipt: { date: "01/11/2026 - 18:40 hs" },
+      },
+    ],
   },
+];
+
+const groups = [
+  { type: "Locatario", title: "Locatarios" },
+  { type: "Propietario", title: "Propietarios" },
 ];
 
 const initialConcepts = [
@@ -43,6 +101,8 @@ const initialConcepts = [
   { label: "Otros", amount: "49103", tone: "green", checked: true },
   { label: "Reparación", amount: "192.912,21", tone: "blue", checked: true },
 ];
+
+const LOCKED_STATUSES = ["Revisión", "Pago", "Enviado"];
 
 const months = [
   "Enero",
@@ -64,22 +124,17 @@ function Icono({ src }) {
 }
 
 function parseAmount(value) {
-  const normalized = String(value)
-    .trim()
-    .replace(/[^\d,.-]/g, "");
+  const normalized = String(value).trim().replace(/[^\d,.-]/g, "");
   const comma = normalized.lastIndexOf(",");
   const dot = normalized.lastIndexOf(".");
+
   if (comma !== -1 && dot !== -1) {
     const decimalMark = comma > dot ? "," : ".";
-    return (
-      Number(
-        normalized.replace(decimalMark === "," ? /\./g : /,/g, "").replace(decimalMark, "."),
-      ) || 0
-    );
+    return (Number(normalized.replace(decimalMark === "," ? /\./g : /,/g, "").replace(decimalMark, "."),) || 0);
   }
   if (comma !== -1) return Number(normalized.replace(/\./g, "").replace(",", ".")) || 0;
-  if (dot !== -1 && normalized.length - dot - 1 === 3)
-    return Number(normalized.replace(/\./g, "")) || 0;
+  if (dot !== -1 && normalized.length - dot - 1 === 3) return Number(normalized.replace(/\./g, "")) || 0;
+
   return Number(normalized) || 0;
 }
 
@@ -91,69 +146,198 @@ function formatCurrency(value) {
   });
 }
 
-function BotonDecision({ type, children, onClick, active }) {
+function soloNumeros(valor) {
+  return valor.replace(/[^\d.,]/g, "");
+}
+
+function conceptosIniciales(idPropiedad) {
+  return initialConcepts.map((concept, index) => ({ ...concept, id: `${idPropiedad}-concepto-${index}` }));
+}
+
+function normalizar(texto) {
+  return texto.toLocaleLowerCase("es-AR").normalize("NFD").replace(/[̀-ͯ]/g, "");
+}
+
+function Chevron({ open }) {
+  return (
+    <img
+      className={`pagos-agente__chevron${open ? " is-open" : ""}`}
+      src={angleDownIcon}
+      alt=""
+      aria-hidden="true"
+    />
+  );
+}
+
+function BotonDecision({ type, children, onClick, active, neutral }) {
   return (
     <button
-      className={`pagos-agente__decision pagos-agente__decision--${type}${active ? " is-active" : ""}`}
+      className={`pagos-agente__decision pagos-agente__decision--${neutral ? "neutral" : type}${active ? " is-active" : ""}`}
       type="button"
       onClick={onClick}
       aria-pressed={active}
     >
-      <Icono src={type === "approved" ? checkIcon : xIcon} />
+      <span className="pagos-agente__decision-icon">
+        <Icono src={type === "approved" ? checkIcon : xIcon} />
+      </span>
       <span>{children}</span>
     </button>
   );
 }
 
+function PanelPersonas({ query, selected, onSelect }) {
+  const [openGroup, setOpenGroup] = useState(selected.type);
+  const [openPerson, setOpenPerson] = useState(selected.personId);
+  const buscando = query.trim() !== "";
+  const termino = normalizar(query.trim());
+
+  const visibles = people
+    .map((person) => {
+      if (!buscando || normalizar(person.name).includes(termino)) return person;
+      const properties = person.properties.filter((property) =>
+        normalizar(property.name).includes(termino),
+      );
+      return properties.length ? { ...person, properties } : null;
+    })
+    .filter(Boolean);
+
+  return (
+    <div className="pagos-agente__people-panel">
+      <h2 className="pagos-agente__people-title">Personas</h2>
+      {groups.map((group) => {
+        const grupoAbierto = buscando || openGroup === group.type;
+        const integrantes = visibles.filter((person) => person.type === group.type);
+        return (
+          <div className="pagos-agente__people-group" key={group.type}>
+            <button
+              className="pagos-agente__group-toggle"
+              type="button"
+              onClick={() => setOpenGroup((current) => (current === group.type ? "" : group.type))}
+              aria-expanded={grupoAbierto}
+            >
+              {group.title}
+              <Chevron open={grupoAbierto} />
+            </button>
+            {grupoAbierto && (
+              <ul className="pagos-agente__people-list">
+                {integrantes.map((person) => {
+                  const personaAbierta = buscando || openPerson === person.id;
+                  return (
+                    <li key={person.id}>
+                      <button
+                        className={`pagos-agente__person${selected.personId === person.id ? " is-selected" : ""}`}
+                        type="button"
+                        onClick={() => setOpenPerson((current) => (current === person.id ? "" : person.id))}
+                        aria-expanded={personaAbierta}
+                      >
+                        <span>{person.name}</span>
+                        <Chevron open={personaAbierta} />
+                      </button>
+                      {personaAbierta && (
+                        <ul className="pagos-agente__properties-list">
+                          {person.properties.map((property) => (
+                            <li key={property.id}>
+                              <button
+                                className={`pagos-agente__property-option${selected.propertyId === property.id ? " is-selected" : ""}`}
+                                type="button"
+                                onClick={() => onSelect(person, property)}
+                                aria-current={selected.propertyId === property.id ? "true" : undefined}
+                              >
+                                {property.name}
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </li>
+                  );
+                })}
+                {!integrantes.length && (
+                  <li className="pagos-agente__people-empty">No se encontraron personas.</li>
+                )}
+              </ul>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function PagosYCobros() {
+  const esMovil = useConsultaMedia("(max-width: 1024px)");
   const [query, setQuery] = useState("");
   const [peopleOpen, setPeopleOpen] = useState(false);
-  const [openGroup, setOpenGroup] = useState("");
-  const [selectedPerson, setSelectedPerson] = useState(people[0]);
+  const [selected, setSelected] = useState({
+    personId: people[1].id,
+    propertyId: people[1].properties[0].id,
+    type: people[1].type,
+  });
   const [year, setYear] = useState("2026");
   const [month, setMonth] = useState("Noviembre");
-  const [decision, setDecision] = useState("");
-  const [concepts, setConcepts] = useState(
-    initialConcepts.map((concept, index) => ({ ...concept, id: `concept-${index}` })),
-  );
+  const [statuses, setStatuses] = useState({});
+  const [conceptsByProperty, setConceptsByProperty] = useState({});
+  const [rentByProperty, setRentByProperty] = useState({});
   const [adding, setAdding] = useState("");
   const [newConcept, setNewConcept] = useState({ label: "", amount: "" });
   const [feedback, setFeedback] = useState("");
 
-  const visiblePeople = people.filter((person) =>
-    `${person.name} ${person.property}`
-      .toLocaleLowerCase("es-AR")
-      .includes(query.trim().toLocaleLowerCase("es-AR")),
+  useEffect(() => {
+    const alBuscar = (evento) => setQuery(evento.detail ?? "");
+    window.addEventListener("personas-search", alBuscar);
+    return () => window.removeEventListener("personas-search", alBuscar);
+  }, []);
+
+  const selectedPerson = people.find((person) => person.id === selected.personId);
+  const selectedProperty = selectedPerson.properties.find(
+    (property) => property.id === selected.propertyId,
   );
+  const concepts = conceptsByProperty[selectedProperty.id] ?? conceptosIniciales(selectedProperty.id);
+  const rent = rentByProperty[selectedProperty.id] ?? selectedProperty.amount;
+  const currentStatus = statuses[selectedProperty.id] ?? selectedProperty.status;
+  const locked = LOCKED_STATUSES.includes(currentStatus);
   const selectedConcepts = concepts.filter((concept) => concept.checked);
   const total = selectedConcepts.reduce((sum, concept) => sum + parseAmount(concept.amount), 0);
-  const currentStatus =
-    decision === "approved"
-      ? "Pagado"
-      : decision === "rejected"
-        ? "No pagado"
-        : selectedPerson.status;
+  const receipt = selectedProperty.receipt;
 
-  function choosePerson(person) {
-    setSelectedPerson(person);
-    setDecision("");
+  function choose(person, property) {
+    setSelected({ personId: person.id, propertyId: property.id, type: person.type });
+    setAdding("");
     setFeedback("");
     setPeopleOpen(false);
   }
 
+  function updateConcepts(update) {
+    setConceptsByProperty((current) => ({
+      ...current,
+      [selectedProperty.id]: update(current[selectedProperty.id] ?? conceptosIniciales(selectedProperty.id)),
+    }));
+  }
+
   function updateConcept(id, changes) {
-    setConcepts((current) =>
-      current.map((concept) => (concept.id === id ? { ...concept, ...changes } : concept)),
+    updateConcepts((list) =>
+      list.map((concept) => (concept.id === id ? { ...concept, ...changes } : concept)),
     );
   }
 
+  function setStatus(status) {
+    setStatuses((current) => ({ ...current, [selectedProperty.id]: status }));
+  }
+
   function decide(value) {
-    setDecision(value);
+    setStatus(value === "approved" ? "Pago" : "Impago");
+    setAdding("");
     setFeedback(
       value === "approved"
         ? "El pago fue marcado como pagado."
-        : "El pago fue marcado como no pagado.",
+        : "El pago fue marcado como impagado.",
     );
+  }
+
+  function sendPayment() {
+    setStatus("Enviado");
+    setAdding("");
+    setFeedback(`El cobro fue enviado a ${selectedPerson.name}.`);
   }
 
   function submitConcept(event) {
@@ -163,10 +347,10 @@ export default function PagosYCobros() {
       setFeedback("Ingresá un concepto y un importe mayor a cero.");
       return;
     }
-    setConcepts((current) => [
-      ...current,
+    updateConcepts((list) => [
+      ...list,
       {
-        id: `concept-${Date.now()}`,
+        id: `${selectedProperty.id}-concepto-${Date.now()}`,
         label,
         amount: newConcept.amount.trim(),
         tone: adding === "temporary" ? "blue" : "green",
@@ -177,6 +361,8 @@ export default function PagosYCobros() {
     setNewConcept({ label: "", amount: "" });
     setAdding("");
   }
+
+  const panel = <PanelPersonas query={query} selected={selected} onSelect={choose} />;
 
   return (
     <main id="pagos-agente">
@@ -192,130 +378,77 @@ export default function PagosYCobros() {
       </header>
 
       <div className="pagos-agente__layout">
-        {peopleOpen && (
-          <button
-            className="pagos-agente__people-backdrop"
-            type="button"
-            aria-label="Cerrar personas"
-            onClick={() => setPeopleOpen(false)}
-          />
+        {esMovil ? (
+          <PanelDeslizable
+            etiqueta="Personas"
+            ancho="min(340px, 88vw)"
+            superior="var(--pagos-alto-header, 40px)"
+            posicion="32%"
+            abierto={peopleOpen}
+            onCambiar={setPeopleOpen}
+          >
+            {panel}
+          </PanelDeslizable>
+        ) : (
+          <aside className="pagos-agente__people" aria-label="Personas">
+            {panel}
+          </aside>
         )}
-        <aside
-          className={`pagos-agente__people${peopleOpen ? " is-open" : ""}`}
-          aria-label="Personas"
-        >
-          <div className="pagos-agente__people-heading">
-            <h2>Personas</h2>
-            <button type="button" onClick={() => setPeopleOpen(false)} aria-label="Cerrar personas">
-              ×
-            </button>
-          </div>
-          <label className="pagos-agente__search">
-            <Icono src={magnifyingGlassIcon} />
-            <input
-              type="search"
-              placeholder="Buscar persona..."
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              aria-label="Buscar persona"
-            />
-          </label>
-          {[
-            { type: "Locatario", title: "Locatarios" },
-            { type: "Propietario", title: "Propietarios" },
-          ].map((group) => (
-            <div className="pagos-agente__people-group" key={group.type}>
-              <button
-                className="pagos-agente__group-toggle"
-                type="button"
-                onClick={() =>
-                  setOpenGroup((current) => (current === group.type ? "" : group.type))
-                }
-                aria-expanded={openGroup === group.type}
-              >
-                {group.title}
-                <span aria-hidden="true">‹</span>
-              </button>
-              {openGroup === group.type && (
-                <div className="pagos-agente__people-list">
-                  {visiblePeople
-                    .filter((person) => person.type === group.type)
-                    .map((person) => (
-                      <button
-                        className={`pagos-agente__person${selectedPerson.name === person.name ? " is-selected" : ""}`}
-                        type="button"
-                        key={person.name}
-                        onClick={() => choosePerson(person)}
-                      >
-                        <span className="pagos-agente__avatar">
-                          {person.name
-                            .split(" ")
-                            .map((word) => word[0])
-                            .join("")}
-                        </span>
-                        <span className="pagos-agente__person-copy">
-                          <strong>{person.name}</strong>
-                          <small>{person.property}</small>
-                        </span>
-                        <span className="pagos-agente__person-status">{person.status}</span>
-                      </button>
-                    ))}
-                  {!visiblePeople.some((person) => person.type === group.type) && (
-                    <p className="pagos-agente__people-empty">No se encontraron personas.</p>
-                  )}
-                </div>
-              )}
-            </div>
-          ))}
-        </aside>
 
         <section className="pagos-agente__workspace" aria-label="Pago seleccionado">
           <div className="pagos-agente__toolbar">
             <div className="pagos-agente__record">
-              <label className="pagos-agente__year">
-                <span className="sr-only">Año</span>
-                <select value={year} onChange={(event) => setYear(event.target.value)}>
-                  {["2025", "2026", "2027"].map((value) => (
-                    <option key={value}>{value}</option>
-                  ))}
-                </select>
+              <div className="pagos-agente__period">
+                <label className="pagos-agente__select">
+                  <span className="sr-only">Año</span>
+                  <select value={year} onChange={(event) => setYear(event.target.value)}>
+                    {["2025", "2026", "2027"].map((value) => (
+                      <option key={value}>{value}</option>
+                    ))}
+                  </select>
+                  <Icono src={angleDownIcon} />
+                </label>
+                <label className="pagos-agente__select pagos-agente__select--month">
+                  <span className="sr-only">Mes</span>
+                  <select value={month} onChange={(event) => setMonth(event.target.value)}>
+                    {months.map((value) => (
+                      <option key={value}>{value}</option>
+                    ))}
+                  </select>
+                  <Icono src={angleDownIcon} />
+                </label>
+              </div>
+              <h2 className="pagos-agente__person-name">{selectedPerson.name}</h2>
+              <label className="pagos-agente__rent">
+                <span>Alquiler</span>
+                <input
+                  className="pagos-agente__rent-amount"
+                  type="text"
+                  inputMode="decimal"
+                  value={rent}
+                  disabled={locked}
+                  onChange={(event) =>
+                    setRentByProperty((current) => ({
+                      ...current,
+                      [selectedProperty.id]: soloNumeros(event.target.value),
+                    }))
+                  }
+                  aria-label="Importe del alquiler"
+                />
               </label>
-              <label className="pagos-agente__month">
-                <span className="sr-only">Mes</span>
-                <select value={month} onChange={(event) => setMonth(event.target.value)}>
-                  {months.map((value) => (
-                    <option key={value}>{value}</option>
-                  ))}
-                </select>
-              </label>
-              <button
-                className="pagos-agente__selected-person"
-                type="button"
-                onClick={() => {
-                  setPeopleOpen(true);
-                  setOpenGroup(selectedPerson.type);
-                }}
-                aria-label={`Seleccionar persona. Actual: ${selectedPerson.name}`}
-              >
-                {selectedPerson.name}
-                <Icono src={angleDownIcon} />
-              </button>
-              <span className="pagos-agente__rent">Alquiler</span>
-              <output className="pagos-agente__rent-amount" aria-label="Importe del alquiler">
-                {selectedPerson.amount}
-              </output>
             </div>
             <div className="pagos-agente__decisions">
               <BotonDecision
                 type="rejected"
-                active={decision === "rejected"}
+                neutral={currentStatus === "Pago"}
+                active={currentStatus === "Impago"}
                 onClick={() => decide("rejected")}
               >
-                Marcar como no pagado
+                Marcar como impagado
               </BotonDecision>
               <BotonDecision
                 type="approved"
-                active={decision === "approved"}
+                active={currentStatus === "Pago"}
                 onClick={() => decide("approved")}
               >
                 Marcar como pagado
@@ -327,10 +460,10 @@ export default function PagosYCobros() {
             <article className="pagos-agente__propiedad-card">
               <div className="pagos-agente__propiedad-main">
                 <div className="pagos-agente__propiedad-copy">
-                  <h2>{selectedPerson.property}</h2>
-                  <p>Estado: {currentStatus.toLocaleLowerCase("es-AR")}</p>
-                  <p>Actualización del alquiler: 20/10/26</p>
-                  <p>Servicios incluidos: No</p>
+                  <h2>{selectedProperty.name}</h2>
+                  <p>Estado: {currentStatus}</p>
+                  <p>Actualización del alquiler: {selectedProperty.update}</p>
+                  <p>Servicios incluidos: {selectedProperty.services ? "Sí" : "No"}</p>
                 </div>
                 <div className="pagos-agente__concepts" aria-label="Conceptos del cobro">
                   {concepts.map((concept) => (
@@ -342,6 +475,7 @@ export default function PagosYCobros() {
                         id={concept.id}
                         type="checkbox"
                         checked={concept.checked}
+                        disabled={locked}
                         onChange={(event) =>
                           updateConcept(concept.id, { checked: event.target.checked })
                         }
@@ -352,8 +486,9 @@ export default function PagosYCobros() {
                         type="text"
                         inputMode="decimal"
                         value={concept.amount}
+                        disabled={locked}
                         onChange={(event) =>
-                          updateConcept(concept.id, { amount: event.target.value })
+                          updateConcept(concept.id, { amount: soloNumeros(event.target.value) })
                         }
                         aria-label={`Importe de ${concept.label}`}
                       />
@@ -378,6 +513,7 @@ export default function PagosYCobros() {
                 <div className="pagos-agente__concept-actions">
                   <button
                     type="button"
+                    disabled={locked}
                     onClick={() => {
                       setAdding("permanent");
                       setFeedback("");
@@ -388,6 +524,7 @@ export default function PagosYCobros() {
                   </button>
                   <button
                     type="button"
+                    disabled={locked}
                     onClick={() => {
                       setAdding("temporary");
                       setFeedback("");
@@ -397,7 +534,7 @@ export default function PagosYCobros() {
                     Concepto temporal
                   </button>
                 </div>
-                {adding && (
+                {adding && !locked && (
                   <form className="pagos-agente__new-concept" onSubmit={submitConcept}>
                     <label>
                       <span>Concepto {adding === "temporary" ? "temporal" : "nuevo"}</span>
@@ -416,7 +553,7 @@ export default function PagosYCobros() {
                         inputMode="decimal"
                         value={newConcept.amount}
                         onChange={(event) =>
-                          setNewConcept((current) => ({ ...current, amount: event.target.value }))
+                          setNewConcept((current) => ({ ...current, amount: soloNumeros(event.target.value) }))
                         }
                         placeholder="0,00"
                       />
@@ -436,13 +573,23 @@ export default function PagosYCobros() {
                   </form>
                 )}
               </div>
-              <aside className="pagos-agente__receipt" aria-label="Comprobante del inquilino">
+              <aside
+                className={`pagos-agente__receipt${receipt ? " has-receipt" : ""}`}
+                aria-label="Comprobante del inquilino"
+              >
                 <div className="pagos-agente__receipt-preview">
-                  <Icono src={imageIcon} />
+                  {receipt?.url ? (
+                    <img src={receipt.url} alt="Comprobante del inquilino" />
+                  ) : (
+                    <Icono src={receipt ? fileLinesIcon : imageIcon} />
+                  )}
                 </div>
                 <div className="pagos-agente__receipt-caption">
                   <Icono src={fileLinesIcon} />
-                  <span>Comprobante del inquilino</span>
+                  <span>
+                    Comprobante del inquilino
+                    {receipt && <small>{receipt.date}</small>}
+                  </span>
                 </div>
               </aside>
             </article>
@@ -472,8 +619,8 @@ export default function PagosYCobros() {
               <button
                 className="pagos-agente__send"
                 type="button"
-                onClick={() => setFeedback("El pago fue enviado al propietario.")}
-                disabled={total <= 0}
+                onClick={sendPayment}
+                disabled={locked || total <= 0}
               >
                 <Icono src={paperPlaneIcon} />
                 Enviar pago

@@ -32,6 +32,7 @@ export { default as SelectDesplegable } from "./select/SelectDesplegable";
 export { default as Skeleton } from "./skeleton/Skeleton";
 export { default as Estadisticas } from "./estadisticas/Estadisticas";
 export { default as PildoraResumen } from "./pildoraResumen/PildoraResumen";
+export { default as PanelDeslizable } from "./panelDeslizable/PanelDeslizable";
 export { default as CampoTexto } from "./campoTexto/CampoTexto";
 export { default as Aviso } from "./avisos/Aviso";
 export { default as ContenedorAvisos } from "./avisos/ContenedorAvisos";
