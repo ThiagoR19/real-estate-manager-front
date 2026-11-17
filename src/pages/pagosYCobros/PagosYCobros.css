@@ -603,8 +603,23 @@
   box-shadow: 0 0 16px #14205714;
 }
 
+button.pagos-agente__receipt-preview {
+  padding: 0;
+  border: 0;
+  font: inherit;
+}
+
+button.pagos-agente__receipt-preview:not(:disabled) {
+  cursor: pointer;
+}
+
 .pagos-agente__receipt.has-receipt .pagos-agente__receipt-preview {
   background: #fff;
+}
+
+.pagos-agente__decision:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .pagos-agente__receipt-preview img:not(.pagos-agente__icon) {

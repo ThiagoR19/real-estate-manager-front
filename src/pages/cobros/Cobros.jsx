@@ -1,70 +1,30 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   buildingColumnsIcon,
   calendarIcon,
   checkIcon,
   downloadIcon,
   fileLinesIcon,
-  magnifyingGlassIcon,
   optionsIcon,
   xIcon,
 } from "../../assets/icons";
-import paymentReference from "../../assets/pagos.png";
 import { Boton } from "../../components";
 import SelectDesplegable from "../../components/select/SelectDesplegable";
+import useHistorialPeriodos, {
+  formatearFecha,
+  formatearFechaHora,
+  formatearMonto,
+  nombreMes,
+  nombrePeriodo,
+} from "../../hooks/useHistorialPeriodos";
+import { api } from "../../services/api";
 import "../pagos/PagosMovil.css";
 import "./Cobros.css";
 
-const properties = ["Bielke 454", "Casa de San Isidro", "Belgrano 123"];
-const periods = [
-  { month: "Mayo", status: "Sin comprobante", tone: "neutral" },
-  { month: "Marzo", status: "Impago", tone: "danger" },
-  { month: "Abril", status: "Cobrado", tone: "success" },
-  { month: "Febrero", status: "En proceso", tone: "info" },
-  { month: "Enero", status: "Impago", tone: "danger" },
-];
-
-const collectionData = {
-  Mayo: {
-    title: "Mayo 2023",
-    status: "Sin comprobante",
-    date: "—",
-    settlement: "—",
-    collected: "—",
-    total: "—",
-  },
-  Marzo: {
-    title: "Marzo 2023",
-    status: "Impago",
-    date: "—",
-    settlement: "—",
-    collected: "—",
-    total: "—",
-  },
-  Abril: {
-    title: "Abril 2023",
-    status: "Cobrado",
-    date: "06/04/2023",
-    settlement: "07/04/2023",
-    collected: "600.000,10",
-    total: "550.000,10",
-  },
-  Febrero: {
-    title: "Febrero 2023",
-    status: "Cobrado",
-    date: "06/02/2023",
-    settlement: "07/02/2023",
-    collected: "600.000,10",
-    total: "550.000,10",
-  },
-  Enero: {
-    title: "Enero 2023",
-    status: "Impago",
-    date: "—",
-    settlement: "—",
-    collected: "—",
-    total: "—",
-  },
+const ESTADOS = {
+  Pendiente: { texto: "En proceso", tono: "info" },
+  Liquidado: { texto: "Liquidado", tono: "success" },
+  Anulado: { texto: "Anulado", tono: "neutral" },
 };
 
 function Icono({ src }) {
@@ -83,16 +43,29 @@ function TarjetaResumen({ icon, label, value, tone }) {
   );
 }
 
+function estadoDe(cobro) {
+  return ESTADOS[cobro?.estado] ?? { texto: cobro?.estado ?? "—", tono: "neutral" };
+}
+
+function notaDe(cobro) {
+  if (cobro.detalle) return cobro.detalle;
+  if (cobro.estado === "Liquidado") {
+    return `Se le informa la transferencia del dinero correspondiente a ${nombrePeriodo(cobro.periodo).toLowerCase()}.`;
+  }
+  if (cobro.estado === "Anulado") return "Esta liquidación fue anulada.";
+  return "La liquidación de este período está en proceso.";
+}
+
 export default function Cobros() {
-  const [property, setProperty] = useState(properties[0]);
-  const [selectedMonth, setSelectedMonth] = useState("Febrero");
-  const [openYears, setOpenYears] = useState({ 2024: true });
+  const historial = useHistorialPeriodos(api.cobros, api.cobro);
+  const { items, contratos, contrato, delContrato, anios, detalle: cobro } = historial;
+  const [openYears, setOpenYears] = useState({});
   const [timelineOpen, setTimelineOpen] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [feedback, setFeedback] = useState("");
-  const receiptDialog = useRef(null);
-  const detail = useMemo(() => collectionData[selectedMonth], [selectedMonth]);
-  const hasReceipt = detail.status === "Cobrado";
+  const estado = estadoDe(cobro);
+  const hasReceipt = Boolean(cobro?.tieneComprobante);
+  const contar = (condicion) => `${delContrato.filter(condicion).length}/${delContrato.length}`;
 
   useEffect(() => {
     if (!timelineOpen && !summaryOpen) return undefined;
@@ -106,40 +79,51 @@ export default function Cobros() {
     return () => document.removeEventListener("keydown", closeOnEscape);
   }, [timelineOpen, summaryOpen]);
 
-  function changeProperty(direction) {
-    setProperty(
-      (current) =>
-        properties[
-          (properties.indexOf(current) + direction + properties.length) % properties.length
-        ],
-    );
+  function chooseProperty(propiedad) {
+    historial.elegirContrato(contratos.find((item) => item.propiedad === propiedad).idContrato);
     setFeedback("");
   }
 
-  function chooseMonth(month) {
-    setSelectedMonth(month);
+  function changeProperty(direction) {
+    historial.moverContrato(direction);
+    setFeedback("");
+  }
+
+  function choosePeriod(id) {
+    historial.elegir(id);
     setTimelineOpen(false);
     setFeedback("");
   }
 
-  function toggleYear(year) {
-    setOpenYears((current) => ({ ...current, [year]: !current[year] }));
+  function toggleYear(anio, abierto) {
+    setOpenYears((current) => ({ ...current, [anio]: !abierto }));
   }
 
   function downloadReceipt() {
-    setFeedback(`Comprobante de ${detail.title} listo para descargar.`);
-    window.setTimeout(() => setFeedback(""), 2800);
+    api.descargarComprobanteCobro(cobro.id, cobro.nombreArchivo).catch((error) => setFeedback(error.message));
   }
+
+  if (!items || !items.length || !cobro) {
+    return (
+      <main id="cobros">
+        <p className="cobros__feedback" role="status">
+          {items?.length === 0 ? historial.error || "Todavía no tenés liquidaciones registradas." : "Cargando cobros..."}
+        </p>
+      </main>
+    );
+  }
+
+  const propertyOptions = contratos.map((item) => item.propiedad);
 
   return (
     <main id="cobros">
       <div className="pago-movil__toolbar">
         <SelectDesplegable
           label="Propiedad"
-          placeholder={property}
-          value={property}
-          options={properties}
-          onChange={setProperty}
+          placeholder={contrato?.propiedad}
+          value={contrato?.propiedad}
+          options={propertyOptions}
+          onChange={chooseProperty}
           icon={buildingColumnsIcon}
           className="cobros__mobile-propiedad-select"
           triggerClassName="cobros__mobile-propiedad-trigger"
@@ -199,10 +183,10 @@ export default function Cobros() {
           </button>
           <SelectDesplegable
             label="Seleccionar propiedad"
-            placeholder={property}
-            value={property}
-            options={properties}
-            onChange={setProperty}
+            placeholder={contrato?.propiedad}
+            value={contrato?.propiedad}
+            options={propertyOptions}
+            onChange={chooseProperty}
             className="cobros__propiedad-select"
             triggerClassName="cobros__propiedad-trigger"
             valueClassName="cobros__propiedad-value"
@@ -214,49 +198,42 @@ export default function Cobros() {
           </button>
         </div>
         <div className="cobros__years">
-          {["2026", "2025"].map((year) => (
-            <section className="cobros__year" key={year}>
-              <button
-                className="cobros__year-toggle"
-                type="button"
-                onClick={() => toggleYear(year)}
-                aria-expanded={Boolean(openYears[year])}
-              >
-                <strong>{year}</strong>
-                <span className={`cobros__chevron${openYears[year] ? " is-open" : ""}`} />
-              </button>
-              {openYears[year] && <p>No hay períodos disponibles</p>}
-            </section>
-          ))}
-          <section className="cobros__year">
-            <button
-              className="cobros__year-toggle"
-              type="button"
-              onClick={() => toggleYear("2024")}
-              aria-expanded={Boolean(openYears[2024])}
-            >
-              <strong>2024</strong>
-              <span className={`cobros__chevron${openYears[2024] ? " is-open" : ""}`} />
-            </button>
-            {openYears[2024] && (
-              <div className="cobros__months">
-                {periods.map((period) => (
-                  <button
-                    className={`cobros__month cobros__month--${period.tone}${selectedMonth === period.month ? " is-selected" : ""}`}
-                    type="button"
-                    key={period.month}
-                    onClick={() => chooseMonth(period.month)}
-                    aria-pressed={selectedMonth === period.month}
-                  >
-                    <strong>{period.month}</strong>
-                    <span className={`cobros__status cobros__status--${period.tone}`}>
-                      {period.status}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </section>
+          {anios.map(({ anio, periodos }, index) => {
+            const abierto = openYears[anio] ?? index === 0;
+            return (
+              <section className="cobros__year" key={anio}>
+                <button
+                  className="cobros__year-toggle"
+                  type="button"
+                  onClick={() => toggleYear(anio, abierto)}
+                  aria-expanded={abierto}
+                >
+                  <strong>{anio}</strong>
+                  <span className={`cobros__chevron${abierto ? " is-open" : ""}`} />
+                </button>
+                {abierto && (
+                  <div className="cobros__months">
+                    {periodos.map((item) => {
+                      const { texto, tono } = estadoDe(item);
+                      const elegido = item.id === cobro.id;
+                      return (
+                        <button
+                          className={`cobros__month cobros__month--${tono}${elegido ? " is-selected" : ""}`}
+                          type="button"
+                          key={item.id}
+                          onClick={() => choosePeriod(item.id)}
+                          aria-pressed={elegido}
+                        >
+                          <strong>{nombreMes(item.periodo)}</strong>
+                          <span className={`cobros__status cobros__status--${tono}`}>{texto}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </section>
+            );
+          })}
         </div>
       </aside>
 
@@ -268,12 +245,22 @@ export default function Cobros() {
         >
           <TarjetaResumen
             icon={fileLinesIcon}
-            label="Total revisado este mes"
-            value="550.000,10"
+            label="Total del período"
+            value={formatearMonto(cobro.montoNeto)}
             tone="blue"
           />
-          <TarjetaResumen icon={checkIcon} label="Pagos recibidos" value="5/9" tone="green" />
-          <TarjetaResumen icon={xIcon} label="Meses impagos" value="5/9" tone="red" />
+          <TarjetaResumen
+            icon={checkIcon}
+            label="Liquidaciones cobradas"
+            value={contar((item) => item.estado === "Liquidado")}
+            tone="green"
+          />
+          <TarjetaResumen
+            icon={xIcon}
+            label="Liquidaciones pendientes"
+            value={contar((item) => item.estado === "Pendiente")}
+            tone="red"
+          />
         </section>
 
         <div className="cobros__content">
@@ -282,43 +269,25 @@ export default function Cobros() {
               className="pago-movil__open-receipt"
               type="button"
               disabled={!hasReceipt}
-              onClick={() => receiptDialog.current?.showModal()}
+              onClick={downloadReceipt}
             >
               <Icono src={fileLinesIcon} />
-              {hasReceipt ? "Abrir comprobante" : "Sin comprobante"}
+              {hasReceipt ? "Descargar comprobante" : "Sin comprobante"}
             </button>
-            <div className={`cobros__receipt-frame${hasReceipt ? "" : " is-empty"}`}>
-              {hasReceipt ? (
-                <>
-                  <div
-                    className="cobros__receipt"
-                    style={{ "--payment-reference": `url(${paymentReference})` }}
-                    role="img"
-                    aria-label="Comprobante de transferencia BBVA"
-                  />
-                  <button
-                    className="cobros__zoom"
-                    type="button"
-                    aria-label="Ampliar comprobante"
-                    onClick={() => receiptDialog.current?.showModal()}
-                  >
-                    <Icono src={magnifyingGlassIcon} />
-                    <span aria-hidden="true">+</span>
-                  </button>
-                </>
-              ) : (
-                <div className="cobros__empty-receipt">
-                  <Icono src={fileLinesIcon} />
-                  Sin comprobante
-                </div>
-              )}
+            <div className="cobros__receipt-frame is-empty">
+              <div className="cobros__empty-receipt">
+                <Icono src={fileLinesIcon} />
+                {hasReceipt ? cobro.nombreArchivo : "Sin comprobante"}
+              </div>
             </div>
             <div className={`cobros__receipt-status${hasReceipt ? " is-approved" : ""}`}>
               <Icono src={fileLinesIcon} />
               <span>
                 <strong>{hasReceipt ? "Comprobante cargado" : "Sin comprobante cargado"}</strong>
                 <small>
-                  {hasReceipt ? `${detail.date} · 14:32 hs` : "Esperando comprobante del inquilino"}
+                  {hasReceipt
+                    ? formatearFechaHora(cobro.fechaComprobante)
+                    : "Esperando la transferencia de la inmobiliaria"}
                 </small>
               </span>
             </div>
@@ -326,12 +295,10 @@ export default function Cobros() {
 
           <article className="cobros__detail" aria-labelledby="cobros-title">
             <header className="cobros__detail-heading">
-              <h2 id="cobros-title">{detail.title}</h2>
-              <span
-                className={`cobros__status cobros__status--${hasReceipt ? "success" : detail.status === "Impago" ? "danger" : "neutral"}`}
-              >
-                {hasReceipt && <Icono src={checkIcon} />}
-                {detail.status}
+              <h2 id="cobros-title">{nombrePeriodo(cobro.periodo)}</h2>
+              <span className={`cobros__status cobros__status--${estado.tono}`}>
+                {cobro.estado === "Liquidado" && <Icono src={checkIcon} />}
+                {estado.texto}
               </span>
             </header>
             <div className="cobros__financials">
@@ -339,38 +306,44 @@ export default function Cobros() {
                 <div>
                   <Icono src={calendarIcon} />
                   <strong>Fecha de cobro:</strong>
-                  <b>{detail.date}</b>
+                  <b>{formatearFecha(cobro.fechaPagoInquilino)}</b>
                 </div>
                 <div>
                   <Icono src={calendarIcon} />
                   <strong>Fecha de liquidación:</strong>
-                  <b>{detail.settlement}</b>
+                  <b>{formatearFecha(cobro.fechaCobro)}</b>
                 </div>
                 <div>
                   <span className="cobros__round-symbol">$</span>
                   <strong>Monto cobrado:</strong>
-                  <b>{detail.collected}</b>
+                  <b>{formatearMonto(cobro.montoBruto)}</b>
                 </div>
                 <div>
                   <span className="cobros__round-symbol">%</span>
                   <strong>Comisión inmobiliaria:</strong>
-                  <b>-50.000</b>
+                  <b>{cobro.comision ? `-${formatearMonto(cobro.comision)}` : formatearMonto(0)}</b>
                 </div>
                 <div className="cobros__facts-total">
                   <span className="cobros__round-symbol">$</span>
                   <strong>Monto total:</strong>
-                  <b>{detail.total}</b>
+                  <b>{formatearMonto(cobro.montoNeto)}</b>
                 </div>
               </div>
 
               <section className="cobros__breakdown" aria-label="Detalle del cobro">
                 <h3>Detalle del cobro</h3>
-                {["Alquiler", "Gas", "Electricidad", "Agua", "Reparación"].map((item, index) => (
-                  <div key={item}>
-                    <span>{item}:</span>
-                    <b>{index === 4 ? "-25.203,40" : "15.203,40"}</b>
+                {cobro.conceptos?.length ? (
+                  cobro.conceptos.map((linea) => (
+                    <div key={linea.idConcepto}>
+                      <span>{linea.nombre}:</span>
+                      <b>{formatearMonto(linea.monto)}</b>
+                    </div>
+                  ))
+                ) : (
+                  <div>
+                    <span>Sin desglose por concepto</span>
                   </div>
-                ))}
+                )}
               </section>
             </div>
             <aside className="cobros__admin-note">
@@ -379,46 +352,19 @@ export default function Cobros() {
               </span>
               <div>
                 <strong>Detalle de administración</strong>
-                <p>
-                  Se le informa la transferencia del dinero correspondiente al mes de{" "}
-                  {selectedMonth.toLowerCase()} 2023.
-                </p>
+                <p>{notaDe(cobro)}</p>
               </div>
             </aside>
-            <Boton
-              className="cobros__download"
-              onClick={downloadReceipt}
-              disabled={!hasReceipt}
-            >
+            <Boton className="cobros__download" onClick={downloadReceipt} disabled={!hasReceipt}>
               <Icono src={downloadIcon} />
               <span>Descargar comprobante</span>
             </Boton>
             <p className="cobros__feedback" aria-live="polite">
-              {feedback}
+              {feedback || historial.error}
             </p>
           </article>
         </div>
       </section>
-      <dialog
-        ref={receiptDialog}
-        className="cobros__receipt-dialog"
-        aria-label={`Comprobante de ${detail.title}`}
-      >
-        <button
-          className="cobros__dialog-close"
-          type="button"
-          aria-label="Cerrar comprobante"
-          onClick={() => receiptDialog.current?.close()}
-        >
-          ×
-        </button>
-        <div
-          className="cobros__receipt"
-          style={{ "--payment-reference": `url(${paymentReference})` }}
-          role="img"
-          aria-label="Comprobante de transferencia BBVA"
-        />
-      </dialog>
     </main>
   );
 }
