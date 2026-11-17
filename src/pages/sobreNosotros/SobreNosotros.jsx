@@ -41,7 +41,7 @@ const servicios = [
   },
 ];
 
-export default function SobreNosotros() {
+export default function SobreNosotros({datos}) {
   return (
     <Skeleton className="Nosotros" fondos={[fondoPortada]}>
       <section className="Portada" data-sk-fondo>
@@ -73,7 +73,11 @@ export default function SobreNosotros() {
           ))}
         </ul>
 
-        <Estadisticas className="Nosotros__estadisticas" />
+        <Estadisticas
+          anios={datos?.aniosExperiencia}
+          vendidas={datos?.propiedadesVendidas}
+          activas={datos?.propiedadesActivas}
+        />
 
         <section className="Servicios" aria-labelledby="servicios-titulo">
           <TituloSeccion

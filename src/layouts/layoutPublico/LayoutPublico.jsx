@@ -59,14 +59,29 @@ export default function LayoutPublico() {
         )}
 
         <Switch>
-          <Route path="/">
-            {() => <Inicio loading={cargando} datos={inmobiliaria} />}
+          <Route path="/sobre-nosotros">
+            {
+              () => {
+                return (
+                  <SobreNosotros
+                    datos={inmobiliaria}
+                  />)
+              }
+            }
           </Route>
-          <Route path="/sobre-nosotros" component={SobreNosotros} />
           <Route path="/propiedades-publicas" component={PropiedadesPublicas} />
           <Route path="/propiedad-publica" component={PropiedadPublica} />
           <Route path="/inicio">
-            {() => <Inicio loading={cargando} datos={inmobiliaria} />}
+            {
+              () => {
+                console.log(inmobiliaria)
+                console.log(estado.inmobiliaria)
+                return (<Inicio
+                  loading={estado.cargando}
+                  datos={inmobiliaria}
+                />)
+              }
+            }
           </Route>
         </Switch>
 

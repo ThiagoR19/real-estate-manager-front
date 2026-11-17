@@ -214,10 +214,12 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
             placeholder={searchPlaceholder}
             aria-label={searchPlaceholder.replace("...", "")}
             onChange={
-              isProperties
+              isProperties || isPaymentsAndCollections
                 ? (event) =>
                   window.dispatchEvent(
-                    new CustomEvent("propiedad-search", { detail: event.target.value }),
+                    new CustomEvent(isProperties ? "propiedad-search" : "personas-search", {
+                      detail: event.target.value,
+                    }),
                   )
                 : undefined
             }

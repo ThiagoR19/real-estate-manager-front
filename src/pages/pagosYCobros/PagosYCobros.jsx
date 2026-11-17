@@ -1,50 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   angleDownIcon,
   checkIcon,
   circleInfoIcon,
   fileLinesIcon,
   imageIcon,
-  magnifyingGlassIcon,
   paperPlaneIcon,
   plusIconWhite,
   xIcon,
 } from "../../assets/icons";
+import { PanelDeslizable } from "../../components";
+import useConsultaMedia from "../../hooks/useConsultaMedia";
+import usePagosYCobros, {
+  CONCEPTO_ALQUILER,
+  calcularLiquidacion,
+  estaIncluida,
+  parseAmount,
+} from "../../hooks/usePagosYCobros";
 import "./PagosYCobros.css";
 
-const people = [
-  {
-    name: "Maria Shakira",
-    type: "Locatario",
-    property: "Propiedad baldez B2",
-    amount: "14933.10",
-    status: "Sin enviar",
-  },
-  {
-    name: "Sofia Ramirez",
-    type: "Locatario",
-    property: "Casa de San Isidro",
-    amount: "600.000,10",
-    status: "Pendiente",
-  },
-  {
-    name: "Juan Pérez",
-    type: "Propietario",
-    property: "Bielke 454",
-    amount: "550.000,10",
-    status: "Aprobado",
-  },
+const GRUPOS = [
+  { tipo: "Locatario", titulo: "Locatarios" },
+  { tipo: "Propietario", titulo: "Propietarios" },
 ];
 
-const initialConcepts = [
-  { label: "Electricidad", amount: "14933.10", tone: "muted", checked: false },
-  { label: "Agua", amount: "14933.10", tone: "muted", checked: false },
-  { label: "Expensas", amount: "49103", tone: "green", checked: true },
-  { label: "Otros", amount: "49103", tone: "green", checked: true },
-  { label: "Reparación", amount: "192.912,21", tone: "blue", checked: true },
-];
-
-const months = [
+const MESES = [
   "Enero",
   "Febrero",
   "Marzo",
@@ -59,429 +39,513 @@ const months = [
   "Diciembre",
 ];
 
+const ANIO_ACTUAL = new Date().getFullYear();
+const ANIOS = [ANIO_ACTUAL - 1, ANIO_ACTUAL, ANIO_ACTUAL + 1];
+
 function Icono({ src }) {
   return <img className="pagos-agente__icon" src={src} alt="" aria-hidden="true" />;
 }
 
-function parseAmount(value) {
-  const normalized = String(value)
-    .trim()
-    .replace(/[^\d,.-]/g, "");
-  const comma = normalized.lastIndexOf(",");
-  const dot = normalized.lastIndexOf(".");
-  if (comma !== -1 && dot !== -1) {
-    const decimalMark = comma > dot ? "," : ".";
-    return (
-      Number(
-        normalized.replace(decimalMark === "," ? /\./g : /,/g, "").replace(decimalMark, "."),
-      ) || 0
-    );
-  }
-  if (comma !== -1) return Number(normalized.replace(/\./g, "").replace(",", ".")) || 0;
-  if (dot !== -1 && normalized.length - dot - 1 === 3)
-    return Number(normalized.replace(/\./g, "")) || 0;
-  return Number(normalized) || 0;
+function Chevron({ open }) {
+  return (
+    <img
+      className={`pagos-agente__chevron${open ? " is-open" : ""}`}
+      src={angleDownIcon}
+      alt=""
+      aria-hidden="true"
+    />
+  );
 }
 
-function formatCurrency(value) {
-  return Number(value).toLocaleString("es-AR", {
-    style: "currency",
-    currency: "ARS",
-    minimumFractionDigits: 2,
-  });
+function formatCurrency(value, moneda = "ARS") {
+  return Number(value).toLocaleString("es-AR", { style: "currency", currency: moneda, minimumFractionDigits: 2 });
 }
 
-function BotonDecision({ type, children, onClick, active }) {
+function formatDate(value) {
+  if (!value) return "-";
+  const [anio, mes, dia] = String(value).slice(0, 10).split("-");
+  return `${dia}/${mes}/${anio}`;
+}
+
+function formatDateTime(value) {
+  return new Date(value).toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" });
+}
+
+function soloNumeros(valor) {
+  return valor.replace(/[^\d.,-]/g, "");
+}
+
+function normalizar(texto) {
+  return texto.toLocaleLowerCase("es-AR").normalize("NFD").replace(/[̀-ͯ]/g, "");
+}
+
+function BotonDecision({ type, children, onClick, active, neutral, disabled }) {
   return (
     <button
-      className={`pagos-agente__decision pagos-agente__decision--${type}${active ? " is-active" : ""}`}
+      className={`pagos-agente__decision pagos-agente__decision--${neutral ? "neutral" : type}${active ? " is-active" : ""}`}
       type="button"
       onClick={onClick}
+      disabled={disabled}
       aria-pressed={active}
     >
-      <Icono src={type === "approved" ? checkIcon : xIcon} />
+      <span className="pagos-agente__decision-icon">
+        <Icono src={type === "approved" ? checkIcon : xIcon} />
+      </span>
       <span>{children}</span>
     </button>
   );
 }
 
+function PanelPersonas({ personas, query, persona, idContrato, onSelect }) {
+  const [openGroup, setOpenGroup] = useState(persona?.tipo ?? "Locatario");
+  const [openPerson, setOpenPerson] = useState(persona?.id ?? "");
+  const buscando = query.trim() !== "";
+  const termino = normalizar(query.trim());
+
+  const visibles = personas
+    .map((item) => {
+      if (!buscando || normalizar(item.nombre).includes(termino)) return item;
+      const contratos = item.contratos.filter((contrato) => normalizar(contrato.propiedad).includes(termino));
+      return contratos.length ? { ...item, contratos } : null;
+    })
+    .filter(Boolean);
+
+  return (
+    <div className="pagos-agente__people-panel">
+      <h2 className="pagos-agente__people-title">Personas</h2>
+      {GRUPOS.map((grupo) => {
+        const grupoAbierto = buscando || openGroup === grupo.tipo;
+        const integrantes = visibles.filter((item) => item.tipo === grupo.tipo);
+        return (
+          <div className="pagos-agente__people-group" key={grupo.tipo}>
+            <button
+              className="pagos-agente__group-toggle"
+              type="button"
+              onClick={() => setOpenGroup((actual) => (actual === grupo.tipo ? "" : grupo.tipo))}
+              aria-expanded={grupoAbierto}
+            >
+              {grupo.titulo}
+              <Chevron open={grupoAbierto} />
+            </button>
+            {grupoAbierto && (
+              <ul className="pagos-agente__people-list">
+                {integrantes.map((item) => {
+                  const personaAbierta = buscando || openPerson === item.id;
+                  return (
+                    <li key={item.id}>
+                      <button
+                        className={`pagos-agente__person${persona?.id === item.id ? " is-selected" : ""}`}
+                        type="button"
+                        onClick={() => setOpenPerson((actual) => (actual === item.id ? "" : item.id))}
+                        aria-expanded={personaAbierta}
+                      >
+                        <span>{item.nombre}</span>
+                        <Chevron open={personaAbierta} />
+                      </button>
+                      {personaAbierta && (
+                        <ul className="pagos-agente__properties-list">
+                          {item.contratos.map((contrato) => {
+                            const elegido = persona?.id === item.id && idContrato === contrato.idContrato;
+                            return (
+                              <li key={contrato.idContrato}>
+                                <button
+                                  className={`pagos-agente__property-option${elegido ? " is-selected" : ""}`}
+                                  type="button"
+                                  onClick={() => onSelect(item, contrato)}
+                                  aria-current={elegido ? "true" : undefined}
+                                >
+                                  {contrato.propiedad}
+                                </button>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      )}
+                    </li>
+                  );
+                })}
+                {!integrantes.length && <li className="pagos-agente__people-empty">No se encontraron personas.</li>}
+              </ul>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function PagosYCobros() {
+  const esMovil = useConsultaMedia("(max-width: 1024px)");
+  const datos = usePagosYCobros();
+  const { personas, persona, contrato, detalle, cargando, guardando, feedback } = datos;
   const [query, setQuery] = useState("");
   const [peopleOpen, setPeopleOpen] = useState(false);
-  const [openGroup, setOpenGroup] = useState("");
-  const [selectedPerson, setSelectedPerson] = useState(people[0]);
-  const [year, setYear] = useState("2026");
-  const [month, setMonth] = useState("Noviembre");
-  const [decision, setDecision] = useState("");
-  const [concepts, setConcepts] = useState(
-    initialConcepts.map((concept, index) => ({ ...concept, id: `concept-${index}` })),
-  );
   const [adding, setAdding] = useState("");
   const [newConcept, setNewConcept] = useState({ label: "", amount: "" });
-  const [feedback, setFeedback] = useState("");
+  const [rechazando, setRechazando] = useState(false);
+  const [motivo, setMotivo] = useState("");
 
-  const visiblePeople = people.filter((person) =>
-    `${person.name} ${person.property}`
-      .toLocaleLowerCase("es-AR")
-      .includes(query.trim().toLocaleLowerCase("es-AR")),
-  );
-  const selectedConcepts = concepts.filter((concept) => concept.checked);
-  const total = selectedConcepts.reduce((sum, concept) => sum + parseAmount(concept.amount), 0);
-  const currentStatus =
-    decision === "approved"
-      ? "Pagado"
-      : decision === "rejected"
-        ? "No pagado"
-        : selectedPerson.status;
+  useEffect(() => {
+    const alBuscar = (evento) => setQuery(evento.detail ?? "");
+    window.addEventListener("personas-search", alBuscar);
+    return () => window.removeEventListener("personas-search", alBuscar);
+  }, []);
 
-  function choosePerson(person) {
-    setSelectedPerson(person);
-    setDecision("");
-    setFeedback("");
+  const esLocatario = persona?.tipo === "Locatario";
+  const bloqueado = !detalle?.editable || cargando || guardando;
+  const moneda = detalle?.contrato?.moneda ?? "ARS";
+  const alquiler = detalle?.lineas.find((linea) => linea.nombre === CONCEPTO_ALQUILER);
+  const conceptos = detalle?.lineas.filter((linea) => linea.nombre !== CONCEPTO_ALQUILER) ?? [];
+  const incluidas = detalle?.lineas.filter(estaIncluida) ?? [];
+  const liquidacion = detalle && !esLocatario ? calcularLiquidacion(detalle) : null;
+  const total = liquidacion?.neto ?? incluidas.reduce((suma, linea) => suma + parseAmount(linea.monto), 0);
+
+  function choose(item, nuevoContrato) {
+    datos.elegir(item, nuevoContrato);
+    setAdding("");
+    setRechazando(false);
     setPeopleOpen(false);
   }
 
-  function updateConcept(id, changes) {
-    setConcepts((current) =>
-      current.map((concept) => (concept.id === id ? { ...concept, ...changes } : concept)),
-    );
+  function openConceptForm(tipo) {
+    setAdding(tipo);
+    datos.setFeedback("");
   }
 
-  function decide(value) {
-    setDecision(value);
-    setFeedback(
-      value === "approved"
-        ? "El pago fue marcado como pagado."
-        : "El pago fue marcado como no pagado.",
-    );
+  function closeConceptForm() {
+    setAdding("");
+    setNewConcept({ label: "", amount: "" });
   }
 
-  function submitConcept(event) {
+  async function submitConcept(event) {
     event.preventDefault();
     const label = newConcept.label.trim();
     if (!label || parseAmount(newConcept.amount) <= 0) {
-      setFeedback("Ingresá un concepto y un importe mayor a cero.");
+      datos.setFeedback("Ingresá un concepto y un importe mayor a cero.");
       return;
     }
-    setConcepts((current) => [
-      ...current,
-      {
-        id: `concept-${Date.now()}`,
-        label,
-        amount: newConcept.amount.trim(),
-        tone: adding === "temporary" ? "blue" : "green",
-        checked: true,
-      },
-    ]);
-    setFeedback(`${label} se agregó al detalle del cobro.`);
-    setNewConcept({ label: "", amount: "" });
-    setAdding("");
+    if (await datos.agregarConcepto(label, newConcept.amount.trim(), adding === "temporary")) closeConceptForm();
   }
+
+  async function submitRechazo(event) {
+    event.preventDefault();
+    if (motivo.trim().length < 3) {
+      datos.setFeedback("Escribí un motivo de al menos 3 letras.");
+      return;
+    }
+    if (await datos.rechazar(motivo.trim())) {
+      setRechazando(false);
+      setMotivo("");
+    }
+  }
+
+  const panel = personas ? (
+    <PanelPersonas
+      personas={personas}
+      query={query}
+      persona={persona}
+      idContrato={contrato?.idContrato}
+      onSelect={choose}
+    />
+  ) : (
+    <p className="pagos-agente__people-empty">Cargando personas...</p>
+  );
 
   return (
     <main id="pagos-agente">
       <header className="pagos-agente__hero">
         <h1>Pagos y cobros</h1>
         <p className="pagos-agente__hero-desktop">
-          Estos pagos y cobros se pueden consultar desde la sección Pagos de propietarios y
-          locatarios.
+          Estos pagos y cobros se pueden consultar desde la sección Pagos de propietarios y locatarios.
         </p>
-        <p className="pagos-agente__hero-mobile">
-          Gestioná los pagos y cobros de tus inquilinos o propietarios.
-        </p>
+        <p className="pagos-agente__hero-mobile">Gestioná los pagos y cobros de tus inquilinos o propietarios.</p>
       </header>
 
       <div className="pagos-agente__layout">
-        {peopleOpen && (
-          <button
-            className="pagos-agente__people-backdrop"
-            type="button"
-            aria-label="Cerrar personas"
-            onClick={() => setPeopleOpen(false)}
-          />
+        {esMovil ? (
+          <PanelDeslizable
+            etiqueta="Personas"
+            ancho="min(340px, 88vw)"
+            superior="var(--pagos-alto-header, 40px)"
+            posicion="32%"
+            abierto={peopleOpen}
+            onCambiar={setPeopleOpen}
+          >
+            {panel}
+          </PanelDeslizable>
+        ) : (
+          <aside className="pagos-agente__people" aria-label="Personas">
+            {panel}
+          </aside>
         )}
-        <aside
-          className={`pagos-agente__people${peopleOpen ? " is-open" : ""}`}
-          aria-label="Personas"
-        >
-          <div className="pagos-agente__people-heading">
-            <h2>Personas</h2>
-            <button type="button" onClick={() => setPeopleOpen(false)} aria-label="Cerrar personas">
-              ×
-            </button>
-          </div>
-          <label className="pagos-agente__search">
-            <Icono src={magnifyingGlassIcon} />
-            <input
-              type="search"
-              placeholder="Buscar persona..."
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              aria-label="Buscar persona"
-            />
-          </label>
-          {[
-            { type: "Locatario", title: "Locatarios" },
-            { type: "Propietario", title: "Propietarios" },
-          ].map((group) => (
-            <div className="pagos-agente__people-group" key={group.type}>
-              <button
-                className="pagos-agente__group-toggle"
-                type="button"
-                onClick={() =>
-                  setOpenGroup((current) => (current === group.type ? "" : group.type))
-                }
-                aria-expanded={openGroup === group.type}
-              >
-                {group.title}
-                <span aria-hidden="true">‹</span>
-              </button>
-              {openGroup === group.type && (
-                <div className="pagos-agente__people-list">
-                  {visiblePeople
-                    .filter((person) => person.type === group.type)
-                    .map((person) => (
-                      <button
-                        className={`pagos-agente__person${selectedPerson.name === person.name ? " is-selected" : ""}`}
-                        type="button"
-                        key={person.name}
-                        onClick={() => choosePerson(person)}
+
+        <section className="pagos-agente__workspace" aria-label="Pago seleccionado" aria-busy={cargando}>
+          {!persona || !detalle ? (
+            <p className="pagos-agente__feedback" role="status">
+              {personas && !persona ? feedback || "No hay contratos de alquiler vigentes." : feedback || "Cargando..."}
+            </p>
+          ) : (
+            <>
+              <div className="pagos-agente__toolbar">
+                <div className="pagos-agente__record">
+                  <div className="pagos-agente__period">
+                    <label className="pagos-agente__select">
+                      <span className="sr-only">Año</span>
+                      <select
+                        value={datos.anio}
+                        onChange={(event) => datos.cambiarPeriodo(Number(event.target.value), datos.mes)}
                       >
-                        <span className="pagos-agente__avatar">
-                          {person.name
-                            .split(" ")
-                            .map((word) => word[0])
-                            .join("")}
-                        </span>
-                        <span className="pagos-agente__person-copy">
-                          <strong>{person.name}</strong>
-                          <small>{person.property}</small>
-                        </span>
-                        <span className="pagos-agente__person-status">{person.status}</span>
-                      </button>
-                    ))}
-                  {!visiblePeople.some((person) => person.type === group.type) && (
-                    <p className="pagos-agente__people-empty">No se encontraron personas.</p>
-                  )}
-                </div>
-              )}
-            </div>
-          ))}
-        </aside>
-
-        <section className="pagos-agente__workspace" aria-label="Pago seleccionado">
-          <div className="pagos-agente__toolbar">
-            <div className="pagos-agente__record">
-              <label className="pagos-agente__year">
-                <span className="sr-only">Año</span>
-                <select value={year} onChange={(event) => setYear(event.target.value)}>
-                  {["2025", "2026", "2027"].map((value) => (
-                    <option key={value}>{value}</option>
-                  ))}
-                </select>
-              </label>
-              <label className="pagos-agente__month">
-                <span className="sr-only">Mes</span>
-                <select value={month} onChange={(event) => setMonth(event.target.value)}>
-                  {months.map((value) => (
-                    <option key={value}>{value}</option>
-                  ))}
-                </select>
-              </label>
-              <button
-                className="pagos-agente__selected-person"
-                type="button"
-                onClick={() => {
-                  setPeopleOpen(true);
-                  setOpenGroup(selectedPerson.type);
-                }}
-                aria-label={`Seleccionar persona. Actual: ${selectedPerson.name}`}
-              >
-                {selectedPerson.name}
-                <Icono src={angleDownIcon} />
-              </button>
-              <span className="pagos-agente__rent">Alquiler</span>
-              <output className="pagos-agente__rent-amount" aria-label="Importe del alquiler">
-                {selectedPerson.amount}
-              </output>
-            </div>
-            <div className="pagos-agente__decisions">
-              <BotonDecision
-                type="rejected"
-                active={decision === "rejected"}
-                onClick={() => decide("rejected")}
-              >
-                Marcar como no pagado
-              </BotonDecision>
-              <BotonDecision
-                type="approved"
-                active={decision === "approved"}
-                onClick={() => decide("approved")}
-              >
-                Marcar como pagado
-              </BotonDecision>
-            </div>
-          </div>
-
-          <div className="pagos-agente__record-grid">
-            <article className="pagos-agente__propiedad-card">
-              <div className="pagos-agente__propiedad-main">
-                <div className="pagos-agente__propiedad-copy">
-                  <h2>{selectedPerson.property}</h2>
-                  <p>Estado: {currentStatus.toLocaleLowerCase("es-AR")}</p>
-                  <p>Actualización del alquiler: 20/10/26</p>
-                  <p>Servicios incluidos: No</p>
-                </div>
-                <div className="pagos-agente__concepts" aria-label="Conceptos del cobro">
-                  {concepts.map((concept) => (
-                    <div
-                      className={`pagos-agente__concept pagos-agente__concept--${concept.tone}${concept.checked ? " is-selected" : ""}`}
-                      key={concept.id}
-                    >
+                        {ANIOS.map((value) => (
+                          <option key={value}>{value}</option>
+                        ))}
+                      </select>
+                      <Icono src={angleDownIcon} />
+                    </label>
+                    <label className="pagos-agente__select pagos-agente__select--month">
+                      <span className="sr-only">Mes</span>
+                      <select
+                        value={datos.mes}
+                        onChange={(event) => datos.cambiarPeriodo(datos.anio, Number(event.target.value))}
+                      >
+                        {MESES.map((value, index) => (
+                          <option key={value} value={index + 1}>
+                            {value}
+                          </option>
+                        ))}
+                      </select>
+                      <Icono src={angleDownIcon} />
+                    </label>
+                  </div>
+                  <h2 className="pagos-agente__person-name">{persona.nombre}</h2>
+                  {alquiler && (
+                    <label className="pagos-agente__rent">
+                      <span>Alquiler</span>
                       <input
-                        id={concept.id}
-                        type="checkbox"
-                        checked={concept.checked}
-                        onChange={(event) =>
-                          updateConcept(concept.id, { checked: event.target.checked })
-                        }
-                      />
-                      <label htmlFor={concept.id}>{concept.label}</label>
-                      <input
-                        className="pagos-agente__amount"
+                        className="pagos-agente__rent-amount"
                         type="text"
                         inputMode="decimal"
-                        value={concept.amount}
+                        value={alquiler.monto}
+                        disabled={bloqueado}
                         onChange={(event) =>
-                          updateConcept(concept.id, { amount: event.target.value })
+                          datos.actualizarLinea(alquiler.idConcepto, { monto: soloNumeros(event.target.value) })
                         }
-                        aria-label={`Importe de ${concept.label}`}
-                      />
-                      <span
-                        className="pagos-agente__info"
-                        title={
-                          concept.checked
-                            ? "Incluido en el detalle del cobro"
-                            : "Marcá el concepto para incluirlo en el detalle del cobro"
-                        }
-                        aria-label={
-                          concept.checked
-                            ? "Incluido en el detalle del cobro"
-                            : "No incluido en el detalle del cobro"
-                        }
-                      >
-                        <Icono src={circleInfoIcon} />
-                      </span>
-                    </div>
-                  ))}
-                </div>
-                <div className="pagos-agente__concept-actions">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setAdding("permanent");
-                      setFeedback("");
-                    }}
-                  >
-                    <Icono src={plusIconWhite} />
-                    Nuevo concepto
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setAdding("temporary");
-                      setFeedback("");
-                    }}
-                  >
-                    <Icono src={plusIconWhite} />
-                    Concepto temporal
-                  </button>
-                </div>
-                {adding && (
-                  <form className="pagos-agente__new-concept" onSubmit={submitConcept}>
-                    <label>
-                      <span>Concepto {adding === "temporary" ? "temporal" : "nuevo"}</span>
-                      <input
-                        autoFocus
-                        value={newConcept.label}
-                        onChange={(event) =>
-                          setNewConcept((current) => ({ ...current, label: event.target.value }))
-                        }
-                        placeholder="Nombre"
+                        aria-label="Importe del alquiler"
                       />
                     </label>
-                    <label>
-                      <span>Importe</span>
-                      <input
-                        inputMode="decimal"
-                        value={newConcept.amount}
-                        onChange={(event) =>
-                          setNewConcept((current) => ({ ...current, amount: event.target.value }))
-                        }
-                        placeholder="0,00"
-                      />
-                    </label>
-                    <div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setAdding("");
-                          setNewConcept({ label: "", amount: "" });
-                        }}
-                      >
-                        Cancelar
-                      </button>
-                      <button type="submit">Agregar</button>
-                    </div>
-                  </form>
-                )}
-              </div>
-              <aside className="pagos-agente__receipt" aria-label="Comprobante del inquilino">
-                <div className="pagos-agente__receipt-preview">
-                  <Icono src={imageIcon} />
-                </div>
-                <div className="pagos-agente__receipt-caption">
-                  <Icono src={fileLinesIcon} />
-                  <span>Comprobante del inquilino</span>
-                </div>
-              </aside>
-            </article>
-
-            <div className="pagos-agente__summary-column">
-              <aside className="pagos-agente__total" aria-label="Detalle del cobro">
-                <h2>Detalle del cobro</h2>
-                <div className="pagos-agente__total-lines">
-                  {selectedConcepts.length ? (
-                    selectedConcepts.map((concept) => (
-                      <div className="pagos-agente__total-line" key={concept.id}>
-                        <span>{concept.label}</span>
-                        <b>{formatCurrency(parseAmount(concept.amount))}</b>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="pagos-agente__total-empty">
-                      Seleccioná conceptos para ver el detalle.
-                    </p>
                   )}
                 </div>
-                <div className="pagos-agente__total-sum">
-                  <span>Total:</span>
-                  <b>{formatCurrency(total)}</b>
+                <div className="pagos-agente__decisions">
+                  {esLocatario && (
+                    <BotonDecision
+                      type="rejected"
+                      neutral={detalle.estado === "Aprobado"}
+                      active={detalle.estado === "Rechazado"}
+                      disabled={!detalle.puedeRechazar || guardando}
+                      onClick={() => setRechazando(true)}
+                    >
+                      Marcar como impagado
+                    </BotonDecision>
+                  )}
+                  <BotonDecision
+                    type="approved"
+                    active={["Aprobado", "Liquidado"].includes(detalle.estado)}
+                    disabled={!detalle.puedeAprobar || guardando}
+                    onClick={datos.aprobar}
+                  >
+                    Marcar como pagado
+                  </BotonDecision>
                 </div>
-              </aside>
-              <button
-                className="pagos-agente__send"
-                type="button"
-                onClick={() => setFeedback("El pago fue enviado al propietario.")}
-                disabled={total <= 0}
-              >
-                <Icono src={paperPlaneIcon} />
-                Enviar pago
-              </button>
-            </div>
-          </div>
+              </div>
+
+              {rechazando && (
+                <form className="pagos-agente__new-concept" onSubmit={submitRechazo}>
+                  <label>
+                    <span>Motivo</span>
+                    <input
+                      autoFocus
+                      value={motivo}
+                      onChange={(event) => setMotivo(event.target.value)}
+                      placeholder="Ej: el comprobante no corresponde"
+                    />
+                  </label>
+                  <div>
+                    <button type="button" onClick={() => setRechazando(false)}>
+                      Cancelar
+                    </button>
+                    <button type="submit" disabled={guardando}>
+                      Confirmar
+                    </button>
+                  </div>
+                </form>
+              )}
+
+              <div className="pagos-agente__record-grid">
+                <article className="pagos-agente__propiedad-card">
+                  <div className="pagos-agente__propiedad-main">
+                    <div className="pagos-agente__propiedad-copy">
+                      <h2>{contrato.propiedad}</h2>
+                      <p>Estado: {cargando ? "Cargando..." : detalle.estado}</p>
+                      <p>
+                        Vigencia: {formatDate(detalle.contrato.fechaInicio)} – {formatDate(detalle.contrato.fechaFin)}
+                      </p>
+                      <p>Monto acordado: {formatCurrency(detalle.contrato.montoAcordado, moneda)}</p>
+                    </div>
+                    <div className="pagos-agente__concepts" aria-label="Conceptos">
+                      {conceptos.map((linea) => {
+                        const id = `concepto-${linea.idConcepto}`;
+                        const tono = linea.tono ?? (linea.checked ? "green" : "muted");
+                        return (
+                          <div
+                            className={`pagos-agente__concept pagos-agente__concept--${tono}${linea.checked ? " is-selected" : ""}`}
+                            key={linea.idConcepto}
+                          >
+                            <input
+                              id={id}
+                              type="checkbox"
+                              checked={linea.checked}
+                              disabled={bloqueado}
+                              onChange={(event) =>
+                                datos.actualizarLinea(linea.idConcepto, { checked: event.target.checked })
+                              }
+                            />
+                            <label htmlFor={id}>{linea.nombre}</label>
+                            <input
+                              className="pagos-agente__amount"
+                              type="text"
+                              inputMode="decimal"
+                              value={linea.monto}
+                              disabled={bloqueado}
+                              onChange={(event) =>
+                                datos.actualizarLinea(linea.idConcepto, { monto: soloNumeros(event.target.value) })
+                              }
+                              aria-label={`Importe de ${linea.nombre}`}
+                            />
+                            <span
+                              className="pagos-agente__info"
+                              title={linea.checked ? "Incluido en el detalle" : "Marcá el concepto para incluirlo en el detalle"}
+                              aria-label={linea.checked ? "Incluido en el detalle" : "No incluido en el detalle"}
+                            >
+                              <Icono src={circleInfoIcon} />
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <div className="pagos-agente__concept-actions">
+                      <button type="button" disabled={bloqueado} onClick={() => openConceptForm("permanent")}>
+                        <Icono src={plusIconWhite} />
+                        Nuevo concepto
+                      </button>
+                      <button type="button" disabled={bloqueado} onClick={() => openConceptForm("temporary")}>
+                        <Icono src={plusIconWhite} />
+                        Concepto temporal
+                      </button>
+                    </div>
+                    {adding && !bloqueado && (
+                      <form className="pagos-agente__new-concept" onSubmit={submitConcept}>
+                        <label>
+                          <span>Concepto {adding === "temporary" ? "temporal" : "nuevo"}</span>
+                          <input
+                            autoFocus
+                            value={newConcept.label}
+                            onChange={(event) => setNewConcept((actual) => ({ ...actual, label: event.target.value }))}
+                            placeholder="Nombre"
+                          />
+                        </label>
+                        <label>
+                          <span>Importe</span>
+                          <input
+                            inputMode="decimal"
+                            value={newConcept.amount}
+                            onChange={(event) =>
+                              setNewConcept((actual) => ({ ...actual, amount: soloNumeros(event.target.value) }))
+                            }
+                            placeholder="0,00"
+                          />
+                        </label>
+                        <div>
+                          <button type="button" onClick={closeConceptForm}>
+                            Cancelar
+                          </button>
+                          <button type="submit">Agregar</button>
+                        </div>
+                      </form>
+                    )}
+                  </div>
+                  <aside
+                    className={`pagos-agente__receipt${detalle.comprobante ? " has-receipt" : ""}`}
+                    aria-label={esLocatario ? "Comprobante del inquilino" : "Comprobante de la liquidación"}
+                  >
+                    <button
+                      className="pagos-agente__receipt-preview"
+                      type="button"
+                      disabled={!detalle.comprobante}
+                      onClick={datos.descargarComprobante}
+                      aria-label="Descargar comprobante"
+                    >
+                      <Icono src={detalle.comprobante ? fileLinesIcon : imageIcon} />
+                    </button>
+                    <div className="pagos-agente__receipt-caption">
+                      <Icono src={fileLinesIcon} />
+                      <span>
+                        {esLocatario ? "Comprobante del inquilino" : "Comprobante de la liquidación"}
+                        {detalle.comprobante && <small>{formatDateTime(detalle.comprobante.fecha)}</small>}
+                      </span>
+                    </div>
+                  </aside>
+                </article>
+
+                <div className="pagos-agente__summary-column">
+                  <aside className="pagos-agente__total" aria-label="Detalle">
+                    <h2>{esLocatario ? "Detalle del cobro" : "Detalle de la liquidación"}</h2>
+                    <div className="pagos-agente__total-lines">
+                      {incluidas.map((linea) => (
+                        <div className="pagos-agente__total-line" key={linea.idConcepto}>
+                          <span>{linea.nombre}</span>
+                          <b>{formatCurrency(parseAmount(linea.monto), moneda)}</b>
+                        </div>
+                      ))}
+                      {liquidacion && (
+                        <>
+                          <label className="pagos-agente__total-line pagos-agente__commission">
+                            <span>Comisión (%)</span>
+                            <input
+                              type="text"
+                              inputMode="decimal"
+                              value={detalle.porcentaje}
+                              disabled={bloqueado}
+                              placeholder={detalle.registro ? "Fija" : "0"}
+                              onChange={(event) => datos.cambiarComision(soloNumeros(event.target.value).replace("-", ""))}
+                              aria-label="Porcentaje de comisión"
+                            />
+                          </label>
+                          <div className="pagos-agente__total-line">
+                            <span>Comisión inmobiliaria</span>
+                            <b>-{formatCurrency(liquidacion.comision, moneda)}</b>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                    <div className="pagos-agente__total-sum">
+                      <span>{liquidacion ? "Total neto:" : "Total:"}</span>
+                      <b>{formatCurrency(total, moneda)}</b>
+                    </div>
+                  </aside>
+                  <button
+                    className="pagos-agente__send"
+                    type="button"
+                    onClick={datos.enviar}
+                    disabled={bloqueado || !incluidas.length}
+                  >
+                    <Icono src={paperPlaneIcon} />
+                    {detalle.registro ? "Guardar cambios" : esLocatario ? "Enviar pago" : "Enviar liquidación"}
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
           <p className="pagos-agente__feedback" role="status" aria-live="polite">
-            {feedback}
+            {detalle && feedback}
           </p>
         </section>
       </div>

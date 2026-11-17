@@ -1,108 +1,76 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   buildingColumnsIcon,
   calendarIcon,
   checkIcon,
   downloadIcon,
   fileLinesIcon,
-  magnifyingGlassIcon,
   optionsIcon,
   paperPlaneIcon,
   xIcon,
 } from "../../assets/icons";
-import paymentReference from "../../assets/pagos.png";
 import { Boton } from "../../components";
 import SelectDesplegable from "../../components/select/SelectDesplegable";
+import useHistorialPeriodos, {
+  formatearFecha,
+  formatearFechaHora,
+  formatearMonto,
+  nombreMes,
+  nombrePeriodo,
+} from "../../hooks/useHistorialPeriodos";
+import { api } from "../../services/api";
 import "./PagosReferencia.css";
 import "./PagosMovil.css";
 
-const months = [
-  ["Mayo", "Sin comprobante", "neutral"],
-  ["Marzo", "Impago", "danger"],
-  ["Abril", "Aprobado", "success"],
-  ["Febrero", "En proceso", "info"],
-  ["Enero", "Rechazado", "danger"],
-];
-const properties = ["Bielke 454", "Casa de San Isidro", "Belgrano 123"];
-const details = {
-  Mayo: [
-    "Mayo 2023",
-    "Sin comprobante",
-    "—",
-    "—",
-    "600.000,10",
-    "Subí el comprobante de pago para que podamos revisarlo.",
-    "Sin comprobante cargado",
-  ],
-  Marzo: [
-    "Marzo 2023",
-    "Impago",
-    "—",
-    "—",
-    "600.000,10",
-    "Todavía no registramos un pago para este período.",
-    "Sin comprobante cargado",
-  ],
-  Abril: [
-    "Abril 2023",
-    "Aprobado",
-    "06/04/2023",
-    "07/04/2023",
-    "600.000,10",
-    "Pago aprobado correctamente. No se requieren acciones adicionales",
-    "06/04/2023 · 14:32 hs",
-  ],
-  Febrero: [
-    "Febrero 2023",
-    "Aprobado",
-    "06/02/2023",
-    "07/02/2023",
-    "600.000,10",
-    "Pago aprobado correctamente. No se requieren acciones adicionales",
-    "06/02/2023 · 14:32 hs",
-  ],
-  Enero: [
-    "Enero 2023",
-    "Rechazado",
-    "06/01/2023",
-    "—",
-    "600.000,10",
-    "El comprobante fue rechazado. Revisá los datos y volvé a enviarlo.",
-    "06/01/2023 · 14:32 hs",
-  ],
+const ESTADOS = {
+  Pendiente: {
+    texto: "Pendiente",
+    tono: "neutral",
+    nota: "Subí el comprobante de pago y envialo para que podamos revisarlo.",
+  },
+  "En revision": { texto: "En revisión", tono: "info", nota: "Estamos revisando tu comprobante." },
+  Aprobado: {
+    texto: "Aprobado",
+    tono: "success",
+    nota: "Pago aprobado correctamente. No se requieren acciones adicionales",
+  },
+  Rechazado: {
+    texto: "Rechazado",
+    tono: "danger",
+    nota: "El comprobante fue rechazado. Revisá los datos y volvé a enviarlo.",
+  },
+  Anulado: { texto: "Anulado", tono: "neutral", nota: "Este pago fue anulado." },
 };
+const TONO_DETALLE = { success: "approved", danger: "rejected" };
+const PUEDE_ENVIAR = ["Pendiente", "Rechazado"];
 
 function Icono({ src }) {
   return <img className="vista-pago__icon" src={src} alt="" aria-hidden="true" />;
 }
 
+function estadoDe(pago) {
+  return ESTADOS[pago?.estado] ?? { texto: pago?.estado ?? "—", tono: "neutral", nota: "" };
+}
+
 export default function PagosReferencia() {
-  const [openYears, setOpenYears] = useState({ 2024: true });
-  const [selectedMonth, setSelectedMonth] = useState("Febrero");
-  const [property, setProperty] = useState(properties[0]);
+  const historial = useHistorialPeriodos(api.pagos, api.pago);
+  const { items, contratos, contrato, delContrato, anios, detalle: pago } = historial;
+  const [openYears, setOpenYears] = useState({});
   const [uploadedFile, setUploadedFile] = useState(null);
   const [feedback, setFeedback] = useState("");
+  const [enviando, setEnviando] = useState(false);
   const [timelineOpen, setTimelineOpen] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [receiptOpen, setReceiptOpen] = useState(false);
-  const [title, status, paid, approved, amount, note, receiptDate] = useMemo(
-    () => details[selectedMonth],
-    [selectedMonth],
-  );
-  const hasReceipt = status !== "Sin comprobante" && status !== "Impago";
-  const tone = status === "Aprobado" ? "approved" : status === "Rechazado" ? "rejected" : "info";
 
-  function toggleYear(year) {
-    setOpenYears((current) => ({ ...current, [year]: !current[year] }));
-  }
-  function changeProperty(direction) {
-    setProperty(
-      (current) =>
-        properties[
-          (properties.indexOf(current) + direction + properties.length) % properties.length
-        ],
-    );
-  }
+  const estado = estadoDe(pago);
+  const comprobante = pago?.comprobantes?.[0] ?? null;
+  const hasReceipt = Boolean(comprobante) || Boolean(pago?.tieneComprobante);
+  const puedeEnviar = PUEDE_ENVIAR.includes(pago?.estado) && !historial.cargandoDetalle;
+  const motivo = pago?.estado === "Rechazado" && comprobante?.motivoRechazo ? ` Motivo: ${comprobante.motivoRechazo}` : "";
+  const nota = [estado.nota + motivo, pago?.detalle].filter(Boolean).join(" ");
+  const contar = (condicion) => `${delContrato.filter(condicion).length}/${delContrato.length}`;
+
   useEffect(() => {
     if (!timelineOpen && !summaryOpen && !receiptOpen) return undefined;
     function closeOnEscape(event) {
@@ -116,12 +84,31 @@ export default function PagosReferencia() {
     return () => document.removeEventListener("keydown", closeOnEscape);
   }, [timelineOpen, summaryOpen, receiptOpen]);
 
-  function chooseMonth(month) {
-    setSelectedMonth(month);
+  function limpiar() {
     setUploadedFile(null);
     setFeedback("");
+  }
+
+  function toggleYear(anio, abierto) {
+    setOpenYears((current) => ({ ...current, [anio]: !abierto }));
+  }
+
+  function chooseProperty(propiedad) {
+    historial.elegirContrato(contratos.find((item) => item.propiedad === propiedad).idContrato);
+    limpiar();
+  }
+
+  function changeProperty(direction) {
+    historial.moverContrato(direction);
+    limpiar();
+  }
+
+  function choosePeriod(id) {
+    historial.elegir(id);
+    limpiar();
     setTimelineOpen(false);
   }
+
   function upload(event) {
     const [file] = event.target.files ?? [];
     if (!file) return;
@@ -130,15 +117,51 @@ export default function PagosReferencia() {
     event.target.value = "";
   }
 
+  async function sendForReview() {
+    if (!uploadedFile && comprobante?.estado !== "PENDIENTE") {
+      setFeedback("Subí el comprobante antes de enviarlo.");
+      return;
+    }
+    setEnviando(true);
+    setFeedback("");
+    try {
+      if (uploadedFile) await api.subirComprobantePago(pago.id, uploadedFile);
+      await api.marcarPagoPagado(pago.id);
+      setUploadedFile(null);
+      setFeedback("Solicitud de revisión enviada");
+      historial.recargar();
+    } catch (error) {
+      setFeedback(error.message);
+    } finally {
+      setEnviando(false);
+    }
+  }
+
+  function downloadReceipt() {
+    api.descargarComprobantePago(pago.id, comprobante?.nombreArchivo).catch((error) => setFeedback(error.message));
+  }
+
+  if (!items || !items.length || !pago) {
+    return (
+      <main id="vista-pago">
+        <p className="vista-pago__feedback pagos__feedback" role="status">
+          {items?.length === 0 ? historial.error || "Todavía no tenés pagos registrados." : "Cargando pagos..."}
+        </p>
+      </main>
+    );
+  }
+
+  const propertyOptions = contratos.map((item) => item.propiedad);
+
   return (
     <main id="vista-pago">
       <div className="pago-movil__toolbar">
         <SelectDesplegable
           label="Propiedad"
-          placeholder={property}
-          value={property}
-          options={properties}
-          onChange={setProperty}
+          placeholder={contrato?.propiedad}
+          value={contrato?.propiedad}
+          options={propertyOptions}
+          onChange={chooseProperty}
           icon={buildingColumnsIcon}
           className="vista-pago__mobile-propiedad-select"
           triggerClassName="vista-pago__mobile-propiedad-trigger"
@@ -198,10 +221,10 @@ export default function PagosReferencia() {
           </button>
           <SelectDesplegable
             label="Seleccionar propiedad"
-            placeholder={property}
-            value={property}
-            options={properties}
-            onChange={setProperty}
+            placeholder={contrato?.propiedad}
+            value={contrato?.propiedad}
+            options={propertyOptions}
+            onChange={chooseProperty}
             className="vista-pago__propiedad-select"
             triggerClassName="vista-pago__propiedad-trigger"
             valueClassName="vista-pago__propiedad-value"
@@ -213,49 +236,42 @@ export default function PagosReferencia() {
           </button>
         </div>
         <div className="vista-pago__years pagos__years">
-          {["2026", "2025"].map((year) => (
-            <section className="vista-pago__year pagos__year" key={year}>
-              <button
-                className="vista-pago__year-button"
-                type="button"
-                onClick={() => toggleYear(year)}
-                aria-expanded={Boolean(openYears[year])}
-              >
-                <strong>{year}</strong>
-                <span className={`vista-pago__chevron${openYears[year] ? " is-open" : ""}`} />
-              </button>
-              {openYears[year] && <p>No hay períodos disponibles</p>}
-            </section>
-          ))}
-          <section className="vista-pago__year pagos__year">
-            <button
-              className="vista-pago__year-button"
-              type="button"
-              onClick={() => toggleYear("2024")}
-              aria-expanded={Boolean(openYears[2024])}
-            >
-              <strong>2024</strong>
-              <span className={`vista-pago__chevron${openYears[2024] ? " is-open" : ""}`} />
-            </button>
-            {openYears[2024] && (
-              <div className="vista-pago__months">
-                {months.map(([month, monthStatus, monthTone]) => (
-                  <button
-                    key={month}
-                    className={`vista-pago__month vista-pago__month--${monthTone} pagos__month${month === selectedMonth ? " is-selected" : ""}`}
-                    type="button"
-                    onClick={() => chooseMonth(month)}
-                    aria-pressed={month === selectedMonth}
-                  >
-                    <strong>{month}</strong>
-                    <span className={`vista-pago__status vista-pago__status--${monthTone}`}>
-                      {monthStatus}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </section>
+          {anios.map(({ anio, periodos }, index) => {
+            const abierto = openYears[anio] ?? index === 0;
+            return (
+              <section className="vista-pago__year pagos__year" key={anio}>
+                <button
+                  className="vista-pago__year-button"
+                  type="button"
+                  onClick={() => toggleYear(anio, abierto)}
+                  aria-expanded={abierto}
+                >
+                  <strong>{anio}</strong>
+                  <span className={`vista-pago__chevron${abierto ? " is-open" : ""}`} />
+                </button>
+                {abierto && (
+                  <div className="vista-pago__months">
+                    {periodos.map((item) => {
+                      const { texto, tono } = estadoDe(item);
+                      const elegido = item.id === pago?.id;
+                      return (
+                        <button
+                          key={item.id}
+                          className={`vista-pago__month vista-pago__month--${tono} pagos__month${elegido ? " is-selected" : ""}`}
+                          type="button"
+                          onClick={() => choosePeriod(item.id)}
+                          aria-pressed={elegido}
+                        >
+                          <strong>{nombreMes(item.periodo)}</strong>
+                          <span className={`vista-pago__status vista-pago__status--${tono}`}>{texto}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </section>
+            );
+          })}
         </div>
       </aside>
       <section className="vista-pago__workspace pagos__workspace">
@@ -269,35 +285,31 @@ export default function PagosReferencia() {
               <Icono src={fileLinesIcon} />
             </span>
             <strong>Comprobantes enviados</strong>
-            <b>5/9</b>
+            <b>{contar((item) => item.tieneComprobante)}</b>
           </article>
           <article>
             <span className="vista-pago__metric vista-pago__metric--green">
               <Icono src={checkIcon} />
             </span>
             <strong>Pagos aprobados</strong>
-            <b>5/9</b>
+            <b>{contar((item) => item.estado === "Aprobado")}</b>
           </article>
           <article>
             <span className="vista-pago__metric vista-pago__metric--red">
               <Icono src={xIcon} />
             </span>
             <strong>Pagos rechazados</strong>
-            <b>5/9</b>
+            <b>{contar((item) => item.estado === "Rechazado")}</b>
           </article>
         </section>
         <div className="vista-pago__content pagos__content">
           <article className="vista-pago__receipt-column pagos__receipt-column">
-            <button
-              className="pago-movil__open-receipt"
-              type="button"
-              onClick={() => setReceiptOpen(true)}
-            >
+            <button className="pago-movil__open-receipt" type="button" onClick={() => setReceiptOpen(true)}>
               <Icono src={fileLinesIcon} />
               {hasReceipt ? "Abrir comprobante" : "Ver comprobante"}
             </button>
             <div
-              className={`vista-pago__receipt-frame pagos__receipt-frame${hasReceipt ? "" : " is-empty"}${receiptOpen ? " is-open" : ""}`}
+              className={`vista-pago__receipt-frame pagos__receipt-frame is-empty${receiptOpen ? " is-open" : ""}`}
             >
               {receiptOpen && (
                 <button
@@ -309,88 +321,71 @@ export default function PagosReferencia() {
                   ×
                 </button>
               )}
-              {hasReceipt ? (
-                <div
-                  className="vista-pago__receipt"
-                  style={{ "--payment-reference": `url(${paymentReference})` }}
-                  role="img"
-                  aria-label="Comprobante de transferencia BBVA"
-                >
-                  <button type="button" aria-label="Ampliar comprobante">
-                    <Icono src={magnifyingGlassIcon} />
-                    <span>+</span>
-                  </button>
-                </div>
-              ) : (
-                <div className="vista-pago__empty-receipt">
-                  <Icono src={fileLinesIcon} />
-                  Sin comprobante
-                </div>
-              )}
+              <div className="vista-pago__empty-receipt">
+                <Icono src={fileLinesIcon} />
+                {comprobante ? comprobante.nombreArchivo : hasReceipt ? "Comprobante cargado" : "Sin comprobante"}
+              </div>
             </div>
-            <div
-              className={`vista-pago__uploaded pagos__uploaded${hasReceipt ? " is-approved" : ""}`}
-            >
+            <div className={`vista-pago__uploaded pagos__uploaded${hasReceipt ? " is-approved" : ""}`}>
               <Icono src={fileLinesIcon} />
               <span>
                 <strong>
-                  {uploadedFile
-                    ? "Comprobante listo para enviar"
-                    : hasReceipt
-                      ? "Comprobante cargado"
-                      : "Cargar comprobante"}
+                  {uploadedFile ? "Comprobante listo para enviar" : hasReceipt ? "Comprobante cargado" : "Cargar comprobante"}
                 </strong>
-                <small>{uploadedFile ? uploadedFile.name : receiptDate}</small>
+                <small>
+                  {uploadedFile
+                    ? uploadedFile.name
+                    : comprobante
+                      ? formatearFechaHora(comprobante.fechaCarga)
+                      : "Sin comprobante cargado"}
+                </small>
               </span>
             </div>
           </article>
-          <section
-            className="vista-pago__detail pagos__detail"
-            aria-labelledby="vista-pago-title"
-          >
+          <section className="vista-pago__detail pagos__detail" aria-labelledby="vista-pago-title">
             <header className="pagos__detail-heading">
-              <h1 id="vista-pago-title">{title}</h1>
+              <h1 id="vista-pago-title">{nombrePeriodo(pago.periodo)}</h1>
               <span
-                className={`vista-pago__status pagos__status vista-pago__status--${tone}`}
+                className={`vista-pago__status pagos__status vista-pago__status--${TONO_DETALLE[estado.tono] ?? "info"}`}
               >
-                {status === "Aprobado" && <Icono src={checkIcon} />}
-                {status}
+                {pago.estado === "Aprobado" && <Icono src={checkIcon} />}
+                {estado.texto}
               </span>
             </header>
             <dl className="pagos__facts">
               <div>
                 <Icono src={calendarIcon} />
                 <dt>Fecha de pago:</dt>
-                <dd>{paid}</dd>
+                <dd>{formatearFecha(pago.fechaPago)}</dd>
               </div>
               <div>
                 <Icono src={calendarIcon} />
                 <dt>Fecha de aprobación:</dt>
-                <dd>{approved}</dd>
+                <dd>{pago.estado === "Aprobado" ? formatearFecha(comprobante?.fechaRevision ?? pago.fechaPago) : "—"}</dd>
               </div>
               <div>
                 <span className="vista-pago__coin">$</span>
-                <dt>Monto abonado:</dt>
-                <dd>{amount}</dd>
+                <dt>Monto a abonar:</dt>
+                <dd>{formatearMonto(pago.monto)}</dd>
               </div>
               <div className="vista-pago__mobile-only pagos__facts-total">
                 <span className="vista-pago__coin">$</span>
                 <dt>Monto total:</dt>
-                <dd>{amount}</dd>
+                <dd>{formatearMonto(pago.monto)}</dd>
               </div>
             </dl>
-            <section
-              className="vista-pago__mobile-only pagos__breakdown"
-              aria-label="Detalle del pago"
-            >
+            <section className="vista-pago__mobile-only pagos__breakdown" aria-label="Detalle del pago">
               <h3>Detalle del pago</h3>
-              <div>
-                <span>Pago del período:</span>
-                <b>{amount}</b>
-              </div>
-              <p className="vista-pago__breakdown-note">
-                No hay un desglose por concepto disponible para este período.
-              </p>
+              {pago.conceptos?.length ? (
+                pago.conceptos.map((linea) => (
+                  <div key={linea.idConcepto}>
+                    <span>{linea.nombre}:</span>
+                    <b>{formatearMonto(linea.monto)}</b>
+                  </div>
+                ))
+              ) : (
+                <p className="vista-pago__breakdown-note">No hay un desglose por concepto disponible para este período.</p>
+              )}
             </section>
             <aside className="pagos__admin-note">
               <span>
@@ -398,27 +393,35 @@ export default function PagosReferencia() {
               </span>
               <div>
                 <strong>Observaciones de administración</strong>
-                <p>{note}</p>
+                <p>{nota}</p>
               </div>
             </aside>
             <div className="vista-pago__actions pagos__actions">
-              <label className="pagos__button">
-                <Icono src={downloadIcon} />
-                <span>{uploadedFile ? "Cambiar comprobante" : "Subir comprobante"}</span>
-                <input type="file" accept="image/*,.pdf" onChange={upload} />
-              </label>
+              {puedeEnviar ? (
+                <label className="pagos__button">
+                  <Icono src={downloadIcon} />
+                  <span>{uploadedFile ? "Cambiar comprobante" : "Subir comprobante"}</span>
+                  <input type="file" accept="image/*,.pdf" onChange={upload} />
+                </label>
+              ) : (
+                <Boton className="pagos__button" onClick={downloadReceipt} disabled={!hasReceipt}>
+                  <Icono src={downloadIcon} />
+                  <span>Descargar comprobante</span>
+                </Boton>
+              )}
               <Boton
                 className="pagos__button"
                 icon={paperPlaneIcon}
-                text={feedback ? "Enviado para revisión" : "Enviar para revisión"}
-                onClick={() => setFeedback("Solicitud de revisión enviada")}
+                text={pago.estado === "En revision" ? "Enviado para revisión" : "Enviar para revisión"}
+                onClick={sendForReview}
+                disabled={!puedeEnviar || enviando}
               />
             </div>
             <p className="vista-pago__note pagos__disclaimer">
               Nota: Cuando un comprobante es aprobado, ya no puede modificarse.
             </p>
             <p className="vista-pago__feedback pagos__feedback" aria-live="polite">
-              {feedback}
+              {feedback || historial.error}
             </p>
           </section>
         </div>
