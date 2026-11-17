@@ -23,6 +23,24 @@ export function estaIncluida(linea) {
   return linea.nombre === CONCEPTO_ALQUILER ? parseAmount(linea.monto) > 0 : linea.checked;
 }
 
+const redondear = (valor) => Math.round(valor * 100) / 100;
+
+export function calcularLiquidacion(detalle) {
+  const montos = detalle.lineas.filter(estaIncluida).map((linea) => parseAmount(linea.monto));
+  const bruto = redondear(montos.filter((monto) => monto > 0).reduce((suma, monto) => suma + monto, 0));
+  const descuentos = redondear(Math.abs(montos.filter((monto) => monto < 0).reduce((suma, monto) => suma + monto, 0)));
+  const comision = detalle.porcentaje !== ""
+    ? redondear((bruto * parseAmount(detalle.porcentaje)) / 100)
+    : detalle.registro?.comision ?? 0;
+  return { bruto, descuentos, comision, neto: redondear(bruto - comision - descuentos) };
+}
+
+function comisionDelCuerpo(detalle) {
+  if (detalle.porcentaje !== "") return { porcentajeComision: parseAmount(detalle.porcentaje) };
+  if (detalle.registro) return { comision: detalle.registro.comision };
+  return {};
+}
+
 function aPersonas(lista, tipo) {
   return lista.map((persona) => ({
     id: `${tipo}-${persona.idPersona}`,
@@ -79,6 +97,7 @@ async function detalleDeCobro(persona, contrato, periodo) {
     editable: cobro ? cobro.estado === "Pendiente" : pagoAprobado,
     puedeAprobar: cobro?.estado === "Pendiente",
     puedeRechazar: false,
+    porcentaje: cobro?.porcentajeComision != null ? String(cobro.porcentajeComision) : "",
     comprobante: cobro?.nombreArchivo ? { nombre: cobro.nombreArchivo, fecha: cobro.fechaComprobante } : null,
     lineas: armarLineas(
       conceptos,
@@ -183,6 +202,10 @@ export default function usePagosYCobros() {
     }
   }
 
+  function cambiarComision(porcentaje) {
+    setEstado((actual) => ({ ...actual, detalle: { ...actual.detalle, porcentaje } }));
+  }
+
   function enviar() {
     const conceptos = detalle.lineas
       .filter(estaIncluida)
@@ -195,6 +218,7 @@ export default function usePagosYCobros() {
           registro
             ? api.modificarPago(registro.id, {
                 fechaVencimiento: new Date(registro.fechaVencimiento).toLocaleDateString("en-CA"),
+                detalle: registro.detalle,
                 conceptos,
               })
             : api.crearPago({ idContrato: contrato.idContrato, periodo, conceptos }),
@@ -202,11 +226,18 @@ export default function usePagosYCobros() {
       );
     }
 
+    const porcentaje = parseAmount(detalle.porcentaje);
+    if (detalle.porcentaje !== "" && (porcentaje < 0 || porcentaje > 100)) {
+      setFeedback("La comisión tiene que estar entre 0 y 100 %.");
+      return Promise.resolve(false);
+    }
+
+    const comision = comisionDelCuerpo(detalle);
     return ejecutar(
       () =>
         registro
-          ? api.modificarCobro(registro.id, { conceptos })
-          : api.crearCobro({ idPago: detalle.pago.id, idPropietario: persona.idPropietario, conceptos }),
+          ? api.modificarCobro(registro.id, { conceptos, detalle: registro.detalle, ...comision })
+          : api.crearCobro({ idPago: detalle.pago.id, idPropietario: persona.idPropietario, conceptos, ...comision }),
       registro ? "Se guardaron los cambios de la liquidación." : `La liquidación fue enviada a ${persona.nombre}.`,
     );
   }
@@ -271,6 +302,7 @@ export default function usePagosYCobros() {
     elegir,
     cambiarPeriodo,
     actualizarLinea,
+    cambiarComision,
     enviar,
     aprobar,
     rechazar,

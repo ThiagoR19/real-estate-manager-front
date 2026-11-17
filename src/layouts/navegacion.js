@@ -66,7 +66,7 @@ const rolesNavegacion = {
   "/dashboard-agente": [3],
   "/dashboard-propietario": [4],
   "/mis-propiedades": [4],
-  "/cobros": [1, 4],
+  "/cobros": [4],
   "/pagos-cobros": [2, 3],
   "/indec": [2, 3],
   "/super-admin": [1],
@@ -77,16 +77,23 @@ const rolesNavegacion = {
   "/chat": [2, 3, 4, 5],
   "/propiedades": [2, 3],
   "/reportes-agente": [2, 3, 4, 5],
-  "/pagos": [2, 3, 5],
+  "/pagos": [5],
   "/agentes": [2],
   "/inmobiliaria": [2],
   "/perfil": [1, 2, 3, 4, 5],
   "/terminos": [1, 2, 3, 4, 5],
 };
 
+const RUTAS_CON_ROL_FIJO = ["/pagos", "/cobros", "/pagos-cobros"];
+
+export function puedeEntrar(rol, ruta) {
+  return rolesNavegacion[ruta]?.includes(Number(rol)) ?? false;
+}
+
 export function elementosNavegacionPorRol(rol) {
   const idRol = Number(rol);
-  const puedeVer = ({ href }) => idRol === 1 || rolesNavegacion[href]?.includes(idRol);
+  const puedeVer = ({ href }) =>
+    (idRol === 1 && !RUTAS_CON_ROL_FIJO.includes(href)) || rolesNavegacion[href]?.includes(idRol);
   return {
     principales: elementosPrincipales.filter(puedeVer),
     secundarios: elementosSecundarios.filter(puedeVer),

@@ -11,7 +11,12 @@ import {
 } from "../../assets/icons";
 import { PanelDeslizable } from "../../components";
 import useConsultaMedia from "../../hooks/useConsultaMedia";
-import usePagosYCobros, { CONCEPTO_ALQUILER, estaIncluida, parseAmount } from "../../hooks/usePagosYCobros";
+import usePagosYCobros, {
+  CONCEPTO_ALQUILER,
+  calcularLiquidacion,
+  estaIncluida,
+  parseAmount,
+} from "../../hooks/usePagosYCobros";
 import "./PagosYCobros.css";
 
 const GRUPOS = [
@@ -192,7 +197,8 @@ export default function PagosYCobros() {
   const alquiler = detalle?.lineas.find((linea) => linea.nombre === CONCEPTO_ALQUILER);
   const conceptos = detalle?.lineas.filter((linea) => linea.nombre !== CONCEPTO_ALQUILER) ?? [];
   const incluidas = detalle?.lineas.filter(estaIncluida) ?? [];
-  const total = incluidas.reduce((suma, linea) => suma + parseAmount(linea.monto), 0);
+  const liquidacion = detalle && !esLocatario ? calcularLiquidacion(detalle) : null;
+  const total = liquidacion?.neto ?? incluidas.reduce((suma, linea) => suma + parseAmount(linea.monto), 0);
 
   function choose(item, nuevoContrato) {
     datos.elegir(item, nuevoContrato);
@@ -276,7 +282,7 @@ export default function PagosYCobros() {
         <section className="pagos-agente__workspace" aria-label="Pago seleccionado" aria-busy={cargando}>
           {!persona || !detalle ? (
             <p className="pagos-agente__feedback" role="status">
-              {personas && !persona ? "No hay contratos de alquiler vigentes." : feedback || "Cargando..."}
+              {personas && !persona ? feedback || "No hay contratos de alquiler vigentes." : feedback || "Cargando..."}
             </p>
           ) : (
             <>
@@ -499,9 +505,29 @@ export default function PagosYCobros() {
                           <b>{formatCurrency(parseAmount(linea.monto), moneda)}</b>
                         </div>
                       ))}
+                      {liquidacion && (
+                        <>
+                          <label className="pagos-agente__total-line pagos-agente__commission">
+                            <span>Comisión (%)</span>
+                            <input
+                              type="text"
+                              inputMode="decimal"
+                              value={detalle.porcentaje}
+                              disabled={bloqueado}
+                              placeholder={detalle.registro ? "Fija" : "0"}
+                              onChange={(event) => datos.cambiarComision(soloNumeros(event.target.value).replace("-", ""))}
+                              aria-label="Porcentaje de comisión"
+                            />
+                          </label>
+                          <div className="pagos-agente__total-line">
+                            <span>Comisión inmobiliaria</span>
+                            <b>-{formatCurrency(liquidacion.comision, moneda)}</b>
+                          </div>
+                        </>
+                      )}
                     </div>
                     <div className="pagos-agente__total-sum">
-                      <span>Total:</span>
+                      <span>{liquidacion ? "Total neto:" : "Total:"}</span>
                       <b>{formatCurrency(total, moneda)}</b>
                     </div>
                   </aside>

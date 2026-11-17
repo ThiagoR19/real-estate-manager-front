@@ -23,17 +23,18 @@ export function nombrePeriodo(periodo) {
   return `${nombreMes(periodo)} ${periodo.slice(0, 4)}`;
 }
 
+const ZONA = "America/Argentina/Buenos_Aires";
+
 export function formatearFecha(valor) {
   if (!valor) return "—";
   if (/^\d{4}-\d{2}-\d{2}$/.test(valor)) return valor.split("-").reverse().join("/");
-  return new Date(valor).toLocaleDateString("es-AR", { timeZone: "America/Argentina/Buenos_Aires" });
+  return new Date(valor).toLocaleDateString("es-AR", { timeZone: ZONA, day: "2-digit", month: "2-digit", year: "numeric" });
 }
 
 export function formatearFechaHora(valor) {
   if (!valor) return "—";
-  const fecha = new Date(valor);
-  const opciones = { timeZone: "America/Argentina/Buenos_Aires" };
-  return `${fecha.toLocaleDateString("es-AR", opciones)} · ${fecha.toLocaleTimeString("es-AR", { ...opciones, hour: "2-digit", minute: "2-digit" })} hs`;
+  const hora = new Date(valor).toLocaleTimeString("es-AR", { timeZone: ZONA, hour: "2-digit", minute: "2-digit", hour12: false });
+  return `${formatearFecha(valor)} · ${hora} hs`;
 }
 
 export function formatearMonto(valor) {
@@ -55,6 +56,7 @@ export default function useHistorialPeriodos(listar, consultar) {
       .then((lista) => {
         if (!activo) return;
         setItems(lista);
+        setError("");
         setIdContrato((actual) => actual ?? lista[0]?.idContrato ?? null);
         setIdSeleccionado((actual) => actual ?? lista[0]?.id ?? null);
       })
@@ -74,7 +76,11 @@ export default function useHistorialPeriodos(listar, consultar) {
     if (!clave) return undefined;
     let activo = true;
     consultar(idSeleccionado)
-      .then((detalle) => activo && setEstado({ clave, detalle }))
+      .then((detalle) => {
+        if (!activo) return;
+        setEstado({ clave, detalle });
+        setError("");
+      })
       .catch((causa) => {
         if (!activo) return;
         setEstado({ clave, detalle: null });
@@ -100,7 +106,13 @@ export default function useHistorialPeriodos(listar, consultar) {
   const seleccionado = (items ?? []).find((item) => item.id === idSeleccionado) ?? null;
   const detalle = estado.clave === clave && estado.detalle ? estado.detalle : seleccionado;
 
+  function elegir(id) {
+    setIdSeleccionado(id);
+    setError("");
+  }
+
   function elegirContrato(nuevoId) {
+    setError("");
     setIdContrato(nuevoId);
     setIdSeleccionado(items.find((item) => item.idContrato === nuevoId)?.id ?? null);
   }
@@ -123,7 +135,7 @@ export default function useHistorialPeriodos(listar, consultar) {
     cargandoDetalle: Boolean(clave) && estado.clave !== clave,
     elegirContrato,
     moverContrato,
-    elegir: setIdSeleccionado,
+    elegir,
     recargar: () => setRecargas((cantidad) => cantidad + 1),
   };
 }

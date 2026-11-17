@@ -716,6 +716,16 @@ button.pagos-agente__receipt-preview:not(:disabled) {
   font-size: 12px;
 }
 
+.pagos-agente__commission input {
+  width: 72px;
+  padding: 4px 8px;
+  border: 1px solid #d9dee7;
+  border-radius: 6px;
+  color: inherit;
+  font: inherit;
+  text-align: right;
+}
+
 .pagos-agente__total-line span {
   overflow: hidden;
   text-overflow: ellipsis;

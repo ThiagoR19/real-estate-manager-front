@@ -4,7 +4,7 @@ import { Redirect, Route, Switch, useLocation } from "wouter";
 import { SobreNosotros, Inmobiliaria, Agentes, DashboardAgente, Chat, Cobros, ConfirmarRegistro, Dashboard, DashboardPropietario, Indec, Login, MisPropiedades, Propietarios, Pagos, PagosYCobros, Profesionales, Perfil, Propiedades, Propiedad, Registro, ReportesAgente, Agenda, SuperAdmin, Inquilinos, DashboardInquilino, Terminos } from "./pages/index.js";
 
 import { Header, Navbar, LayoutPublico } from "./layouts/index.js";
-import { dashboardPorRol } from "./layouts/navegacion.js";
+import { dashboardPorRol, puedeEntrar } from "./layouts/navegacion.js";
 import { obtenerSesion } from "./services/login.js";
 import { ContenedorAvisos } from "./components/index.js";
 
@@ -30,6 +30,12 @@ function DashboardPorRol() {
   if (!DashboardDelRol) return <Redirect to="/login" replace />;
 
   return <DashboardDelRol />;
+}
+
+function SoloConRol({ ruta, children }) {
+  const rol = Number(obtenerSesion()?.usuario?.rol);
+  if (puedeEntrar(rol, ruta)) return children;
+  return <Redirect to={dashboardPorRol[rol] ?? "/inicio"} replace />;
 }
 
 function AuthenticatedApp() {
@@ -58,13 +64,9 @@ function AuthenticatedApp() {
         <Route path="/reportes">{() => <ReportesAgente allowCreate />}</Route>
         <Route path="/chat" component={Chat} />
         <Route path="/inmobiliaria" component={Inmobiliaria} />
-        <Route path="/pagos" component={Pagos} />
-        <Route path="/cobros">
-          {() => [1, 4].includes(Number(obtenerSesion()?.usuario?.rol))
-            ? <Cobros />
-            : <Redirect to={dashboardPorRol[Number(obtenerSesion()?.usuario?.rol)] ?? "/inicio"} replace />}
-        </Route>
-        <Route path="/pagos-cobros" component={PagosYCobros} />
+        <Route path="/pagos">{() => <SoloConRol ruta="/pagos"><Pagos /></SoloConRol>}</Route>
+        <Route path="/cobros">{() => <SoloConRol ruta="/cobros"><Cobros /></SoloConRol>}</Route>
+        <Route path="/pagos-cobros">{() => <SoloConRol ruta="/pagos-cobros"><PagosYCobros /></SoloConRol>}</Route>
         <Route path="/indec" component={Indec} />
         <Route path="/mis-propiedades" component={MisPropiedades} />
         <Route path="/super-admin" component={SuperAdmin} />
