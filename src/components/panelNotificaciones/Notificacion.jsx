@@ -1,3 +1,4 @@
+import { Link } from "wouter";
 import "./Notificacion.css";
 
 const tiposConColor = new Set(["contrato", "mantenimiento", "mensaje", "pago", "visita"]);
@@ -15,49 +16,38 @@ function tiempoTranscurrido(fecha) {
   return valor.toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric" });
 }
 
-export default function Notificacion({ notificacion, expandida, destacada = false, onAlternar }) {
-  const { id, tipo, hace, titulo, detalle = [], leida, fechaCreacion } = notificacion;
+export default function Notificacion({ notificacion, destino, onMarcarLeida, onNavegar }) {
+  const { tipo, hace, titulo, detalle = [], leida, fechaCreacion, inmobiliaria } = notificacion;
   const resumen = notificacion.contenido ?? notificacion.resumen ?? "";
   const nombreTipo = String(tipo || "Notificación").trim();
   const claveTipo = nombreTipo.toLocaleLowerCase("es-AR");
   const colorTipo = tiposConColor.has(claveTipo) ? claveTipo : "otro";
   const tiempo = fechaCreacion ? tiempoTranscurrido(fechaCreacion) : hace;
-  const idDetalle = `notificacion-detalle-${id}`;
 
   return (
-    <article
-      className={`Notificacion ${leida ? "Notificacion--leida" : ""} ${expandida ? "Notificacion--expandida" : ""} ${destacada ? "Notificacion--destacada" : ""}`}
-    >
+    <article className={`Notificacion${leida ? " Notificacion--leida" : ""}`}>
       <p className="Notificacion__meta">
-        <span className={`Notificacion__punto Notificacion__punto--${colorTipo}`}></span>
+        <span className={`Notificacion__punto Notificacion__punto--${colorTipo}`} aria-hidden="true" />
         <span className="Notificacion__tipo">{nombreTipo}</span>
         {tiempo && <span className="Notificacion__tiempo">{tiempo}</span>}
       </p>
 
       <h3 className="Notificacion__titulo">{titulo}</h3>
 
+      {inmobiliaria && <p className="Notificacion__resumen">{inmobiliaria}</p>}
       <p className="Notificacion__resumen">{resumen}</p>
+      {detalle.map((linea) => <p key={linea} className="Notificacion__resumen">{linea}</p>)}
 
-
-      <div className="Notificacion__detalle" id={idDetalle}>
-        <div className="Notificacion__detalle-interno">
-          {detalle.map((linea) => (
-            <p key={linea} className="Notificacion__linea">
-              {linea}
-            </p>
-          ))}
+      {(!leida || destino) && (
+        <div className="Notificacion__acciones">
+          {destino && <Link href={destino[0]} className="Notificacion__boton" onClick={onNavegar}>{destino[1]}</Link>}
+          {!leida && (
+            <button type="button" className="Notificacion__boton" onClick={onMarcarLeida}>
+              Marcar como leída
+            </button>
+          )}
         </div>
-      </div>
-
-      <button
-        type="button"
-        className="Notificacion__boton"
-        aria-expanded={expandida}
-        aria-controls={idDetalle}
-        onClick={onAlternar}
-      >
-        {expandida ? "Contraer" : "Expandir"}
-      </button>
+      )}
     </article>
   );
 }

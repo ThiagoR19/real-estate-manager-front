@@ -250,11 +250,14 @@ function TarjetaReportes({ reportes }) {
 
 export default function DashboardInquilino() {
   const [datos, setDatos] = useState(null);
+  const [avisos, setAvisos] = useState(null);
   const [error, setError] = useState(false);
   const nombre = api.obtenerSesion()?.usuario?.nombre;
 
   useEffect(() => {
     let vigente = true;
+    const actualizarAvisos = (evento) => setAvisos(evento.detail);
+    window.addEventListener("notificaciones-actualizadas", actualizarAvisos);
     api
       .dashboard()
       .then((respuesta) => {
@@ -272,6 +275,7 @@ export default function DashboardInquilino() {
       });
     return () => {
       vigente = false;
+      window.removeEventListener("notificaciones-actualizadas", actualizarAvisos);
     };
   }, []);
 
@@ -289,7 +293,7 @@ export default function DashboardInquilino() {
         </header>
 
         <div className="dashboard-inquilino__grid">
-          <TarjetaAgenda avisos={datos.notificaciones} />
+          <TarjetaAgenda avisos={avisos ?? datos.notificaciones} />
           <TarjetaEstadoAlquiler alquiler={datos.alquiler} pagos={datos.pagos} />
           <TarjetaReportes reportes={datos.reportes} />
         </div>

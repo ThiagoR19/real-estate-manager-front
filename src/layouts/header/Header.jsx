@@ -13,16 +13,23 @@ import { api } from "../../services/api.js";
 import initials from "../../utils/initials.js";
 import "./Header.css";
 
+const identidadSesion = (sesion) => sesion?.token ?? null;
+
 export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
   const [pathname] = useLocation();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const [user, setUser] = useState(() => api.obtenerSesion()?.usuario);
+  const [session, setSession] = useState(() => api.obtenerSesion());
+  const user = session?.usuario;
+  const role = Number(user?.rol);
+  const sessionToken = identidadSesion(session);
+  const canReceiveNotifications = Boolean(sessionToken) && [1, 2, 3, 4, 5].includes(role);
   const [photoLoadError, setPhotoLoadError] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const [notificationsLoaded, setNotificationsLoaded] = useState(false);
   const [notificationsLoading, setNotificationsLoading] = useState(false);
   const [notificationsError, setNotificationsError] = useState("");
   const notificationsRequest = useRef(0);
-  const notificationsIdentity = useRef(`${user?.id}:${user?.rol}`);
+  const notificationsIdentity = useRef(sessionToken);
 
   const loadNotifications = useCallback(async () => {
     const requestId = ++notificationsRequest.current;
@@ -31,6 +38,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
       const items = await api.notificaciones();
       if (requestId !== notificationsRequest.current) return;
       setNotifications(Array.isArray(items) ? items : []);
+      setNotificationsLoaded(true);
       setNotificationsError("");
     } catch (error) {
       if (requestId === notificationsRequest.current) setNotificationsError(error.message);
@@ -41,20 +49,29 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
 
   useEffect(() => {
     const syncUser = () => {
-      const nextUser = api.obtenerSesion()?.usuario;
-      const nextIdentity = `${nextUser?.id}:${nextUser?.rol}`;
+      const nextSession = api.obtenerSesion();
+      const nextIdentity = identidadSesion(nextSession);
       if (nextIdentity !== notificationsIdentity.current) {
         notificationsIdentity.current = nextIdentity;
         notificationsRequest.current += 1;
         setNotifications([]);
+        setNotificationsLoaded(false);
         setNotificationsLoading(false);
         setNotificationsError("");
+        setNotificationsOpen(false);
       }
-      setUser(nextUser);
+      setSession(nextSession);
       setPhotoLoadError(false);
     };
+    const syncStorage = (event) => {
+      if (event.key === "agi-session" || event.key === null) syncUser();
+    };
     window.addEventListener("session-updated", syncUser);
-    return () => window.removeEventListener("session-updated", syncUser);
+    window.addEventListener("storage", syncStorage);
+    return () => {
+      window.removeEventListener("session-updated", syncUser);
+      window.removeEventListener("storage", syncStorage);
+    };
   }, []);
 
   useEffect(() => {
@@ -96,7 +113,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
 
   useEffect(() => {
     notificationsRequest.current += 1;
-    if (![2, 3, 4, 5].includes(Number(user?.rol))) return undefined;
+    if (!canReceiveNotifications) return undefined;
 
     const initialLoad = window.setTimeout(loadNotifications, 0);
     const interval = window.setInterval(loadNotifications, 30000);
@@ -108,37 +125,30 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
       window.clearInterval(interval);
       window.removeEventListener("focus", refreshOnFocus);
     };
-  }, [user?.id, user?.rol, loadNotifications]);
+  }, [sessionToken, canReceiveNotifications, loadNotifications]);
 
-  const markNotificationRead = async (id) => {
+  useEffect(() => {
+    if (role !== 5 || !notificationsLoaded) return;
+    const items = notifications.filter((item) => !item.leida);
+    window.dispatchEvent(new CustomEvent("notificaciones-actualizadas", {
+      detail: { total: items.length, items: items.slice(0, 5) },
+    }));
+  }, [role, notificationsLoaded, notifications]);
+
+  const markNotificationsRead = async (ids) => {
+    const results = await Promise.allSettled(ids.map((id) => api.marcarNotificacionLeida(id)));
+    if (sessionToken !== notificationsIdentity.current) return;
     notificationsRequest.current += 1;
     setNotificationsLoading(false);
-    try {
-      const updated = await api.marcarNotificacionLeida(id);
-      if (!updated) throw new Error("La notificación no se pudo marcar como leída.");
-      setNotifications((items) => items.map((item) =>
-        item.id === id ? { ...item, leida: true } : item,
-      ));
-      setNotificationsError("");
-    } catch (error) {
-      setNotificationsError(error.message);
-    }
-  };
-
-  const markAllNotificationsRead = async () => {
-    const unread = notifications.filter((item) => !item.leida);
-    if (!unread.length) return;
-    notificationsRequest.current += 1;
-    setNotificationsLoading(false);
-    const results = await Promise.allSettled(unread.map((item) => api.marcarNotificacionLeida(item.id)));
-    const updatedIds = new Set(unread.filter((_, index) =>
+    const updatedIds = new Set(ids.filter((_, index) =>
       results[index].status === "fulfilled" && results[index].value,
-    ).map((item) => item.id));
+    ));
     setNotifications((items) => items.map((item) =>
       updatedIds.has(item.id) ? { ...item, leida: true } : item,
     ));
-    setNotificationsError(updatedIds.size === unread.length ? "" : "Algunas notificaciones no se pudieron marcar como leídas.");
+    setNotificationsError(updatedIds.size === ids.length ? "" : "No se pudieron marcar todos los avisos seleccionados como leídos.");
   };
+  const unread = notifications.filter((item) => !item.leida);
   const currentItem = todosLosElementos.find(({ href }) => elementoActivo(pathname, href));
   const isPayments = pathname === "/pagos" || pathname.startsWith("/pagos/");
   const isProperties =
@@ -228,17 +238,24 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
       )}
 
       <aside className="navbar__account" aria-label="Cuenta de usuario">
-        {!isSuperAdmin && Number(user?.rol) !== 1 && (
+        {canReceiveNotifications && (
           <div className="navbar__notifications">
             <button
               type="button"
-              aria-label="Notificaciones"
+              aria-label={unread.length ? `Notificaciones, ${unread.length} sin leer` : "Notificaciones"}
+              aria-haspopup="dialog"
+              aria-expanded={notificationsOpen}
               onClick={() => {
                 setNotificationsOpen(true);
                 loadNotifications();
               }}
             >
               <img src={bellIcon} alt="" />
+              {unread.length > 0 && (
+                <span className="navbar__notifications-count" aria-hidden="true">
+                  {unread.length > 99 ? "99+" : unread.length}
+                </span>
+              )}
             </button>
           </div>
         )}
@@ -273,12 +290,13 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
         etiqueta="Notificaciones"
       >
         <PanelNotificaciones
+          rol={role}
           notificaciones={notifications}
           cargando={notificationsLoading}
           error={notificationsError}
           onReintentar={loadNotifications}
-          onMarcarLeida={markNotificationRead}
-          onMarcarTodas={markAllNotificationsRead}
+          onMarcarLeida={(id) => markNotificationsRead([id])}
+          onMarcarTodas={() => markNotificationsRead(unread.map((item) => item.id))}
           onCerrar={() => setNotificationsOpen(false)}
         />
       </CapaModal>

@@ -13,7 +13,26 @@ const filtros = [
   { id: "leidas", texto: "Leídas", cumple: (n) => n.leida },
 ];
 
+function destinoNotificacion(rol, tipo) {
+  switch (tipo?.toLowerCase()) {
+    case "cuenta": return rol === 1 ? ["/super-admin", "Ver cuentas"] : null;
+    case "mantenimiento": return [rol === 5 ? "/reportes" : "/reportes-agente", "Ver reportes"];
+    case "mensaje": return ["/chat", "Ir al chat"];
+    case "visita": return ["/agenda", "Ver agenda"];
+    case "contrato": return [
+      { 4: "/mis-propiedades", 5: "/dashboard" }[rol] ?? "/propiedades",
+      "Ver alquileres y propiedades",
+    ];
+    case "pago": return [
+      { 4: "/cobros", 5: "/pagos" }[rol] ?? "/pagos-cobros",
+      rol === 4 ? "Ver cobros" : "Ver pagos",
+    ];
+    default: return null;
+  }
+}
+
 export default function PanelNotificaciones({
+  rol,
   notificaciones = [],
   cargando = false,
   error = "",
@@ -25,23 +44,7 @@ export default function PanelNotificaciones({
 }) {
   const [filtro, setFiltro] = useState("todas");
 
-  const [expandidas, setExpandidas] = useState(() => new Map());
-
   const visibles = notificaciones.filter(filtros.find((f) => f.id === filtro).cumple);
-
-
-  const alternar = (id) => {
-    const abrir = !expandidas.has(id);
-    const sinLeer = !notificaciones.find((n) => n.id === id)?.leida;
-
-    setExpandidas((actuales) => {
-      const nuevas = new Map(actuales);
-      abrir ? nuevas.set(id, sinLeer) : nuevas.delete(id);
-      return nuevas;
-    });
-
-    if (abrir && sinLeer) onMarcarLeida?.(id);
-  };
 
   return (
     <section className={`PanelNotificaciones ${className}`} aria-labelledby="notificaciones-titulo">
@@ -105,9 +108,12 @@ export default function PanelNotificaciones({
             <Notificacion
               key={notificacion.id}
               notificacion={notificacion}
-              expandida={expandidas.has(notificacion.id)}
-              destacada={expandidas.get(notificacion.id) === true}
-              onAlternar={() => alternar(notificacion.id)}
+              destino={destinoNotificacion(rol, notificacion.tipo)}
+              onMarcarLeida={() => onMarcarLeida?.(notificacion.id)}
+              onNavegar={() => {
+                if (!notificacion.leida) onMarcarLeida?.(notificacion.id);
+                onCerrar?.();
+              }}
             />
           ))
         )}
