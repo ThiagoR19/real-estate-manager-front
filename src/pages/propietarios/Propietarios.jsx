@@ -18,6 +18,7 @@ import {
   AvisoEnlaceActivacion,
   Paginacion,
   usePaginacion,
+  mostrarAviso,
 } from "../../components";
 import PersonaModal from "./PersonaModal";
 import "./Propietarios.css";
@@ -127,7 +128,11 @@ export default function Propietarios() {
     let active = true;
     api.propietarios()
       .then((rows) => { if (active) setOwners(rows.map(displayOwner)); })
-      .catch((cause) => { if (active) setError(cause.message); })
+      .catch((cause) => {
+        if (!active) return;
+        setError(cause.message);
+        mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar los propietarios", mensaje: cause.message });
+      })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, []);
@@ -170,8 +175,16 @@ export default function Propietarios() {
     setOwners((current) => modal.mode === "edit"
       ? current.map((owner) => owner.id === saved.id ? saved : owner)
       : [saved, ...current]);
-    setActivationUrl(enlaceActivacion(raw.activacion));
-    setNotice(modal.mode === "edit" ? "Propietario actualizado correctamente." : "Propietario creado. Compartí el enlace de activación con su titular.");
+    const urlActivacion = enlaceActivacion(raw.activacion);
+    setActivationUrl(modal.mode === "edit" ? "" : urlActivacion);
+    setNotice(modal.mode === "edit" || !urlActivacion
+      ? ""
+      : "Propietario creado. Compartí el enlace de activación con su titular.");
+    mostrarAviso({
+      tipo: "exito",
+      titulo: modal.mode === "edit" ? "Propietario actualizado" : "Propietario creado",
+      mensaje: modal.mode === "edit" ? "Los datos del propietario se guardaron." : "El propietario ya está en la lista.",
+    });
     setModal(null);
   }
 
@@ -181,8 +194,9 @@ export default function Propietarios() {
       const activacion = await api.generarEnlacePropietario(owner.id);
       setActivationUrl(enlaceActivacion(activacion));
       setNotice(`Enlace nuevo para ${owner.name}. Compartilo con el propietario para activar su cuenta.`);
+      mostrarAviso({ tipo: "info", titulo: "Enlace de activación generado", mensaje: "Copialo y compartilo con el propietario para que active su cuenta." });
     } catch (cause) {
-      setError(cause.message);
+      mostrarAviso({ tipo: "error", titulo: "No se pudo generar el enlace", mensaje: cause.message });
     }
   }
 
@@ -190,9 +204,12 @@ export default function Propietarios() {
     try {
       await api.eliminarPropietario(pendingDelete.id);
       setOwners((current) => current.filter((owner) => owner.id !== pendingDelete.id));
-      setNotice("Propietario eliminado correctamente.");
+      setNotice("");
       setActivationUrl("");
-    } catch (cause) { setError(cause.message); }
+      mostrarAviso({ tipo: "exito", titulo: "Propietario eliminado", mensaje: "El propietario se eliminó correctamente." });
+    } catch (cause) {
+      mostrarAviso({ tipo: "error", titulo: "No se pudo eliminar al propietario", mensaje: cause.message });
+    }
     finally { setPendingDelete(null); }
   }
 

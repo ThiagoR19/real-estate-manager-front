@@ -10,7 +10,7 @@ Ingresar con el nombre de usuario y contraseña de una cuenta activa. Un adminis
 
 ## Registro, chat y agenda
 
-Las invitaciones abren `/activar?codigo=...`. El titular verifica el DNI autorizado (hasta tres intentos) y continúa a `/registro`, donde puede elegir usuario y contraseña o Google. El registro con Google genera un usuario y permite crear una contraseña más adelante desde `/perfil`. En bases existentes deben estar aplicadas las migraciones de invitación y DNI indicadas en el README del backend. Los usuarios sin DNI cargado deben pedir a la inmobiliaria que complete ese dato antes de registrarse.
+Las invitaciones abren `/activar?codigo=...`. El titular verifica el DNI autorizado (hasta tres intentos) y continúa a `/registro`, donde puede elegir usuario y contraseña o Google. El registro con Google genera un usuario y permite crear una contraseña más adelante desde `/perfil` sin volver a verificar Google; el inicio de sesión con Google sigue disponible. En bases existentes deben estar aplicadas las migraciones de invitación y DNI indicadas en el README del backend. Los usuarios sin DNI cargado deben pedir a la inmobiliaria que complete ese dato antes de registrarse.
 
 El chat usa `/api/chat` para conversaciones, contactos y mensajes de texto. La agenda usa `/api/visitas` y `/api/visitas/clientes`; los agentes pueden crear clientes y programar, modificar o cancelar visitas. “Mis propiedades” toma los contratos asociados al usuario y los reportes de esas propiedades. El backend limita los reportes de propietarios e inquilinos a propiedades vinculadas a sus contratos.
 A comprehensive real estate management platform for properties, clients, rentals, sales, contracts, payments, maintenance, and more.

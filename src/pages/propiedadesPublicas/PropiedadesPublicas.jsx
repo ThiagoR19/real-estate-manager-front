@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "wouter";
-import { TarjetaPropiedadSimple, Paginacion } from "../../components";
+import { TarjetaPropiedadSimple, Paginacion, mostrarAviso } from "../../components";
 import { api } from "../../services/api";
 import filterIcon from "../../assets/icons/options.svg";
 import "./PropiedadesPublicas.css";
@@ -224,6 +224,7 @@ export default function PropiedadesPublicas() {
           if (!activo) return;
           setResultado((anterior) => ({ ...anterior, propiedades: [], paginacion: null }));
           setError(true);
+          mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar las propiedades", mensaje: causa.message });
         })
         .finally(() => activo && setCargando(false));
     }, 300);

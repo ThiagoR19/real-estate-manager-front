@@ -21,6 +21,7 @@ import {
   PildoraResumen,
   Paginacion,
   usePaginacion,
+  mostrarAviso,
 } from "../../components";
 import InquilinoModal from "./InquilinoModal";
 import propertyImage from "/images.jpg";
@@ -196,7 +197,6 @@ export default function Inquilinos() {
   const [notice, setNotice] = useState("");
   const [activationUrl, setActivationUrl] = useState("");
   const [loadError, setLoadError] = useState("");
-  const [actionError, setActionError] = useState("");
   const [loading, setLoading] = useState(true);
   const [pendingDelete, setPendingDelete] = useState(null);
 
@@ -209,7 +209,10 @@ export default function Inquilinos() {
         const rows = await api.inquilinos();
         if (mounted) setTenants(rows);
       } catch (error) {
-        if (mounted) setLoadError(error.message || "No se pudieron cargar los inquilinos.");
+        if (mounted) {
+          setLoadError(error.message || "No se pudieron cargar los inquilinos.");
+          mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar los inquilinos", mensaje: error.message });
+        }
       } finally {
         if (mounted) setLoading(false);
       }
@@ -302,39 +305,40 @@ export default function Inquilinos() {
 
   async function confirmDeleteTenant() {
     if (!pendingDelete) return;
-    setActionError("");
     try {
       await api.eliminarInquilino(pendingDelete.id);
       setTenants((current) => current.filter((tenant) => tenant.id !== pendingDelete.id));
-      setNotice(`${`${pendingDelete.nombre || ""} ${pendingDelete.apellido || ""}`.trim() || `DNI ${pendingDelete.dni}`} fue eliminado.`);
+      mostrarAviso({
+        tipo: "exito",
+        titulo: "Inquilino eliminado",
+        mensaje: `${`${pendingDelete.nombre || ""} ${pendingDelete.apellido || ""}`.trim() || `DNI ${pendingDelete.dni}`} fue eliminado.`,
+      });
+      setNotice("");
       setActivationUrl("");
-      window.setTimeout(() => setNotice(""), 2800);
     } catch (error) {
-      setActionError(error.message || "No se pudo eliminar el inquilino.");
+      mostrarAviso({ tipo: "error", titulo: "No se pudo eliminar el inquilino", mensaje: error.message });
     } finally {
       setPendingDelete(null);
     }
   }
 
   async function generateActivation(tenant) {
-    setActionError("");
     try {
       const activacion = await api.generarEnlaceInquilino(tenant.id);
       const titular = `${tenant.nombre || ""} ${tenant.apellido || ""}`.trim() || `DNI ${tenant.dni}`;
       setActivationUrl(enlaceActivacion(activacion));
       setNotice(`Enlace nuevo para ${titular}. Compartilo con el inquilino para activar su cuenta.`);
+      mostrarAviso({ tipo: "info", titulo: "Enlace de activación generado", mensaje: "Copialo y compartilo con el inquilino para que active su cuenta." });
     } catch (error) {
-      setActionError(error.message || "No se pudo generar el enlace de activación.");
+      mostrarAviso({ tipo: "error", titulo: "No se pudo generar el enlace", mensaje: error.message });
     }
   }
 
   function openCreateModal() {
-    setActionError("");
     setModal({ isOpen: true, mode: "create", tenant: null });
   }
 
   function editTenant(tenant) {
-    setActionError("");
     setModal({ isOpen: true, mode: "edit", tenant });
   }
 
@@ -343,7 +347,6 @@ export default function Inquilinos() {
   }
 
   async function saveTenant(form) {
-    setActionError("");
     const existing = modal.mode === "edit" ? modal.tenant : null;
     const body = {
       nombre: form.firstName || null,
@@ -363,9 +366,15 @@ export default function Inquilinos() {
         : [result.tenant, ...current],
     );
     const titular = `${raw.nombre || ""} ${raw.apellido || ""}`.trim() || `DNI ${raw.dni}`;
-    setNotice(existing ? `Se actualizó la información de ${titular}.` : `Se creó el acceso de ${titular}. Compartí el enlace con su titular.`);
+    setNotice(!existing && result.activationUrl
+      ? `Se creó el acceso de ${titular}. Compartí el enlace con su titular.`
+      : "");
     setActivationUrl(result.activationUrl || "");
-    if (!result.activationUrl) window.setTimeout(() => setNotice(""), 2800);
+    mostrarAviso({
+      tipo: "exito",
+      titulo: existing ? "Inquilino actualizado" : "Inquilino creado",
+      mensaje: existing ? `Se actualizó la información de ${titular}.` : `Se creó el acceso de ${titular}.`,
+    });
     closeTenantModal();
   }
 
@@ -460,11 +469,6 @@ export default function Inquilinos() {
         </section>
       </div>
 
-      {actionError && (
-        <p className="inquilinos__notice" role="alert">
-          {actionError}
-        </p>
-      )}
       {notice && (
         <AvisoEnlaceActivacion
           message={notice}

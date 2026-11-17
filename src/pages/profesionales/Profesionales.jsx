@@ -14,6 +14,7 @@ import {
   Boton,
   Paginacion,
   usePaginacion,
+  mostrarAviso,
 } from "../../components/index.js";
 import ProfesionalModal from "./ProfesionalModal";
 import "./Profesionales.css";
@@ -23,16 +24,21 @@ import { api } from "../../services/api.js";
 export default function Profesionales() {
   const [professionals, setProfessionals] = useState([]);
   const [selectedType, setSelectedType] = useState("Tipo");
-  const [feedback, setFeedback] = useState("");
   const [modal, setModal] = useState({ isOpen: false, mode: "create", professional: null });
   const [pendingDelete, setPendingDelete] = useState(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
+    let active = true;
     api
       .profesionales()
-      .then(setProfessionals)
-      .catch((cause) => setError(cause.message));
+      .then((rows) => { if (active) setProfessionals(rows); })
+      .catch((cause) => {
+        if (!active) return;
+        setError(cause.message);
+        mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar los profesionales", mensaje: cause.message });
+      });
+    return () => { active = false; };
   }, []);
 
   const filterOptions = [
@@ -68,11 +74,11 @@ export default function Profesionales() {
     if (modal.mode === "edit") {
       const saved = await api.actualizarProfesional(modal.professional.id, body);
       setProfessionals((current) => current.map((item) => (item.id === saved.id ? saved : item)));
-      setFeedback(`Se actualizó la información de ${form.name}.`);
+      mostrarAviso({ tipo: "exito", titulo: "Profesional actualizado", mensaje: `Se actualizó la información de ${form.name}.` });
     } else {
       const saved = await api.crearProfesional(body);
       setProfessionals((current) => [...current, saved]);
-      setFeedback(`Se agregó a ${form.name} a la lista.`);
+      mostrarAviso({ tipo: "exito", titulo: "Profesional agregado", mensaje: `Se agregó a ${form.name} a la lista.` });
     }
     closeProfessionalModal();
   }
@@ -81,10 +87,10 @@ export default function Profesionales() {
     try {
       await api.eliminarProfesional(professional.id);
       setProfessionals((current) => current.filter(({ id }) => id !== professional.id));
-      setFeedback(`${professional.nombre} ${professional.apellido} fue eliminado de la lista.`);
+      mostrarAviso({ tipo: "exito", titulo: "Profesional eliminado", mensaje: `${professional.nombre} ${professional.apellido} fue eliminado de la lista.` });
       setPendingDelete(null);
     } catch (cause) {
-      setError(cause.message);
+      mostrarAviso({ tipo: "error", titulo: "No se pudo eliminar al profesional", mensaje: cause.message });
     }
   }
 
@@ -203,7 +209,7 @@ export default function Profesionales() {
                         className="profesionales__rate"
                         type="button"
                         aria-label={`Valorar a ${professional.nombre} ${professional.apellido}`}
-                        onClick={() => setFeedback("La función para valorar profesionales todavía no está disponible.")}
+                        onClick={() => mostrarAviso({ tipo: "info", titulo: "Valoraciones no disponibles", mensaje: "La función para valorar profesionales todavía no está disponible." })}
                       >
                         <img src={starIcon} alt="" />
                         <span>Valorar</span>
@@ -237,9 +243,6 @@ export default function Profesionales() {
         <Paginacion page={page} totalPages={totalPages} total={visibleProfessionals.length} onPageChange={setPage} />
       </section>
 
-      <p className="profesionales__feedback" aria-live="polite">
-        {feedback}
-      </p>
       {error && (
         <p className="profesionales__feedback" role="alert">
           {error}

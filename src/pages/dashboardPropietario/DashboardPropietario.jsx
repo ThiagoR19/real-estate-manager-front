@@ -298,9 +298,9 @@ export default function DashboardPropietario() {
         setError(true);
         mostrarAviso({
           tipo: "error",
-          titulo: causa.codigo,
+          titulo: "No se pudo cargar el panel",
           mensaje: causa.mensaje ?? causa.message,
-          accion: { texto: "Recargar", onclick: () => window.location.reload() },
+          accion: { texto: "Recargar", onClick: () => window.location.reload() },
         });
       });
     return () => {

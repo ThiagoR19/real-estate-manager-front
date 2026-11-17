@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { calendarIcon, clockIcon, houseIcon, peopleIcon, userIcon } from "../../assets/icons";
-import { GestionModal, AccionesModal, CampoModal, EntradaModal } from "../../components";
+import { GestionModal, AccionesModal, CampoModal, EntradaModal, mostrarAviso } from "../../components";
 import "./VisitaModal.css";
 
 export default function VisitaModal({ visit, defaultDate, properties, clients, agents, onClose, onSubmit }) {
@@ -47,7 +47,9 @@ export default function VisitaModal({ visit, defaultDate, properties, clients, a
         ...(editing || form.idAgente ? { idAgente: Number(form.idAgente) } : {}),
         fecha, status: form.status, motivo: form.motivo.trim(),
       });
-    } catch (cause) { setError(cause.message); }
+    } catch (cause) {
+      mostrarAviso({ tipo: "error", titulo: editing ? "No se pudo guardar la visita" : "No se pudo agendar la visita", mensaje: cause.message });
+    }
     finally { setBusy(false); }
   }
 

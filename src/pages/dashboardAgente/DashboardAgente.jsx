@@ -152,16 +152,26 @@ export default function DashboardAgente() {
     api
       .dashboard()
       .then((respuesta) => {
-        if (vigente) setDatos(respuesta);
+        if (!vigente) return;
+        setDatos(respuesta);
+        const proximasVisitas = (respuesta.agenda ?? []).filter((visita) => new Date(visita.fecha).getTime() > Date.now());
+        if (proximasVisitas.length) {
+          const cantidad = proximasVisitas.length;
+          mostrarAviso({
+            tipo: "recordatorio",
+            titulo: cantidad === 1 ? "Te queda una visita hoy" : `Te quedan ${cantidad} visitas hoy`,
+            mensaje: `La próxima visita es a las ${hora(proximasVisitas[0].fecha)}.`,
+          });
+        }
       })
       .catch((causa) => {
         if (!vigente) return;
         setError(true);
         mostrarAviso({
           tipo: "error",
-          titulo: causa.codigo,
+          titulo: "No se pudo cargar el panel",
           mensaje: causa.mensaje ?? causa.message,
-          accion: { texto: "Recargar", onclick: () => window.location.reload() },
+          accion: { texto: "Recargar", onClick: () => window.location.reload() },
         });
       });
     return () => {

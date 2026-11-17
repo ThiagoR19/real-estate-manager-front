@@ -10,6 +10,7 @@ import {
   BotonPrincipal,
   TextoLegal,
   AccesoGoogle,
+  mostrarAviso,
 } from "../../components";
 import Login from "../login/Login";
 import { limpiarBorradorRegistro, obtenerBorradorRegistro } from "../../services/borradorRegistro.js";
@@ -63,7 +64,7 @@ export default function Registro() {
       limpiarBorradorRegistro();
       window.location.assign("/perfil");
     } catch (cause) {
-      setError(cause.message);
+      mostrarAviso({ tipo: "error", titulo: "No se pudo crear la cuenta", mensaje: cause.message });
       setStatus("inactivo");
     }
   };
@@ -78,7 +79,7 @@ export default function Registro() {
       limpiarBorradorRegistro();
       window.location.assign("/perfil");
     } catch (cause) {
-      setError(cause.message);
+      mostrarAviso({ tipo: "error", titulo: "No se pudo crear la cuenta con Google", mensaje: cause.message });
       setStatus("inactivo");
     }
   }, [draft?.verificacion]);

@@ -9,7 +9,7 @@ import {
   xIcon,
 } from "../../assets/icons";
 import paymentReference from "../../assets/cobros.png";
-import { Boton } from "../../components";
+import { Boton, mostrarAviso } from "../../components";
 import "./Pagos.css";
 
 const months = [
@@ -125,6 +125,7 @@ export default function Pagos() {
     if (!file) return;
     setUploadedFile(file);
     setFeedback("Comprobante listo para enviar");
+    mostrarAviso({ tipo: "info", titulo: "Comprobante seleccionado", mensaje: "El comprobante está listo para enviarse a revisión." });
     event.target.value = "";
   }
 
@@ -328,7 +329,7 @@ export default function Pagos() {
                 <button
                   className="pagos__button pagos__button--secondary"
                   type="button"
-                  onClick={() => setFeedback("Comprobante descargado")}
+                  onClick={() => mostrarAviso({ tipo: "info", titulo: "Comprobante descargado", mensaje: `Se descargó el comprobante de ${details.title}.` })}
                 >
                   <Icono src={downloadIcon} />
                   <span>Descargar comprobante</span>
@@ -348,15 +349,15 @@ export default function Pagos() {
                     ? "Enviado para revisión"
                     : "Solicitar revisión"
                 }
-                onClick={() => setFeedback("Solicitud de revisión enviada")}
+                onClick={() => {
+                  setFeedback("Solicitud de revisión enviada");
+                  mostrarAviso({ tipo: "exito", titulo: "Solicitud enviada", mensaje: `Se envió a revisión el pago de ${details.title}.` });
+                }}
               />
             </div>
             <p className="pagos__disclaimer">
               Nota: una vez liquidado el periodo, la información queda disponible para consultas y
               descarga
-            </p>
-            <p className="pagos__feedback" aria-live="polite">
-              {feedback}
             </p>
           </section>
         </div>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { briefcaseIcon, envelopeIcon, phoneIcon, userIcon } from "../../assets/icons";
-import { Boton } from "../../components";
+import { Boton, mostrarAviso } from "../../components";
 import useClosingTransition from "../../hooks/useClosingTransition.js";
 import "./ProfesionalModal.css";
 
@@ -60,7 +60,6 @@ function EntradaConIcono({ icon, ...props }) {
 
 export default function ProfesionalModal({ isOpen, mode, professional, onClose, onSubmit }) {
   const [form, setForm] = useState(() => getInitialForm(professional));
-  const [error, setError] = useState("");
   const { isClosing, close } = useClosingTransition(onClose);
   const isEditing = mode === "edit";
   const displayName = isEditing ? professional?.name || "Profesional" : "Profesional";
@@ -99,10 +98,13 @@ export default function ProfesionalModal({ isOpen, mode, professional, onClose, 
   async function handleSubmit(event) {
     event.preventDefault();
     try {
-      setError("");
       await onSubmit({ ...form, name: `${form.firstName.trim()} ${form.lastName.trim()}`.trim() });
     } catch (cause) {
-      setError(cause.message);
+      mostrarAviso({
+        tipo: "error",
+        titulo: isEditing ? "No se pudo actualizar el profesional" : "No se pudo crear el profesional",
+        mensaje: cause.message,
+      });
     }
   }
 
@@ -207,7 +209,6 @@ export default function ProfesionalModal({ isOpen, mode, professional, onClose, 
             </div>
           </div>
 
-          {error && <p role="alert">{error}</p>}
           <footer className="profesional-modal__actions">
             <button className="profesional-modal__cancel" type="button" onClick={close}>
               Cancelar

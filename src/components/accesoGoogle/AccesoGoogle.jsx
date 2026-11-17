@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { mostrarAviso } from "../avisos/almacenAvisos";
 import googleIcono from "../../assets/icons/loginGoogle.svg";
 import "./AccesoGoogle.css";
 
@@ -60,6 +61,7 @@ export default function AccesoGoogle({ texto, className = "", onCredential, onEr
       if (active) {
         setUnavailable(true);
         errorHandler.current?.(error.message);
+        mostrarAviso({ tipo: "error", titulo: "No se pudo cargar Google", mensaje: error.message || "Revisá la conexión y volvé a intentar." });
       }
     });
     return () => {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { calendarIcon, plusIcon, userIcon } from "../../assets/icons";
-import { Boton, Paginacion, usePaginacion } from "../../components";
+import { Boton, Paginacion, usePaginacion, mostrarAviso } from "../../components";
 import VisitaModal from "./VisitaModal";
 import { api } from "../../services/api.js";
 import PageSkeleton from "../../components/skeleton/PageSkeleton";
@@ -454,7 +454,6 @@ export default function Agenda() {
   const [clients, setClients] = useState([]);
   const [agents, setAgents] = useState([]);
   const [modal, setModal] = useState(null);
-  const [feedback, setFeedback] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [upcomingOpen, setUpcomingOpen] = useState(false);
@@ -474,16 +473,14 @@ export default function Agenda() {
         setAgents(catalogs.agentes);
         setClients(clientRows);
       })
-      .catch((cause) => { if (active) setError(cause.message); })
+      .catch((cause) => {
+        if (!active) return;
+        setError(cause.message);
+        mostrarAviso({ tipo: "error", titulo: "No se pudo cargar la agenda", mensaje: cause.message });
+      })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, [canManage]);
-
-  useEffect(() => {
-    if (!feedback) return undefined;
-    const timeout = window.setTimeout(() => setFeedback(""), 2800);
-    return () => window.clearTimeout(timeout);
-  }, [feedback]);
 
   useEffect(() => {
     if (!upcomingOpen) return undefined;
@@ -501,30 +498,37 @@ export default function Agenda() {
   }
 
   async function saveVisit(values) {
-    try {
-      const editing = modal.visit;
-      const { status, motivo, clientName, clientSurname, clientInterest, ...body } = values;
-      if (!body.idCliente && status !== "Cancelada") {
-        const client = await api.crearClienteVisita({ nombre: clientName, apellido: clientSurname, interes: clientInterest });
-        body.idCliente = client.id;
-        setClients((current) => [...current, client]);
-      }
-      let saved;
-      if (editing && status === "Cancelada") {
-        saved = await api.cancelarVisita(editing.id, motivo);
-      } else if (editing) {
-        saved = await api.actualizarVisita(editing.id, { ...body, estado: status });
-      } else {
-        saved = await api.crearVisita(body);
-      }
-      const normalized = toVisit(saved);
-      setVisits((current) => editing ? current.map((visit) => visit.id === editing.id ? normalized : visit) : [...current, normalized]);
-      setDate(normalized.date);
-      setView("day");
-      setFeedback(editing ? "Visita modificada." : "Visita agendada.");
-      setModal(null);
-      setError("");
-    } catch (cause) { setError(cause.message); throw cause; }
+    const editing = modal.visit;
+    const { status, motivo, clientName, clientSurname, clientInterest, ...body } = values;
+    if (!body.idCliente && status !== "Cancelada") {
+      const client = await api.crearClienteVisita({ nombre: clientName, apellido: clientSurname, interes: clientInterest });
+      body.idCliente = client.id;
+      setClients((current) => [...current, client]);
+    }
+    let saved;
+    if (editing && status === "Cancelada") {
+      saved = await api.cancelarVisita(editing.id, motivo);
+    } else if (editing) {
+      saved = await api.actualizarVisita(editing.id, { ...body, estado: status });
+    } else {
+      saved = await api.crearVisita(body);
+    }
+    const normalized = toVisit(saved);
+    setVisits((current) => editing ? current.map((visit) => visit.id === editing.id ? normalized : visit) : [...current, normalized]);
+    setDate(normalized.date);
+    setView("day");
+    const titulo = editing
+      ? status === "Cancelada" ? "Visita cancelada" : "Visita modificada"
+      : "Visita agendada";
+    mostrarAviso({
+      tipo: "exito",
+      titulo,
+      mensaje: titulo === "Visita cancelada"
+        ? "La visita se canceló correctamente."
+        : editing ? "Los cambios de la visita se guardaron." : "La visita se agregó a la agenda.",
+    });
+    setModal(null);
+    setError("");
   }
 
   const upcomingVisits = visits
@@ -586,11 +590,6 @@ export default function Agenda() {
           />
         )}
       </div>
-      {feedback && (
-        <p className="agenda__feedback" role="status">
-          {feedback}
-        </p>
-      )}
       {modal && (
         <VisitaModal
           visit={modal.visit}

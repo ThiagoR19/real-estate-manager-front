@@ -10,6 +10,7 @@ import {
   plusIconWhite,
   xIcon,
 } from "../../assets/icons";
+import { mostrarAviso } from "../../components";
 import "./PagosYCobros.css";
 
 const people = [
@@ -118,7 +119,6 @@ export default function PagosYCobros() {
   );
   const [adding, setAdding] = useState("");
   const [newConcept, setNewConcept] = useState({ label: "", amount: "" });
-  const [feedback, setFeedback] = useState("");
 
   const visiblePeople = people.filter((person) =>
     `${person.name} ${person.property}`
@@ -137,7 +137,6 @@ export default function PagosYCobros() {
   function choosePerson(person) {
     setSelectedPerson(person);
     setDecision("");
-    setFeedback("");
     setPeopleOpen(false);
   }
 
@@ -149,18 +148,18 @@ export default function PagosYCobros() {
 
   function decide(value) {
     setDecision(value);
-    setFeedback(
-      value === "approved"
-        ? "El pago fue marcado como pagado."
-        : "El pago fue marcado como no pagado.",
-    );
+    mostrarAviso({
+      tipo: value === "approved" ? "exito" : "advertencia",
+      titulo: value === "approved" ? "Pago marcado como pagado" : "Pago marcado como no pagado",
+      mensaje: `${selectedPerson.name}: el estado del pago se actualizó.`,
+    });
   }
 
   function submitConcept(event) {
     event.preventDefault();
     const label = newConcept.label.trim();
     if (!label || parseAmount(newConcept.amount) <= 0) {
-      setFeedback("Ingresá un concepto y un importe mayor a cero.");
+      mostrarAviso({ tipo: "advertencia", titulo: "Datos incompletos", mensaje: "Ingresá un concepto y un importe mayor a cero." });
       return;
     }
     setConcepts((current) => [
@@ -173,7 +172,7 @@ export default function PagosYCobros() {
         checked: true,
       },
     ]);
-    setFeedback(`${label} se agregó al detalle del cobro.`);
+    mostrarAviso({ tipo: "info", titulo: "Concepto agregado", mensaje: `${label} se agregó al detalle del cobro.` });
     setNewConcept({ label: "", amount: "" });
     setAdding("");
   }
@@ -380,7 +379,6 @@ export default function PagosYCobros() {
                     type="button"
                     onClick={() => {
                       setAdding("permanent");
-                      setFeedback("");
                     }}
                   >
                     <Icono src={plusIconWhite} />
@@ -390,7 +388,6 @@ export default function PagosYCobros() {
                     type="button"
                     onClick={() => {
                       setAdding("temporary");
-                      setFeedback("");
                     }}
                   >
                     <Icono src={plusIconWhite} />
@@ -472,7 +469,7 @@ export default function PagosYCobros() {
               <button
                 className="pagos-agente__send"
                 type="button"
-                onClick={() => setFeedback("El pago fue enviado al propietario.")}
+                onClick={() => mostrarAviso({ tipo: "exito", titulo: "Pago enviado", mensaje: `Se envió el pago a ${selectedPerson.name}.` })}
                 disabled={total <= 0}
               >
                 <Icono src={paperPlaneIcon} />
@@ -480,9 +477,6 @@ export default function PagosYCobros() {
               </button>
             </div>
           </div>
-          <p className="pagos-agente__feedback" role="status" aria-live="polite">
-            {feedback}
-          </p>
         </section>
       </div>
     </main>

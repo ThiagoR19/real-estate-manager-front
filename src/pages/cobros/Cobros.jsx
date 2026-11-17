@@ -10,7 +10,7 @@ import {
   xIcon,
 } from "../../assets/icons";
 import paymentReference from "../../assets/pagos.png";
-import { Boton } from "../../components";
+import { Boton, mostrarAviso } from "../../components";
 import SelectDesplegable from "../../components/select/SelectDesplegable";
 import "../pagos/PagosMovil.css";
 import "./Cobros.css";
@@ -89,7 +89,6 @@ export default function Cobros() {
   const [openYears, setOpenYears] = useState({ 2024: true });
   const [timelineOpen, setTimelineOpen] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
-  const [feedback, setFeedback] = useState("");
   const receiptDialog = useRef(null);
   const detail = useMemo(() => collectionData[selectedMonth], [selectedMonth]);
   const hasReceipt = detail.status === "Cobrado";
@@ -113,13 +112,11 @@ export default function Cobros() {
           (properties.indexOf(current) + direction + properties.length) % properties.length
         ],
     );
-    setFeedback("");
   }
 
   function chooseMonth(month) {
     setSelectedMonth(month);
     setTimelineOpen(false);
-    setFeedback("");
   }
 
   function toggleYear(year) {
@@ -127,8 +124,7 @@ export default function Cobros() {
   }
 
   function downloadReceipt() {
-    setFeedback(`Comprobante de ${detail.title} listo para descargar.`);
-    window.setTimeout(() => setFeedback(""), 2800);
+    mostrarAviso({ tipo: "info", titulo: "Comprobante listo", mensaje: `El comprobante de ${detail.title} está listo para descargar.` });
   }
 
   return (
@@ -393,9 +389,6 @@ export default function Cobros() {
               <Icono src={downloadIcon} />
               <span>Descargar comprobante</span>
             </Boton>
-            <p className="cobros__feedback" aria-live="polite">
-              {feedback}
-            </p>
           </article>
         </div>
       </section>

@@ -11,7 +11,7 @@ import {
   xIcon,
 } from "../../assets/icons";
 import paymentReference from "../../assets/pagos.png";
-import { Boton } from "../../components";
+import { Boton, mostrarAviso } from "../../components";
 import SelectDesplegable from "../../components/select/SelectDesplegable";
 import "./PagosReferencia.css";
 import "./PagosMovil.css";
@@ -127,6 +127,7 @@ export default function PagosReferencia() {
     if (!file) return;
     setUploadedFile(file);
     setFeedback("Comprobante listo para enviar");
+    mostrarAviso({ tipo: "info", titulo: "Comprobante seleccionado", mensaje: "El comprobante está listo para enviarse a revisión." });
     event.target.value = "";
   }
 
@@ -410,15 +411,15 @@ export default function PagosReferencia() {
               <Boton
                 className="pagos__button"
                 icon={paperPlaneIcon}
-                text={feedback ? "Enviado para revisión" : "Enviar para revisión"}
-                onClick={() => setFeedback("Solicitud de revisión enviada")}
+                text={feedback === "Solicitud de revisión enviada" ? "Enviado para revisión" : "Enviar para revisión"}
+                onClick={() => {
+                  setFeedback("Solicitud de revisión enviada");
+                  mostrarAviso({ tipo: "exito", titulo: "Solicitud enviada", mensaje: "Se envió a revisión el pago seleccionado." });
+                }}
               />
             </div>
             <p className="vista-pago__note pagos__disclaimer">
               Nota: Cuando un comprobante es aprobado, ya no puede modificarse.
-            </p>
-            <p className="vista-pago__feedback pagos__feedback" aria-live="polite">
-              {feedback}
             </p>
           </section>
         </div>

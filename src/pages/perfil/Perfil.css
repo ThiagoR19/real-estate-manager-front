@@ -35,8 +35,7 @@ body:has(#perfil) {
 
 #perfil img {
   object-fit: contain;
-  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg)
-    brightness(93%) contrast(99%);
+  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%);
 }
 
 #perfil :focus-visible:not(input):not(textarea):not(select) {
@@ -91,8 +90,7 @@ body:has(#perfil) {
 .perfil__brand-icon {
   width: 37px;
   height: 40px;
-  filter: brightness(0) saturate(100%) invert(52%) sepia(92%) saturate(2012%) hue-rotate(150deg)
-    brightness(94%) contrast(101%) !important;
+  filter: brightness(0) saturate(100%) invert(52%) sepia(92%) saturate(2012%) hue-rotate(150deg) brightness(94%) contrast(101%) !important;
 }
 
 .perfil__brand strong {
@@ -175,7 +173,7 @@ body:has(#perfil) {
   gap: 15px;
 }
 
-.perfil__account-link > span {
+.perfil__account-link>span {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -259,7 +257,7 @@ body:has(#perfil) {
   cursor: pointer;
 }
 
-.perfil__avatar-upload > img {
+.perfil__avatar-upload>img {
   width: 18px;
   height: 18px;
   filter: brightness(0) invert(1) !important;
@@ -304,7 +302,7 @@ body:has(#perfil) {
 }
 
 .perfil__role {
-  margin: 3px 0 16px;
+  margin: 3px 0 6px;
   color: #111;
   font-size: 16px;
 }
@@ -333,7 +331,7 @@ body:has(#perfil) {
   background: #edf6ff;
 }
 
-.perfil__password-hint > img {
+.perfil__password-hint>img {
   flex-shrink: 0;
   width: 35px;
   height: 35px;
@@ -536,8 +534,7 @@ body:has(#perfil) {
 .perfil__password-toggle img {
   width: 18px;
   height: 18px;
-  filter: brightness(0) saturate(100%) invert(56%) sepia(12%) saturate(798%) hue-rotate(184deg)
-    brightness(88%) contrast(86%) !important;
+  filter: brightness(0) saturate(100%) invert(56%) sepia(12%) saturate(798%) hue-rotate(184deg) brightness(88%) contrast(86%) !important;
 }
 
 .perfil__actions {
@@ -583,8 +580,7 @@ body:has(#perfil) {
 .perfil__logout-button img {
   width: 17px;
   height: 17px;
-  filter: brightness(0) saturate(100%) invert(20%) sepia(91%) saturate(2031%) hue-rotate(341deg)
-    brightness(88%) contrast(101%) !important;
+  filter: brightness(0) saturate(100%) invert(20%) sepia(91%) saturate(2031%) hue-rotate(341deg) brightness(88%) contrast(101%) !important;
 }
 
 .perfil__logout-error {
@@ -690,7 +686,7 @@ body:has(#perfil) {
     padding-right: 8px;
   }
 
-  .perfil__account-link > span {
+  .perfil__account-link>span {
     display: none;
   }
 
@@ -796,6 +792,7 @@ body:has(#perfil) {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .perfil__field-control,
   .perfil__save-button,
   .perfil__logout-button {
@@ -852,8 +849,7 @@ body:has(#perfil) {
   }
 
   #perfil .perfil__email img {
-    filter: brightness(0) saturate(100%) invert(56%) sepia(12%) saturate(798%) hue-rotate(184deg)
-      brightness(88%) contrast(86%);
+    filter: brightness(0) saturate(100%) invert(56%) sepia(12%) saturate(798%) hue-rotate(184deg) brightness(88%) contrast(86%);
   }
 
   .perfil__content {
@@ -895,7 +891,7 @@ body:has(#perfil) {
     line-height: 1.2;
   }
 
-  .perfil__form-section:not(.perfil__form-section--security) .perfil__section-heading > div {
+  .perfil__form-section:not(.perfil__form-section--security) .perfil__section-heading>div {
     display: contents;
   }
 

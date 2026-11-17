@@ -2,6 +2,7 @@
 let avisos = [];
 let siguienteId = 1;
 const oyentes = new Set();
+export const TIPOS_AVISO = Object.freeze(["exito", "advertencia", "error", "info", "recordatorio"]);
 
 function avisar() {
   oyentes.forEach((oyente) => oyente());
@@ -11,7 +12,8 @@ function avisar() {
 
 export function mostrarAviso({ tipo = "exito", titulo, mensaje, accion } = {}) {
   const id = siguienteId++;
-  avisos = [...avisos, { id, tipo, titulo, mensaje, accion }];
+  const tipoValido = TIPOS_AVISO.includes(tipo) ? tipo : "info";
+  avisos = [...avisos, { id, tipo: tipoValido, titulo, mensaje, accion }];
   avisar();
   return id;
 }

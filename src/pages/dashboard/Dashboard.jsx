@@ -71,13 +71,21 @@ export default function Dashboard() {
 
 
   useEffect(() => {
+    let activo = true;
     api.dashboard()
-      .then((respuesta) => setDatos(respuesta))
+      .then((respuesta) => { if (activo) setDatos(respuesta); })
       .catch((causa) => {
+        if (!activo) return;
         setError(causa.message)
-        mostrarAviso({ tipo: "error", titulo: causa.codigo, mensaje: causa.menssage, accion: { texto: "Recargar", onclick: () => window.location.reload } })
+        mostrarAviso({
+          tipo: "error",
+          titulo: "No se pudo cargar el panel",
+          mensaje: causa.mensaje ?? causa.message,
+          accion: { texto: "Recargar", onClick: () => window.location.reload() },
+        });
       })
-      .finally(() => setLoading(false));
+      .finally(() => { if (activo) setLoading(false); });
+    return () => { activo = false; };
   }, []);
   if (error) return <main className="dashboard-page"><p role="alert">{error}</p></main>;
   if (loading) return <PageSkeleton variant="dashboard" title="administrador" />;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { angleDownIcon, clockIcon, plusIcon } from "../../assets/icons";
-import { Boton } from "../../components";
+import { Boton, mostrarAviso } from "../../components";
 import AumentoModal from "./AumentoModal";
 import "./Indec.css";
 import { api } from "../../services/api";
@@ -41,7 +41,6 @@ export default function Indec() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showForm, setShowForm] = useState(false);
-  const [feedback, setFeedback] = useState("");
   const yearOptions = Array.from(
     { length: Math.max(1, currentYear + 2 - 2024) },
     (_, index) => String(2024 + index),
@@ -56,28 +55,30 @@ export default function Indec() {
     const periodoActual = currentIndecPeriod();
     const anio = Number(selectedYear);
     if (anio > periodoActual.year || (anio === periodoActual.year && mes > periodoActual.month)) {
-      setError("No se puede cargar el porcentaje de un mes que todavía no empezó.");
+      const mensaje = "No se puede cargar el porcentaje de un mes que todavía no empezó.";
+      setError(mensaje);
       return;
     }
 
     setError("");
-    setFeedback("");
     setLoading(true);
 
     try {
       await api.crearIndec({ anio, mes, porcentaje });
       setYear(String(anio));
       setShowForm(false);
-      setFeedback(`Porcentaje de ${month} ${anio} guardado.`);
-      window.setTimeout(() => setFeedback(""), 2800);
+      mostrarAviso({ tipo: "exito", titulo: "Porcentaje guardado", mensaje: `Se guardó el porcentaje de ${month} ${anio}.` });
       try {
         const updatedRecords = await api.indec(anio);
         setRecords(updatedRecords);
       } catch (refreshError) {
-        setError(`Se guardó, pero no se pudo actualizar la lista: ${refreshError.message}`);
+        const mensaje = `Se guardó, pero no se pudo actualizar la lista: ${refreshError.message}`;
+        setError(mensaje);
+        mostrarAviso({ tipo: "advertencia", titulo: "Lista desactualizada", mensaje });
       }
     } catch (requestError) {
       setError(requestError.message);
+      mostrarAviso({ tipo: "error", titulo: "No se pudo guardar el porcentaje", mensaje: requestError.message });
     } finally {
       setLoading(false);
     }
@@ -92,7 +93,10 @@ export default function Indec() {
         if (active) setRecords(data);
       })
       .catch((requestError) => {
-        if (active) setError(requestError.message);
+        if (active) {
+          setError(requestError.message);
+          mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar los porcentajes", mensaje: requestError.message });
+        }
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -161,11 +165,6 @@ export default function Indec() {
         )}
       </section>
 
-      {feedback && (
-        <p className="indec__feedback" role="status" aria-live="polite">
-          {feedback}
-        </p>
-      )}
       {showForm && (
         <AumentoModal
           year={year}

@@ -7,7 +7,7 @@ import {
   phoneIcon,
   userIcon,
 } from "../../assets/icons";
-import { SelectDesplegable, Boton } from "../../components";
+import { SelectDesplegable, Boton, mostrarAviso } from "../../components";
 import useClosingTransition from "../../hooks/useClosingTransition.js";
 import "./InquilinoModal.css";
 
@@ -71,7 +71,6 @@ function EntradaConIcono({ icon, ...props }) {
 export default function InquilinoModal({ isOpen, mode, tenant, onClose, onSubmit }) {
   const [form, setForm] = useState(() => getInitialForm(tenant));
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
   const { isClosing, close } = useClosingTransition(onClose);
   const isEditing = mode === "edit";
   const displayName = isEditing
@@ -117,7 +116,6 @@ export default function InquilinoModal({ isOpen, mode, tenant, onClose, onSubmit
 
   async function handleSubmit(event) {
     event.preventDefault();
-    setError("");
     setSaving(true);
     try {
       await onSubmit({
@@ -125,7 +123,11 @@ export default function InquilinoModal({ isOpen, mode, tenant, onClose, onSubmit
         name: `${form.firstName.trim()} ${form.lastName.trim()}`.trim(),
       });
     } catch (submitError) {
-      setError(submitError.message || "No se pudieron guardar los cambios.");
+      mostrarAviso({
+        tipo: "error",
+        titulo: isEditing ? "No se pudo actualizar el inquilino" : "No se pudo crear el inquilino",
+        mensaje: submitError.message || "No se pudieron guardar los cambios.",
+      });
     } finally {
       setSaving(false);
     }
@@ -265,11 +267,6 @@ export default function InquilinoModal({ isOpen, mode, tenant, onClose, onSubmit
             </div>
           </div>
 
-          {error && (
-            <p className="inquilino-modal__error" role="alert">
-              {error}
-            </p>
-          )}
 
           <footer className="inquilino-modal__actions">
             <button

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { Skeleton, PanelImagen, CampoTexto, BotonPrincipal, TextoLegal } from "../../components";
+import { Skeleton, PanelImagen, CampoTexto, BotonPrincipal, TextoLegal, mostrarAviso } from "../../components";
 import { api } from "../../services/api.js";
 import { guardarBorradorRegistro } from "../../services/borradorRegistro.js";
 import addressCardIcon from "../../assets/icons/address-card-regular-full.svg";
@@ -27,9 +27,10 @@ export default function ConfirmarRegistro() {
       const { verificacion } = await api.verificarDniInvitacion(codigo, dni);
       guardarBorradorRegistro({ verificacion });
       setStatus("listo");
+      mostrarAviso({ tipo: "exito", titulo: "DNI verificado", mensaje: "Ya podés crear tu cuenta." });
       navigate("/registro");
     } catch (cause) {
-      setError(cause.message);
+      mostrarAviso({ tipo: "error", titulo: "No se pudo verificar el DNI", mensaje: cause.message });
       setStatus("inactivo");
     }
   }

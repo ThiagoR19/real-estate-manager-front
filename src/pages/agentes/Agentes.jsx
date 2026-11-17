@@ -24,6 +24,7 @@ import {
   AvisoEnlaceActivacion,
   Paginacion,
   usePaginacion,
+  mostrarAviso,
 } from "../../components";
 import { api } from "../../services/api.js";
 import PageSkeleton from "../../components/skeleton/PageSkeleton";
@@ -106,7 +107,6 @@ function FilaAgente({ agent, onEdit, onDelete, onGenerateActivation }) {
 }
 
 function AgenteModal({ agent, areas, onClose, onSubmit }) {
-  const [error, setError] = useState("");
   const [areaId, setAreaId] = useState(String(agent?.idArea ?? ""));
   const selectedArea = areas.find((area) => String(area.id) === areaId);
 
@@ -120,10 +120,13 @@ function AgenteModal({ agent, areas, onClose, onSubmit }) {
     body.idArea = body.idArea ? Number(body.idArea) : null;
 
     try {
-      setError("");
       await onSubmit(body);
     } catch (cause) {
-      setError(cause.message);
+      mostrarAviso({
+        tipo: "error",
+        titulo: agent ? "No se pudo actualizar el agente" : "No se pudo crear el agente",
+        mensaje: cause.message,
+      });
     }
   }
 
@@ -162,7 +165,6 @@ function AgenteModal({ agent, areas, onClose, onSubmit }) {
             </CampoModal>
           </div>
         </div>
-        {error && <p role="alert">{error}</p>}
         <AccionesModal onClose={onClose} submitText={agent ? "Guardar cambios" : "Crear agente"} />
       </form>
     </GestionModal>
@@ -206,7 +208,11 @@ export default function Agentes() {
         setAreas(areaRows);
         setVisits(visitRows);
       })
-      .catch((cause) => { if (active) setError(cause.message); })
+      .catch((cause) => {
+        if (!active) return;
+        setError(cause.message);
+        mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar los agentes", mensaje: cause.message });
+      })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, []);
@@ -221,12 +227,16 @@ export default function Agentes() {
         ? current.map((agent) => (agent.id === result.id ? result : agent))
         : [...current, result],
     );
-    setActivationUrl(enlaceActivacion(result.activacion));
-    setNotice(
-      modal.mode === "edit"
-        ? "Agente actualizado correctamente."
-        : "Agente creado. Copiá el enlace y compartilo para que active su cuenta.",
-    );
+    const urlActivacion = enlaceActivacion(result.activacion);
+    setActivationUrl(modal.mode === "edit" ? "" : urlActivacion);
+    setNotice(modal.mode === "edit" || !urlActivacion
+      ? ""
+      : "Agente creado. Copiá el enlace y compartilo para que active su cuenta.");
+    mostrarAviso({
+      tipo: "exito",
+      titulo: modal.mode === "edit" ? "Agente actualizado" : "Agente creado",
+      mensaje: modal.mode === "edit" ? "Los datos del agente se guardaron." : "El agente ya está en la lista.",
+    });
     setModal(null);
   }
 
@@ -236,8 +246,9 @@ export default function Agentes() {
       const activacion = await api.generarEnlaceAgente(agent.id);
       setActivationUrl(enlaceActivacion(activacion));
       setNotice(`Enlace nuevo para ${agent.nombre || `DNI ${agent.dni}`}. Compartilo con el agente para activar su cuenta.`);
+      mostrarAviso({ tipo: "info", titulo: "Enlace de activación generado", mensaje: "Copialo y compartilo con el agente para que active su cuenta." });
     } catch (cause) {
-      setError(cause.message);
+      mostrarAviso({ tipo: "error", titulo: "No se pudo generar el enlace", mensaje: cause.message });
     }
   }
 
@@ -247,9 +258,10 @@ export default function Agentes() {
       setAgents((current) => current.filter((agent) => agent.id !== pendingDelete.id));
       setPendingDelete(null);
       setActivationUrl("");
-      setNotice("Agente eliminado correctamente.");
+      setNotice("");
+      mostrarAviso({ tipo: "exito", titulo: "Agente eliminado", mensaje: "El agente se eliminó correctamente." });
     } catch (cause) {
-      setError(cause.message);
+      mostrarAviso({ tipo: "error", titulo: "No se pudo eliminar el agente", mensaje: cause.message });
     }
   }
 

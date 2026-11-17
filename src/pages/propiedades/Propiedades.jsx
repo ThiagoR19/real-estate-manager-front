@@ -10,6 +10,7 @@ import {
   Paginacion,
   usePaginacion,
   PROPERTY_PAGE_SIZE,
+  mostrarAviso,
 } from "../../components";
 import { api } from "../../services/api.js";
 import PageSkeleton from "../../components/skeleton/PageSkeleton";
@@ -78,7 +79,6 @@ export default function Propiedades() {
   const [pendingDelete, setPendingDelete] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [feedback, setFeedback] = useState("");
   const [search, setSearch] = useState("");
   const filterItems = buildFilterOptions(catalogs, properties);
   const visibleProperties = properties.filter((property) =>
@@ -105,7 +105,10 @@ export default function Propiedades() {
         setCatalogs(lists);
       })
       .catch((cause) => {
-        if (active) setError(cause.message);
+        if (active) {
+          setError(cause.message);
+          mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar las propiedades", mensaje: cause.message });
+        }
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -116,11 +119,21 @@ export default function Propiedades() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!loading && !error && (!catalogs.tipos.length || !catalogs.estados.length)) {
+      mostrarAviso({
+        tipo: "advertencia",
+        titulo: "Faltan datos para crear propiedades",
+        mensaje: "La base de datos necesita tipos y estados comerciales configurados.",
+      });
+    }
+  }, [catalogs.estados.length, catalogs.tipos.length, error, loading]);
+
   async function openEdit(property) {
     try {
       setModal({ mode: "edit", property: await api.obtenerPropiedad(property.id) });
     } catch (cause) {
-      setError(cause.message);
+      mostrarAviso({ tipo: "error", titulo: "No se pudo abrir la propiedad", mensaje: cause.message });
     }
   }
 
@@ -133,9 +146,12 @@ export default function Propiedades() {
       }
     },);
     setModal(null);
-    if (fileError)
-      setError("La propiedad se guardó, pero hubo un problema con sus archivos: " + fileError);
-    else setFeedback(property.nombre + " se guardó correctamente.");
+    if (fileError) {
+      const mensaje = `La propiedad se guardó, pero hubo un problema con sus archivos: ${fileError}`;
+      mostrarAviso({ tipo: "advertencia", titulo: "Propiedad guardada con observaciones", mensaje });
+    } else {
+      mostrarAviso({ tipo: "exito", titulo: "Propiedad guardada", mensaje: `${property.nombre} se guardó correctamente.` });
+    }
   }
 
   async function remove() {
@@ -144,10 +160,10 @@ export default function Propiedades() {
     try {
       await api.eliminarPropiedad(pendingDelete.id);
       setProperties((current) => current.filter((item) => item.id !== pendingDelete.id));
-      setFeedback(pendingDelete.nombre + " se eliminó.");
+      mostrarAviso({ tipo: "exito", titulo: "Propiedad eliminada", mensaje: `${pendingDelete.nombre} se eliminó.` });
       setPendingDelete(null);
     } catch (error) {
-      setError(error.message);
+      mostrarAviso({ tipo: "error", titulo: "No se pudo eliminar la propiedad", mensaje: error.message });
       setPendingDelete(null);
     }
   }
@@ -214,9 +230,6 @@ export default function Propiedades() {
       )}
       {!loading && <Paginacion page={page} totalPages={totalPages} total={visibleProperties.length} onPageChange={setPage} pageSize={PROPERTY_PAGE_SIZE} />}
 
-      <p className="propiedades__feedback" role="status">
-        {feedback}
-      </p>
       <ConfirmarEliminacionModal
         isOpen={Boolean(pendingDelete)}
         onClose={() => setPendingDelete(null)}

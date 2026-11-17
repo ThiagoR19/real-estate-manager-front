@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { buildingColumnsIcon, magnifyingGlassIcon, paperPlaneIcon, userIcon } from "../../assets/icons";
 import SelectDesplegable from "../../components/select/SelectDesplegable";
+import { mostrarAviso } from "../../components";
 import { api } from "../../services/api.js";
 import PageSkeleton from "../../components/skeleton/PageSkeleton";
 import { obtenerSesion } from "../../services/login.js";
@@ -49,7 +50,11 @@ export default function Chat() {
         setContacts(people);
         setSelectedId(rows[0]?.id ?? null);
       })
-      .catch((cause) => { if (active) setError(cause.message); })
+      .catch((cause) => {
+        if (!active) return;
+        setError(cause.message);
+        mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar las conversaciones", mensaje: cause.message });
+      })
       .finally(() => { if (active) setLoading(false); });
     const interval = window.setInterval(() => {
       api.conversaciones().then((rows) => {
@@ -113,7 +118,9 @@ export default function Chat() {
       }
       setDraft("");
       await refreshConversations();
-    } catch (cause) { setError(cause.message); }
+    } catch (cause) {
+      mostrarAviso({ tipo: "error", titulo: "No se pudo enviar el mensaje", mensaje: cause.message });
+    }
     finally { setSending(false); }
   }
 
