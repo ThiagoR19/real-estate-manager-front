@@ -11,6 +11,8 @@ import {
 import {
   SelectDesplegable,
   ConfirmarEliminacionModal,
+  GestionModal,
+  AccionesModal,
   Boton,
   Paginacion,
   usePaginacion,
@@ -20,13 +22,19 @@ import ProfesionalModal from "./ProfesionalModal";
 import "./Profesionales.css";
 
 import { api } from "../../services/api.js";
+import { obtenerSesion } from "../../services/login.js";
+import avatarClass from "../../utils/avatarClass.js";
 
 export default function Profesionales() {
   const [professionals, setProfessionals] = useState([]);
   const [selectedType, setSelectedType] = useState("Tipo");
   const [modal, setModal] = useState({ isOpen: false, mode: "create", professional: null });
   const [pendingDelete, setPendingDelete] = useState(null);
+  const [pendingVote, setPendingVote] = useState(null);
+  const [selectedRating, setSelectedRating] = useState(0);
+  const [sendingVote, setSendingVote] = useState(false);
   const [error, setError] = useState("");
+  const canVote = Number(obtenerSesion()?.usuario?.rol) === 3;
 
   useEffect(() => {
     let active = true;
@@ -94,6 +102,23 @@ export default function Profesionales() {
     }
   }
 
+  async function submitVote(event) {
+    event.preventDefault();
+    if (!pendingVote || !selectedRating || sendingVote) return;
+    setSendingVote(true);
+    try {
+      const saved = await api.valorarProfesional(pendingVote.id, selectedRating);
+      setProfessionals((current) => current.map((item) => item.id === saved.id ? saved : item));
+      setPendingVote(null);
+      setSelectedRating(0);
+      mostrarAviso({ tipo: "exito", titulo: "Valoración guardada", mensaje: `Valoraste a ${saved.nombre} ${saved.apellido} con ${selectedRating} estrellas.` });
+    } catch (cause) {
+      mostrarAviso({ tipo: "error", titulo: "No se pudo guardar la valoración", mensaje: cause.message });
+    } finally {
+      setSendingVote(false);
+    }
+  }
+
   return (
     <main id="profesionales">
       <section className="profesionales__top" aria-label="Encabezado y filtros de profesionales">
@@ -150,7 +175,7 @@ export default function Profesionales() {
                 <tr key={professional.id}>
                   <th scope="row" data-label="Profesional">
                     <div className="profesionales__identity">
-                      <span className="profesionales__avatar" aria-hidden="true">
+                      <span className={`profesionales__avatar ${avatarClass(professional.nombre, professional.apellido)}`} aria-hidden="true">
                         {professional.nombre?.[0]}
                         {professional.apellido?.[0]}
                       </span>
@@ -178,42 +203,36 @@ export default function Profesionales() {
                     {(() => {
                       const rating = Number(professional.ratingPromedio) || 0;
                       const reviewCount = Number(professional.cantidadResenas) || 0;
-                      const roundedRating = Math.round(rating);
-
                       return (
                         <div className="profesionales__rating">
                           <span
                             className="profesionales__rating-stars"
                             role="img"
                             aria-label={`${rating.toFixed(1)} de 5 estrellas`}
+                            style={{ "--rating-percent": `${rating * 20}%` }}
                           >
-                            {Array.from({ length: 5 }, (_, index) => (
-                              <span
-                                className={`profesionales__rating-star${index < roundedRating ? " is-active" : ""}`}
-                                key={index}
-                                aria-hidden="true"
-                              >
-                                ★
-                              </span>
-                            ))}
+                            ★★★★★
                           </span>
                           <strong>{rating.toFixed(1)}</strong>
-                          <small>({reviewCount}) Reseñas</small>
+                          <small>({reviewCount}) votos</small>
                         </div>
                       );
                     })()}
                   </td>
                   <td data-label="Acciones">
                     <div className="profesionales__actions">
-                      <button
+                      {canVote && <button
                         className="profesionales__rate"
                         type="button"
-                        aria-label={`Valorar a ${professional.nombre} ${professional.apellido}`}
-                        onClick={() => mostrarAviso({ tipo: "info", titulo: "Valoraciones no disponibles", mensaje: "La función para valorar profesionales todavía no está disponible." })}
+                        aria-label={professional.miVoto != null
+                          ? `Ya valoraste a ${professional.nombre} ${professional.apellido} con ${professional.miVoto} estrellas`
+                          : `Valorar a ${professional.nombre} ${professional.apellido}`}
+                        disabled={professional.miVoto != null}
+                        onClick={() => { setPendingVote(professional); setSelectedRating(0); }}
                       >
                         <img src={starIcon} alt="" />
-                        <span>Valorar</span>
-                      </button>
+                        <span>{professional.miVoto != null ? "Votado" : "Valorar"}</span>
+                      </button>}
                       <button
                         className="profesionales__action profesionales__action--edit"
                         type="button"
@@ -253,8 +272,30 @@ export default function Profesionales() {
         isOpen={Boolean(pendingDelete)}
         onClose={() => setPendingDelete(null)}
         onConfirm={() => removeProfessional(pendingDelete)}
-        title="¿Seguro que desea eliminar este profesional?"
+        title="¿Eliminar este profesional? Sus reportes quedarán sin profesional asignado."
       />
+
+      {pendingVote && (
+        <GestionModal
+          isOpen
+          onClose={() => { if (!sendingVote) setPendingVote(null); }}
+          title={`Valorar a ${pendingVote.nombre} ${pendingVote.apellido}`}
+          subtitle="Cada agente puede votar una sola vez por profesional."
+        >
+          <form onSubmit={submitVote}>
+            <fieldset className="profesionales__vote-options" disabled={sendingVote}>
+              <legend>Elegí de 1 a 5 estrellas</legend>
+              {[1, 2, 3, 4, 5].map((value) => (
+                <label key={value} className={selectedRating === value ? "is-selected" : ""}>
+                  <input type="radio" name="puntuacion" value={value} checked={selectedRating === value} onChange={() => setSelectedRating(value)} />
+                  <span aria-hidden="true">★</span>{value}
+                </label>
+              ))}
+            </fieldset>
+            <AccionesModal onClose={() => setPendingVote(null)} submitText="Enviar valoración" disabled={!selectedRating || sendingVote} />
+          </form>
+        </GestionModal>
+      )}
 
       {modal.isOpen && (
         <ProfesionalModal

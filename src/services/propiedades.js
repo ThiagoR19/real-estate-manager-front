@@ -27,11 +27,15 @@ export async function obtenerPropiedad(id) {
   return { ...raw, imagenes: files.imagenes || [], documentos: files.documentos || [] };
 }
 
-export function subirArchivosPropiedad(id, kind, files) {
+export function subirArchivosPropiedad(id, kind, files, titulo) {
   const body = new FormData();
   for (const file of files) body.append(kind, file);
+  if (titulo) body.append("titulo", titulo);
   return request(`/propiedades/${id}/archivos/${kind}`, { method: "POST", body });
 }
+
+export const renombrarDocumentoPropiedad = (id, fileId, titulo) =>
+  request(`/propiedades/${id}/archivos/documentos/${fileId}`, { method: "PATCH", body: { titulo } });
 
 export const eliminarArchivoPropiedad = (id, kind, fileId) => request(`/propiedades/${id}/archivos/${kind}/${fileId}`, { method: "DELETE" });
 

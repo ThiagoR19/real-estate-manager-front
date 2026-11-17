@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { circleInfoIcon, commentsIcon, paperPlaneIcon, smailing, toolplumbing } from "../../assets/icons";
 import { mostrarAviso } from "../../components";
 import { api } from "../../services/api";
+import { estadoReporte } from "../../utils/estadoReporte.js";
 import PageSkeleton from "../../components/skeleton/PageSkeleton";
 import "./DashboardPropietario.css";
 
@@ -255,7 +256,7 @@ function AccesoReportes({ reportes }) {
               <strong>{reporte.titulo}</strong>
               <span>{reporte.propiedad}</span>
               <small>
-                {reporte.estado} · {diaYMes(reporte.fecha)}
+                {estadoReporte(reporte.estado)} · {diaYMes(reporte.fecha)}
               </small>
             </li>
           ))}

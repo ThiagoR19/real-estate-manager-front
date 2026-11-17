@@ -1,7 +1,7 @@
 import { PAGE_SIZE } from "./usePaginacion.js";
 import "./Paginacion.css";
 
-export default function Paginacion({ page, totalPages, total, onPageChange, pageSize = PAGE_SIZE }) {
+export default function Paginacion({ page, totalPages, total, onPageChange, pageSize = PAGE_SIZE, mostrarTamanoPagina = false }) {
   if (!total) return null;
 
   const first = (page - 1) * pageSize + 1;
@@ -11,7 +11,10 @@ export default function Paginacion({ page, totalPages, total, onPageChange, page
 
   return (
     <nav className="paginacion" aria-label="Paginación">
-      <span className="paginacion__count">Mostrando {first}–{last} de {total}</span>
+      <span className="paginacion__count">
+        Mostrando {first}–{last} de {total}
+        {mostrarTamanoPagina && ` · ${pageSize} por página`}
+      </span>
       <div className="paginacion__buttons">
         <button type="button" disabled={page === 1} onClick={() => onPageChange(page - 1)}>
           Anterior

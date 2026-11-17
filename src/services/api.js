@@ -11,6 +11,7 @@ import * as servicioContVisita from "./contVisita.js";
 import * as servicioVisitas from "./visitas.js";
 import * as servicioChats from "./chats.js";
 import * as servicioPropiedadesPropietario from "./propiedadesPropietario.js";
+import * as servicioReportes from "./reportes.js";
 import * as servicioDocumentos from "./documentos.js";
 import * as servicioNotificaciones from "./notificaciones.js";
 import { assetUrl } from "../utils/assetUrl.js";
@@ -56,6 +57,7 @@ export const api = {
   actualizarPropiedad: servicioPropiedades.actualizarPropiedad,
   eliminarPropiedad: servicioPropiedades.eliminarPropiedad,
   subirArchivosPropiedad: servicioPropiedades.subirArchivosPropiedad,
+  renombrarDocumentoPropiedad: servicioPropiedades.renombrarDocumentoPropiedad,
   eliminarArchivoPropiedad: servicioPropiedades.eliminarArchivoPropiedad,
   descargarDocumentoPropiedad: servicioPropiedades.descargarDocumentoPropiedad,
   obtenerPropiedad: servicioPropiedades.obtenerPropiedad,
@@ -77,6 +79,7 @@ export const api = {
   crearProfesional: servicioProfesionales.crearProfesional,
   actualizarProfesional: servicioProfesionales.actualizarProfesional,
   eliminarProfesional: servicioProfesionales.eliminarProfesional,
+  valorarProfesional: servicioProfesionales.valorarProfesional,
   indec: servicioIndec.indec,
   crearIndec: servicioIndec.crearIndec,
   dashboard: servicioDashboard.obtenerDashboard,
@@ -96,6 +99,10 @@ export const api = {
   marcarChatLeido: servicioChats.marcarLeido,
   contratos: servicioPropiedadesPropietario.contratos,
   reportes: servicioPropiedadesPropietario.reportes,
+  catalogosReportes: servicioReportes.catalogosReportes,
+  crearReporte: servicioReportes.crearReporte,
+  actualizarReporte: servicioReportes.actualizarReporte,
+  subirImagenesReporte: servicioReportes.subirImagenesReporte,
   documentosContrato: servicioDocumentos.documentosContrato,
   descargarDocumento: servicioDocumentos.descargarDocumento,
   notificaciones: servicioNotificaciones.notificaciones,

@@ -88,6 +88,17 @@ export default function Propiedad() {
       icon: userIcon,
     },
     {
+      label: "Dueño / Propietario",
+      value: (catalogs.propietarios || []).find((owner) => owner.id === propertyData?.idPropietario)?.nombre || "Sin asignar",
+      icon: userIcon,
+    },
+    {
+      label: "Servicios",
+      value: (catalogs.servicios || []).filter((service) => propertyData?.servicios?.includes(service.id))
+        .map((service) => service.nombre).join(", ") || "Sin especificar",
+      icon: houseIcon,
+    },
+    {
       label: "Fecha de alta",
       value: propertyData?.fechaCreacion
         ? new Date(propertyData.fechaCreacion).toLocaleDateString("es-AR")
@@ -288,7 +299,7 @@ export default function Propiedad() {
                           }
                         }}
                       >
-                        {document.nombreArchivo}
+                        {document.titulo || document.nombreArchivo}
                       </button>
                     </div>
                   </article>

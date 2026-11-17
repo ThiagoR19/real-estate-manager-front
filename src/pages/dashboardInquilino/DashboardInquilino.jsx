@@ -13,6 +13,7 @@ import {
 } from "../../assets/icons";
 import { mostrarAviso } from "../../components";
 import { api } from "../../services/api";
+import { estadoReporte } from "../../utils/estadoReporte.js";
 import PageSkeleton from "../../components/skeleton/PageSkeleton";
 import "./DashboardInquilino.css";
 
@@ -211,7 +212,7 @@ function TarjetaReportes({ reportes }) {
         <h2 id="reportes-title">Reportes</h2>
         {reportes.total > 0 && (
           <span className="dashboard-inquilino__count">
-            {reportes.total} {reportes.total === 1 ? "abierto" : "abiertos"}
+            {reportes.total} {reportes.total === 1 ? "pendiente" : "pendientes"}
           </span>
         )}
       </header>
@@ -222,7 +223,7 @@ function TarjetaReportes({ reportes }) {
             <li key={reporte.id}>
               <strong>{reporte.titulo}</strong>
               <small>
-                {reporte.estado} · {diaYMes(reporte.fecha)}
+                {estadoReporte(reporte.estado)} · {diaYMes(reporte.fecha)}
               </small>
             </li>
           ))}

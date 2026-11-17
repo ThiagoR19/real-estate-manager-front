@@ -194,7 +194,7 @@ body:has(#inquilinos) {
 
 .inquilinos__toolbar {
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) repeat(3, minmax(145px, 190px)) auto;
+  grid-template-columns: minmax(220px, 1fr) repeat(3, minmax(145px, 220px)) auto;
   gap: 12px;
   align-items: center;
   margin: 22px 8px 25px;
@@ -478,6 +478,15 @@ body:has(#inquilinos) {
   object-fit: cover !important;
   filter: none !important;
 }
+.inquilinos__propiedad-image--empty {
+  display: grid;
+  place-items: center;
+  background: #edf3f9;
+}
+.inquilinos__propiedad-image--empty img {
+  width: 23px;
+  height: 23px;
+}
 .inquilinos__status {
   display: inline-flex;
   align-items: center;
@@ -495,10 +504,6 @@ body:has(#inquilinos) {
 .inquilinos__status--inactive {
   background: #edf1f5;
   color: #526485;
-}
-.inquilinos__status--pending {
-  background: #fff2cf;
-  color: #8e650e;
 }
 .inquilinos__due {
   font-size: 14px;

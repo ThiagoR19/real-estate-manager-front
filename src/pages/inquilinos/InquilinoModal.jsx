@@ -3,12 +3,14 @@ import { createPortal } from "react-dom";
 import {
   addressCardIcon,
   envelopeIcon,
+  houseIcon,
   locationDotIcon,
   phoneIcon,
   userIcon,
 } from "../../assets/icons";
 import { SelectDesplegable, Boton, mostrarAviso } from "../../components";
 import useClosingTransition from "../../hooks/useClosingTransition.js";
+import { propiedades } from "../../services/propiedades.js";
 import "./InquilinoModal.css";
 
 const statusOptions = ["Activo", "Inactivo"];
@@ -23,6 +25,7 @@ function getInitialForm(tenant) {
       address: "",
       dni: "",
       active: true,
+      propertyId: null,
     };
   }
 
@@ -34,6 +37,7 @@ function getInitialForm(tenant) {
     address: tenant.direccion || "",
     dni: tenant.dni || "",
     active: Boolean(tenant.activo),
+    propertyId: tenant.idPropiedad || null,
   };
 }
 
@@ -71,18 +75,37 @@ function EntradaConIcono({ icon, ...props }) {
 export default function InquilinoModal({ isOpen, mode, tenant, onClose, onSubmit }) {
   const [form, setForm] = useState(() => getInitialForm(tenant));
   const [saving, setSaving] = useState(false);
+  const [availableProperties, setAvailableProperties] = useState([]);
+  const [loadingProperties, setLoadingProperties] = useState(isOpen && mode === "edit");
+  const [propertiesError, setPropertiesError] = useState("");
   const { isClosing, close } = useClosingTransition(onClose);
   const isEditing = mode === "edit";
   const displayName = isEditing
     ? `${tenant?.nombre || ""} ${tenant?.apellido || ""}`.trim() || `DNI ${tenant?.dni}`
     : "Inquilino";
-  const displayStatus = isEditing
-    ? !tenant?.activo
-      ? "Inactivo"
-      : tenant?.estadoCuenta === "PENDIENTE_ACTIVACION"
-        ? "Pendiente"
-        : "Activo"
-    : "Estado";
+  const displayStatus = isEditing ? (form.active ? "Activo" : "Inactivo") : "Estado";
+  const propertyChoices = availableProperties.map((property) => ({
+    id: property.id,
+    label: `${property.ubicacion ? `${property.ubicacion} · ` : ""}${property.nombre} (#${property.id})`,
+  }));
+  const selectedProperty = propertyChoices.find((property) => Number(property.id) === Number(form.propertyId));
+  const propertyOptions = ["Seleccionar propiedad", ...propertyChoices.map((property) => property.label)];
+
+  useEffect(() => {
+    if (!isOpen || !isEditing) return undefined;
+    let mounted = true;
+    propiedades()
+      .then((items) => {
+        if (mounted) setAvailableProperties(items);
+      })
+      .catch((error) => {
+        if (mounted) setPropertiesError(error.message || "No se pudieron cargar las propiedades.");
+      })
+      .finally(() => {
+        if (mounted) setLoadingProperties(false);
+      });
+    return () => { mounted = false; };
+  }, [isOpen, isEditing]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -156,7 +179,7 @@ export default function InquilinoModal({ isOpen, mode, tenant, onClose, onSubmit
           <h2 id="inquilino-modal-title">{isEditing ? "Editar inquilino" : "Crear inquilino"}</h2>
           <p>
             {isEditing
-              ? "Actualiza la información de contacto y el estado del inquilino."
+              ? "Actualiza la información principal del inquilino."
               : "Completá los datos del inquilino para crear su cuenta."}
           </p>
         </header>
@@ -246,6 +269,33 @@ export default function InquilinoModal({ isOpen, mode, tenant, onClose, onSubmit
                   readOnly={isEditing}
                 />
               </Campo>
+
+              {isEditing && <Campo label="Propiedad">
+                {loadingProperties || propertiesError || !propertyChoices.length ? (
+                  <span className="inquilino-modal__select-trigger" role={propertiesError ? "alert" : undefined}>
+                    {loadingProperties
+                      ? "Cargando propiedades..."
+                      : propertiesError || "No hay propiedades disponibles"}
+                  </span>
+                ) : (
+                  <SelectDesplegable
+                    label="Propiedad"
+                    value={selectedProperty?.label || propertyOptions[0]}
+                    options={propertyOptions}
+                    onChange={(label) => {
+                      const property = propertyChoices.find((choice) => choice.label === label);
+                      if (property) setForm((current) => ({ ...current, propertyId: property.id }));
+                    }}
+                    icon={houseIcon}
+                    className="inquilino-modal__select"
+                    triggerClassName="inquilino-modal__select-trigger"
+                    iconClassName="inquilino-modal__select-icon"
+                    valueClassName="inquilino-modal__select-value"
+                    chevronClassName="inquilino-modal__select-arrow"
+                    optionsClassName="inquilino-modal__select-options"
+                  />
+                )}
+              </Campo>}
 
               {isEditing && <Campo label="Estado">
                 <SelectDesplegable

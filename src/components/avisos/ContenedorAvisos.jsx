@@ -8,7 +8,7 @@ export default function ContenedorAvisos() {
   const avisos = useSyncExternalStore(suscribirAvisos, leerAvisos);
 
   return (
-    <section className="ContenedorAvisos" aria-label="Notificaciones" aria-live="polite">
+    <section id="contenedor-avisos" className="ContenedorAvisos" aria-label="Notificaciones" aria-live="polite">
       {avisos.map(({ id, ...aviso }) => (
         <Aviso key={id} {...aviso} onFin={() => quitarAviso(id)} />
       ))}

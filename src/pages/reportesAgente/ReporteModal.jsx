@@ -1,16 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { houseIcon, xIcon } from "../../assets/icons";
-import { SelectDesplegable, Boton } from "../../components";
+import { houseIcon, plusIcon, xIcon } from "../../assets/icons";
+import { Boton } from "../../components";
 import useClosingTransition from "../../hooks/useClosingTransition.js";
 import "./ReporteModal.css";
-
-const typeOptions = ["Tipo", "Plomería", "Electricidad", "Gas", "Pintura", "Carpintería", "Otro"];
 
 function getInitialForm() {
   return {
     name: "",
-    type: typeOptions[1],
+    idPropiedad: "",
+    idCategoria: "",
     description: "",
   };
 }
@@ -24,7 +23,7 @@ function Campo({ children, label }) {
   );
 }
 
-export default function ReporteModal({ isOpen, onClose, onSubmit }) {
+export default function ReporteModal({ isOpen, onClose, onSubmit, propiedades = [], categorias = [], busy = false }) {
   const [form, setForm] = useState(getInitialForm);
   const [photos, setPhotos] = useState([]);
   const photosRef = useRef([]);
@@ -68,7 +67,7 @@ export default function ReporteModal({ isOpen, onClose, onSubmit }) {
   }
 
   function addPhotos(event) {
-    const selectedPhotos = Array.from(event.target.files ?? []).map((file) => ({
+    const selectedPhotos = Array.from(event.target.files ?? []).slice(0, Math.max(0, 10 - photosRef.current.length)).map((file) => ({
       id: `${file.name}-${file.lastModified}-${file.size}-${Math.random()}`,
       file,
       url: URL.createObjectURL(file),
@@ -96,8 +95,11 @@ export default function ReporteModal({ isOpen, onClose, onSubmit }) {
 
   function handleSubmit(event) {
     event.preventDefault();
+    if (busy) return;
     onSubmit({
       ...form,
+      idPropiedad: form.idPropiedad || propiedades[0]?.id,
+      idCategoria: form.idCategoria || categorias[0]?.id,
       name: form.name.trim(),
       description: form.description.trim(),
       photos: photosRef.current.map(({ file }) => file),
@@ -151,20 +153,21 @@ export default function ReporteModal({ isOpen, onClose, onSubmit }) {
                 />
               </Campo>
 
+              <Campo label="Propiedad">
+                <span className="reporte-modal__native-select-wrap">
+                  <img src={houseIcon} alt="" aria-hidden="true" />
+                  <select className="reporte-modal__native-select" name="idPropiedad"
+                    value={form.idPropiedad || propiedades[0]?.id || ""} onChange={updateField} required>
+                    {propiedades.map((propiedad) => <option key={propiedad.id} value={propiedad.id}>{propiedad.nombre}{propiedad.ubicacion ? ` · ${propiedad.ubicacion}` : ""}</option>)}
+                  </select>
+                </span>
+              </Campo>
+
               <Campo label="Tipo">
-                <SelectDesplegable
-                  label="Tipo de reporte"
-                  value={form.type}
-                  options={typeOptions}
-                  onChange={(type) => setForm((current) => ({ ...current, type }))}
-                  icon={houseIcon}
-                  className="reporte-modal__select"
-                  triggerClassName="reporte-modal__select-trigger"
-                  iconClassName="reporte-modal__select-icon"
-                  valueClassName="reporte-modal__select-value"
-                  chevronClassName="reporte-modal__select-arrow"
-                  optionsClassName="reporte-modal__select-options"
-                />
+                <select className="reporte-modal__native-select" name="idCategoria"
+                  value={form.idCategoria || categorias[0]?.id || ""} onChange={updateField} required>
+                  {categorias.map((categoria) => <option key={categoria.id} value={categoria.id}>{categoria.nombre}</option>)}
+                </select>
               </Campo>
 
               <Campo label="Descripción">
@@ -211,23 +214,21 @@ export default function ReporteModal({ isOpen, onClose, onSubmit }) {
                 ))}
 
                 <label className="reporte-modal__add-photos">
-                  <span className="reporte-modal__add-icon" aria-hidden="true">
-                    +
-                  </span>
+                  <img className="reporte-modal__add-icon" src={plusIcon} alt="" aria-hidden="true" />
                   <span>Agregar fotos</span>
-                  <input type="file" accept="image/*" multiple onChange={addPhotos} />
+                  <input type="file" accept="image/*" multiple onChange={addPhotos} disabled={photos.length >= 10 || busy} />
                 </label>
               </div>
             </div>
           </section>
 
           <footer className="reporte-modal__actions">
-            <p>Nota: una vez creado el reporte no podrá editarlo ni eliminarlo</p>
+            <p>La inmobiliaria te notificará cuando cambie el estado del reporte.</p>
             <div>
-              <button className="reporte-modal__cancel" type="button" onClick={close}>
+              <button className="reporte-modal__cancel" type="button" onClick={close} disabled={busy}>
                 Cancelar
               </button>
-              <Boton className="reporte-modal__submit" type="submit" text="Crear reporte" />
+              <Boton className="reporte-modal__submit" type="submit" disabled={busy} text={busy ? "Guardando..." : "Crear reporte"} />
             </div>
           </footer>
         </form>

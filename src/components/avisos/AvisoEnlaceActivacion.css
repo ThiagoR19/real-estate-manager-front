@@ -1,9 +1,6 @@
 .aviso-enlace-activacion {
-  position: fixed;
-  z-index: 40;
-  right: 22px;
-  bottom: 22px;
-  width: min(540px, calc(100vw - 44px));
+  box-sizing: border-box;
+  width: min(540px, calc(100vw - 48px));
   padding: 16px 18px;
   border: 1px solid #c8dff3;
   border-radius: 12px;
@@ -12,6 +9,7 @@
   color: #17235e;
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
   font-size: 14px;
+  pointer-events: auto;
   transition: opacity 220ms ease, transform 220ms ease;
 }
 
@@ -88,9 +86,7 @@
 
 @media (max-width: 520px) {
   .aviso-enlace-activacion {
-    right: 12px;
-    bottom: 12px;
-    width: calc(100vw - 24px);
+    width: 100%;
     padding: 14px;
   }
 

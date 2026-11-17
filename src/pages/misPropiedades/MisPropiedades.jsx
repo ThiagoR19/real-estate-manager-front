@@ -5,11 +5,12 @@ import {
 } from "../../assets/icons";
 import { SelectDesplegable, PildoraResumen, Paginacion, usePaginacion, PROPERTY_PAGE_SIZE, mostrarAviso } from "../../components";
 import { api } from "../../services/api.js";
+import { estadoReporte } from "../../utils/estadoReporte.js";
 import "./MisPropiedades.css";
 
 const money = (amount, currency) => amount == null ? "—" : new Intl.NumberFormat("es-AR", { style: "currency", currency: currency || "ARS" }).format(Number(amount));
 const date = (value) => value ? new Date(`${value}T12:00:00`).toLocaleDateString("es-AR") : "—";
-const pending = (report) => !/resuelt|cerrad|finalizad/i.test(report.estado || "");
+const pending = (report) => report.estado !== "Resuelto";
 
 function Icono({ src }) {
   return <img className="propiedades-propietario__icon" src={src} alt="" aria-hidden="true" />;
@@ -123,7 +124,7 @@ export default function MisPropiedades() {
             <header><Icono src={toolboxIcon} /><h2 id="propiedades-propietario-reportes-title">Reportes de inquilinos</h2><span className="propiedades-propietario__pending">{visibleReports.filter(pending).length} pendientes</span></header>
             <div className="propiedades-propietario__report-list">
               {!visibleReports.length && <p className="propiedades-propietario__message">No hay reportes para esta propiedad.</p>}
-              {reportPages.pageItems.map((report) => <button className={`propiedades-propietario__report${openReport === report.id ? " is-open" : ""}`} key={report.id} type="button" aria-expanded={openReport === report.id} onClick={() => setOpenReport(openReport === report.id ? null : report.id)}><span className="propiedades-propietario__report-summary">{report.imagenes?.[0]?.url && <img className="propiedades-propietario__report-image" src={api.urlRecurso(report.imagenes[0].url)} alt="" />}<span className={`propiedades-propietario__report-dot${pending(report) ? " is-warning" : ""}`} /><strong>{report.titulo}</strong><small>{date(report.fecha)}</small><img className={`propiedades-propietario__report-chevron${openReport === report.id ? " is-open" : ""}`} src={angleDownIcon} alt="" aria-hidden="true" /><span className="propiedades-propietario__report-meta">{report.personaReporta}<br />{report.propiedad}</span></span>{openReport === report.id && <span className="propiedades-propietario__report-detail"><span className="propiedades-propietario__report-gallery">{report.imagenes?.map((image) => <img src={api.urlRecurso(image.url)} alt={`Imagen del reporte ${report.titulo}`} key={image.id} />)}</span><span className="propiedades-propietario__report-propiedad">{report.estado}</span><span>Inquilino: {report.personaReporta}</span><span className="propiedades-propietario__report-description"><strong>Descripción:</strong> {report.descripcion || "Sin descripción"}</span></span>}</button>)}
+              {reportPages.pageItems.map((report) => <button className={`propiedades-propietario__report${openReport === report.id ? " is-open" : ""}`} key={report.id} type="button" aria-expanded={openReport === report.id} onClick={() => setOpenReport(openReport === report.id ? null : report.id)}><span className="propiedades-propietario__report-summary">{report.imagenes?.[0]?.url && <img className="propiedades-propietario__report-image" src={api.urlRecurso(report.imagenes[0].url)} alt="" />}<span className={`propiedades-propietario__report-dot${pending(report) ? " is-warning" : ""}`} /><strong>{report.titulo}</strong><small>{date(report.fecha)}</small><img className={`propiedades-propietario__report-chevron${openReport === report.id ? " is-open" : ""}`} src={angleDownIcon} alt="" aria-hidden="true" /><span className="propiedades-propietario__report-meta">{report.personaReporta}<br />{report.propiedad}</span></span>{openReport === report.id && <span className="propiedades-propietario__report-detail"><span className="propiedades-propietario__report-gallery">{report.imagenes?.map((image) => <img src={api.urlRecurso(image.url)} alt={`Imagen del reporte ${report.titulo}`} key={image.id} />)}</span><span className="propiedades-propietario__report-propiedad">{estadoReporte(report.estado)}</span><span>Inquilino: {report.personaReporta}</span><span className="propiedades-propietario__report-description"><strong>Descripción:</strong> {report.descripcion || "Sin descripción"}</span></span>}</button>)}
             </div>
             <Paginacion page={reportPages.page} totalPages={reportPages.totalPages} total={visibleReports.length} onPageChange={reportPages.setPage} />
           </aside>

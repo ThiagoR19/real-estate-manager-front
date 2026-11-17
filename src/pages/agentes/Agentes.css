@@ -413,6 +413,10 @@ body:has(#agentes) {
   font-weight: 500;
 }
 
+.agentes__avatar.dashboard-avatar--silver {
+  color: #fff;
+}
+
 .agentes__avatar img {
   width: 100%;
   height: 100%;

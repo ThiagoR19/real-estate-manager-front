@@ -228,7 +228,7 @@ export default function Propiedades() {
           )}
         </section>
       )}
-      {!loading && <Paginacion page={page} totalPages={totalPages} total={visibleProperties.length} onPageChange={setPage} pageSize={PROPERTY_PAGE_SIZE} />}
+      {!loading && <Paginacion page={page} totalPages={totalPages} total={visibleProperties.length} onPageChange={setPage} pageSize={PROPERTY_PAGE_SIZE} mostrarTamanoPagina />}
 
       <ConfirmarEliminacionModal
         isOpen={Boolean(pendingDelete)}

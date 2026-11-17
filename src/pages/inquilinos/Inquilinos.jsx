@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import PageSkeleton from "../../components/skeleton/PageSkeleton";
 import {
   calendarIcon,
-  clockIcon,
   envelopeIcon,
   fileLinesIcon as fileIcon,
   houseIcon,
@@ -11,6 +10,7 @@ import {
   peopleIcon,
   phoneIcon,
   plusIcon,
+  xIcon,
 } from "../../assets/icons";
 import {
   SelectDesplegable,
@@ -24,7 +24,6 @@ import {
   mostrarAviso,
 } from "../../components";
 import InquilinoModal from "./InquilinoModal";
-import propertyImage from "/images.jpg";
 import "./Inquilinos.css";
 import { api } from "../../services/api.js";
 
@@ -37,7 +36,7 @@ const filterDefinitions = [
   { label: "Vencimiento", icon: calendarIcon, all: "Todos los vencimientos" },
 ];
 
-const statusOptions = ["Todos los estados", "Activo", "Inactivo", "Pendiente"];
+const statusOptions = ["Todos los estados", "Activo", "Inactivo"];
 const dueDateOptions = ["Todos los vencimientos", "Este mes", "Próximos 30 días"];
 
 function parseDate(value) {
@@ -105,13 +104,24 @@ function ControlFiltro({ filter, value, onChange }) {
   );
 }
 
-function FilaInquilino({ tenant, onEdit, onDelete, onGenerateActivation }) {
+function ImagenPropiedad({ src }) {
+  const [failed, setFailed] = useState(false);
+
+  if (!src || failed) {
+    return (
+      <div className="inquilinos__propiedad-image inquilinos__propiedad-image--empty" aria-hidden="true">
+        <img src={houseIcon} alt="" />
+      </div>
+    );
+  }
+
+  return <img className="inquilinos__propiedad-image" src={src} alt="" onError={() => setFailed(true)} />;
+}
+
+function FilaInquilino({ tenant, propertyImages, onEdit, onDelete, onGenerateActivation }) {
   const name = `${tenant.nombre || ""} ${tenant.apellido || ""}`.trim() || `DNI ${tenant.dni}`;
-  const status = !tenant.activo
-    ? "Inactivo"
-    : tenant.estadoCuenta === "PENDIENTE_ACTIVACION"
-      ? "Pendiente"
-      : "Activo";
+  const status = tenant.activo ? "Activo" : "Inactivo";
+  const propertyImageUrl = propertyImages[tenant.idPropiedad];
   return (
     <tr>
       <td data-label="Inquilino">
@@ -143,7 +153,7 @@ function FilaInquilino({ tenant, onEdit, onDelete, onGenerateActivation }) {
       </td>
       <td data-label="Propiedad">
         <div className="inquilinos__propiedad">
-          <img className="inquilinos__propiedad-image" src={propertyImage} alt="" />
+          <ImagenPropiedad key={propertyImageUrl || "sin-imagen"} src={propertyImageUrl} />
           <span>
             <strong>{tenant.propiedad || "Sin propiedad asignada"}</strong>
             <small>{tenant.propiedadUbicacion || "Sin ubicación de propiedad"}</small>
@@ -162,7 +172,7 @@ function FilaInquilino({ tenant, onEdit, onDelete, onGenerateActivation }) {
       </td>
       <td data-label="Estado">
         <span
-          className={`inquilinos__status inquilinos__status--${status === "Activo" ? "active" : status === "Inactivo" ? "inactive" : "pending"}`}
+          className={`inquilinos__status inquilinos__status--${tenant.activo ? "active" : "inactive"}`}
         >
           {status}
         </span>
@@ -191,6 +201,7 @@ function FilaInquilino({ tenant, onEdit, onDelete, onGenerateActivation }) {
 
 export default function Inquilinos() {
   const [tenants, setTenants] = useState([]);
+  const [propertyImages, setPropertyImages] = useState({});
   const [query, setQuery] = useState("");
   const [filterValues, setFilterValues] = useState(filterDefinitions.map((filter) => filter.all));
   const [modal, setModal] = useState({ isOpen: false, mode: "create", tenant: null });
@@ -206,8 +217,21 @@ export default function Inquilinos() {
       setLoading(true);
       setLoadError("");
       try {
-        const rows = await api.inquilinos();
-        if (mounted) setTenants(rows);
+        const [tenantResult, propertyResult] = await Promise.allSettled([api.inquilinos(), api.propiedades()]);
+        if (tenantResult.status === "rejected") throw tenantResult.reason;
+        if (!mounted) return;
+        setTenants(tenantResult.value);
+        if (propertyResult.status === "fulfilled") {
+          setPropertyImages(Object.fromEntries(propertyResult.value
+            .filter((property) => property.imagenes?.[0]?.url)
+            .map((property) => [property.id, api.urlRecurso(property.imagenes[0].url)])));
+        } else {
+          mostrarAviso({
+            tipo: "advertencia",
+            titulo: "No se pudieron cargar las imágenes de propiedades",
+            mensaje: propertyResult.reason?.message || "Las imágenes no están disponibles en este momento.",
+          });
+        }
       } catch (error) {
         if (mounted) {
           setLoadError(error.message || "No se pudieron cargar los inquilinos.");
@@ -238,18 +262,14 @@ export default function Inquilinos() {
     () => [
       {
         label: "Inquilinos activos",
-        value: tenants.filter(
-          (tenant) => tenant.activo && tenant.estadoCuenta !== "PENDIENTE_ACTIVACION",
-        ).length,
+        value: tenants.filter((tenant) => tenant.activo).length,
         icon: peopleIcon,
         tone: "success",
       },
       {
-        label: "Pendientes",
-        value: tenants.filter(
-          (tenant) => tenant.activo && tenant.estadoCuenta === "PENDIENTE_ACTIVACION",
-        ).length,
-        icon: clockIcon,
+        label: "Inquilinos inactivos",
+        value: tenants.filter((tenant) => !tenant.activo).length,
+        icon: xIcon,
         tone: "warning",
       },
       {
@@ -291,11 +311,7 @@ export default function Inquilinos() {
       const matchesQuery = !normalizedQuery || searchable;
       const matchesProperty =
         filterValues[0] === filterDefinitions[0].all || tenant.propiedad === filterValues[0];
-      const status = !tenant.activo
-        ? "Inactivo"
-        : tenant.estadoCuenta === "PENDIENTE_ACTIVACION"
-          ? "Pendiente"
-          : "Activo";
+      const status = tenant.activo ? "Activo" : "Inactivo";
       const matchesStatus = filterValues[1] === statusOptions[0] || status === filterValues[1];
       const matchesDate = matchesDueDate(tenant, filterValues[2], today);
       return matchesQuery && matchesProperty && matchesStatus && matchesDate;
@@ -357,7 +373,14 @@ export default function Inquilinos() {
       direccion: form.address || null,
     };
     const raw = existing
-      ? await api.actualizarInquilino(existing.id, { ...body, dni: undefined, activo: form.active })
+      ? await api.actualizarInquilino(existing.id, {
+          ...body,
+          dni: undefined,
+          activo: form.active,
+          ...(form.propertyId && Number(form.propertyId) !== Number(existing.idPropiedad)
+            ? { idPropiedad: Number(form.propertyId) }
+            : {}),
+        })
       : await api.crearInquilino(body);
     const result = { tenant: raw, activationUrl: enlaceActivacion(raw.activacion) };
     setTenants((current) =>
@@ -448,6 +471,7 @@ export default function Inquilinos() {
                   <FilaInquilino
                     key={tenant.id}
                     tenant={tenant}
+                    propertyImages={propertyImages}
                     onEdit={editTenant}
                     onDelete={setPendingDelete}
                     onGenerateActivation={generateActivation}
@@ -481,7 +505,7 @@ export default function Inquilinos() {
         isOpen={Boolean(pendingDelete)}
         onClose={() => setPendingDelete(null)}
         onConfirm={confirmDeleteTenant}
-        title="¿Seguro que desea eliminar este inquilino?"
+        title="¿Eliminar este inquilino? Se quitará su acceso y se conservará el historial de contratos, pagos y reportes."
       />
 
       {modal.isOpen && (

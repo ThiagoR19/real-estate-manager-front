@@ -392,6 +392,10 @@ body:has(#propietarios) {
   font-weight: 500;
 }
 
+.propietarios__avatar.dashboard-avatar--silver {
+  color: #fff;
+}
+
 .propietarios__person-copy,
 .propietarios__propiedad > span {
   gap: 5px;

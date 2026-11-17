@@ -24,6 +24,7 @@ import PersonaModal from "./PersonaModal";
 import "./Propietarios.css";
 import { api } from "../../services/api.js";
 import PageSkeleton from "../../components/skeleton/PageSkeleton";
+import avatarClass from "../../utils/avatarClass.js";
 import initials from "../../utils/initials.js";
 
 function enlaceActivacion(activacion) {
@@ -56,7 +57,7 @@ function FilaPropietario({ owner, onEdit, onDelete, onGenerateActivation }) {
     <tr>
       <td data-label="Propietario">
         <div className="propietarios__person">
-          <span className="propietarios__avatar">{owner.initials}</span>
+          <span className={`propietarios__avatar ${avatarClass(owner.nombre, owner.apellido)}`}>{owner.initials}</span>
           <span className="propietarios__person-copy">
             <strong>{owner.name}</strong>
             <small>DNI {owner.dni}</small>

@@ -28,6 +28,7 @@ import {
 } from "../../components";
 import { api } from "../../services/api.js";
 import PageSkeleton from "../../components/skeleton/PageSkeleton";
+import avatarClass from "../../utils/avatarClass.js";
 import initials from "../../utils/initials.js";
 import "./Agentes.css";
 
@@ -61,7 +62,7 @@ function FilaAgente({ agent, onEdit, onDelete, onGenerateActivation }) {
     <tr>
       <td data-label="Agente">
         <div className="agentes__person">
-          <span className="agentes__avatar">
+          <span className={`agentes__avatar ${avatarClass(agent.nombre, agent.apellido)}`}>
             {agent.urlFotoPerfil ? (
               <img src={api.urlRecurso(agent.urlFotoPerfil)} alt="" />
             ) : (
