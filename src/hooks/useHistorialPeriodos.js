@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { mostrarAviso } from "../components/avisos/almacenAvisos";
 
 const MESES = [
   "Enero",
@@ -84,7 +85,7 @@ export default function useHistorialPeriodos(listar, consultar) {
       .catch((causa) => {
         if (!activo) return;
         setEstado({ clave, detalle: null });
-        setError(causa.message);
+        mostrarAviso({ tipo: "error", titulo: "No se pudo cargar el detalle", mensaje: causa.message });
       });
     return () => {
       activo = false;

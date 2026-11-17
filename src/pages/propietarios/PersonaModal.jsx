@@ -9,7 +9,7 @@ import {
   phoneIcon,
   userIcon,
 } from "../../assets/icons";
-import { GestionModal, AccionesModal, CampoModal, EntradaModal, ModalSelect } from "../../components";
+import { GestionModal, AccionesModal, CampoModal, EntradaModal, ModalSelect, mostrarAviso } from "../../components";
 
 const propertyOptions = ["Av. San Martín 1250", "Av. Santa Fe 850"];
 const statusOptions = ["Activo", "Inactivo", "Pendiente"];
@@ -45,7 +45,6 @@ function personInitials(name) {
 
 export default function PersonaModal({ kind, mode, person, zones = [], onClose, onSubmit }) {
   const [form, setForm] = useState(() => initialForm(person, kind));
-  const [error, setError] = useState("");
   const isOwner = kind === "owner";
   const isEditing = mode === "edit";
   const noun = isOwner ? "propietario" : "agente";
@@ -60,9 +59,14 @@ export default function PersonaModal({ kind, mode, person, zones = [], onClose, 
     event.preventDefault();
     const name = `${form.firstName.trim()} ${form.lastName.trim()}`.trim();
     try {
-      setError("");
       await onSubmit({ ...form, name, initials: personInitials(name) });
-    } catch (cause) { setError(cause.message || "No se pudieron guardar los cambios."); }
+    } catch (cause) {
+      mostrarAviso({
+        tipo: "error",
+        titulo: isEditing ? `No se pudo actualizar el ${noun}` : `No se pudo crear el ${noun}`,
+        mensaje: cause.message || "No se pudieron guardar los cambios.",
+      });
+    }
   }
 
   return (
@@ -199,7 +203,6 @@ export default function PersonaModal({ kind, mode, person, zones = [], onClose, 
             </CampoModal>}
           </div>
         </div>
-        {error && <p role="alert">{error}</p>}
         <AccionesModal onClose={onClose} submitText={isEditing ? "Guardar cambios" : `Crear ${noun}`} />
       </form>
     </GestionModal>

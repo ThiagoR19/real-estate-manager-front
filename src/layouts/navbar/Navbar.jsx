@@ -12,6 +12,7 @@ import {
 import { api } from "../../services/api.js";
 import initials from "../../utils/initials.js";
 import avatarClass from "../../utils/avatarClass.js";
+import { mostrarAviso } from "../../components";
 import "./Navbar.css";
 
 function ElementoNavegacion({ item, pathname, onNavigate }) {
@@ -32,7 +33,6 @@ function ElementoNavegacion({ item, pathname, onNavigate }) {
 
 export default function Navbar({ menuOpen = false, onClose = () => {} }) {
   const [pathname] = useLocation();
-  const [logoutError, setLogoutError] = useState("");
   const [user, setUser] = useState(() => api.obtenerSesion()?.usuario);
   const [photoLoadError, setPhotoLoadError] = useState(false);
   const [rendered, setRendered] = useState(menuOpen);
@@ -59,13 +59,12 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
 
   async function closeSession(event) {
     event.preventDefault();
-    setLogoutError("");
     try {
       await api.cerrarSesion();
       onClose();
       window.location.assign("/login");
     } catch (error) {
-      setLogoutError(error.message);
+      mostrarAviso({ tipo: "error", titulo: "No se pudo cerrar la sesión", mensaje: error.message });
     }
   }
   const mobilePaths =
@@ -216,11 +215,6 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
             <small>{role}</small>
           </span>
         </Link>
-        {logoutError && (
-          <p className="navbar__logout-error" role="alert">
-            {logoutError}
-          </p>
-        )}
         <button
           type="button"
           className="navbar__drawer-account navbar__drawer-logout"

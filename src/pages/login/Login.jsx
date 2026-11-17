@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { Skeleton, PanelImagen, CampoTexto, BotonPrincipal, TextoLegal, AccesoGoogle } from "../../components";
+import { Skeleton, PanelImagen, CampoTexto, BotonPrincipal, TextoLegal, AccesoGoogle, mostrarAviso } from "../../components";
 
 import { api } from "../../services/api.js";
 import { dashboardPorRol } from "../../layouts/navegacion.js";
@@ -13,7 +13,6 @@ import "./Login.css";
 
 export default function Login() {
   const [submitState, setSubmitState] = useState("inactivo");
-  const [error, setError] = useState("");
   const [googleCredential, setGoogleCredential] = useState("");
   const [cuentasGoogle, setCuentasGoogle] = useState([]);
   const [cuentasPassword, setCuentasPassword] = useState([]);
@@ -28,7 +27,6 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitState("enviando");
-    setError("");
     setCuentasPassword([]);
     const form = new FormData(e.currentTarget);
     const usuario = String(form.get("email") || "").trim();
@@ -46,14 +44,13 @@ export default function Login() {
       const destination = dashboardPorRol[Number(session.usuario?.rol)] ?? "/dashboard";
       window.location.assign(destination);
     } catch (cause) {
-      setError(cause.message);
+      mostrarAviso({ tipo: "error", titulo: "No se pudo iniciar sesión", mensaje: cause.message });
       setSubmitState("inactivo");
     }
   };
 
   const completarPassword = async (idUsuario) => {
     if (!credencialesPassword.current) return;
-    setError("");
     setSubmitState("enviando");
     try {
       const { usuario, password } = credencialesPassword.current;
@@ -61,13 +58,12 @@ export default function Login() {
       api.guardarSesion(session);
       window.location.assign(dashboardPorRol[Number(session.usuario?.rol)] ?? "/dashboard");
     } catch (cause) {
-      setError(cause.message);
+      mostrarAviso({ tipo: "error", titulo: "No se pudo iniciar sesión", mensaje: cause.message });
       setSubmitState("inactivo");
     }
   };
 
   const completarGoogle = useCallback(async (credential, idUsuario) => {
-    setError("");
     try {
       const result = await api.loginGoogle(credential, idUsuario);
       if (result.cuentas) {
@@ -78,7 +74,7 @@ export default function Login() {
       api.guardarSesion(result);
       window.location.assign(dashboardPorRol[Number(result.usuario?.rol)] ?? "/dashboard");
     } catch (cause) {
-      setError(cause.message);
+      mostrarAviso({ tipo: "error", titulo: "No se pudo iniciar sesión con Google", mensaje: cause.message });
     }
   }, []);
 
@@ -122,11 +118,6 @@ export default function Login() {
             className="login__submit"
           />
 
-          {error && (
-            <p className="login__error" role="alert">
-              {error}
-            </p>
-          )}
         </form>
 
         {cuentasPassword.length > 0 && <div className="login__organizaciones">

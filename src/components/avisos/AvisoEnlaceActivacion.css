@@ -1,0 +1,100 @@
+.aviso-enlace-activacion {
+  position: fixed;
+  z-index: 40;
+  right: 22px;
+  bottom: 22px;
+  width: min(540px, calc(100vw - 44px));
+  padding: 16px 18px;
+  border: 1px solid #c8dff3;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 8px 26px #17235e24;
+  color: #17235e;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+  font-size: 14px;
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.aviso-enlace-activacion--closing {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px) scale(0.98);
+}
+
+.aviso-enlace-activacion__message {
+  margin: 0 0 12px;
+  line-height: 1.45;
+}
+
+.aviso-enlace-activacion__controls {
+  display: flex;
+  align-items: stretch;
+  gap: 9px;
+}
+
+.aviso-enlace-activacion__controls input {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  padding: 0 11px;
+  border: 1px solid #cbd9e9;
+  border-radius: 8px;
+  outline: none;
+  background: #f7faff;
+  color: #314269;
+  font: 12px / 1.2 "Inter", "Segoe UI", Arial, sans-serif;
+  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.aviso-enlace-activacion__controls input:focus {
+  border-color: #3988cc;
+  background: #fff;
+  box-shadow: 0 0 0 3px #3988cc24;
+}
+
+.aviso-enlace-activacion__controls button {
+  flex: 0 0 auto;
+  min-height: 40px;
+  padding: 0 15px;
+  border: 1px solid #1768a8;
+  border-radius: 8px;
+  background: #1768a8;
+  color: #fff;
+  font: 600 13px / 1 "Inter", "Segoe UI", Arial, sans-serif;
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.aviso-enlace-activacion__controls button:hover:not(:disabled) {
+  border-color: #125789;
+  background: #125789;
+  transform: translateY(-1px);
+}
+
+.aviso-enlace-activacion__controls button:focus-visible {
+  outline: 3px solid #3988cc55;
+  outline-offset: 2px;
+}
+
+.aviso-enlace-activacion__controls button:disabled {
+  cursor: default;
+}
+
+.aviso-enlace-activacion__error {
+  margin: 9px 0 0;
+  color: #a33333;
+  font-size: 12px;
+}
+
+@media (max-width: 520px) {
+  .aviso-enlace-activacion {
+    right: 12px;
+    bottom: 12px;
+    width: calc(100vw - 24px);
+    padding: 14px;
+  }
+
+  .aviso-enlace-activacion__controls {
+    flex-direction: column;
+  }
+}

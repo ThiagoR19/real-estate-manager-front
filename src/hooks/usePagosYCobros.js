@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "../services/api";
+import { mostrarAviso } from "../components/avisos/almacenAvisos";
 
 export const CONCEPTO_ALQUILER = "Alquiler mensual";
 const PAGO_EDITABLE = ["Pendiente", "Rechazado"];
@@ -117,7 +118,7 @@ export default function usePagosYCobros() {
   const [recargas, setRecargas] = useState(0);
   const [estado, setEstado] = useState({ clave: null, detalle: null });
   const [guardando, setGuardando] = useState(false);
-  const [feedback, setFeedback] = useState("");
+  const [error, setError] = useState("");
 
   const persona = personas?.find((item) => item.id === seleccion?.idPersona) ?? null;
   const contrato = persona?.contratos.find((item) => item.idContrato === seleccion?.idContrato) ?? null;
@@ -139,7 +140,7 @@ export default function usePagosYCobros() {
       .catch((error) => {
         if (!activo) return;
         setPersonas([]);
-        setFeedback(error.message);
+        setError(error.message);
       });
     return () => {
       activo = false;
@@ -158,7 +159,7 @@ export default function usePagosYCobros() {
       .catch((error) => {
         if (!activo) return;
         setEstado({ clave, detalle: null });
-        setFeedback(error.message);
+        mostrarAviso({ tipo: "error", titulo: "No se pudo cargar el detalle", mensaje: error.message });
       });
     return () => {
       activo = false;
@@ -167,13 +168,11 @@ export default function usePagosYCobros() {
 
   function elegir(nuevaPersona, nuevoContrato) {
     setSeleccion({ idPersona: nuevaPersona.id, idContrato: nuevoContrato.idContrato });
-    setFeedback("");
   }
 
   function cambiarPeriodo(nuevoAnio, nuevoMes) {
     setAnio(nuevoAnio);
     setMes(nuevoMes);
-    setFeedback("");
   }
 
   function cambiarLineas(cambiar) {
@@ -186,16 +185,15 @@ export default function usePagosYCobros() {
     );
   }
 
-  async function ejecutar(accion, mensaje) {
+  async function ejecutar(accion, titulo, mensaje) {
     setGuardando(true);
-    setFeedback("");
     try {
       await accion();
-      setFeedback(mensaje);
+      mostrarAviso({ tipo: "exito", titulo, mensaje });
       setRecargas((cantidad) => cantidad + 1);
       return true;
     } catch (error) {
-      setFeedback(error.message);
+      mostrarAviso({ tipo: "error", titulo: "No se pudo completar la acción", mensaje: error.message });
       return false;
     } finally {
       setGuardando(false);
@@ -222,13 +220,14 @@ export default function usePagosYCobros() {
                 conceptos,
               })
             : api.crearPago({ idContrato: contrato.idContrato, periodo, conceptos }),
+        registro ? "Pago actualizado" : "Pago enviado",
         registro ? "Se guardaron los cambios del pago." : `El pago fue enviado a ${persona.nombre}.`,
       );
     }
 
     const porcentaje = parseAmount(detalle.porcentaje);
     if (detalle.porcentaje !== "" && (porcentaje < 0 || porcentaje > 100)) {
-      setFeedback("La comisión tiene que estar entre 0 y 100 %.");
+      mostrarAviso({ tipo: "advertencia", titulo: "Comisión inválida", mensaje: "La comisión tiene que estar entre 0 y 100 %." });
       return Promise.resolve(false);
     }
 
@@ -238,18 +237,19 @@ export default function usePagosYCobros() {
         registro
           ? api.modificarCobro(registro.id, { conceptos, detalle: registro.detalle, ...comision })
           : api.crearCobro({ idPago: detalle.pago.id, idPropietario: persona.idPropietario, conceptos, ...comision }),
+      registro ? "Liquidación actualizada" : "Liquidación enviada",
       registro ? "Se guardaron los cambios de la liquidación." : `La liquidación fue enviada a ${persona.nombre}.`,
     );
   }
 
   function aprobar() {
     return persona.tipo === "Locatario"
-      ? ejecutar(() => api.aprobarPago(detalle.registro.id), "El pago fue marcado como pagado.")
-      : ejecutar(() => api.marcarCobroPagado(detalle.registro.id), "La liquidación fue marcada como pagada.");
+      ? ejecutar(() => api.aprobarPago(detalle.registro.id), "Pago marcado como pagado", `${persona.nombre}: el estado del pago se actualizó.`)
+      : ejecutar(() => api.marcarCobroPagado(detalle.registro.id), "Liquidación pagada", `${persona.nombre}: la liquidación se marcó como pagada.`);
   }
 
   function rechazar(motivo) {
-    return ejecutar(() => api.rechazarPago(detalle.registro.id, motivo), "El pago fue marcado como impagado.");
+    return ejecutar(() => api.rechazarPago(detalle.registro.id, motivo), "Pago marcado como impago", `${persona.nombre}: el estado del pago se actualizó.`);
   }
 
   async function agregarConcepto(nombre, monto, temporal) {
@@ -260,7 +260,7 @@ export default function usePagosYCobros() {
 
     if (existente) {
       actualizarLinea(existente.idConcepto, { monto, checked: true, tono });
-      setFeedback(`${existente.nombre} se agregó al detalle.`);
+      mostrarAviso({ tipo: "info", titulo: "Concepto agregado", mensaje: `${existente.nombre} se agregó al detalle.` });
       return true;
     }
 
@@ -271,10 +271,10 @@ export default function usePagosYCobros() {
         ...lineas,
         { idConcepto: concepto.id, nombre: concepto.nombre, monto, checked: true, tono },
       ]);
-      setFeedback(`${concepto.nombre} se agregó al detalle.`);
+      mostrarAviso({ tipo: "info", titulo: "Concepto agregado", mensaje: `${concepto.nombre} se agregó al detalle.` });
       return true;
     } catch (error) {
-      setFeedback(error.message);
+      mostrarAviso({ tipo: "error", titulo: "No se pudo agregar el concepto", mensaje: error.message });
       return false;
     } finally {
       setGuardando(false);
@@ -284,7 +284,9 @@ export default function usePagosYCobros() {
   function descargarComprobante() {
     const { registro, comprobante } = detalle;
     const descargar = persona.tipo === "Locatario" ? api.descargarComprobantePago : api.descargarComprobanteCobro;
-    return descargar(registro.id, comprobante.nombre).catch((error) => setFeedback(error.message));
+    return descargar(registro.id, comprobante.nombre).catch((error) =>
+      mostrarAviso({ tipo: "error", titulo: "No se pudo descargar el comprobante", mensaje: error.message }),
+    );
   }
 
   return {
@@ -297,8 +299,7 @@ export default function usePagosYCobros() {
     detalle,
     cargando,
     guardando,
-    feedback,
-    setFeedback,
+    error,
     elegir,
     cambiarPeriodo,
     actualizarLinea,

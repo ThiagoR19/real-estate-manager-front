@@ -24,8 +24,7 @@ body:has(#agentes) {
 
 #agentes img {
   object-fit: contain;
-  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg)
-    brightness(93%) contrast(99%);
+  filter: brightness(0) saturate(100%) invert(13%) sepia(37%) saturate(2199%) hue-rotate(210deg) brightness(93%) contrast(99%);
 }
 
 #agentes :focus-visible:not(input):not(textarea):not(select) {
@@ -398,8 +397,7 @@ body:has(#agentes) {
 .agentes__contact img {
   width: 16px;
   height: 16px;
-  filter: brightness(0) saturate(100%) invert(48%) sepia(13%) saturate(1012%) hue-rotate(187deg)
-    brightness(92%) contrast(86%);
+  filter: brightness(0) saturate(100%) invert(48%) sepia(13%) saturate(1012%) hue-rotate(187deg) brightness(92%) contrast(86%);
 }
 
 .agentes__avatar {
@@ -445,16 +443,7 @@ body:has(#agentes) {
 
 .agentes__actions-cell {
   text-align: center !important;
-}
-
-.agentes__activation-button {
-  margin-right: 8px;
-  padding: 6px 8px;
-  border: 1px solid #2178c4;
-  border-radius: 6px;
-  background: #fff;
-  color: #174d85;
-  cursor: pointer;
+  display: flex;
 }
 
 .agentes__empty {
@@ -482,16 +471,6 @@ body:has(#agentes) {
 
 .agentes__notice p {
   margin: 0 0 8px;
-}
-
-.agentes__activation-link {
-  display: flex;
-  gap: 8px;
-}
-
-.agentes__activation-link input {
-  min-width: 0;
-  flex: 1;
 }
 
 body:has(#agentes) .navbar__search {
@@ -725,6 +704,7 @@ body:has(#agentes) .navbar__search {
 }
 
 @media (max-width: 360px) {
+
   .agentes__table-card td,
   .agentes__table-card td:first-child,
   .agentes__table-card td:last-child {
@@ -733,6 +713,7 @@ body:has(#agentes) .navbar__search {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .agentes__new-button,
   .agentes__actions {
     transition: none;

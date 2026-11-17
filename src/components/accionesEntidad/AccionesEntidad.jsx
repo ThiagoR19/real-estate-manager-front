@@ -1,15 +1,16 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { penIcon, trashCanIcon } from "../../assets/icons";
+import { linkIcon, penIcon, trashCanIcon } from "../../assets/icons";
 import "./AccionesEntidad.css";
 
-const menuWidth = 156;
+const menuWidth = 176;
 
 export default function AccionesEntidad({
   entity,
   name,
   onEdit,
   onDelete,
+  onGenerateActivation,
   className = "",
   variant = "table",
 }) {
@@ -114,7 +115,7 @@ export default function AccionesEntidad({
         onKeyDown={(event) => {
           if (event.key === "ArrowDown" || event.key === "ArrowUp") {
             event.preventDefault();
-            openMenu(event.key === "ArrowUp" ? 1 : 0);
+            openMenu(event.key === "ArrowUp" ? (onGenerateActivation ? 2 : 1) : 0);
           } else if (event.key === "Escape" && open) {
             event.preventDefault();
             closeMenu();
@@ -143,6 +144,17 @@ export default function AccionesEntidad({
               <img src={penIcon} alt="" aria-hidden="true" />
               Editar {entity}
             </button>
+            {onGenerateActivation && (
+              <button
+                type="button"
+                role="menuitem"
+                tabIndex={-1}
+                onClick={() => runAction(onGenerateActivation)}
+              >
+                <img src={linkIcon} alt="" aria-hidden="true" />
+                Generar enlace
+              </button>
+            )}
             <button type="button" role="menuitem" tabIndex={-1} onClick={() => runAction(onDelete)}>
               <img src={trashCanIcon} alt="" aria-hidden="true" />
               Eliminar {entity}

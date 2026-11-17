@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import reportReference from "../../assets/reports-reference.png";
-import { Paginacion, usePaginacion, PAGE_SIZE } from "../../components";
+import { Paginacion, usePaginacion, PAGE_SIZE, Skeleton, mostrarAviso } from "../../components";
 import ReporteModal from "./ReporteModal";
 import { houseIcon, relojHomeIcon } from "../../assets/icons";
 import "./ReportesAgente.css";
@@ -127,10 +127,11 @@ export default function ReportesAgente({ allowCreate = false }) {
     setSelectedProperty("Todas las propiedades");
     setPage(Math.ceil((reportItems.length + 1) / PAGE_SIZE));
     setCreateOpen(false);
+    mostrarAviso({ tipo: "exito", titulo: "Reporte creado", mensaje: "El nuevo reporte se agregó a la lista." });
   }
 
   return (
-    <main id="reportes-agent">
+    <Skeleton as="main" id="reportes-agent" fondos={[reportReference]}>
       <section className="reportes__hero" aria-labelledby="reportes-title">
         <div>
           <h1 id="reportes-title">Reportes</h1>
@@ -324,6 +325,6 @@ export default function ReportesAgente({ allowCreate = false }) {
       {createOpen && (
         <ReporteModal isOpen onClose={() => setCreateOpen(false)} onSubmit={createReport} />
       )}
-    </main>
+    </Skeleton>
   );
 }

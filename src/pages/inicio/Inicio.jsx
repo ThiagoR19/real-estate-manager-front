@@ -1,4 +1,4 @@
-import { Skeleton, Estadisticas, TituloSeccion } from "../../components";
+import { Skeleton, Estadisticas, TituloSeccion, mostrarAviso } from "../../components";
 import BuscadorPropiedades from "./BuscadorPropiedades";
 import TarjetaPropiedad from "./TarjetaPropiedad";
 
@@ -33,7 +33,10 @@ export default function Inicio({ loading, datos }) {
     let activo = true;
     api.propiedadesDestacadas(CANTIDAD_DESTACADAS)
       .then((lista) => activo && setPropiedades(lista))
-      .catch((causa) => console.error(causa))
+      .catch((causa) => {
+        console.error(causa);
+        if (activo) mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar las propiedades destacadas", mensaje: causa.message });
+      })
       .finally(() => activo && setCargandoPropiedades(false));
     return () => {
       activo = false;

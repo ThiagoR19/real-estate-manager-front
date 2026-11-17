@@ -11,7 +11,7 @@ import {
   rulerCombinedIcon as rulerIcon,
   userIcon,
 } from "../../assets/icons";
-import { PropiedadModal, AccionesPropiedad, ConfirmarEliminacionModal } from "../../components";
+import { PropiedadModal, AccionesPropiedad, ConfirmarEliminacionModal, mostrarAviso } from "../../components";
 import houseImage from "/images (1).jpg";
 import { api } from "../../services/api.js";
 import "./Propiedad.css";
@@ -56,7 +56,10 @@ export default function Propiedad() {
         }
       })
       .catch((cause) => {
-        if (active) setError(cause.message);
+        if (active) {
+          setError(cause.message);
+          mostrarAviso({ tipo: "error", titulo: "No se pudo cargar la propiedad", mensaje: cause.message });
+        }
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -111,16 +114,21 @@ export default function Propiedad() {
     setPropertyData(saved);
     setActiveImage(0);
     setPropertyModalOpen(false);
-    if (fileError)
-      setError(`La propiedad se guardó, pero hubo un problema con sus archivos: ${fileError}`);
+    if (fileError) {
+      const mensaje = `La propiedad se guardó, pero hubo un problema con sus archivos: ${fileError}`;
+      mostrarAviso({ tipo: "advertencia", titulo: "Propiedad guardada con observaciones", mensaje });
+    } else {
+      mostrarAviso({ tipo: "exito", titulo: "Propiedad actualizada", mensaje: `${saved.nombre} se guardó correctamente.` });
+    }
   }
 
   async function remove() {
     try {
       await api.eliminarPropiedad(id);
+      mostrarAviso({ tipo: "exito", titulo: "Propiedad eliminada", mensaje: "La propiedad se eliminó correctamente." });
       navigate("/propiedades");
     } catch (cause) {
-      setError(cause.message);
+      mostrarAviso({ tipo: "error", titulo: "No se pudo eliminar la propiedad", mensaje: cause.message });
       setDeleteModalOpen(false);
     }
   }
@@ -276,7 +284,7 @@ export default function Propiedad() {
                           try {
                             await api.descargarDocumentoPropiedad(id, document);
                           } catch (cause) {
-                            setError(cause.message);
+                            mostrarAviso({ tipo: "error", titulo: "No se pudo descargar el documento", mensaje: cause.message });
                           }
                         }}
                       >

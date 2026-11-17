@@ -17,6 +17,7 @@ export async function inquilinos() {
 export const inquilino = (id) => request(`/inquilinos/${id}`).then(({ data }) => data);
 export const archivosInquilino = (id) => request(`/inquilinos/${id}/archivos`).then(({ data }) => data);
 export const crearInquilino = (body) => request("/inquilinos", { method: "POST", body }).then(({ data }) => data);
+export const generarEnlaceInquilino = (id) => request(`/inquilinos/${id}/activacion`, { method: "POST" }).then(({ data }) => data.activacion);
 export const actualizarInquilino = (id, body) => request(`/inquilinos/${id}`, { method: "PUT", body }).then(({ data }) => data);
 export const eliminarInquilino = (id) => request(`/inquilinos/${id}`, { method: "DELETE" });
 

@@ -2,7 +2,7 @@
 
 ## Login y gestión de propiedades
 
-Para habilitar los botones de Google en Login y Registro, definir `VITE_GOOGLE_CLIENT_ID` con el ID de cliente web y usar el mismo valor como `GOOGLE_CLIENT_ID` en el backend. El registro con Google solo aparece después de verificar DNI desde una invitación. Si una cuenta Google corresponde a varias inmobiliarias, el login solicita elegir una.
+Para habilitar los botones de Google en Login y Registro, definir `VITE_GOOGLE_CLIENT_ID` con el ID de cliente OAuth de tipo **Aplicación web** (termina en `.apps.googleusercontent.com`) y usar el mismo valor como `GOOGLE_CLIENT_ID` en el backend. No usar el secreto de cliente (`GOCSPX-...`): Vite expone las variables `VITE_` al navegador. En Google Cloud, agregar el origen exacto del frontend (por ejemplo, `http://localhost:5173`) a **Orígenes autorizados de JavaScript** y reiniciar Vite después de editar `.env`. El registro con Google solo aparece después de verificar DNI desde una invitación. Si una cuenta Google corresponde a varias inmobiliarias, el login solicita elegir una.
 
 Iniciar el backend en `http://localhost:3000` y este proyecto con `npm run dev`. Vite envía `/api` y `/uploads` al backend. Para otro servidor, definir `VITE_API_URL` con la URL completa terminada en `/api` y configurar `FRONT_URL` en el backend con el origen del frontend.
 
@@ -10,7 +10,7 @@ Ingresar con el nombre de usuario y contraseña de una cuenta activa. Un adminis
 
 ## Registro, chat y agenda
 
-Las invitaciones abren `/activar?codigo=...`. El titular verifica el DNI autorizado (hasta tres intentos) y continúa a `/registro`, donde puede elegir usuario y contraseña o Google. El registro con Google genera un usuario y permite crear una contraseña más adelante desde `/perfil`. En bases existentes deben estar aplicadas las migraciones de invitación y DNI indicadas en el README del backend. Los usuarios sin DNI cargado deben pedir a la inmobiliaria que complete ese dato antes de registrarse.
+Las invitaciones abren `/activar?codigo=...`. El titular verifica el DNI autorizado (hasta tres intentos) y continúa a `/registro`, donde puede elegir usuario y contraseña o Google. El registro con Google genera un usuario y permite crear una contraseña más adelante desde `/perfil` sin volver a verificar Google; el inicio de sesión con Google sigue disponible. En bases existentes deben estar aplicadas las migraciones de invitación y DNI indicadas en el README del backend. Los usuarios sin DNI cargado deben pedir a la inmobiliaria que complete ese dato antes de registrarse.
 
-El chat usa `/api/chat` para conversaciones, contactos, mensajes y adjuntos. La agenda usa `/api/visitas` y `/api/visitas/clientes`; los agentes pueden crear clientes y programar, modificar o cancelar visitas. “Mis propiedades” toma los contratos asociados al usuario y los reportes de esas propiedades. El backend limita los reportes de propietarios e inquilinos a propiedades vinculadas a sus contratos.
+El chat usa `/api/chat` para conversaciones, contactos y mensajes de texto. La agenda usa `/api/visitas` y `/api/visitas/clientes`; los agentes pueden crear clientes y programar, modificar o cancelar visitas. “Mis propiedades” toma los contratos asociados al usuario y los reportes de esas propiedades. El backend limita los reportes de propietarios e inquilinos a propiedades vinculadas a sus contratos.
 A comprehensive real estate management platform for properties, clients, rentals, sales, contracts, payments, maintenance, and more.

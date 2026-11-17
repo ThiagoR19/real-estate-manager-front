@@ -9,7 +9,7 @@ import {
   paperPlaneIcon,
   xIcon,
 } from "../../assets/icons";
-import { Boton } from "../../components";
+import { Boton, mostrarAviso } from "../../components";
 import SelectDesplegable from "../../components/select/SelectDesplegable";
 import useHistorialPeriodos, {
   formatearFecha,
@@ -57,7 +57,6 @@ export default function PagosReferencia() {
   const { items, contratos, contrato, delContrato, anios, detalle: pago } = historial;
   const [openYears, setOpenYears] = useState({});
   const [uploadedFile, setUploadedFile] = useState(null);
-  const [feedback, setFeedback] = useState("");
   const [enviando, setEnviando] = useState(false);
   const [timelineOpen, setTimelineOpen] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
@@ -86,7 +85,6 @@ export default function PagosReferencia() {
 
   function limpiar() {
     setUploadedFile(null);
-    setFeedback("");
   }
 
   function toggleYear(anio, abierto) {
@@ -113,32 +111,33 @@ export default function PagosReferencia() {
     const [file] = event.target.files ?? [];
     if (!file) return;
     setUploadedFile(file);
-    setFeedback("Comprobante listo para enviar");
+    mostrarAviso({ tipo: "info", titulo: "Comprobante seleccionado", mensaje: "El comprobante está listo para enviarse a revisión." });
     event.target.value = "";
   }
 
   async function sendForReview() {
     if (!uploadedFile && comprobante?.estado !== "PENDIENTE") {
-      setFeedback("Subí el comprobante antes de enviarlo.");
+      mostrarAviso({ tipo: "advertencia", titulo: "Falta el comprobante", mensaje: "Subí el comprobante antes de enviarlo." });
       return;
     }
     setEnviando(true);
-    setFeedback("");
     try {
       if (uploadedFile) await api.subirComprobantePago(pago.id, uploadedFile);
       await api.marcarPagoPagado(pago.id);
       setUploadedFile(null);
-      setFeedback("Solicitud de revisión enviada");
+      mostrarAviso({ tipo: "exito", titulo: "Solicitud enviada", mensaje: "Se envió a revisión el pago seleccionado." });
       historial.recargar();
     } catch (error) {
-      setFeedback(error.message);
+      mostrarAviso({ tipo: "error", titulo: "No se pudo enviar", mensaje: error.message });
     } finally {
       setEnviando(false);
     }
   }
 
   function downloadReceipt() {
-    api.descargarComprobantePago(pago.id, comprobante?.nombreArchivo).catch((error) => setFeedback(error.message));
+    api.descargarComprobantePago(pago.id, comprobante?.nombreArchivo).catch((error) =>
+      mostrarAviso({ tipo: "error", titulo: "No se pudo descargar el comprobante", mensaje: error.message }),
+    );
   }
 
   if (!items || !items.length || !pago) {
@@ -419,9 +418,6 @@ export default function PagosReferencia() {
             </div>
             <p className="vista-pago__note pagos__disclaimer">
               Nota: Cuando un comprobante es aprobado, ya no puede modificarse.
-            </p>
-            <p className="vista-pago__feedback pagos__feedback" aria-live="polite">
-              {feedback || historial.error}
             </p>
           </section>
         </div>

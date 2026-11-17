@@ -10,7 +10,7 @@ import {
   rulerCombinedIcon,
   xIcon,
 } from "../../assets/icons";
-import { Boton } from "../index";
+import { Boton, mostrarAviso } from "../index";
 import { api } from "../../services/api.js";
 import useClosingTransition from "../../hooks/useClosingTransition.js";
 import "./PropiedadModal.css";
@@ -55,7 +55,6 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
   const [form, setForm] = useState(() => initialForm(property, catalogs));
   const [section, setSection] = useState("information");
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
   const { isClosing, close } = useClosingTransition(onClose);
   const photoInput = useRef(null);
   const documentInput = useRef(null);
@@ -111,7 +110,6 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
   async function submit(event) {
     event.preventDefault();
     setSaving(true);
-    setError("");
     let saved;
     try {
       const body = {
@@ -160,7 +158,13 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
 
         }
         await onSubmit(current, cause.message);
-      } else setError(cause.message);
+      } else {
+        mostrarAviso({
+          tipo: "error",
+          titulo: property ? "No se pudo actualizar la propiedad" : "No se pudo crear la propiedad",
+          mensaje: cause.message,
+        });
+      }
     } finally {
       setSaving(false);
     }
@@ -231,6 +235,7 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
                         name="name"
                         value={form.name}
                         onChange={change}
+                        placeholder="Nombre de la propiedad"
                       />
                     </Campo>
                     <Campo label="Tipo">
@@ -261,7 +266,7 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
                     <Campo label="Ubicación">
                       <span className="propiedad-modal__input-wrap">
                         <img src={locationDotIcon} alt="" />
-                        <input name="location" value={form.location} onChange={change} />
+                        <input name="location" value={form.location} onChange={change} placeholder="Ubicación de la propiedad" />
                       </span>
                     </Campo>
                     <Campo label="Agente">
@@ -456,11 +461,6 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
                 </div>
               </section>
             </div>
-          )}
-          {error && (
-            <p className="propiedad-modal__error" role="alert">
-              {error}
-            </p>
           )}
           <footer className="propiedad-modal__actions">
             <button

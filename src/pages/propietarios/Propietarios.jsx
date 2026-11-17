@@ -15,13 +15,23 @@ import {
   PildoraResumen,
   ConfirmarEliminacionModal,
   AccionesEntidad,
+  AvisoEnlaceActivacion,
   Paginacion,
   usePaginacion,
+  mostrarAviso,
 } from "../../components";
 import PersonaModal from "./PersonaModal";
 import "./Propietarios.css";
 import { api } from "../../services/api.js";
+import PageSkeleton from "../../components/skeleton/PageSkeleton";
 import initials from "../../utils/initials.js";
+
+function enlaceActivacion(activacion) {
+  if (activacion?.enlace) return activacion.enlace;
+  return activacion?.codigo
+    ? `${window.location.origin}/activar?codigo=${encodeURIComponent(activacion.codigo)}`
+    : "";
+}
 
 const displayOwner = (owner) => ({
   ...owner,
@@ -41,7 +51,7 @@ const summaryCards = [
   { label: "Cobros acreditados", value: "18", icon: fileIcon, tone: "info" },
 ];
 
-function FilaPropietario({ owner, onEdit, onDelete }) {
+function FilaPropietario({ owner, onEdit, onDelete, onGenerateActivation }) {
   return (
     <tr>
       <td data-label="Propietario">
@@ -57,11 +67,15 @@ function FilaPropietario({ owner, onEdit, onDelete }) {
         <div className="propietarios__contact">
           <span>
             <img src={envelopeIcon} alt="" />
-            {owner.email || "—"}
+            <span className="propietarios__contact-text" title={owner.email || "—"}>
+              {owner.email || "—"}
+            </span>
           </span>
           <span>
             <img src={phoneIcon} alt="" />
-            {owner.phone || "—"}
+            <span className="propietarios__contact-text" title={owner.phone || "—"}>
+              {owner.phone || "—"}
+            </span>
           </span>
         </div>
       </td>
@@ -75,10 +89,10 @@ function FilaPropietario({ owner, onEdit, onDelete }) {
         </div>
       </td>
       <td data-label="CBU">
-        <span className="propietarios__muted-value">{owner.cbu || "—"}</span>
+        <span className="propietarios__muted-value" title={owner.cbu || "—"}>{owner.cbu || "—"}</span>
       </td>
       <td data-label="Alias">
-        <span className="propietarios__muted-value">{owner.alias || "—"}</span>
+        <span className="propietarios__muted-value" title={owner.alias || "—"}>{owner.alias || "—"}</span>
       </td>
       <td data-label="Estado">
         <span className="propietarios__status">{owner.status}</span>
@@ -89,6 +103,11 @@ function FilaPropietario({ owner, onEdit, onDelete }) {
           name={owner.name}
           onEdit={() => onEdit(owner)}
           onDelete={() => onDelete(owner)}
+          onGenerateActivation={
+            owner.estadoCuenta === "PENDIENTE_ACTIVACION"
+              ? () => onGenerateActivation(owner)
+              : undefined
+          }
         />
       </td>
     </tr>
@@ -103,9 +122,19 @@ export default function Propietarios() {
   const [notice, setNotice] = useState("");
   const [activationUrl, setActivationUrl] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.propietarios().then((rows) => setOwners(rows.map(displayOwner))).catch((cause) => setError(cause.message));
+    let active = true;
+    api.propietarios()
+      .then((rows) => { if (active) setOwners(rows.map(displayOwner)); })
+      .catch((cause) => {
+        if (!active) return;
+        setError(cause.message);
+        mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar los propietarios", mensaje: cause.message });
+      })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
   }, []);
 
   const normalizedQuery = query.trim().toLowerCase();
@@ -146,20 +175,45 @@ export default function Propietarios() {
     setOwners((current) => modal.mode === "edit"
       ? current.map((owner) => owner.id === saved.id ? saved : owner)
       : [saved, ...current]);
-    setActivationUrl(raw.activacion?.enlace || "");
-    setNotice(modal.mode === "edit" ? "Propietario actualizado correctamente." : "Propietario creado. Compartí el enlace de activación con su titular.");
+    const urlActivacion = enlaceActivacion(raw.activacion);
+    setActivationUrl(modal.mode === "edit" ? "" : urlActivacion);
+    setNotice(modal.mode === "edit" || !urlActivacion
+      ? ""
+      : "Propietario creado. Compartí el enlace de activación con su titular.");
+    mostrarAviso({
+      tipo: "exito",
+      titulo: modal.mode === "edit" ? "Propietario actualizado" : "Propietario creado",
+      mensaje: modal.mode === "edit" ? "Los datos del propietario se guardaron." : "El propietario ya está en la lista.",
+    });
     setModal(null);
+  }
+
+  async function generateActivation(owner) {
+    try {
+      setError("");
+      const activacion = await api.generarEnlacePropietario(owner.id);
+      setActivationUrl(enlaceActivacion(activacion));
+      setNotice(`Enlace nuevo para ${owner.name}. Compartilo con el propietario para activar su cuenta.`);
+      mostrarAviso({ tipo: "info", titulo: "Enlace de activación generado", mensaje: "Copialo y compartilo con el propietario para que active su cuenta." });
+    } catch (cause) {
+      mostrarAviso({ tipo: "error", titulo: "No se pudo generar el enlace", mensaje: cause.message });
+    }
   }
 
   async function deleteOwner() {
     try {
       await api.eliminarPropietario(pendingDelete.id);
       setOwners((current) => current.filter((owner) => owner.id !== pendingDelete.id));
-      setNotice("Propietario eliminado correctamente.");
+      setNotice("");
       setActivationUrl("");
-    } catch (cause) { setError(cause.message); }
+      mostrarAviso({ tipo: "exito", titulo: "Propietario eliminado", mensaje: "El propietario se eliminó correctamente." });
+    } catch (cause) {
+      mostrarAviso({ tipo: "error", titulo: "No se pudo eliminar al propietario", mensaje: cause.message });
+    }
     finally { setPendingDelete(null); }
   }
+
+  if (loading) return <PageSkeleton variant="table" title="propietarios" />;
 
   return (
     <main id="propietarios">
@@ -217,6 +271,7 @@ export default function Propietarios() {
                     owner={owner}
                     onEdit={(person) => setModal({ mode: "edit", person })}
                     onDelete={setPendingDelete}
+                    onGenerateActivation={generateActivation}
                   />
                 ))}
               </tbody>
@@ -230,9 +285,11 @@ export default function Propietarios() {
       </div>
 
       {notice && (
-        <p className="propietarios__notice" role="status">
-          {notice} {activationUrl && <><a href={activationUrl}>Abrir enlace de activación</a> <button type="button" onClick={() => navigator.clipboard.writeText(activationUrl)}>Copiar enlace</button></>}
-        </p>
+        <AvisoEnlaceActivacion
+          message={notice}
+          url={activationUrl}
+          onDismiss={() => { setNotice(""); setActivationUrl(""); }}
+        />
       )}
       {error && <p className="propietarios__notice" role="alert">{error}</p>}
 

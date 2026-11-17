@@ -18,17 +18,12 @@ export const todosLosAdministradores = () => todasLasPaginas("/admins");
 export const todosLosAgentes = () => todasLasPaginas("/agentes");
 
 export async function panelSuperAdmin() {
-<<<<<<< HEAD
   const [listaInmobiliarias, admins, agentes] = await Promise.all([
     inmobiliarias(),
     todosLosAdministradores(),
     todosLosAgentes(),
   ]);
   return listaInmobiliarias.map((inmobiliaria) => ({
-=======
-  const [lista, admins, agentes] = await Promise.all([inmobiliarias(), todosLosAdministradores(), todosLosAgentes()]);
-  return lista.map((inmobiliaria) => ({
->>>>>>> develop-nahuel
     ...inmobiliaria,
     admins: admins.filter((admin) => admin.idInmobiliaria === inmobiliaria.id),
     agentes: agentes.filter((agente) => agente.idInmobiliaria === inmobiliaria.id),

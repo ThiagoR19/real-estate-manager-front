@@ -13,6 +13,7 @@ import {
   angleDownIcon,
 } from "../../assets/icons";
 import { api } from "../../services/api";
+import { mostrarAviso } from "../../components";
 import propertyImage from "../../assets/fondoCasa.png";
 import "./PropiedadPublica.css";
 
@@ -41,7 +42,6 @@ function linkWhatsapp(telefono, nombrePropiedad) {
 
 function DetallePropiedad({ propiedad }) {
   const [activeImage, setActiveImage] = useState(0);
-  const [contactMessage, setContactMessage] = useState("");
   const fotos = propiedad.imagenes.length ? propiedad.imagenes : [propertyImage];
   const variasFotos = fotos.length > 1;
 
@@ -75,8 +75,7 @@ function DetallePropiedad({ propiedad }) {
       window.open(linkWhatsapp(propiedad.telefonoAgente, propiedad.nombre), "_blank", "noopener");
       return;
     }
-    setContactMessage("Un asesor se pondrá en contacto con vos.");
-    window.setTimeout(() => setContactMessage(""), 3000);
+    mostrarAviso({ tipo: "info", titulo: "Contacto no disponible", mensaje: "Esta propiedad no tiene un teléfono de contacto publicado." });
   }
 
   return (
@@ -179,9 +178,6 @@ function DetallePropiedad({ propiedad }) {
         <img src={whatsappIcon} alt="" />
         Contactar
       </button>
-      <p className="propiedad-publica__contact-message" role="status" aria-live="polite">
-        {contactMessage}
-      </p>
     </>
   );
 }
@@ -208,7 +204,10 @@ export default function PropiedadPublica() {
       .then((propiedad) => activo && setEstado({ id, propiedad }))
       .catch((causa) => {
         console.error(causa);
-        if (activo) setEstado({ id, propiedad: null });
+        if (activo) {
+          setEstado({ id, propiedad: null });
+          mostrarAviso({ tipo: "error", titulo: "No se pudo cargar la propiedad", mensaje: causa.message });
+        }
       });
     return () => {
       activo = false;

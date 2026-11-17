@@ -8,7 +8,7 @@ import {
   optionsIcon,
   xIcon,
 } from "../../assets/icons";
-import { Boton } from "../../components";
+import { Boton, mostrarAviso } from "../../components";
 import SelectDesplegable from "../../components/select/SelectDesplegable";
 import useHistorialPeriodos, {
   formatearFecha,
@@ -62,7 +62,6 @@ export default function Cobros() {
   const [openYears, setOpenYears] = useState({});
   const [timelineOpen, setTimelineOpen] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
-  const [feedback, setFeedback] = useState("");
   const estado = estadoDe(cobro);
   const hasReceipt = Boolean(cobro?.tieneComprobante);
   const contar = (condicion) => `${delContrato.filter(condicion).length}/${delContrato.length}`;
@@ -81,18 +80,15 @@ export default function Cobros() {
 
   function chooseProperty(propiedad) {
     historial.elegirContrato(contratos.find((item) => item.propiedad === propiedad).idContrato);
-    setFeedback("");
   }
 
   function changeProperty(direction) {
     historial.moverContrato(direction);
-    setFeedback("");
   }
 
   function choosePeriod(id) {
     historial.elegir(id);
     setTimelineOpen(false);
-    setFeedback("");
   }
 
   function toggleYear(anio, abierto) {
@@ -100,7 +96,9 @@ export default function Cobros() {
   }
 
   function downloadReceipt() {
-    api.descargarComprobanteCobro(cobro.id, cobro.nombreArchivo).catch((error) => setFeedback(error.message));
+    api.descargarComprobanteCobro(cobro.id, cobro.nombreArchivo).catch((error) =>
+      mostrarAviso({ tipo: "error", titulo: "No se pudo descargar el comprobante", mensaje: error.message }),
+    );
   }
 
   if (!items || !items.length || !cobro) {
@@ -359,9 +357,6 @@ export default function Cobros() {
               <Icono src={downloadIcon} />
               <span>Descargar comprobante</span>
             </Boton>
-            <p className="cobros__feedback" aria-live="polite">
-              {feedback || historial.error}
-            </p>
           </article>
         </div>
       </section>

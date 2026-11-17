@@ -15,7 +15,7 @@ import {
   infoToastIcon
 } from "../../assets/icons";
 import "./Perfil.css";
-import { Boton, AccesoGoogle } from "../../components";
+import { Boton, mostrarAviso } from "../../components";
 import { api } from "../../services/api.js";
 import initials from "../../utils/initials.js";
 import avatarClass from "../../utils/avatarClass.js";
@@ -103,17 +103,11 @@ const CampoContrasena = memo(function CampoContrasena({ field, visible, onToggle
 
 export default function Perfil() {
   const [visiblePasswords, setVisiblePasswords] = useState({});
-  const [logoutError, setLogoutError] = useState("");
   const [loggingOut, setLoggingOut] = useState(false);
   const [profile, setProfile] = useState({});
   const [photoUploading, setPhotoUploading] = useState(false);
-  const [photoError, setPhotoError] = useState("");
-  const [photoNotice, setPhotoNotice] = useState("");
   const [photoLoadError, setPhotoLoadError] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [saveError, setSaveError] = useState("");
-  const [saveNotice, setSaveNotice] = useState("");
-  const [googleCredential, setGoogleCredential] = useState("");
   const [, navigate] = useLocation();
 
   const showProfile = useCallback((updated, token) => {
@@ -137,16 +131,13 @@ export default function Perfil() {
     setVisiblePasswords((current) => ({ ...current, [id]: !current[id] }));
   }, []);
 
-  const confirmarGoogle = useCallback((credential) => setGoogleCredential(credential), []);
-
   async function closeSession() {
     setLoggingOut(true);
-    setLogoutError("");
     try {
       await api.cerrarSesion();
       navigate("/login");
     } catch (error) {
-      setLogoutError(error.message);
+      mostrarAviso({ tipo: "error", titulo: "No se pudo cerrar la sesión", mensaje: error.message });
       setLoggingOut(false);
     }
   }
@@ -155,8 +146,6 @@ export default function Perfil() {
     e.preventDefault();
     const form = e.currentTarget;
     setSaving(true);
-    setSaveError("");
-    setSaveNotice("");
 
     const values = Object.fromEntries(new FormData(form));
 
@@ -171,9 +160,6 @@ export default function Perfil() {
     const confirmarContraseña = values["confirm-password"];
 
     try {
-      if ((contraseñaActual || contraseñaNueva || confirmarContraseña) && !profile.tieneContrasena && !googleCredential) {
-        throw new Error("Confirmá tu identidad con Google antes de crear la contraseña.");
-      }
       if (Object.keys(payload).length > 0) {
         const result = await api.actualizarPerfil(payload);
         showProfile(result.perfil, result.token);
@@ -183,10 +169,8 @@ export default function Perfil() {
           actual: contraseñaActual,
           nueva: contraseñaNueva,
           confirmacion: confirmarContraseña,
-          ...(!profile.tieneContrasena ? { credential: googleCredential } : {}),
         });
         setProfile((current) => ({ ...current, tieneContrasena: 1 }));
-        setGoogleCredential("");
       }
       if (
         Object.keys(payload).length > 0 ||
@@ -195,10 +179,10 @@ export default function Perfil() {
         confirmarContraseña
       ) {
         form.reset();
-        setSaveNotice("Cambios guardados correctamente.");
+        mostrarAviso({ tipo: "exito", titulo: "Cambios guardados", mensaje: "La información de tu perfil se actualizó correctamente." });
       }
     } catch (error) {
-      setSaveError(error.message || "No se pudieron guardar los cambios.");
+      mostrarAviso({ tipo: "error", titulo: "No se pudieron guardar los cambios", mensaje: error.message || "Intentá nuevamente." });
     } finally {
       setSaving(false);
     }
@@ -209,17 +193,14 @@ export default function Perfil() {
     const file = input.files?.[0];
     if (!file) return;
 
-    setPhotoError("");
-    setPhotoNotice("");
-
     if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
-      setPhotoError("Elegí una imagen JPEG, PNG o WebP.");
+      mostrarAviso({ tipo: "advertencia", titulo: "Formato no permitido", mensaje: "Elegí una imagen JPEG, PNG o WebP." });
       input.value = "";
       return;
     }
 
     if (file.size > 2 * 1024 * 1024) {
-      setPhotoError("La imagen no puede superar los 2 MiB.");
+      mostrarAviso({ tipo: "advertencia", titulo: "Imagen muy pesada", mensaje: "La imagen no puede superar los 2 MiB." });
       input.value = "";
       return;
     }
@@ -227,9 +208,9 @@ export default function Perfil() {
     setPhotoUploading(true);
     try {
       showProfile(await api.actualizarFotoPerfil(file));
-      setPhotoNotice("Foto de perfil actualizada.");
+      mostrarAviso({ tipo: "exito", titulo: "Foto actualizada", mensaje: "Tu foto de perfil se actualizó correctamente." });
     } catch (error) {
-      setPhotoError(error.message || "No se pudo subir la foto de perfil.");
+      mostrarAviso({ tipo: "error", titulo: "No se pudo subir la foto", mensaje: error.message || "Intentá nuevamente." });
     } finally {
       setPhotoUploading(false);
       input.value = "";
@@ -244,7 +225,7 @@ export default function Perfil() {
         const loadedProfile = await api.perfil();
         if (mounted) showProfile(loadedProfile ?? {});
       } catch (error) {
-        console.error(error);
+        if (mounted) mostrarAviso({ tipo: "error", titulo: "No se pudo cargar el perfil", mensaje: error.message });
       }
     }
 
@@ -257,7 +238,7 @@ export default function Perfil() {
   const iniciales = initials(profile.nombre, profile.apellido);
   const profilePhotoUrl =
     profile.urlFotoPerfil && !photoLoadError ? api.urlRecurso(profile.urlFotoPerfil) : "";
-  const requiereVinculoGoogle = Number(profile.googleVinculado) === 1 && Number(profile.tieneContrasena) !== 1;
+  const cuentaGoogleSinContrasena = Number(profile.googleVinculado) === 1 && Number(profile.tieneContrasena) !== 1;
 
   return (
     <main id="perfil">
@@ -272,8 +253,7 @@ export default function Perfil() {
                   alt={`Foto de perfil de ${profile.nombre ?? ""} ${profile.apellido ?? ""}`.trim()}
                   onError={() => {
                     setPhotoLoadError(true);
-                    setPhotoNotice("");
-                    setPhotoError("No se pudo cargar la foto de perfil.");
+                    mostrarAviso({ tipo: "error", titulo: "No se pudo cargar la foto", mensaje: "Podés elegir otra imagen desde tu perfil." });
                   }}
                 />
               ) : (
@@ -300,16 +280,6 @@ export default function Perfil() {
             {photoUploading && (
               <p className="perfil__photo-feedback" role="status">
                 Subiendo foto...
-              </p>
-            )}
-            {photoError && (
-              <p className="perfil__photo-feedback perfil__photo-feedback--error" role="alert">
-                {photoError}
-              </p>
-            )}
-            {photoNotice && (
-              <p className="perfil__photo-feedback" role="status">
-                {photoNotice}
               </p>
             )}
           </section>
@@ -369,8 +339,8 @@ export default function Perfil() {
               </span>
               <div>
                 <h3 id="security-title">Seguridad</h3>
-                <p>{requiereVinculoGoogle
-                  ? "Confirmá tu identidad con Google para crear una contraseña. Dejá vacía la contraseña actual."
+                <p>{cuentaGoogleSinContrasena
+                  ? "Creá una contraseña desde esta sesión (dejá vacía la actual). Después vas a poder iniciar sesión con tu usuario y contraseña o con Google."
                   : "Cambia tu contraseña periódicamente para mantener tu cuenta segura"}</p>
               </div>
             </div>
@@ -384,10 +354,6 @@ export default function Perfil() {
                 />
               ))}
             </div>
-            {requiereVinculoGoogle && <div>
-              <AccesoGoogle modo="/perfil" onCredential={confirmarGoogle} />
-              {googleCredential && <p role="status">Identidad de Google confirmada. Ya podés guardar tu contraseña.</p>}
-            </div>}
           </section>
         </form>
       </div>
@@ -408,21 +374,6 @@ export default function Perfil() {
           text={saving ? "Guardando..." : "Guardar cambios"}
           disabled={saving || photoUploading}
         />
-        {saveError && (
-          <p className="perfil__save-feedback perfil__save-feedback--error" role="alert">
-            {saveError}
-          </p>
-        )}
-        {saveNotice && (
-          <p className="perfil__save-feedback" role="status">
-            {saveNotice}
-          </p>
-        )}
-        {logoutError && (
-          <p className="perfil__logout-error" role="alert">
-            {logoutError}
-          </p>
-        )}
       </div>
     </main>
   );

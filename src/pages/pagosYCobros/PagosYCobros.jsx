@@ -9,7 +9,7 @@ import {
   plusIconWhite,
   xIcon,
 } from "../../assets/icons";
-import { PanelDeslizable } from "../../components";
+import { PanelDeslizable, mostrarAviso } from "../../components";
 import useConsultaMedia from "../../hooks/useConsultaMedia";
 import usePagosYCobros, {
   CONCEPTO_ALQUILER,
@@ -177,7 +177,7 @@ function PanelPersonas({ personas, query, persona, idContrato, onSelect }) {
 export default function PagosYCobros() {
   const esMovil = useConsultaMedia("(max-width: 1024px)");
   const datos = usePagosYCobros();
-  const { personas, persona, contrato, detalle, cargando, guardando, feedback } = datos;
+  const { personas, persona, contrato, detalle, cargando, guardando, error } = datos;
   const [query, setQuery] = useState("");
   const [peopleOpen, setPeopleOpen] = useState(false);
   const [adding, setAdding] = useState("");
@@ -209,7 +209,6 @@ export default function PagosYCobros() {
 
   function openConceptForm(tipo) {
     setAdding(tipo);
-    datos.setFeedback("");
   }
 
   function closeConceptForm() {
@@ -221,7 +220,7 @@ export default function PagosYCobros() {
     event.preventDefault();
     const label = newConcept.label.trim();
     if (!label || parseAmount(newConcept.amount) <= 0) {
-      datos.setFeedback("Ingresá un concepto y un importe mayor a cero.");
+      mostrarAviso({ tipo: "advertencia", titulo: "Datos incompletos", mensaje: "Ingresá un concepto y un importe mayor a cero." });
       return;
     }
     if (await datos.agregarConcepto(label, newConcept.amount.trim(), adding === "temporary")) closeConceptForm();
@@ -230,7 +229,7 @@ export default function PagosYCobros() {
   async function submitRechazo(event) {
     event.preventDefault();
     if (motivo.trim().length < 3) {
-      datos.setFeedback("Escribí un motivo de al menos 3 letras.");
+      mostrarAviso({ tipo: "advertencia", titulo: "Falta el motivo", mensaje: "Escribí un motivo de al menos 3 letras." });
       return;
     }
     if (await datos.rechazar(motivo.trim())) {
@@ -282,7 +281,13 @@ export default function PagosYCobros() {
         <section className="pagos-agente__workspace" aria-label="Pago seleccionado" aria-busy={cargando}>
           {!persona || !detalle ? (
             <p className="pagos-agente__feedback" role="status">
-              {personas && !persona ? feedback || "No hay contratos de alquiler vigentes." : feedback || "Cargando..."}
+              {!personas
+                ? "Cargando..."
+                : !persona
+                  ? error || "No hay contratos de alquiler vigentes."
+                  : cargando
+                    ? "Cargando..."
+                    : "No se pudo cargar el detalle."}
             </p>
           ) : (
             <>
@@ -544,9 +549,6 @@ export default function PagosYCobros() {
               </div>
             </>
           )}
-          <p className="pagos-agente__feedback" role="status" aria-live="polite">
-            {detalle && feedback}
-          </p>
         </section>
       </div>
     </main>

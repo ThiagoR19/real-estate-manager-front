@@ -21,10 +21,13 @@ import {
   ModalSelect,
   ConfirmarEliminacionModal,
   AccionesEntidad,
+  AvisoEnlaceActivacion,
   Paginacion,
   usePaginacion,
+  mostrarAviso,
 } from "../../components";
 import { api } from "../../services/api.js";
+import PageSkeleton from "../../components/skeleton/PageSkeleton";
 import initials from "../../utils/initials.js";
 import "./Agentes.css";
 
@@ -87,16 +90,16 @@ function FilaAgente({ agent, onEdit, onDelete, onGenerateActivation }) {
         <strong>{agent.zona || "Sin asignar"}</strong>
       </td>
       <td data-label="Acciones" className="agentes__actions-cell">
-        {agent.estadoCuenta === "PENDIENTE_ACTIVACION" && (
-          <button type="button" className="agentes__activation-button" onClick={() => onGenerateActivation(agent)}>
-            Generar enlace
-          </button>
-        )}
         <AccionesEntidad
           entity="agente"
           name={name}
           onEdit={() => onEdit(agent)}
           onDelete={() => onDelete(agent)}
+          onGenerateActivation={
+            agent.estadoCuenta === "PENDIENTE_ACTIVACION"
+              ? () => onGenerateActivation(agent)
+              : undefined
+          }
         />
       </td>
     </tr>
@@ -104,7 +107,6 @@ function FilaAgente({ agent, onEdit, onDelete, onGenerateActivation }) {
 }
 
 function AgenteModal({ agent, areas, onClose, onSubmit }) {
-  const [error, setError] = useState("");
   const [areaId, setAreaId] = useState(String(agent?.idArea ?? ""));
   const selectedArea = areas.find((area) => String(area.id) === areaId);
 
@@ -118,10 +120,13 @@ function AgenteModal({ agent, areas, onClose, onSubmit }) {
     body.idArea = body.idArea ? Number(body.idArea) : null;
 
     try {
-      setError("");
       await onSubmit(body);
     } catch (cause) {
-      setError(cause.message);
+      mostrarAviso({
+        tipo: "error",
+        titulo: agent ? "No se pudo actualizar el agente" : "No se pudo crear el agente",
+        mensaje: cause.message,
+      });
     }
   }
 
@@ -131,22 +136,22 @@ function AgenteModal({ agent, areas, onClose, onSubmit }) {
         <div className="gestion-modal__card">
           <div className="gestion-modal__fields">
             <CampoModal label="Nombre">
-              <EntradaModal name="nombre" defaultValue={agent?.nombre || ""} required={!agent} />
+              <EntradaModal name="nombre" defaultValue={agent?.nombre || ""} placeholder="Nombre" required={!agent} />
             </CampoModal>
             <CampoModal label="Apellido">
-              <EntradaModal name="apellido" defaultValue={agent?.apellido || ""} required={!agent} />
+              <EntradaModal name="apellido" defaultValue={agent?.apellido || ""} placeholder="Apellido" required={!agent} />
             </CampoModal>
             <CampoModal label="Correo">
-              <EntradaModal name="correo" type="email" defaultValue={agent?.correo || ""} />
+              <EntradaModal name="correo" type="email" defaultValue={agent?.correo || ""} placeholder="ejemplo@gmail.com" />
             </CampoModal>
             <CampoModal label="Teléfono">
-              <EntradaModal name="telefono" defaultValue={agent?.telefono || ""} />
+              <EntradaModal name="telefono" defaultValue={agent?.telefono || ""} placeholder="2133 123123" />
             </CampoModal>
             <CampoModal label="Dirección">
-              <EntradaModal name="direccion" defaultValue={agent?.direccion || ""} />
+              <EntradaModal name="direccion" defaultValue={agent?.direccion || ""} placeholder="Av. San Martín 12" />
             </CampoModal>
             <CampoModal label="DNI">
-              <EntradaModal name="dni" defaultValue={agent?.dni || ""} required pattern="[0-9]{7,8}" inputMode="numeric" readOnly={Boolean(agent)} />
+              <EntradaModal name="dni" defaultValue={agent?.dni || ""} placeholder="12123123" required pattern="[0-9]{7,8}" inputMode="numeric" readOnly={Boolean(agent)} />
             </CampoModal>
             <CampoModal label="Zona">
               <input type="hidden" name="idArea" value={selectedArea ? areaId : ""} />
@@ -160,7 +165,6 @@ function AgenteModal({ agent, areas, onClose, onSubmit }) {
             </CampoModal>
           </div>
         </div>
-        {error && <p role="alert">{error}</p>}
         <AccionesModal onClose={onClose} submitText={agent ? "Guardar cambios" : "Crear agente"} />
       </form>
     </GestionModal>
@@ -179,6 +183,7 @@ export default function Agentes() {
   const [activationUrl, setActivationUrl] = useState("");
 
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
   const zones = ["Todas las zonas", ...new Set(areas.map((area) => area.nombre))];
   const visibleAgents = agents.filter(
     (agent) =>
@@ -195,13 +200,21 @@ export default function Agentes() {
   const { page, totalPages, pageItems, setPage, resetPage } = usePaginacion(visibleAgents);
 
   useEffect(() => {
+    let active = true;
     Promise.all([api.agentes(), api.areas(), api.todasLasVisitas()])
       .then(([agentRows, areaRows, visitRows]) => {
+        if (!active) return;
         setAgents(agentRows);
         setAreas(areaRows);
         setVisits(visitRows);
       })
-      .catch((cause) => setError(cause.message));
+      .catch((cause) => {
+        if (!active) return;
+        setError(cause.message);
+        mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar los agentes", mensaje: cause.message });
+      })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
   }, []);
 
   async function saveAgent(body) {
@@ -214,12 +227,16 @@ export default function Agentes() {
         ? current.map((agent) => (agent.id === result.id ? result : agent))
         : [...current, result],
     );
-    setActivationUrl(enlaceActivacion(result.activacion));
-    setNotice(
-      modal.mode === "edit"
-        ? "Agente actualizado correctamente."
-        : "Agente creado. Copiá el enlace y compartilo para que active su cuenta.",
-    );
+    const urlActivacion = enlaceActivacion(result.activacion);
+    setActivationUrl(modal.mode === "edit" ? "" : urlActivacion);
+    setNotice(modal.mode === "edit" || !urlActivacion
+      ? ""
+      : "Agente creado. Copiá el enlace y compartilo para que active su cuenta.");
+    mostrarAviso({
+      tipo: "exito",
+      titulo: modal.mode === "edit" ? "Agente actualizado" : "Agente creado",
+      mensaje: modal.mode === "edit" ? "Los datos del agente se guardaron." : "El agente ya está en la lista.",
+    });
     setModal(null);
   }
 
@@ -229,8 +246,9 @@ export default function Agentes() {
       const activacion = await api.generarEnlaceAgente(agent.id);
       setActivationUrl(enlaceActivacion(activacion));
       setNotice(`Enlace nuevo para ${agent.nombre || `DNI ${agent.dni}`}. Compartilo con el agente para activar su cuenta.`);
+      mostrarAviso({ tipo: "info", titulo: "Enlace de activación generado", mensaje: "Copialo y compartilo con el agente para que active su cuenta." });
     } catch (cause) {
-      setError(cause.message);
+      mostrarAviso({ tipo: "error", titulo: "No se pudo generar el enlace", mensaje: cause.message });
     }
   }
 
@@ -240,11 +258,14 @@ export default function Agentes() {
       setAgents((current) => current.filter((agent) => agent.id !== pendingDelete.id));
       setPendingDelete(null);
       setActivationUrl("");
-      setNotice("Agente eliminado correctamente.");
+      setNotice("");
+      mostrarAviso({ tipo: "exito", titulo: "Agente eliminado", mensaje: "El agente se eliminó correctamente." });
     } catch (cause) {
-      setError(cause.message);
+      mostrarAviso({ tipo: "error", titulo: "No se pudo eliminar el agente", mensaje: cause.message });
     }
   }
+
+  if (loading) return <PageSkeleton variant="table" title="agentes" />;
 
   return (
     <main id="agentes">
@@ -335,13 +356,11 @@ export default function Agentes() {
       </div>
 
       {notice && (
-        <div className="agentes__notice" role="status">
-          <p>{notice}</p>
-          {activationUrl && <div className="agentes__activation-link">
-            <input aria-label="Enlace de activación" readOnly value={activationUrl} onFocus={(event) => event.currentTarget.select()} />
-            <button type="button" onClick={() => navigator.clipboard.writeText(activationUrl)}>Copiar enlace</button>
-          </div>}
-        </div>
+        <AvisoEnlaceActivacion
+          message={notice}
+          url={activationUrl}
+          onDismiss={() => { setNotice(""); setActivationUrl(""); }}
+        />
       )}
       {error && (
         <p className="agentes__notice" role="alert">

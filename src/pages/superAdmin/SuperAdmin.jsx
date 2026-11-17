@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { api } from "../../services/api";
+import PageSkeleton from "../../components/skeleton/PageSkeleton";
 
 import initials from "../../utils/initials";
 import avatarClass from "../../utils/avatarClass";
@@ -162,7 +163,7 @@ export default function SuperAdmin() {
   }
 
 
-  if (loading) return <main id="super-admin" aria-busy="true" />;
+  if (loading) return <PageSkeleton variant="super-admin" />;
 
   const { inmobiliarias, mensaje } = estado;
 

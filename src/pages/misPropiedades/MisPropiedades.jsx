@@ -3,7 +3,7 @@ import {
   angleDownIcon, buildingColumnsIcon, clockIcon, fileLinesIcon, houseIcon,
   locationDotIcon, peopleIcon, tagIcon, toolboxIcon, userIcon, walletIcon, xIcon,
 } from "../../assets/icons";
-import { SelectDesplegable, PildoraResumen, Paginacion, usePaginacion, PROPERTY_PAGE_SIZE } from "../../components";
+import { SelectDesplegable, PildoraResumen, Paginacion, usePaginacion, PROPERTY_PAGE_SIZE, mostrarAviso } from "../../components";
 import { api } from "../../services/api.js";
 import "./MisPropiedades.css";
 
@@ -33,7 +33,11 @@ export default function MisPropiedades() {
         setReports(reportRows);
         setSelectedId(contractRows[0]?.idPropiedad ?? null);
       })
-      .catch((cause) => { if (active) setError(cause.message); })
+      .catch((cause) => {
+        if (!active) return;
+        setError(cause.message);
+        mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar tus propiedades", mensaje: cause.message });
+      })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, []);
@@ -65,7 +69,11 @@ export default function MisPropiedades() {
     let active = true;
     api.documentosContrato(activeContractId)
       .then((rows) => { if (active) setDocuments({ contractId: activeContractId, items: rows }); })
-      .catch((cause) => { if (active) setError(cause.message); });
+      .catch((cause) => {
+        if (!active) return;
+        setError(cause.message);
+        mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar los documentos", mensaje: cause.message });
+      });
     return () => { active = false; };
   }, [activeContractId]);
 
@@ -73,6 +81,15 @@ export default function MisPropiedades() {
     propertyPages.setPage(nextPage);
     setSelectedId(properties[(nextPage - 1) * PROPERTY_PAGE_SIZE]?.id ?? null);
     reportPages.resetPage();
+  }
+
+  async function downloadDocument(document) {
+    try {
+      await api.descargarDocumento(document);
+      mostrarAviso({ tipo: "info", titulo: "Descarga iniciada", mensaje: `Se inició la descarga de ${document.titulo}.` });
+    } catch (cause) {
+      mostrarAviso({ tipo: "error", titulo: "No se pudo descargar el documento", mensaje: cause.message });
+    }
   }
 
   return (
@@ -99,7 +116,7 @@ export default function MisPropiedades() {
           </aside>
           <section className="propiedades-propietario__detail">
             <header><div><h2>{property.name}</h2><div className="propiedades-propietario__facts"><span><span className="propiedades-propietario__fact-icon"><Icono src={locationDotIcon} /></span>Ubicación: {property.address || "—"}</span><span><span className="propiedades-propietario__fact-icon"><Icono src={tagIcon} /></span>Estado: {activeContract?.estado || "—"}</span></div></div><div className="propiedades-propietario__facts propiedades-propietario__facts--right"><span><span className="propiedades-propietario__fact-icon"><Icono src={walletIcon} /></span>Alquiler: {activeContract?.tipo === "Alquiler" ? money(activeContract.montoAcordado, activeContract.moneda) : "—"}</span><span><span className="propiedades-propietario__fact-icon"><Icono src={userIcon} /></span>Locatario: {tenant}</span></div></header>
-            <div className="propiedades-propietario__document"><div><Icono src={fileLinesIcon} /><strong>Contrato {activeContract?.estado?.toLowerCase() || "registrado"}</strong><small>{date(activeContract?.fechaInicio)} - {date(activeContract?.fechaFin)}</small></div>{visibleDocuments.length ? visibleDocuments.map((document) => <button className="propiedades-propietario__download" type="button" key={document.id} onClick={() => api.descargarDocumento(document).catch((cause) => setError(cause.message))}>Descargar {document.titulo}</button>) : <small>No hay un contrato disponible para descargar.</small>}</div>
+            <div className="propiedades-propietario__document"><div><Icono src={fileLinesIcon} /><strong>Contrato {activeContract?.estado?.toLowerCase() || "registrado"}</strong><small>{date(activeContract?.fechaInicio)} - {date(activeContract?.fechaFin)}</small></div>{visibleDocuments.length ? visibleDocuments.map((document) => <button className="propiedades-propietario__download" type="button" key={document.id} onClick={() => downloadDocument(document)}>Descargar {document.titulo}</button>) : <small>No hay un contrato disponible para descargar.</small>}</div>
             {propertyContracts.length > 1 && <p className="propiedades-propietario__message">{propertyContracts.length} contratos asociados a esta propiedad</p>}
           </section>
           <aside className="propiedades-propietario__reportes" aria-labelledby="propiedades-propietario-reportes-title">

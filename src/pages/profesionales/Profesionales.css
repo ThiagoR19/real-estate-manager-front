@@ -325,11 +325,24 @@ body:has(#profesionales) {
   line-height: 1.2;
 }
 
+.profesionales__identity small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .profesionales__contact {
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
   white-space: nowrap;
+}
+
+.profesionales__contact > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .profesionales__contact img {
@@ -596,6 +609,7 @@ body:has(#profesionales) {
     display: grid;
     grid-template-columns: 106px minmax(0, 1fr);
     align-items: center;
+    width: 100%;
     min-height: 49px;
     padding: 7px 0;
   }
@@ -614,11 +628,16 @@ body:has(#profesionales) {
   }
   .profesionales__contact {
     white-space: normal;
+  }
+  .profesionales__contact > span {
+    overflow: visible;
     overflow-wrap: anywhere;
   }
   .profesionales__actions {
     justify-content: flex-start;
     gap: 5px;
+    min-width: 0;
+    flex-wrap: wrap;
   }
   .profesionales__rate {
     flex: 1;

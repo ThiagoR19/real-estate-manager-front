@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Route, Switch, useLocation } from "wouter";
-import { EncabezadoPublico, Footer, NavegacionPortada } from "../../components";
+import { EncabezadoPublico, Footer, NavegacionPortada, mostrarAviso } from "../../components";
 import { Inicio, PropiedadesPublicas, PropiedadPublica, SobreNosotros } from "../../pages/index.js";
 import { InmobiliariaPublicaContext } from "../../hooks/useInmobiliariaPublica";
 import { api } from "../../services/api";
@@ -30,7 +30,10 @@ export default function LayoutPublico() {
       .then((inmobiliaria) => activo && setEstado({ inmobiliaria, cargando: false }))
       .catch((causa) => {
         console.error(causa);
-        if (activo) setEstado({ inmobiliaria: null, cargando: false });
+        if (activo) {
+          setEstado({ inmobiliaria: null, cargando: false });
+          mostrarAviso({ tipo: "error", titulo: "No se pudo cargar la inmobiliaria", mensaje: causa.message });
+        }
       });
     return () => {
       activo = false;

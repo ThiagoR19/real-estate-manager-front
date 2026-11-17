@@ -391,7 +391,7 @@ body:has(#inquilinos) {
 }
 .inquilinos__person,
 .inquilinos__propiedad,
-.inquilinos__contact span,
+.inquilinos__contact > span,
 .inquilinos__person-copy,
 .inquilinos__propiedad > span,
 .inquilinos__contract {
@@ -401,6 +401,7 @@ body:has(#inquilinos) {
 .inquilinos__propiedad {
   align-items: center;
   gap: 14px;
+  min-width: 0;
 }
 .inquilinos__contact,
 .inquilinos__person-copy,
@@ -410,11 +411,18 @@ body:has(#inquilinos) {
 }
 .inquilinos__contact {
   gap: 7px;
+  min-width: 0;
 }
-.inquilinos__contact span {
+.inquilinos__contact > span {
   align-items: center;
   gap: 11px;
+  min-width: 0;
   color: #7e8aa6;
+}
+.inquilinos__contact-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 .inquilinos__contact img {
@@ -456,8 +464,10 @@ body:has(#inquilinos) {
 .inquilinos__person-copy small,
 .inquilinos__propiedad small,
 .inquilinos__contract small {
+  overflow: hidden;
   color: #7e8aa6;
   font-size: 12px;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 .inquilinos__propiedad-image {
@@ -754,19 +764,24 @@ body:has(#inquilinos) .navbar__search {
   .inquilinos__contact {
     display: flex;
   }
-  .inquilinos__contact span {
+  .inquilinos__contact > span {
     gap: 14px;
-    white-space: normal;
-    overflow-wrap: anywhere;
     font-size: 12px;
+  }
+  .inquilinos__contact-text {
+    overflow: visible;
+    overflow-wrap: anywhere;
+    white-space: normal;
   }
   .inquilinos__status {
     width: 100%;
     height: 26px;
   }
   .inquilinos__propiedad strong,
+  .inquilinos__propiedad small,
   .inquilinos__contract small {
     white-space: normal;
+    overflow-wrap: anywhere;
   }
 }
 
