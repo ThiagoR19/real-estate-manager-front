@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Paginacion, usePaginacion, Skeleton, mostrarAviso } from "../../components";
 import { api } from "../../services/api.js";
 import { assetUrl } from "../../utils/assetUrl.js";
+import { ROLES, rolActual } from "../../utils/roles.js";
 import { estadoReporte } from "../../utils/estadoReporte.js";
 import {
   angleDownIcon, calendarIcon, checkIcon, clockIcon, commentsIcon, houseIcon,
@@ -26,9 +27,9 @@ function FotoReporte({ src, className = "", label = "Foto del reporte" }) {
 }
 
 export default function ReportesAgente() {
-  const rol = Number(api.obtenerSesion()?.usuario?.rol);
-  const puedeCambiarEstado = rol === 2 || rol === 3;
-  const puedeCrearReporte = rol === 5;
+  const rol = rolActual();
+  const puedeCambiarEstado = rol === ROLES.ADMIN || rol === ROLES.AGENTE;
+  const puedeCrearReporte = rol === ROLES.INQUILINO;
   const [reportItems, setReportItems] = useState([]);
   const [catalogos, setCatalogos] = useState({ categorias: [], estados: [], propiedades: [] });
   const [loading, setLoading] = useState(true);
@@ -204,7 +205,7 @@ export default function ReportesAgente() {
                   <article><h3>Reportado por</h3><p>{activeReport.personaReporta}</p></article>
                   <article><h3>Fecha</h3><p>{fecha(activeReport.fecha)}</p></article>
                 </div>
-                {rol !== 3 && <aside className="reportes__info-card">
+                {rol !== ROLES.AGENTE && <aside className="reportes__info-card">
                   <span className="reportes__info-icon"><Icono src={commentsIcon} /></span>
                   <div><h3>Información</h3><p>Te notificaremos cuando se asigne un profesional o haya novedades sobre tu reporte.</p></div>
                 </aside>}
