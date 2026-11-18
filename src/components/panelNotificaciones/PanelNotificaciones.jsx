@@ -16,8 +16,12 @@ const filtros = [
 
 function destinoNotificacion(rol, tipo) {
   switch (tipo?.toLowerCase()) {
+<<<<<<< HEAD
     case "cuenta": return rol === ROLES.SUPERADMIN ? ["/super-admin", "Ver cuentas"] : null;
     case "mantenimiento": return [rol === ROLES.INQUILINO ? "/reportes" : "/reportes-agente", "Ver reportes"];
+=======
+    case "mantenimiento": return [rol === 5 ? "/reportes" : "/reportes-agente", "Ver reportes"];
+>>>>>>> a2859aa527e1d617e4560f1c659c76a0fd4d73a8
     case "mensaje": return ["/chat", "Ir al chat"];
     case "visita": return ["/agenda", "Ver agenda"];
     case "contrato": return [

@@ -41,6 +41,9 @@ export const renombrarInmobiliaria = (id, nombre) =>
 
 export const crearAdministrador = (body) => request("/admins", { method: "POST", body }).then(({ data }) => data);
 
+export const generarEnlaceAdministrador = (id) =>
+  request(`/admins/${id}/activacion`, { method: "POST" }).then(({ data }) => data.activacion);
+
 export const administradorAAgente = (id) => request(`/admins/${id}/agente`, { method: "PATCH" }).then(({ data }) => data);
 
 export const agenteAAdministrador = (id) => request(`/agentes/${id}/ADMIN`, { method: "PATCH" }).then(({ data }) => data);

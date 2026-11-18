@@ -19,7 +19,7 @@ function usarImagenPorDefecto(event) {
 }
 
 export default function TarjetaPropiedad({ propiedad, className = "" }) {
-  const { titulo, direccion, imagen, dormitorios, banos, superficie, operacion } = propiedad;
+  const { titulo, direccion, imagen, dormitorios, banos, superficie, operacion, estadoComercial } = propiedad;
 
   const caracteristicas = [
     { icono: camaIcono, valor: dormitorios, nombre: "Dormitorios" },
@@ -61,7 +61,7 @@ export default function TarjetaPropiedad({ propiedad, className = "" }) {
           <span
             className={`TarjetaPropiedad__operacion TarjetaPropiedad__operacion--${operacion.toLowerCase()}`}
           >
-            {operacion}
+            {estadoComercial || `Disponible ${operacion}`}
           </span>
         </div>
 

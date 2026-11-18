@@ -46,8 +46,16 @@ export default function Inicio({ loading, datos }) {
   useEffect(() => cargar(), [cargar]);
 
   return (
-    <Skeleton fondos={[fondoInicio]} cargando={cargando}>
-      <section className="Inicio" data-sk-fondo style={{ backgroundImage: `linear-gradient(90deg, rgba(15, 23, 42, 0.35) 0%, rgba(15, 23, 42, 0) 60%), url("${datos?.urlPrincipal ?? fondoInicio}")`, }}>
+    <Skeleton
+      key={cargando ? "cargando" : "cargado"}
+      fondos={[datos?.urlPrincipal ?? fondoInicio]}
+      cargando={cargando}
+    >
+      <section
+        className="Inicio"
+        data-sk-fondo
+        style={{ backgroundImage: `linear-gradient(90deg, rgba(15, 23, 42, 0.35) 0%, rgba(15, 23, 42, 0) 60%), url("${datos?.urlPrincipal ?? fondoInicio}")` }}
+      >
         <div className="Inicio__contenido">
           <h1 className="Inicio__titulo">
             Encuentra el hogar <span>de tus sueños</span>

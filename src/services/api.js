@@ -111,6 +111,7 @@ export const api = {
   todosLosAdministradores: servicioInmobiliarias.todosLosAdministradores,
   todosLosAgentes: servicioInmobiliarias.todosLosAgentes,
   panelSuperAdmin: servicioInmobiliarias.panelSuperAdmin,
+  generarEnlaceAdministrador: servicioInmobiliarias.generarEnlaceAdministrador,
   eliminarInmobiliaria: servicioInmobiliarias.eliminarInmobiliaria,
   renombrarInmobiliaria: servicioInmobiliarias.renombrarInmobiliaria,
   administradorAAgente: servicioInmobiliarias.administradorAAgente,

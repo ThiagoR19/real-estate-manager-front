@@ -7,8 +7,13 @@ import { api } from "../../services/api";
 import logoPorDefecto from "../../assets/icons/kaiken.svg";
 import "./LayoutPublico.css";
 
+// Rutas que usan el  header de portada(va encima de la imagen del hero)
 const RUTAS_PORTADA = ["/", "/inicio", "/sobre-nosotros"];
 
+// Layout de la landing: pide los datos de la inmobiliaria una sola vez, elige el header según la URL,
+// muestra la vista que corresponde y el footer siempre.
+// Los headers de portada van superpuestos al hero: su alto se guarda en --alto-portada
+// para que el hero deje ese espacio arriba (ver LayoutPublico.css).
 export default function LayoutPublico() {
   const [ubicacion] = useLocation();
   const [estado, setEstado] = useState({ inmobiliaria: null, cargando: true });
@@ -16,7 +21,7 @@ export default function LayoutPublico() {
   const portadaRef = useRef(null);
   const esPortada = RUTAS_PORTADA.includes(ubicacion);
   const { inmobiliaria, cargando } = estado;
-
+  // Mientras carga no se muestra ningún logo, para no parpadear entre el de reserva y el real
   const logo = cargando ? undefined : inmobiliaria?.urlLogo || logoPorDefecto;
 
   useEffect(() => {
@@ -63,7 +68,7 @@ export default function LayoutPublico() {
                 return (
                   <SobreNosotros
                     datos={inmobiliaria}
-                    loading={estado.cargando}
+                    loading={cargando}
                   />)
               }
             }

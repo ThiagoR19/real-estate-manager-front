@@ -40,11 +40,20 @@ const servicios = [
     icono: llaveIcono,
   },
 ];
-export default function SobreNosotros({ datos, loading }) {
 
+export default function SobreNosotros({ datos, loading }) {
   return (
-    <Skeleton className="Nosotros" fondos={[datos?.urlBanner ?? fondoPortada]} cargando={loading}>
-      <section className="Portada" style={{ backgroundImage: `linear-gradient(90deg, rgba(15, 23, 42, 0.35) 0%, rgba(15, 23, 42, 0) 60%), url("${datos?.urlBanner ?? fondoPortada}")`, }}>
+    <Skeleton
+      key={loading ? "cargando" : "cargado"}
+      className="Nosotros"
+      fondos={[datos?.urlBanner ?? fondoPortada]}
+      cargando={loading}
+    >
+      <section
+        className="Portada"
+        data-sk-fondo
+        style={{ backgroundImage: `linear-gradient(90deg, rgba(15, 23, 42, 0.35) 0%, rgba(15, 23, 42, 0) 60%), url("${datos?.urlBanner ?? fondoPortada}")` }}
+      >
 
         <div className="Portada__contenido">
           <h1 className="Portada__titulo">

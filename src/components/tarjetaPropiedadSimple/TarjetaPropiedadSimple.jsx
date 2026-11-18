@@ -18,9 +18,7 @@ export default function TarjetaPropiedadSimple({
   const title = isPublic ? property.title : property.nombre;
   const location = isPublic ? property.location : property.ubicacion;
   const status = isPublic
-    ? property.operation === "buy"
-      ? "Venta"
-      : "Alquiler"
+    ? property.status || (property.operation === "buy" ? "Disponible Venta" : "Disponible Alquiler")
     : property.estadoComercial;
 
   function openProperty() {

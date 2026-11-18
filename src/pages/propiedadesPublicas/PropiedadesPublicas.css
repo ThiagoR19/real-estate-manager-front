@@ -529,6 +529,7 @@
 
 .propiedades-publicas__meta {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 17px;
   min-height: 31px;

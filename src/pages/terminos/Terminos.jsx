@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Link } from "wouter";
 import {
   arrowsRotateIcon,
   circleInfoIcon,
@@ -69,7 +70,7 @@ const sections = [
   },
 ];
 
-export default function Terminos() {
+export default function Terminos({ publico = false }) {
   const [activeSection, setActiveSection] = useState(sections[0].id);
   const contentRef = useRef(null);
   const sectionRefs = useRef({});
@@ -127,7 +128,7 @@ export default function Terminos() {
   }, [updateActiveSection]);
 
   return (
-    <main id="terminos">
+    <main id="terminos" className={publico ? "terminos--publico" : undefined}>
       <div className="terminos__div">
         <aside className="terminos__div-aside" id="terminos-navigation">
           <nav className="terminos__div-aside-nav" aria-label="Secciones de términos y condiciones">
@@ -147,6 +148,7 @@ export default function Terminos() {
         </aside>
 
         <section className="terminos__div-section" aria-labelledby="terminos-title">
+          {publico && <Link href="/login" className="terminos__volver">Volver al login</Link>}
           <header className="terminos__div-section-header">
             <h1 className="terminos__section-header-h1" id="terminos-title">
               Términos y condiciones
