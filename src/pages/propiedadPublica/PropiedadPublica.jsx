@@ -5,6 +5,12 @@ import {
   bedIcon,
   cameraIcon,
   calendarIcon,
+  boltIcon,
+  carIcon,
+  checkIcon,
+  clockIcon,
+  dropletIcon,
+  fireFlameSimpleIcon,
   houseIcon,
   locationDotIcon as locationIcon,
   rulerCombinedIcon as rulerIcon,
@@ -55,6 +61,7 @@ function DetallePropiedad({ propiedad }) {
 
   const details = [
     { label: "Tipo", value: propiedad.tipo, icon: houseIcon },
+    { label: "Disponibilidad", value: propiedad.estadoComercial || `Disponible ${propiedad.operacion}`, icon: clockIcon },
     { label: "Ubicación", value: propiedad.ubicacion || "A consultar", icon: locationIcon },
     { label: "Agente asignado", value: propiedad.agente || "A confirmar", icon: userIcon },
   ];
@@ -172,6 +179,26 @@ function DetallePropiedad({ propiedad }) {
               </div>
             ))}
           </div>
+          <section className="propiedad-publica__services" aria-labelledby="propiedad-publica-services">
+            <h2 id="propiedad-publica-services">Servicios</h2>
+            {propiedad.servicios?.length ? (
+              <ul className="propiedad-publica__services-list">
+                {propiedad.servicios.map((servicio) => (
+                  <li key={servicio.id}>
+                    <IconoPropiedad src={{
+                      Agua: dropletIcon,
+                      Gas: fireFlameSimpleIcon,
+                      Luz: boltIcon,
+                      Estacionamiento: carIcon,
+                    }[servicio.nombre] || checkIcon} />
+                    <span>{servicio.nombre}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="propiedad-publica__description">Sin especificar.</p>
+            )}
+          </section>
         </section>
       </div>
 

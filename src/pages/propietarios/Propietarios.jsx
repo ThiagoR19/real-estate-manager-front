@@ -120,7 +120,6 @@ function FilaPropietario({ owner, onEdit, onDelete, onGenerateActivation }) {
 export default function Propietarios() {
   const [owners, setOwners] = useState([]);
   const [summary, setSummary] = useState(null);
-  const [summaryFilter, setSummaryFilter] = useState("");
   const [summaryError, setSummaryError] = useState("");
   const [query, setQuery] = useState("");
   const [modal, setModal] = useState(null);
@@ -161,12 +160,7 @@ export default function Propietarios() {
   }
 
   const normalizedQuery = query.trim().toLowerCase();
-  const filteredOwners = owners.filter((owner) =>
-    !summaryFilter || (summaryFilter === "propietariosActivos"
-      ? owner.activo
-      : summary?.[summaryFilter]?.ids.includes(owner.id)),
-  );
-  const visibleOwners = filteredOwners.filter(
+  const visibleOwners = owners.filter(
     (owner) =>
       !normalizedQuery ||
       [
@@ -260,22 +254,12 @@ export default function Propietarios() {
               <PildoraResumen
                 key={key}
                 {...card}
-                onClick={() => { setSummaryFilter((current) => current === key ? "" : key); resetPage(); }}
-                selected={summaryFilter === key}
-                disabled={key !== "propietariosActivos" && !summary}
               />
             ))}
           </div>
         </section>
 
         {summaryError && <p className="propietarios__summary-error" role="alert">No se pudo actualizar el resumen: {summaryError}</p>}
-        {summaryFilter && (
-          <div className="propietarios__filter-status" role="status">
-            <span>Filtro: {cards.find((card) => card.key === summaryFilter)?.label} · {filteredOwners.length} {filteredOwners.length === 1 ? "propietario" : "propietarios"}</span>
-            <button type="button" onClick={() => { setSummaryFilter(""); resetPage(); }}>Mostrar todos</button>
-          </div>
-        )}
-
         <section className="propietarios__toolbar" aria-label="Buscar propietarios">
           <label className="propietarios__search">
             <img src={magnifyingGlassIcon} alt="" />

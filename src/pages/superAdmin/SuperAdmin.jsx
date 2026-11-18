@@ -49,6 +49,13 @@ function personasDe(agency) {
   ];
 }
 
+function enlaceActivacion(activacion) {
+  if (activacion?.enlace) return activacion.enlace;
+  return activacion?.codigo
+    ? `${window.location.origin}/activar?codigo=${encodeURIComponent(activacion.codigo)}`
+    : "";
+}
+
 export default function SuperAdmin() {
   const [estado, setEstado] = useState({ inmobiliarias: [], mensaje: "" });
   const [loading, setLoading] = useState(true);
@@ -56,6 +63,7 @@ export default function SuperAdmin() {
   const [modal, setModal] = useState(null);
   const [aEliminar, setAEliminar] = useState(null);
   const [activationUrl, setActivationUrl] = useState("");
+  const [activationMessage, setActivationMessage] = useState("");
 
   const cargar = useCallback(() => {
     let activo = true;
@@ -106,15 +114,40 @@ export default function SuperAdmin() {
     try {
       const admin = await api.crearAdministrador({ ...datos, idInmobiliaria: agency.id });
       setModal(null);
-      setActivationUrl(admin.activacion?.enlace || "");
+      setActivationUrl(enlaceActivacion(admin.activacion));
+      setActivationMessage("Compartí el enlace con el administrador para que verifique su DNI y cree su cuenta.");
       mostrarAviso({
         tipo: "exito",
         titulo: "Admin creado",
-        mensaje: "Compartí el enlace de activación con el administrador.",
+        mensaje: "El administrador ya puede activar su cuenta con el enlace generado.",
       });
       cargar();
     } catch (causa) {
       mostrarAviso({ tipo: "error", titulo: "No se pudo crear el admin", mensaje: causa.message });
+    }
+  }
+
+  async function generarEnlaceAdmin(persona) {
+    try {
+      const activacion = await api.generarEnlaceAdministrador(persona.id);
+      setActivationUrl(enlaceActivacion(activacion));
+      setActivationMessage(`Enlace nuevo para ${persona.nombre} ${persona.apellido}. Compartilo para que pueda crear su cuenta.`);
+      mostrarAviso({
+        tipo: "info",
+        titulo: "Enlace de activación generado",
+        mensaje: "Compartilo con el administrador para que cree su cuenta.",
+      });
+    } catch (causa) {
+      mostrarAviso({ tipo: "error", titulo: "No se pudo generar el enlace", mensaje: causa.message });
+    }
+  }
+
+  async function copiarEnlaceActivacion() {
+    try {
+      await navigator.clipboard.writeText(activationUrl);
+      mostrarAviso({ tipo: "exito", titulo: "Enlace copiado" });
+    } catch {
+      mostrarAviso({ tipo: "error", titulo: "No se pudo copiar el enlace", mensaje: "Abrilo y copialo desde la barra del navegador." });
     }
   }
 
@@ -198,10 +231,11 @@ export default function SuperAdmin() {
         </div>
         <section className="super-admin__inmobiliaria-list" aria-label="Inmobiliarias registradas">
           {activationUrl && (
-            <p role="status">
-              Administrador creado. Compartí este enlace: <a href={activationUrl}>Abrir enlace de activación</a>{" "}
-              <button type="button" onClick={() => navigator.clipboard.writeText(activationUrl)}>Copiar enlace</button>
-            </p>
+            <div className="super-admin__activation-notice" role="status">
+              <p>{activationMessage}</p>
+              <a href={activationUrl} target="_blank" rel="noreferrer">Abrir enlace de activación</a>
+              <button type="button" onClick={copiarEnlaceActivacion}>Copiar enlace</button>
+            </div>
           )}
           {mensaje && (
             <p className="super-admin__no-admins">
@@ -271,9 +305,7 @@ export default function SuperAdmin() {
                           <h3>
                             {persona.nombre} {persona.apellido}
                           </h3>
-                          <label className="super-admin__role-label" htmlFor={`rol-${persona.clave}`}>
-                            Rol
-                          </label>
+                          <label className="super-admin__role-label" htmlFor={`rol-${persona.clave}`}>Rol</label>
                           <select
                             className={`super-admin__rol super-admin__rol--${persona.tipo}`}
                             id={`rol-${persona.clave}`}
@@ -284,6 +316,15 @@ export default function SuperAdmin() {
                             <option>Admin</option>
                             <option>Agente</option>
                           </select>
+                          {persona.tipo === "admin" && persona.estadoCuenta === "PENDIENTE_ACTIVACION" && (
+                            <button
+                              className="super-admin__activation-link"
+                              type="button"
+                              onClick={() => generarEnlaceAdmin(persona)}
+                            >
+                              Generar enlace para crear cuenta
+                            </button>
+                          )}
                         </article>
                       ))
                     ) : (

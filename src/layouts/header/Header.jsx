@@ -22,7 +22,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
   const user = session?.usuario;
   const role = Number(user?.rol);
   const sessionToken = identidadSesion(session);
-  const canReceiveNotifications = Boolean(sessionToken) && [1, 2, 3, 4, 5].includes(role);
+  const canReceiveNotifications = Boolean(sessionToken) && [2, 3, 4, 5].includes(role);
   const [photoLoadError, setPhotoLoadError] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [notificationsLoaded, setNotificationsLoaded] = useState(false);

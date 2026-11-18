@@ -526,6 +526,36 @@
   bottom: 20px;
 }
 
+.propiedad-publica__services {
+  padding-bottom: 16px;
+  border-top: 2px solid #dcecff;
+}
+
+.propiedad-publica__services-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.propiedad-publica__services-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: #e0efff;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.propiedad-publica__services-list .propiedad-publica__icon {
+  flex-shrink: 0;
+}
+
 .propiedad-publica__contact>span {
   display: grid;
   place-items: center;

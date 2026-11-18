@@ -98,24 +98,6 @@ body:has(#propietarios) {
   font-size: 13px;
 }
 
-.propietarios__filter-status {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 14px 8px -8px;
-  color: #42516d;
-  font-size: 13px;
-}
-
-.propietarios__filter-status button {
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: #1766a6;
-  cursor: pointer;
-  text-decoration: underline;
-}
-
 .propietarios__summary-card {
   display: grid;
   grid-template-columns: 38px minmax(0, 1fr) auto;
