@@ -12,7 +12,6 @@ import fotoPorDefecto from "/images (1).jpg";
 import "./DashboardAgente.css";
 
 const ZONA_HORARIA = "America/Argentina/Buenos_Aires";
-const PRIORIDADES_ALTAS = ["ALTA", "URGENTE"];
 
 function Icono({ src, className = "" }) {
   return <img className={className} src={src} alt="" aria-hidden="true" />;
@@ -122,9 +121,6 @@ function TarjetaReportes({ reportes }) {
             <span className="dashboard-agente__report-copy">
               <strong>
                 {reporte.titulo}
-                {PRIORIDADES_ALTAS.includes(reporte.prioridad) && (
-                  <i aria-label={`Prioridad ${reporte.prioridad.toLowerCase()}`} />
-                )}
               </strong>
               <span>{reporte.personaReporta}</span>
               <span>{reporte.propiedad}</span>

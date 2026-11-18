@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Route, Switch, useLocation } from "wouter";
-import { EncabezadoPublico, Footer, NavegacionPortada, mostrarAviso } from "../../components";
+import { EncabezadoPublico, Footer, NavegacionPortada, Skeleton, mostrarAviso } from "../../components";
 import { Inicio, PropiedadesPublicas, PropiedadPublica, SobreNosotros } from "../../pages/index.js";
 import { InmobiliariaPublicaContext } from "../../hooks/useInmobiliariaPublica";
 import { api } from "../../services/api";
@@ -52,7 +52,7 @@ export default function LayoutPublico() {
 
   return (
     <InmobiliariaPublicaContext.Provider value={estado}>
-      <div className="LayoutPublico" style={{ "--alto-portada": `${esPortada ? altoPortada : 0}px` }}>
+      <Skeleton className="LayoutPublico" cargando={cargando} style={{ "--alto-portada": `${esPortada ? altoPortada : 0}px` }}>
         {esPortada ? (
           <div className="LayoutPublico__portada" ref={portadaRef}>
             <NavegacionPortada URLLogo={logo} />
@@ -68,6 +68,7 @@ export default function LayoutPublico() {
                 return (
                   <SobreNosotros
                     datos={inmobiliaria}
+                    loading={cargando}
                   />)
               }
             }
@@ -77,8 +78,16 @@ export default function LayoutPublico() {
           <Route path="/inicio">
             {
               () => {
-                console.log(inmobiliaria)
-                console.log(estado.inmobiliaria)
+                return (<Inicio
+                  loading={estado.cargando}
+                  datos={inmobiliaria}
+                />)
+              }
+            }
+          </Route>
+          <Route path="/">
+            {
+              () => {
                 return (<Inicio
                   loading={estado.cargando}
                   datos={inmobiliaria}
@@ -93,7 +102,7 @@ export default function LayoutPublico() {
           URLLogo={logo}
           inmobiliaria={inmobiliaria?.nombre}
         />
-      </div>
+      </Skeleton>
     </InmobiliariaPublicaContext.Provider>
   );
 }

@@ -13,7 +13,8 @@ import {
   angleDownIcon,
 } from "../../assets/icons";
 import { api } from "../../services/api";
-import { mostrarAviso } from "../../components";
+import { Skeleton, mostrarAviso } from "../../components";
+import { PublicPropertySkeleton } from "../../components/skeleton/PublicSkeletons";
 import propertyImage from "../../assets/fondoCasa.png";
 import "./PropiedadPublica.css";
 
@@ -216,9 +217,9 @@ export default function PropiedadPublica() {
 
   function contenido() {
     if (!id) return <SinPropiedad mensaje="No se indicó qué propiedad mostrar." />;
-    if (cargando) return <p className="propiedad-publica__estado">Cargando propiedad...</p>;
+    if (cargando) return <PublicPropertySkeleton />;
     if (!estado.propiedad) return <SinPropiedad mensaje="La propiedad no existe o ya no está publicada." />;
-    return <DetallePropiedad key={estado.propiedad.id} propiedad={estado.propiedad} />;
+    return <Skeleton key={estado.propiedad.id}><DetallePropiedad propiedad={estado.propiedad} /></Skeleton>;
   }
 
   return (

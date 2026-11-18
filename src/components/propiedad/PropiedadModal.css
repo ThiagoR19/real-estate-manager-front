@@ -620,16 +620,6 @@
   font-size: 13px;
 }
 
-.propiedad-modal__clear-contract {
-  justify-self: start;
-  border: 0;
-  background: transparent;
-  color: #0755d6;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 700;
-}
-
 .propiedad-modal__contract-grid .propiedad-modal__plain-input,
 .propiedad-modal__contract-grid .propiedad-modal__select-trigger {
   height: 40px;
@@ -643,7 +633,7 @@
 
 .propiedad-modal__document-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(180px, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 22px;
 }
@@ -657,10 +647,6 @@
 
 .propiedad-modal__document-add-row .propiedad-modal__document-name {
   width: min(260px, 100%);
-}
-
-.propiedad-modal__document-row .propiedad-modal__document-name {
-  min-width: 0;
 }
 
 .propiedad-modal__document-row > span {
@@ -874,11 +860,6 @@
   .propiedad-modal__file-picker,
   .propiedad-modal__document-name {
     width: 100%;
-  }
-
-  .propiedad-modal__document-name {
-    grid-column: 1 / -1;
-    grid-row: 2;
   }
 
   .propiedad-modal__remove-document {
@@ -1104,13 +1085,9 @@
   .propiedad-modal__document-row {
     grid-template-columns: minmax(0, 1fr) 30px;
   }
-  .propiedad-modal__document-row .propiedad-modal__document-name {
-    grid-column: 1;
-    grid-row: 2;
-  }
   .propiedad-modal__document-row .propiedad-modal__remove-document {
     grid-column: 2;
-    grid-row: 1 / 3;
+    grid-row: 1;
   }
   .propiedad-modal__file-picker {
     height: 70px;

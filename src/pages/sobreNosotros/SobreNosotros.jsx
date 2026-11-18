@@ -41,9 +41,9 @@ const servicios = [
   },
 ];
 
-export default function SobreNosotros({datos}) {
+export default function SobreNosotros({ datos, loading }) {
   return (
-    <Skeleton className="Nosotros" fondos={[fondoPortada]}>
+    <Skeleton className="Nosotros" fondos={[fondoPortada]} cargando={loading}>
       <section className="Portada" data-sk-fondo>
 
         <div className="Portada__contenido">

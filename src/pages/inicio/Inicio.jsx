@@ -46,7 +46,7 @@ export default function Inicio({ loading, datos }) {
   useEffect(() => cargar(), [cargar]);
 
   return (
-    <Skeleton fondos={[fondoInicio]} cargando={cargando}>
+    <Skeleton key={cargando ? "cargando" : "cargado"} fondos={[fondoInicio]} cargando={cargando}>
       <section className="Inicio" data-sk-fondo>
         <div className="Inicio__contenido">
           <h1 className="Inicio__titulo">
