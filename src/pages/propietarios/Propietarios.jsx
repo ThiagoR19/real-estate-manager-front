@@ -42,14 +42,14 @@ const displayOwner = (owner) => ({
   phone: owner.telefono || "",
   address: owner.direccion || "",
   unit: "",
-  status: owner.estadoCuenta === "PENDIENTE_ACTIVACION" ? "Pendiente" : owner.activo ? "Activo" : "Inactivo",
+  status: owner.activo ? "Activo" : "Inactivo",
 });
 
-const summaryCards = [
-  { label: "Cobros pendientes", value: "2", icon: xIcon, tone: "danger" },
-  { label: "Liquidaciones por generar", value: "10", icon: clockIcon, tone: "warning" },
-  { label: "Propietarios activos", value: "24", icon: peopleIcon, tone: "success" },
-  { label: "Cobros acreditados", value: "18", icon: fileIcon, tone: "info" },
+const summaryCards = (summary, activeOwners) => [
+  { key: "cobrosPendientes", label: "Cobros pendientes", value: summary?.cobrosPendientes.total ?? "—", icon: xIcon, tone: "danger" },
+  { key: "liquidacionesPorGenerar", label: "Liquidaciones por generar", value: summary?.liquidacionesPorGenerar.total ?? "—", icon: clockIcon, tone: "warning" },
+  { key: "propietariosActivos", label: "Propietarios activos", value: activeOwners, icon: peopleIcon, tone: "success" },
+  { key: "cobrosAcreditados", label: "Cobros acreditados", value: summary?.cobrosAcreditados.total ?? "—", icon: fileIcon, tone: "info" },
 ];
 
 function FilaPropietario({ owner, onEdit, onDelete, onGenerateActivation }) {
@@ -96,7 +96,9 @@ function FilaPropietario({ owner, onEdit, onDelete, onGenerateActivation }) {
         <span className="propietarios__muted-value" title={owner.alias || "—"}>{owner.alias || "—"}</span>
       </td>
       <td data-label="Estado">
-        <span className="propietarios__status">{owner.status}</span>
+        <span className={`propietarios__status propietarios__status--${owner.activo ? "active" : "inactive"}`}>
+          {owner.status}
+        </span>
       </td>
       <td data-label="Acciones" className="propietarios__actions-cell">
         <AccionesEntidad
@@ -117,6 +119,9 @@ function FilaPropietario({ owner, onEdit, onDelete, onGenerateActivation }) {
 
 export default function Propietarios() {
   const [owners, setOwners] = useState([]);
+  const [summary, setSummary] = useState(null);
+  const [summaryFilter, setSummaryFilter] = useState("");
+  const [summaryError, setSummaryError] = useState("");
   const [query, setQuery] = useState("");
   const [modal, setModal] = useState(null);
   const [pendingDelete, setPendingDelete] = useState(null);
@@ -138,8 +143,30 @@ export default function Propietarios() {
     return () => { active = false; };
   }, []);
 
+  useEffect(() => {
+    let active = true;
+    api.resumenPropietarios()
+      .then((result) => { if (active) setSummary(result); })
+      .catch((cause) => { if (active) setSummaryError(cause.message); });
+    return () => { active = false; };
+  }, []);
+
+  async function refreshSummary() {
+    try {
+      setSummary(await api.resumenPropietarios());
+      setSummaryError("");
+    } catch (cause) {
+      setSummaryError(cause.message);
+    }
+  }
+
   const normalizedQuery = query.trim().toLowerCase();
-  const visibleOwners = owners.filter(
+  const filteredOwners = owners.filter((owner) =>
+    !summaryFilter || (summaryFilter === "propietariosActivos"
+      ? owner.activo
+      : summary?.[summaryFilter]?.ids.includes(owner.id)),
+  );
+  const visibleOwners = filteredOwners.filter(
     (owner) =>
       !normalizedQuery ||
       [
@@ -152,6 +179,7 @@ export default function Propietarios() {
         owner.alias,
       ].some((value) => String(value ?? "").toLowerCase().includes(normalizedQuery)),
   );
+  const cards = summaryCards(summary, owners.filter((owner) => owner.activo).length);
   const { page, totalPages, pageItems, setPage, resetPage } = usePaginacion(visibleOwners);
 
   async function saveOwner(data) {
@@ -160,7 +188,7 @@ export default function Propietarios() {
           nombre: data.firstName || null, apellido: data.lastName || null,
           correo: data.email || null, telefono: data.phone || null,
           direccion: data.address || null, cbu: data.cbu || null,
-          alias: data.alias || null, activo: data.status !== "Inactivo",
+          alias: data.alias || null, activo: data.status === "Activo",
         })
       : await api.crearPropietario({
           nombre: data.firstName,
@@ -176,6 +204,7 @@ export default function Propietarios() {
     setOwners((current) => modal.mode === "edit"
       ? current.map((owner) => owner.id === saved.id ? saved : owner)
       : [saved, ...current]);
+    refreshSummary();
     const urlActivacion = enlaceActivacion(raw.activacion);
     setActivationUrl(modal.mode === "edit" ? "" : urlActivacion);
     setNotice(modal.mode === "edit" || !urlActivacion
@@ -205,6 +234,7 @@ export default function Propietarios() {
     try {
       await api.eliminarPropietario(pendingDelete.id);
       setOwners((current) => current.filter((owner) => owner.id !== pendingDelete.id));
+      refreshSummary();
       setNotice("");
       setActivationUrl("");
       mostrarAviso({ tipo: "exito", titulo: "Propietario eliminado", mensaje: "El propietario se eliminó correctamente." });
@@ -226,11 +256,25 @@ export default function Propietarios() {
           </div>
 
           <div className="propietarios__summary" aria-label="Resumen de propietarios">
-            {summaryCards.map((card) => (
-              <PildoraResumen key={card.label} {...card} />
+            {cards.map(({ key, ...card }) => (
+              <PildoraResumen
+                key={key}
+                {...card}
+                onClick={() => { setSummaryFilter((current) => current === key ? "" : key); resetPage(); }}
+                selected={summaryFilter === key}
+                disabled={key !== "propietariosActivos" && !summary}
+              />
             ))}
           </div>
         </section>
+
+        {summaryError && <p className="propietarios__summary-error" role="alert">No se pudo actualizar el resumen: {summaryError}</p>}
+        {summaryFilter && (
+          <div className="propietarios__filter-status" role="status">
+            <span>Filtro: {cards.find((card) => card.key === summaryFilter)?.label} · {filteredOwners.length} {filteredOwners.length === 1 ? "propietario" : "propietarios"}</span>
+            <button type="button" onClick={() => { setSummaryFilter(""); resetPage(); }}>Mostrar todos</button>
+          </div>
+        )}
 
         <section className="propietarios__toolbar" aria-label="Buscar propietarios">
           <label className="propietarios__search">

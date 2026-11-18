@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "wouter";
-import { TarjetaPropiedadSimple, Paginacion, mostrarAviso } from "../../components";
+import { TarjetaPropiedadSimple, Paginacion, Skeleton, mostrarAviso } from "../../components";
+import { PublicPropertiesSkeleton, PublicSkeletonBar } from "../../components/skeleton/PublicSkeletons";
 import { api } from "../../services/api";
 import filterIcon from "../../assets/icons/options.svg";
 import "./PropiedadesPublicas.css";
@@ -47,7 +48,7 @@ function useFiltrosUrl() {
   return { params, cambiarFiltros, cambiarPagina };
 }
 
-function BarraLateralFiltros({ params, cambiarFiltros, tipos, operation, open, onClose }) {
+function BarraLateralFiltros({ params, cambiarFiltros, tipos, cargandoTipos, operation, open, onClose }) {
   const ubicacion = params.get("ubicacion") ?? "";
   const tiposElegidos = (params.get("tipo") ?? "").split(",").filter(Boolean);
   const moneda = params.get("moneda") === "USD" ? "USD" : "ARS";
@@ -127,6 +128,11 @@ function BarraLateralFiltros({ params, cambiarFiltros, tipos, operation, open, o
 
       <fieldset>
         <legend>Tipo de propiedad</legend>
+        {cargandoTipos && (
+          <div className="public-loading__filters" role="status" aria-label="Cargando tipos de propiedad">
+            {Array.from({ length: 4 }, (_, index) => <PublicSkeletonBar key={index} width="70%" height={18} />)}
+          </div>
+        )}
         {tipos.map((tipo) => (
           <label className="propiedades-publicas__checkbox" key={tipo}>
             <input
@@ -204,29 +210,24 @@ export default function PropiedadesPublicas() {
   const busqueda = params.toString();
   const operation = params.get("filter") === "rent" ? "rent" : "buy";
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const [resultado, setResultado] = useState({ propiedades: [], paginacion: null, tipos: [] });
-  const [cargando, setCargando] = useState(true);
-  const [error, setError] = useState(false);
-  const total = resultado.paginacion?.total ?? 0;
+  const [resultado, setResultado] = useState({ busqueda: null, propiedades: [], paginacion: null, tipos: [], error: false });
+  const cargando = resultado.busqueda !== busqueda;
+  const total = cargando ? 0 : resultado.paginacion?.total ?? 0;
 
   useEffect(() => {
     let activo = true;
     const espera = window.setTimeout(() => {
-      setCargando(true);
       api.catalogoPropiedades(new URLSearchParams(busqueda))
         .then((datos) => {
           if (!activo) return;
-          setResultado(datos);
-          setError(false);
+          setResultado({ ...datos, busqueda, error: false });
         })
         .catch((causa) => {
           console.error(causa);
           if (!activo) return;
-          setResultado((anterior) => ({ ...anterior, propiedades: [], paginacion: null }));
-          setError(true);
+          setResultado((anterior) => ({ ...anterior, busqueda, propiedades: [], paginacion: null, error: true }));
           mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar las propiedades", mensaje: causa.message });
-        })
-        .finally(() => activo && setCargando(false));
+        });
     }, 300);
 
     return () => {
@@ -269,6 +270,7 @@ export default function PropiedadesPublicas() {
           params={params}
           cambiarFiltros={cambiarFiltros}
           tipos={resultado.tipos}
+          cargandoTipos={cargando && !resultado.tipos.length}
           operation={operation}
           open={filtersOpen}
           onClose={() => setFiltersOpen(false)}
@@ -279,7 +281,7 @@ export default function PropiedadesPublicas() {
               <h1 id="propiedades-publicas-title">
                 Propiedades en {operation === "buy" ? "venta" : "alquiler"}
               </h1>
-              <span>{cargando ? "Buscando..." : `${total} propiedades encontradas`}</span>
+              {cargando ? <PublicSkeletonBar width={150} height={17} /> : <span>{total} propiedades encontradas</span>}
             </div>
             <label>
               Ordenar por:
@@ -308,22 +310,24 @@ export default function PropiedadesPublicas() {
             </button>
           </div>
 
-          {!cargando && error && (
+          {!cargando && resultado.error && (
             <p className="propiedades-publicas__vacio">
               No pudimos cargar las propiedades. Probá de nuevo más tarde.
             </p>
           )}
-          {!cargando && !error && !total && (
+          {!cargando && !resultado.error && !total && (
             <p className="propiedades-publicas__vacio">No encontramos propiedades con esos filtros.</p>
           )}
 
-          <div className="propiedades-publicas__grid">
-            {resultado.propiedades.map((property) => (
-              <TarjetaPropiedadSimple key={property.id} property={property} variant="public" />
-            ))}
-          </div>
+          {cargando ? <PublicPropertiesSkeleton /> : (
+            <Skeleton key={busqueda} className="propiedades-publicas__grid">
+              {resultado.propiedades.map((property) => (
+                <TarjetaPropiedadSimple key={property.id} property={property} variant="public" />
+              ))}
+            </Skeleton>
+          )}
 
-          {resultado.paginacion && (
+          {!cargando && resultado.paginacion && (
             <Paginacion
               page={resultado.paginacion.pagina}
               totalPages={resultado.paginacion.paginas}

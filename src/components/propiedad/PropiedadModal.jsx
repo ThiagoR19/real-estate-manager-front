@@ -19,11 +19,26 @@ import { api } from "../../services/api.js";
 import useClosingTransition from "../../hooks/useClosingTransition.js";
 import "./PropiedadModal.css";
 
+function contratoVacio() {
+  return {
+    fechaInicio: "",
+    fechaFin: "",
+    mesesAumento: "",
+    tipo: "Alquiler",
+    estado: "Borrador",
+    montoInicial: "",
+    tipoAumento: "",
+    aumentoFijo: "",
+  };
+}
+
 function initialForm(property, catalogs) {
+  const contractStatus = property?.datosContrato && catalogs.estados.find((item) =>
+    item.nombre === (property.datosContrato.tipo === "Venta" ? "Vendida" : "Alquilada"));
   return {
     name: property?.nombre || "",
     typeId: property?.idTipo || catalogs.tipos[0]?.id || "",
-    statusId: property?.idEstadoComercial || catalogs.estados[0]?.id || "",
+    statusId: contractStatus?.id || property?.idEstadoComercial || catalogs.estados[0]?.id || "",
     agentId: property?.idAgente || "",
     ownerId: property?.idPropietario || "",
     services: property?.servicios || [],
@@ -103,13 +118,24 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
 
   function change(event) {
     const { name, value, type, checked } = event.target;
-    setForm((current) => ({ ...current, [name]: type === "checkbox" ? checked : value }));
+    setForm((current) => {
+      const quitarContrato = name === "statusId" && current.documents.length === 0;
+      return {
+        ...current,
+        [name]: type === "checkbox" ? checked : value,
+        ...(quitarContrato ? { contractEnabled: false, contract: contratoVacio() } : {}),
+      };
+    });
   }
 
   function changeContract(event) {
     const { name, value } = event.target;
-    setForm((current) => ({ ...current, contractEnabled: true,
-      contract: { ...current.contract, [name]: value } }));
+    setForm((current) => {
+      const type = name === "tipo" ? value : current.contract.tipo;
+      const status = catalogs.estados.find((item) => item.nombre === (type === "Venta" ? "Vendida" : "Alquilada"));
+      return { ...current, contractEnabled: true, statusId: status?.id ?? current.statusId,
+        contract: { ...current.contract, [name]: value } };
+    });
   }
 
   function toggleService(id) {
@@ -140,7 +166,7 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
 
   async function submit(event) {
     event.preventDefault();
-    if (form.contractEnabled && form.contract.fechaInicio && form.contract.fechaFin &&
+    if (form.contractEnabled && form.contract.tipo === "Alquiler" && form.contract.fechaInicio && form.contract.fechaFin &&
         form.contract.fechaFin < form.contract.fechaInicio) {
       setSection("documentation");
       mostrarAviso({ tipo: "error", titulo: "Fechas inválidas", mensaje: "La fecha de fin debe ser posterior al inicio." });
@@ -154,22 +180,24 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
     setSaving(true);
     let saved;
     try {
+      const isSale = form.contract.tipo === "Venta";
+      const contractStatus = catalogs.estados.find((item) => item.nombre === (isSale ? "Vendida" : "Alquilada"));
       const body = {
         nombre: form.name.trim(),
         idTipo: Number(form.typeId),
-        idEstadoComercial: Number(form.statusId),
+        idEstadoComercial: Number(form.contractEnabled ? contractStatus?.id ?? form.statusId : form.statusId),
         idAgente: form.agentId ? Number(form.agentId) : null,
         idPropietario: form.ownerId ? Number(form.ownerId) : null,
         servicios: form.services,
         datosContrato: form.contractEnabled ? {
-          fechaInicio: form.contract.fechaInicio || null,
-          fechaFin: form.contract.fechaFin || null,
-          mesesAumento: form.contract.mesesAumento === "" ? null : Number(form.contract.mesesAumento),
+          fechaInicio: isSale ? null : form.contract.fechaInicio || null,
+          fechaFin: isSale ? null : form.contract.fechaFin || null,
+          mesesAumento: isSale || form.contract.mesesAumento === "" ? null : Number(form.contract.mesesAumento),
           tipo: form.contract.tipo,
-          estado: form.contract.estado,
-          montoInicial: form.contract.montoInicial === "" ? null : Number(form.contract.montoInicial),
-          tipoAumento: form.contract.tipoAumento || null,
-          aumentoFijo: form.contract.tipoAumento === "FIJO" && form.contract.aumentoFijo !== ""
+          estado: isSale ? "Borrador" : form.contract.estado,
+          montoInicial: isSale || form.contract.montoInicial === "" ? null : Number(form.contract.montoInicial),
+          tipoAumento: isSale ? null : form.contract.tipoAumento || null,
+          aumentoFijo: !isSale && form.contract.tipoAumento === "FIJO" && form.contract.aumentoFijo !== ""
             ? Number(form.contract.aumentoFijo) : null,
         } : null,
         descripcion: form.description.trim() || null,
@@ -192,8 +220,6 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
       for (const document of documents)
         await api.subirArchivosPropiedad(saved.id, "documentos", [document.file], document.title.trim());
       if (property) {
-        for (const document of form.documents.filter((item) => item.id && item.title.trim() !== item.titulo))
-          await api.renombrarDocumentoPropiedad(saved.id, document.id, document.title.trim());
         const keptPhotos = new Set(form.photos.map((photo) => photo.id));
         const keptDocuments = new Set(form.documents.map((document) => document.id));
         for (const photo of property.imagenes || [])
@@ -438,6 +464,8 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
                         name="statusId"
                         value={form.statusId}
                         onChange={change}
+                        disabled={form.contractEnabled && form.documents.length > 0}
+                        title={form.contractEnabled && form.documents.length > 0 ? "El estado se define por el tipo de contrato" : undefined}
                       >
                         {catalogs.estados.map((status) => (
                           <option key={status.id} value={status.id}>
@@ -511,46 +539,45 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
                 </div>
                 <div className="propiedad-modal__card-body propiedad-modal__contract-grid">
                   <p className="propiedad-modal__contract-note">Estos datos se guardan como borrador de la propiedad hasta completar el contrato con sus participantes.</p>
-                  <Campo label="Fecha inicio">
-                    <input className="propiedad-modal__plain-input" type="date" name="fechaInicio" value={form.contract.fechaInicio} onChange={changeContract} />
-                  </Campo>
-                  <Campo label="Fecha fin">
-                    <input className="propiedad-modal__plain-input" type="date" name="fechaFin" min={form.contract.fechaInicio || undefined} value={form.contract.fechaFin} onChange={changeContract} />
-                  </Campo>
-                  <Campo label="Meses de aumento">
-                    <input className="propiedad-modal__plain-input" type="number" min="1" max="120" name="mesesAumento" value={form.contract.mesesAumento} onChange={changeContract} />
-                  </Campo>
                   <Campo label="Tipo">
                     <select className="propiedad-modal__plain-input" name="tipo" value={form.contract.tipo} onChange={changeContract}>
                       <option value="Alquiler">Alquiler</option>
                       <option value="Venta">Venta</option>
                     </select>
                   </Campo>
-                  <Campo label="Estado">
-                    <select className="propiedad-modal__plain-input" name="estado" value={form.contract.estado} onChange={changeContract}>
-                      <option value="Borrador">Borrador</option>
-                      <option value="Vigente">Activo</option>
-                      <option value="Finalizado">Finalizado</option>
-                    </select>
-                  </Campo>
-                  <Campo label="Monto inicial acordado">
-                    <input className="propiedad-modal__plain-input" type="number" min="0" step="0.01" name="montoInicial" value={form.contract.montoInicial} onChange={changeContract} />
-                  </Campo>
-                  <Campo label="Tipo de aumento">
-                    <select className="propiedad-modal__plain-input" name="tipoAumento" value={form.contract.tipoAumento} onChange={changeContract}>
-                      <option value="">Sin aumento</option>
-                      <option value="FIJO">Fijo</option>
-                      <option value="INDEC">INDEC</option>
-                    </select>
-                  </Campo>
-                  <Campo label="Aumento fijo">
-                    <input className="propiedad-modal__plain-input" type="number" min="0" step="0.01" name="aumentoFijo"
-                      value={form.contract.aumentoFijo} onChange={changeContract} disabled={form.contract.tipoAumento !== "FIJO"} />
-                  </Campo>
-                  {form.contractEnabled && (
-                    <button className="propiedad-modal__clear-contract" type="button" onClick={() => setForm((current) => ({ ...current, contractEnabled: false }))}>
-                      Quitar datos del contrato
-                    </button>
+                  {form.contract.tipo === "Alquiler" && (
+                    <>
+                      <Campo label="Fecha inicio">
+                        <input className="propiedad-modal__plain-input" type="date" name="fechaInicio" value={form.contract.fechaInicio} onChange={changeContract} />
+                      </Campo>
+                      <Campo label="Fecha fin">
+                        <input className="propiedad-modal__plain-input" type="date" name="fechaFin" min={form.contract.fechaInicio || undefined} value={form.contract.fechaFin} onChange={changeContract} />
+                      </Campo>
+                      <Campo label="Meses de aumento">
+                        <input className="propiedad-modal__plain-input" type="number" min="1" max="120" name="mesesAumento" value={form.contract.mesesAumento} onChange={changeContract} />
+                      </Campo>
+                      <Campo label="Estado">
+                        <select className="propiedad-modal__plain-input" name="estado" value={form.contract.estado} onChange={changeContract}>
+                          <option value="Borrador">Borrador</option>
+                          <option value="Vigente">Activo</option>
+                          <option value="Finalizado">Finalizado</option>
+                        </select>
+                      </Campo>
+                      <Campo label="Monto inicial acordado">
+                        <input className="propiedad-modal__plain-input" type="number" min="0" step="0.01" name="montoInicial" value={form.contract.montoInicial} onChange={changeContract} />
+                      </Campo>
+                      <Campo label="Tipo de aumento">
+                        <select className="propiedad-modal__plain-input" name="tipoAumento" value={form.contract.tipoAumento} onChange={changeContract}>
+                          <option value="">Sin aumento</option>
+                          <option value="FIJO">Fijo</option>
+                          <option value="INDEC">INDEC</option>
+                        </select>
+                      </Campo>
+                      <Campo label="Aumento fijo">
+                        <input className="propiedad-modal__plain-input" type="number" min="0" step="0.01" name="aumentoFijo"
+                          value={form.contract.aumentoFijo} onChange={changeContract} disabled={form.contract.tipoAumento !== "FIJO"} />
+                      </Campo>
+                    </>
                   )}
                 </div>
               </section>
@@ -576,21 +603,15 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
                       key={doc.id || `${doc.fileName}-${index}`}
                     >
                       <span title={doc.fileName}>{doc.fileName}</span>
-                      <Campo label="Nombre" className="propiedad-modal__document-name">
-                        <input className="propiedad-modal__plain-input" maxLength={255} value={doc.title} onChange={(event) =>
-                          setForm((current) => ({ ...current, documents: current.documents.map((item, i) =>
-                            i === index ? { ...item, title: event.target.value } : item) }))} />
-                      </Campo>
                       <button
                         className="propiedad-modal__remove-document"
                         type="button"
                         aria-label={`Quitar documento ${index + 1}`}
-                        onClick={() =>
-                          setForm((current) => ({
-                            ...current,
-                            documents: current.documents.filter((_, i) => i !== index),
-                          }))
-                        }
+                        onClick={() => setForm((current) => {
+                          const documents = current.documents.filter((_, i) => i !== index);
+                          return { ...current, documents,
+                            ...(documents.length ? {} : { contractEnabled: false, contract: contratoVacio() }) };
+                        })}
                       >
                         <img src={xIcon} alt="" />
                       </button>

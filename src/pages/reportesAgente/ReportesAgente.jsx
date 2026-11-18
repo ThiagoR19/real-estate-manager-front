@@ -4,13 +4,14 @@ import { api } from "../../services/api.js";
 import { assetUrl } from "../../utils/assetUrl.js";
 import { estadoReporte } from "../../utils/estadoReporte.js";
 import {
-  angleDownIcon, calendarIcon, checkIcon, clockIcon, commentsIcon, houseIcon, imageIcon,
+  angleDownIcon, calendarIcon, checkIcon, clockIcon, commentsIcon, houseIcon,
   locationDotIcon, magnifyingGlassIcon, plusIconWhite,
 } from "../../assets/icons";
 import ReporteModal from "./ReporteModal";
 import "./ReportesAgente.css";
 
 const ICONOS_ESTADO = { Abierto: clockIcon, "En proceso": clockIcon, Resuelto: checkIcon };
+const FOTO_REPORTE_POR_DEFECTO = "/uploads/reportes/8414853068_a71ec481ef_b.jpg";
 const fecha = (valor) => valor
   ? new Date(`${String(valor).slice(0, 10)}T12:00:00`).toLocaleDateString("es-AR")
   : "—";
@@ -20,13 +21,14 @@ function Icono({ src, className = "" }) {
 }
 
 function FotoReporte({ src, className = "", label = "Foto del reporte" }) {
-  return <img className={`reportes__photo ${src ? "reportes__photo--uploaded" : "reportes__photo--empty"} ${className}`}
-    src={src ? assetUrl(src) : imageIcon} alt={src ? label : "Sin foto"} />;
+  return <img className={`reportes__photo reportes__photo--uploaded ${className}`}
+    src={assetUrl(src || FOTO_REPORTE_POR_DEFECTO)} alt={label} />;
 }
 
 export default function ReportesAgente() {
   const rol = Number(api.obtenerSesion()?.usuario?.rol);
   const puedeCambiarEstado = rol === 2 || rol === 3;
+  const puedeCrearReporte = rol === 5;
   const [reportItems, setReportItems] = useState([]);
   const [catalogos, setCatalogos] = useState({ categorias: [], estados: [], propiedades: [] });
   const [loading, setLoading] = useState(true);
@@ -65,7 +67,7 @@ export default function ReportesAgente() {
       (!search || `${report.titulo} ${report.propiedad} ${report.categoria} ${report.descripcion || ""}`
         .toLocaleLowerCase("es-AR").includes(search)));
   }, [query, reportItems, selectedProperty]);
-  const { page, totalPages, pageItems, setPage, resetPage } = usePaginacion(visibleReports);
+  const { page, totalPages, pageItems, setPage, resetPage } = usePaginacion(visibleReports, 5);
   const activeReport = pageItems.find(({ id }) => id === activeReportId) ?? pageItems[0] ?? null;
   const photos = activeReport?.imagenes ?? [];
   const selectedPhoto = Math.min(selectedPhotos[activeReport?.id] ?? 0, Math.max(photos.length - 1, 0));
@@ -123,11 +125,11 @@ export default function ReportesAgente() {
     <Skeleton as="main" id="reportes-agent">
       <section className="reportes__hero" aria-labelledby="reportes-title">
         <div><h1 id="reportes-title">Reportes</h1><p>Gestioná los reportes de tus propiedades</p></div>
-        <button className="reportes__create-button" type="button"
+        {puedeCrearReporte && <button className="reportes__create-button" type="button"
           disabled={loading || !catalogos.propiedades.length || !catalogos.categorias.length}
           onClick={() => setCreateOpen(true)}>
           <Icono src={plusIconWhite} /> Nuevo reporte
-        </button>
+        </button>}
       </section>
       <div className="reportes__workspace">
         <aside className="reportes__list-panel" aria-label="Listado de reportes">
@@ -166,7 +168,7 @@ export default function ReportesAgente() {
             {loading && <p className="reportes__empty">Cargando reportes...</p>}
             {error && <p className="reportes__empty" role="alert">{error}</p>}
           </div>
-          <Paginacion page={page} totalPages={totalPages} total={visibleReports.length} onPageChange={setPage} />
+          <Paginacion page={page} totalPages={totalPages} total={visibleReports.length} pageSize={5} onPageChange={setPage} />
         </aside>
         <section className="reportes__detail-panel" aria-labelledby="report-detail-title">
           {activeReport ? <>
@@ -202,10 +204,10 @@ export default function ReportesAgente() {
                   <article><h3>Reportado por</h3><p>{activeReport.personaReporta}</p></article>
                   <article><h3>Fecha</h3><p>{fecha(activeReport.fecha)}</p></article>
                 </div>
-                <aside className="reportes__info-card">
+                {rol !== 3 && <aside className="reportes__info-card">
                   <span className="reportes__info-icon"><Icono src={commentsIcon} /></span>
                   <div><h3>Información</h3><p>Te notificaremos cuando se asigne un profesional o haya novedades sobre tu reporte.</p></div>
-                </aside>
+                </aside>}
               </div>
             </div>
             <div className="reportes__status-row">
@@ -223,7 +225,7 @@ export default function ReportesAgente() {
           </> : <p className="reportes__empty" id="report-detail-title">Seleccioná un reporte para ver el detalle.</p>}
         </section>
       </div>
-      {createOpen && <ReporteModal isOpen onClose={() => setCreateOpen(false)} onSubmit={createReport}
+      {puedeCrearReporte && createOpen && <ReporteModal isOpen onClose={() => setCreateOpen(false)} onSubmit={createReport}
         propiedades={catalogos.propiedades} categorias={catalogos.categorias} busy={busy} />}
     </Skeleton>
   );

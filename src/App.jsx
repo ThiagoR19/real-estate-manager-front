@@ -72,7 +72,7 @@ function AuthenticatedApp() {
           <Route path="/propietarios" component={Propietarios} />
           <Route path="/perfil" component={Perfil} />
           <Route path="/reportes-agente" component={ReportesAgente} />
-          <Route path="/reportes">{() => <ReportesAgente allowCreate />}</Route>
+          <Route path="/reportes" component={ReportesAgente} />
           <Route path="/chat" component={Chat} />
           <Route path="/inmobiliaria" component={Inmobiliaria} />
           <Route path="/pagos">{() => <SoloConRol ruta="/pagos"><Pagos /></SoloConRol>}</Route>
