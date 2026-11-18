@@ -9,6 +9,8 @@ export async function propietarios() {
   }
 }
 
+export const resumenPropietarios = () => request("/propietarios/resumen").then(({ data }) => data);
+
 export const crearPropietario = (body) => request("/propietarios", { method: "POST", body }).then(({ data }) => data);
 export const generarEnlacePropietario = (id) => request(`/propietarios/${id}/activacion`, { method: "POST" }).then(({ data }) => data.activacion);
 export const actualizarPropietario = (id, body) => request(`/propietarios/${id}`, { method: "PUT", body }).then(({ data }) => data);

@@ -28,6 +28,7 @@ export const api = {
   crearAgente: servicioAgentes.crearAgente,
   generarEnlaceAgente: servicioAgentes.generarEnlaceAgente,
   propietarios: servicioPropietarios.propietarios,
+  resumenPropietarios: servicioPropietarios.resumenPropietarios,
   crearPropietario: servicioPropietarios.crearPropietario,
   generarEnlacePropietario: servicioPropietarios.generarEnlacePropietario,
   actualizarPropietario: servicioPropietarios.actualizarPropietario,

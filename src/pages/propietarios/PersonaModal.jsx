@@ -12,7 +12,8 @@ import {
 import { GestionModal, AccionesModal, CampoModal, EntradaModal, ModalSelect, mostrarAviso } from "../../components";
 
 const propertyOptions = ["Av. San Martín 1250", "Av. Santa Fe 850"];
-const statusOptions = ["Activo", "Inactivo", "Pendiente"];
+const ownerStatusOptions = ["Activo", "Inactivo"];
+const agentStatusOptions = ["Activo", "Inactivo", "Pendiente"];
 
 function initialForm(person, kind) {
   const [firstName = "", ...lastName] = (person?.name || "").trim().split(/\s+/);
@@ -28,7 +29,7 @@ function initialForm(person, kind) {
     alias: person?.alias || "",
     property: person?.property || (kind === "owner" ? person?.address : "") || propertyOptions[0],
     zone: person?.zone || person?.area || "",
-    status: person?.status || statusOptions[0],
+    status: person?.status || ownerStatusOptions[0],
   };
 }
 
@@ -84,7 +85,7 @@ export default function PersonaModal({ kind, mode, person, zones = [], onClose, 
             </span>
             <span>
               <strong>{displayName}</strong>
-              <small>{person?.status || "Estado"}</small>
+              <small>{isOwner && isEditing ? form.status : person?.status || "Estado"}</small>
             </span>
           </div>
           <div className="gestion-modal__fields">
@@ -194,7 +195,7 @@ export default function PersonaModal({ kind, mode, person, zones = [], onClose, 
               <ModalSelect
                 label="Estado"
                 icon={peopleIcon}
-                options={["Estado", ...statusOptions]}
+                options={isOwner ? ownerStatusOptions : ["Estado", ...agentStatusOptions]}
                 value={form.status}
                 onChange={(status) => {
                   if (status !== "Estado") setForm((current) => ({ ...current, status }));
