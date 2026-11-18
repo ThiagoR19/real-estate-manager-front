@@ -149,13 +149,18 @@ export default function GestionModal({
   );
 }
 
-export function AccionesModal({ onClose, submitText = "Guardar cambios", disabled = false }) {
+export function AccionesModal({
+  onClose,
+  submitText = "Guardar cambios",
+  cancelText = "Cancelar",
+  disabled = false,
+}) {
   const closeModal = useContext(ModalCloseContext);
 
   return (
     <footer className="gestion-modal__actions">
       <button className="gestion-modal__cancel" type="button" onClick={closeModal ?? onClose}>
-        Cancelar
+        {cancelText}
       </button>
       <Boton className="gestion-modal__submit" type="submit" text={submitText} disabled={disabled} />
     </footer>

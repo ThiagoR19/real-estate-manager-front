@@ -55,7 +55,7 @@ export default function SuperAdmin() {
   const [expanded, setExpanded] = useState({});
   const [modal, setModal] = useState(null);
   const [aEliminar, setAEliminar] = useState(null);
-  const [activationUrl, setActivationUrl] = useState("");
+  const [enviando, setEnviando] = useState(false);
 
   const cargar = useCallback(() => {
     let activo = true;
@@ -103,18 +103,20 @@ export default function SuperAdmin() {
   }
 
   async function agregarAdmin(agency, datos) {
+    setEnviando(true);
     try {
       const admin = await api.crearAdministrador({ ...datos, idInmobiliaria: agency.id });
-      setModal(null);
-      setActivationUrl(admin.activacion?.enlace || "");
-      mostrarAviso({
-        tipo: "exito",
-        titulo: "Admin creado",
-        mensaje: "Compartí el enlace de activación con el administrador.",
+      setModal({
+        mode: "invitacion",
+        agency,
+        invitacion: { ...admin.activacion, persona: `${datos.nombre} ${datos.apellido}` },
       });
+      mostrarAviso({ tipo: "exito", titulo: "Invitación creada", mensaje: "Copiá el enlace y compartilo con el administrador." });
       cargar();
     } catch (causa) {
-      mostrarAviso({ tipo: "error", titulo: "No se pudo crear el admin", mensaje: causa.message });
+      mostrarAviso({ tipo: "error", titulo: "No se pudo crear la invitación", mensaje: causa.message });
+    } finally {
+      setEnviando(false);
     }
   }
 
@@ -197,12 +199,6 @@ export default function SuperAdmin() {
           </div>
         </div>
         <section className="super-admin__inmobiliaria-list" aria-label="Inmobiliarias registradas">
-          {activationUrl && (
-            <p role="status">
-              Administrador creado. Compartí este enlace: <a href={activationUrl}>Abrir enlace de activación</a>{" "}
-              <button type="button" onClick={() => navigator.clipboard.writeText(activationUrl)}>Copiar enlace</button>
-            </p>
-          )}
           {mensaje && (
             <p className="super-admin__no-admins">
               {mensaje}{" "}
@@ -303,6 +299,8 @@ export default function SuperAdmin() {
           key={`${modal.mode}-${modal.agency?.id || "new"}`}
           mode={modal.mode}
           agency={modal.agency && { ...modal.agency, name: modal.agency.nombre }}
+          invitacion={modal.invitacion}
+          enviando={enviando}
           onClose={() => setModal(null)}
           onSubmit={guardarModal}
           onDelete={modal.mode === "edit" ? () => eliminarInmobiliaria(modal.agency) : undefined}

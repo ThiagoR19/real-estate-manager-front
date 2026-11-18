@@ -20,6 +20,21 @@
   text-align: center;
 }
 
+.agency-modal__invitacion {
+  width: min(100%, 560px);
+}
+
+.agency-modal__invitacion input {
+  text-overflow: ellipsis;
+}
+
+.agency-modal__vencimiento {
+  margin: 8px 0 0;
+  color: #5b6886;
+  font-size: 12px;
+  text-align: center;
+}
+
 .agency-modal__fields {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
