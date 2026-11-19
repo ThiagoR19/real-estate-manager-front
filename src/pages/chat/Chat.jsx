@@ -5,10 +5,12 @@ import { mostrarAviso } from "../../components";
 import { api } from "../../services/api.js";
 import PageSkeleton from "../../components/skeleton/PageSkeleton";
 import { obtenerSesion } from "../../services/login.js";
+import { obtenerSocket } from "../../services/socket.js";
 import agiLogo from "../../assets/icons/agiLogo.svg";
 import "./Chat.css";
 
-const personName = (person) => [person.nombre, person.apellido].filter(Boolean).join(" ") || "Usuario";
+const RESPALDO_MS = 60000;
+const personName =(person) => [person.nombre, person.apellido].filter(Boolean).join(" ") || "Usuario";
 const displayTime = (date) => date ? new Date(date).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" }) : "";
 
 function ConversationAvatar({ kind, className = "" }) {
@@ -56,35 +58,82 @@ export default function Chat() {
         mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar las conversaciones", mensaje: cause.message });
       })
       .finally(() => { if (active) setLoading(false); });
-    const interval = window.setInterval(() => {
+    function actualizarLista() {
       api.conversaciones().then((rows) => {
         if (active) {
           setConversations(rows);
           setSelectedId((current) => current === 0 ? 0 : current && rows.some((row) => row.id === current) ? current : rows[0]?.id ?? null);
         }
       }).catch(() => {});
-    }, 10000);
-    return () => { active = false; window.clearInterval(interval); };
+    }
+    const socket = obtenerSocket();
+    socket?.on("chat:actualizada", actualizarLista);
+    socket?.io.on("reconnect", actualizarLista);
+    const interval = window.setInterval(actualizarLista, RESPALDO_MS);
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+      socket?.off("chat:actualizada", actualizarLista);
+      socket?.io.off("reconnect", actualizarLista);
+    };
   }, []);
 
   useEffect(() => {
     if (!selectedId) return undefined;
     let active = true;
+    let leidoHasta = null;
+    const socket = obtenerSocket();
+
+    function agregar(nuevos) {
+      setMessages((current) => {
+        const ids = new Set(nuevos.map((message) => message.id));
+        return [...current.filter((message) => !ids.has(message.id)), ...nuevos];
+      });
+    }
+
+    async function marcarLeido(ultimoId) {
+      if (leidoHasta !== null && ultimoId <= leidoHasta) return;
+      leidoHasta = ultimoId;
+      await api.marcarChatLeido(selectedId);
+    }
+
     async function refresh() {
       try {
         const result = await api.mensajesChat(selectedId);
         if (!active) return;
         const recent = [...result.data].reverse();
-        setMessages((current) => {
-          const recentIds = new Set(recent.map((message) => message.id));
-          return [...current.filter((message) => !recentIds.has(message.id)), ...recent];
-        });
-        await api.marcarChatLeido(selectedId);
+        agregar(recent);
+        await marcarLeido(Math.max(0, ...recent.map((message) => message.id)));
       } catch (cause) { if (active) setError(cause.message); }
     }
+
+    function unirse() {
+      socket?.emit("chat:unirse", { idConversacion: selectedId });
+    }
+
+    function alConectar() {
+      unirse();
+      refresh();
+    }
+
+    function alRecibir(message) {
+      if (!active || message.idConversacion !== selectedId) return;
+      agregar([message]);
+      marcarLeido(message.id).catch(() => {});
+    }
+
     refresh();
-    const interval = window.setInterval(refresh, 5000);
-    return () => { active = false; window.clearInterval(interval); };
+    unirse();
+    socket?.on("connect", alConectar);
+    socket?.on("chat:mensaje", alRecibir);
+    const interval = window.setInterval(refresh, RESPALDO_MS);
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+      socket?.off("connect", alConectar);
+      socket?.off("chat:mensaje", alRecibir);
+      socket?.emit("chat:salir", { idConversacion: selectedId });
+    };
   }, [selectedId]);
 
   useEffect(() => { if (atBottomRef.current) endRef.current?.scrollIntoView({ block: "end" }); }, [messages, selectedId]);

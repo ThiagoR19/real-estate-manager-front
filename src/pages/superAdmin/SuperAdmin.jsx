@@ -62,12 +62,7 @@ export default function SuperAdmin() {
   const [expanded, setExpanded] = useState({});
   const [modal, setModal] = useState(null);
   const [aEliminar, setAEliminar] = useState(null);
-<<<<<<< HEAD
   const [enviando, setEnviando] = useState(false);
-=======
-  const [activationUrl, setActivationUrl] = useState("");
-  const [activationMessage, setActivationMessage] = useState("");
->>>>>>> a2859aa527e1d617e4560f1c659c76a0fd4d73a8
 
   const cargar = useCallback(() => {
     let activo = true;
@@ -118,20 +113,14 @@ export default function SuperAdmin() {
     setEnviando(true);
     try {
       const admin = await api.crearAdministrador({ ...datos, idInmobiliaria: agency.id });
-<<<<<<< HEAD
       setModal({
         mode: "invitacion",
         agency,
-        invitacion: { ...admin.activacion, persona: `${datos.nombre} ${datos.apellido}` },
-=======
-      setModal(null);
-      setActivationUrl(enlaceActivacion(admin.activacion));
-      setActivationMessage("Compartí el enlace con el administrador para que verifique su DNI y cree su cuenta.");
-      mostrarAviso({
-        tipo: "exito",
-        titulo: "Admin creado",
-        mensaje: "El administrador ya puede activar su cuenta con el enlace generado.",
->>>>>>> a2859aa527e1d617e4560f1c659c76a0fd4d73a8
+        invitacion: {
+          enlace: enlaceActivacion(admin.activacion),
+          expiraEn: admin.activacion?.expiraEn,
+          persona: `${datos.nombre} ${datos.apellido}`,
+        },
       });
       mostrarAviso({ tipo: "exito", titulo: "Invitación creada", mensaje: "Copiá el enlace y compartilo con el administrador." });
       cargar();
@@ -142,11 +131,19 @@ export default function SuperAdmin() {
     }
   }
 
-  async function generarEnlaceAdmin(persona) {
+  async function generarEnlaceAdmin(agency, persona) {
     try {
       const activacion = await api.generarEnlaceAdministrador(persona.id);
-      setActivationUrl(enlaceActivacion(activacion));
-      setActivationMessage(`Enlace nuevo para ${persona.nombre} ${persona.apellido}. Compartilo para que pueda crear su cuenta.`);
+      setModal({
+        mode: "invitacion",
+        agency,
+        invitacion: {
+          titulo: "Enlace generado",
+          enlace: enlaceActivacion(activacion),
+          expiraEn: activacion?.expiraEn,
+          persona: `${persona.nombre} ${persona.apellido}`,
+        },
+      });
       mostrarAviso({
         tipo: "info",
         titulo: "Enlace de activación generado",
@@ -154,15 +151,6 @@ export default function SuperAdmin() {
       });
     } catch (causa) {
       mostrarAviso({ tipo: "error", titulo: "No se pudo generar el enlace", mensaje: causa.message });
-    }
-  }
-
-  async function copiarEnlaceActivacion() {
-    try {
-      await navigator.clipboard.writeText(activationUrl);
-      mostrarAviso({ tipo: "exito", titulo: "Enlace copiado" });
-    } catch {
-      mostrarAviso({ tipo: "error", titulo: "No se pudo copiar el enlace", mensaje: "Abrilo y copialo desde la barra del navegador." });
     }
   }
 
@@ -245,16 +233,6 @@ export default function SuperAdmin() {
           </div>
         </div>
         <section className="super-admin__inmobiliaria-list" aria-label="Inmobiliarias registradas">
-<<<<<<< HEAD
-=======
-          {activationUrl && (
-            <div className="super-admin__activation-notice" role="status">
-              <p>{activationMessage}</p>
-              <a href={activationUrl} target="_blank" rel="noreferrer">Abrir enlace de activación</a>
-              <button type="button" onClick={copiarEnlaceActivacion}>Copiar enlace</button>
-            </div>
-          )}
->>>>>>> a2859aa527e1d617e4560f1c659c76a0fd4d73a8
           {mensaje && (
             <p className="super-admin__no-admins">
               {mensaje}{" "}
@@ -338,7 +316,7 @@ export default function SuperAdmin() {
                             <button
                               className="super-admin__activation-link"
                               type="button"
-                              onClick={() => generarEnlaceAdmin(persona)}
+                              onClick={() => generarEnlaceAdmin(agency, persona)}
                             >
                               Generar enlace para crear cuenta
                             </button>

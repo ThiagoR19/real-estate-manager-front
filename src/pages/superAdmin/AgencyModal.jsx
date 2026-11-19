@@ -30,7 +30,7 @@ function Invitacion({ agency, invitacion, onClose }) {
 
   return (
     <GestionModal
-      title="Invitación creada"
+      title={invitacion.titulo ?? "Invitación creada"}
       subtitle={`Compartí este enlace con ${invitacion.persona} para que verifique su DNI y cree su cuenta en “${agency?.name || "la inmobiliaria"}”`}
       onClose={onClose}
       variant="inmobiliaria"
