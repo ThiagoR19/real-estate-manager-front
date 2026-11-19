@@ -1,14 +1,9 @@
 import { useState } from "react";
 import Notificacion from "./Notificacion";
-<<<<<<< HEAD
-import { campanaIcono, cerrarIcono } from "../../assets/icons";
-import "./PanelNotificaciones.css";
-=======
 import { ROLES } from "../../utils/roles.js";
 
 import campanaIcono from "../../assets/icons/campanaNoti.svg";
 import cerrarIcono from "../../assets/icons/closeNotis.svg";
->>>>>>> f668a75460946aa08b48cb4f797bacdb3c2abc66
 
 const filtros = [
   { id: "todas", texto: "Todas", cumple: () => true },

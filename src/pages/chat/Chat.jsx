@@ -10,6 +10,11 @@ import agiLogo from "../../assets/icons/agiLogo.svg";
 import "./Chat.css";
 
 const RESPALDO_MS = 60000;
+
+function sumarMensajes(actuales, nuevos) {
+  const ids = new Set(nuevos.map((message) => message.id));
+  return [...actuales.filter((message) => !ids.has(message.id)), ...nuevos];
+}
 const personName =(person) => [person.nombre, person.apellido].filter(Boolean).join(" ") || "Usuario";
 const displayTime = (date) => date ? new Date(date).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" }) : "";
 
@@ -84,12 +89,7 @@ export default function Chat() {
     let leidoHasta = null;
     const socket = obtenerSocket();
 
-    function agregar(nuevos) {
-      setMessages((current) => {
-        const ids = new Set(nuevos.map((message) => message.id));
-        return [...current.filter((message) => !ids.has(message.id)), ...nuevos];
-      });
-    }
+    const agregar = (nuevos) => setMessages((current) => sumarMensajes(current, nuevos));
 
     async function marcarLeido(ultimoId) {
       if (leidoHasta !== null && ultimoId <= leidoHasta) return;
@@ -156,7 +156,7 @@ export default function Chat() {
     try {
       if (selectedId) {
         const message = await api.enviarMensajeChat(selectedId, content);
-        setMessages((current) => [...current, message]);
+        setMessages((current) => sumarMensajes(current, [message]));
       } else {
         if (!newContactId || !content) throw new Error("Seleccioná un contacto y escribí un mensaje.");
         const result = await api.iniciarConversacion(Number(newContactId), content);
