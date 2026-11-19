@@ -1,28 +1,11 @@
 import { useEffect, useState } from "react";
-import {
-  envelopeIcon,
-  peopleIcon,
-  phoneIcon,
-  penIcon,
-  plusIcon,
-  starIcon,
-  trashCanIcon,
-} from "../../assets/icons/index.js";
-import {
-  SelectDesplegable,
-  ConfirmarEliminacionModal,
-  GestionModal,
-  AccionesModal,
-  Boton,
-  Paginacion,
-  usePaginacion,
-  mostrarAviso,
-} from "../../components/index.js";
+import { envelopeIcon, peopleIcon, phoneIcon, penIcon, plusIcon, starIcon, trashCanIcon, } from "../../assets/icons/index.js";
+import {SelectDesplegable,ConfirmarEliminacionModal,GestionModal,AccionesModal,Boton,Paginacion,usePaginacion,mostrarAviso,} from "../../components/index.js";
 import ProfesionalModal from "./ProfesionalModal";
 import "./Profesionales.css";
 
 import { api } from "../../services/api.js";
-import { obtenerSesion } from "../../services/login.js";
+import { ROLES, tieneRol } from "../../utils/roles.js";
 import avatarClass from "../../utils/avatarClass.js";
 
 export default function Profesionales() {
@@ -34,7 +17,7 @@ export default function Profesionales() {
   const [selectedRating, setSelectedRating] = useState(0);
   const [sendingVote, setSendingVote] = useState(false);
   const [error, setError] = useState("");
-  const canVote = Number(obtenerSesion()?.usuario?.rol) === 3;
+  const canVote = tieneRol(ROLES.AGENTE);
 
   useEffect(() => {
     let active = true;

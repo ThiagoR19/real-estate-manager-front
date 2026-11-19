@@ -2,13 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { xIcon } from "../../assets/icons";
 import brandLogo from "../../assets/logoAGI.png";
-import {
-  todosLosElementos,
-  elementoActivo,
-  elementosNavegacionPorRol,
-  elementosPrincipales,
-  elementosSecundarios,
-} from "../navegacion";
+import { elementoActivo, menuPorRol } from "../navegacion";
+import { NOMBRE_ROL } from "../../utils/roles.js";
 import { api } from "../../services/api.js";
 import initials from "../../utils/initials.js";
 import avatarClass from "../../utils/avatarClass.js";
@@ -48,14 +43,9 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
     return () => window.removeEventListener("session-updated", syncUser);
   }, []);
   const roleId = Number(user?.rol);
-  const role = {
-    1: "Super admin",
-    2: "Administrador",
-    3: "Agente",
-    4: "Propietario",
-    5: "Inquilino",
-  }[roleId] ?? "Usuario";
-  const desktopItems = elementosNavegacionPorRol(roleId);
+  const role = NOMBRE_ROL[roleId] ?? "Usuario";
+  const desktopItems = menuPorRol(roleId);
+  const mobileItems = menuPorRol(roleId, { movil: true });
 
   async function closeSession(event) {
     event.preventDefault();
@@ -67,35 +57,6 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
       mostrarAviso({ tipo: "error", titulo: "No se pudo cerrar la sesión", mensaje: error.message });
     }
   }
-  const mobilePaths =
-    roleId === 4
-      ? ["/dashboard", "/mis-propiedades", "/cobros", "/reportes-agente", "/chat"]
-      : roleId === 5
-        ? ["/dashboard", "/pagos", "/reportes", "/chat"]
-        : [2, 3].includes(roleId)
-          ? [
-              "/dashboard",
-              "/propietarios",
-              "/inquilinos",
-              "/profesionales",
-              "/agenda",
-              "/chat",
-              "/propiedades",
-              "/reportes-agente",
-            ]
-          : [];
-  const mobilePrimary = roleId === 1 ? elementosPrincipales.filter(({ href }) => href === "/super-admin") : mobilePaths.map((href) => {
-    const item =
-      todosLosElementos.find((entry) => entry.href === href) ??
-      todosLosElementos.find((entry) => entry.href === "/reportes-agente");
-    return { ...item, href, etiqueta: href === "/dashboard" ? "Dashboard" : item.etiqueta };
-  });
-  const mobileSecondary = roleId === 1
-    ? elementosSecundarios.filter(({ href }) => ["/perfil", "/terminos"].includes(href))
-    : desktopItems.secundarios.filter(({ href }) =>
-        ["/perfil", "/terminos", "/agentes", "/inmobiliaria"].includes(href),
-      );
-
   useEffect(() => {
     if (menuOpen) {
       window.clearTimeout(closeTimer.current);
@@ -194,11 +155,11 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
           ))}
         </nav>
         <nav className="navbar__drawer-nav navbar__drawer-nav--mobile">
-          {mobilePrimary.map((item) => (
+          {mobileItems.principales.map((item) => (
             <ElementoNavegacion key={item.href} item={item} pathname={pathname} onNavigate={onClose} />
           ))}
           <span className="navbar__drawer-divider" aria-hidden="true" />
-          {mobileSecondary.map((item) => (
+          {mobileItems.secundarios.map((item) => (
             <ElementoNavegacion key={item.href} item={item} pathname={pathname} onNavigate={onClose} />
           ))}
         </nav>

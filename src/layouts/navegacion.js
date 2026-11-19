@@ -10,93 +10,64 @@ import {
   walletIcon,
   userIcon,
 } from "../assets/icons";
+import { PERSONAL, ROLES, TODOS_LOS_ROLES } from "../utils/roles.js";
 
 export const dashboardPorRol = {
-  1: "/super-admin",
-  2: "/dashboard",
-  3: "/dashboard",
-  4: "/dashboard",
-  5: "/dashboard",
+  [ROLES.SUPERADMIN]: "/super-admin",
+  [ROLES.ADMIN]: "/dashboard",
+  [ROLES.AGENTE]: "/dashboard",
+  [ROLES.PROPIETARIO]: "/dashboard",
+  [ROLES.INQUILINO]: "/dashboard",
 };
 
-export const elementosPrincipales = [
-  { href: "/dashboard", etiqueta: "Dashboard", icono: chartColumnIcon },
-  {
-    href: "/mis-propiedades",
-    etiqueta: "Mis propiedades",
-    etiquetaRuta: "Tus propiedades",
-    icono: houseIcon,
-  },
-  { href: "/cobros", etiqueta: "Cobros", etiquetaRuta: "Zona de cobro", icono: walletIcon },
-  {
-    href: "/pagos-cobros",
-    etiqueta: "Pagos y cobros",
-    etiquetaRuta: "Pagos",
-    icono: walletIcon,
-  },
-  { href: "/indec", etiqueta: "INDEC", icono: chartColumnIcon },
-  {
-    href: "/super-admin",
-    etiqueta: "Panel superAdmin",
-    etiquetaRuta: "Panel administrativo",
-    icono: chartColumnIcon,
-  },
-  { href: "/propietarios", etiqueta: "Propietarios", icono: peopleIcon },
-  { href: "/inquilinos", etiqueta: "Inquilinos", icono: peopleIcon },
-  { href: "/profesionales", etiqueta: "Profesionales", icono: briefcaseIcon },
-  { href: "/agenda", etiqueta: "Agenda", icono: calendarIcon },
-  { href: "/chat", etiqueta: "Chat", icono: commentsIcon },
-  { href: "/propiedades", etiqueta: "Propiedades", icono: houseIcon },
+const SIN_SUPERADMIN = [ROLES.ADMIN, ROLES.AGENTE, ROLES.PROPIETARIO, ROLES.INQUILINO];
+
+export const elementosMenu = [
+  { href: "/dashboard", etiqueta: "Dashboard", icono: chartColumnIcon, roles: SIN_SUPERADMIN, grupo: "principal", movil: "principal" },
+  { href: "/mis-propiedades", etiqueta: "Mis propiedades", etiquetaRuta: "Tus propiedades", icono: houseIcon, roles: [ROLES.PROPIETARIO], grupo: "principal", movil: "principal" },
+  { href: "/cobros", etiqueta: "Cobros", etiquetaRuta: "Zona de cobro", icono: walletIcon, roles: [ROLES.PROPIETARIO], grupo: "principal", movil: "principal" },
+  { href: "/pagos-cobros", etiqueta: "Pagos y cobros", etiquetaRuta: "Pagos", icono: walletIcon, roles: PERSONAL, grupo: "principal", movil: false },
+  { href: "/indec", etiqueta: "INDEC", icono: chartColumnIcon, roles: PERSONAL, grupo: "principal", movil: false },
+  { href: "/super-admin", etiqueta: "Panel superAdmin", etiquetaRuta: "Panel administrativo", icono: chartColumnIcon, roles: [ROLES.SUPERADMIN], grupo: "principal", movil: "principal" },
+  { href: "/propietarios", etiqueta: "Propietarios", icono: peopleIcon, roles: PERSONAL, grupo: "principal", movil: "principal" },
+  { href: "/inquilinos", etiqueta: "Inquilinos", icono: peopleIcon, roles: PERSONAL, grupo: "principal", movil: "principal" },
+  { href: "/profesionales", etiqueta: "Profesionales", icono: briefcaseIcon, roles: PERSONAL, grupo: "principal", movil: "principal" },
+  { href: "/agenda", etiqueta: "Agenda", icono: calendarIcon, roles: PERSONAL, grupo: "principal", movil: "principal" },
+  { href: "/chat", etiqueta: "Chat", icono: commentsIcon, roles: SIN_SUPERADMIN, grupo: "principal", movil: "principal" },
+  { href: "/propiedades", etiqueta: "Propiedades", icono: houseIcon, roles: PERSONAL, grupo: "principal", movil: "principal" },
+  { href: "/reportes-agente", etiqueta: "Reportes", icono: chartColumnIcon, roles: [ROLES.ADMIN, ROLES.AGENTE, ROLES.PROPIETARIO], grupo: "principal", movil: "principal" },
+  { href: "/reportes", etiqueta: "Reportes", icono: chartColumnIcon, roles: [ROLES.INQUILINO], grupo: "principal", movil: "principal" },
+  { href: "/pagos", etiqueta: "Pagos", icono: walletIcon, roles: [ROLES.INQUILINO], grupo: "principal", movil: "principal" },
+  { href: "/agentes", etiqueta: "Agentes", icono: peopleIcon, roles: [ROLES.ADMIN], grupo: "secundario", movil: "secundario" },
+  { href: "/inmobiliaria", etiqueta: "Mi Inmobiliaria", icono: buildingColumnsIcon, roles: [ROLES.ADMIN], grupo: "secundario", movil: "secundario" },
+  { href: "/perfil", etiqueta: "Mi perfil", icono: userIcon, roles: TODOS_LOS_ROLES, grupo: "secundario", movil: "secundario" },
+  { href: "/terminos", etiqueta: "Términos y condiciones", icono: fileLinesIcon, roles: TODOS_LOS_ROLES, grupo: "secundario", movil: "secundario" },
 ];
 
-export const elementosSecundarios = [
-  { href: "/reportes-agente", etiqueta: "Reportes", icono: chartColumnIcon },
-  { href: "/pagos", etiqueta: "Pagos del inquilino", icono: walletIcon },
-  { href: "/agentes", etiqueta: "Agentes", icono: peopleIcon },
-  { href: "/inmobiliaria", etiqueta: "Mi Inmobiliaria", icono: buildingColumnsIcon },
-  { href: "/perfil", etiqueta: "Mi perfil", icono: userIcon },
-  { href: "/terminos", etiqueta: "Términos y condiciones", icono: fileLinesIcon },
-];
+export const todosLosElementos = elementosMenu;
 
-export const todosLosElementos = [...elementosPrincipales, ...elementosSecundarios];
-
-const rolesNavegacion = {
-  "/dashboard": [2, 3, 4, 5],
-  "/dashboard-inquilino": [5],
-  "/dashboard-agente": [3],
-  "/dashboard-propietario": [4],
-  "/mis-propiedades": [4],
-  "/cobros": [4],
-  "/pagos-cobros": [2, 3],
-  "/indec": [2, 3],
-  "/super-admin": [1],
-  "/propietarios": [2, 3],
-  "/inquilinos": [2, 3],
-  "/profesionales": [2, 3],
-  "/agenda": [2, 3],
-  "/chat": [2, 3, 4, 5],
-  "/propiedades": [2, 3],
-  "/reportes-agente": [2, 3, 4, 5],
-  "/pagos": [5],
-  "/agentes": [2],
-  "/inmobiliaria": [2],
-  "/perfil": [1, 2, 3, 4, 5],
-  "/terminos": [1, 2, 3, 4, 5],
+const rutasSinMenu = {
+  "/admin-dashboard": SIN_SUPERADMIN,
+  "/dashboard-agente": [ROLES.AGENTE],
+  "/dashboard-inquilino": [ROLES.INQUILINO],
+  "/dashboard-propietario": [ROLES.PROPIETARIO],
+  "/propiedad": PERSONAL,
 };
 
-const RUTAS_CON_ROL_FIJO = ["/pagos", "/cobros", "/pagos-cobros"];
-
-export function puedeEntrar(rol, ruta) {
-  return rolesNavegacion[ruta]?.includes(Number(rol)) ?? false;
+function rolesDeRuta(ruta) {
+  return elementosMenu.find((item) => item.href === ruta)?.roles ?? rutasSinMenu[ruta] ?? [];
 }
 
-export function elementosNavegacionPorRol(rol) {
-  const idRol = Number(rol);
-  const puedeVer = ({ href }) =>
-    (idRol === 1 && !RUTAS_CON_ROL_FIJO.includes(href)) || rolesNavegacion[href]?.includes(idRol);
+export function puedeEntrar(rol, ruta) {
+  return rolesDeRuta(ruta).includes(Number(rol));
+}
+
+export function menuPorRol(rol, { movil = false } = {}) {
+  const visibles = elementosMenu.filter((item) => item.roles.includes(Number(rol)));
+  const grupoDe = (item) => (movil ? item.movil : item.grupo);
   return {
-    principales: elementosPrincipales.filter(puedeVer),
-    secundarios: elementosSecundarios.filter(puedeVer),
+    principales: visibles.filter((item) => grupoDe(item) === "principal"),
+    secundarios: visibles.filter((item) => grupoDe(item) === "secundario"),
   };
 }
 

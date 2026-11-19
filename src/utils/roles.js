@@ -1,0 +1,28 @@
+import { obtenerSesion } from "../services/login.js";
+
+export const ROLES = Object.freeze({
+  SUPERADMIN: 1,
+  ADMIN: 2,
+  AGENTE: 3,
+  PROPIETARIO: 4,
+  INQUILINO: 5,
+});
+
+export const NOMBRE_ROL = Object.freeze({
+  [ROLES.SUPERADMIN]: "Super admin",
+  [ROLES.ADMIN]: "Administrador",
+  [ROLES.AGENTE]: "Agente",
+  [ROLES.PROPIETARIO]: "Propietario",
+  [ROLES.INQUILINO]: "Inquilino",
+});
+
+export const PERSONAL = Object.freeze([ROLES.ADMIN, ROLES.AGENTE]);
+export const TODOS_LOS_ROLES = Object.freeze(Object.values(ROLES));
+
+export function rolActual() {
+  return Number(obtenerSesion()?.usuario?.rol);
+}
+
+export function tieneRol(...roles) {
+  return roles.includes(rolActual());
+}

@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 import { CapaModal, PanelNotificaciones } from "../../components";
 import { barsIcon, bellIcon, magnifyingGlassIcon, xIcon } from "../../assets/icons";
 import brandLogo from "../../assets/logoAGI.png";
+import { NOMBRE_ROL, ROLES, TODOS_LOS_ROLES } from "../../utils/roles.js";
 import { rolCuentaParaRuta, todosLosElementos, elementoActivo, etiquetasPagina } from "../navegacion";
 import { api } from "../../services/api.js";
 import initials from "../../utils/initials.js";
@@ -17,7 +18,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
   const user = session?.usuario;
   const role = Number(user?.rol);
   const sessionToken = identidadSesion(session);
-  const canReceiveNotifications = Boolean(sessionToken) && [2, 3, 4, 5].includes(role);
+  const canReceiveNotifications = Boolean(sessionToken) && TODOS_LOS_ROLES.includes(role);
   const [photoLoadError, setPhotoLoadError] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [notificationsLoaded, setNotificationsLoaded] = useState(false);
@@ -123,7 +124,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
   }, [sessionToken, canReceiveNotifications, loadNotifications]);
 
   useEffect(() => {
-    if (role !== 5 || !notificationsLoaded) return;
+    if (role !== ROLES.INQUILINO || !notificationsLoaded) return;
     const items = notifications.filter((item) => !item.leida);
     window.dispatchEvent(new CustomEvent("notificaciones-actualizadas", {
       detail: { total: items.length, items: items.slice(0, 5) },
@@ -161,9 +162,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
   const isChat = pathname === "/chat";
   const accountRole = rolCuentaParaRuta(pathname);
   const roleName =
-    { 1: "Super admin", 2: "Administrador", 3: "Agente", 4: "Propietario", 5: "Inquilino" }[
-    user?.rol
-    ] || accountRole;
+    NOMBRE_ROL[role] || accountRole;
   const accountName = user
     ? (`${user.nombre || ""} ${user.apellido || ""}`.trim() || user.usuario || "Cuenta")
     : "Cuenta";

@@ -4,7 +4,7 @@ import { Boton, Paginacion, usePaginacion, mostrarAviso } from "../../components
 import VisitaModal from "./VisitaModal";
 import { api } from "../../services/api.js";
 import PageSkeleton from "../../components/skeleton/PageSkeleton";
-import { obtenerSesion } from "../../services/login.js";
+import { ROLES, tieneRol } from "../../utils/roles.js";
 import propertyImage from "/images (1).jpg";
 import "./Agenda.css";
 
@@ -457,7 +457,7 @@ export default function Agenda() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [upcomingOpen, setUpcomingOpen] = useState(false);
-  const canManage = Number(obtenerSesion()?.usuario?.rol) === 3;
+  const canManage = tieneRol(ROLES.AGENTE);
 
   useEffect(() => {
     let active = true;

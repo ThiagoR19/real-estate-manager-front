@@ -1,7 +1,14 @@
 import { useState } from "react";
 import Notificacion from "./Notificacion";
+<<<<<<< HEAD
 import { campanaIcono, cerrarIcono } from "../../assets/icons";
 import "./PanelNotificaciones.css";
+=======
+import { ROLES } from "../../utils/roles.js";
+
+import campanaIcono from "../../assets/icons/campanaNoti.svg";
+import cerrarIcono from "../../assets/icons/closeNotis.svg";
+>>>>>>> f668a75460946aa08b48cb4f797bacdb3c2abc66
 
 const filtros = [
   { id: "todas", texto: "Todas", cumple: () => true },
@@ -11,16 +18,17 @@ const filtros = [
 
 function destinoNotificacion(rol, tipo) {
   switch (tipo?.toLowerCase()) {
-    case "mantenimiento": return [rol === 5 ? "/reportes" : "/reportes-agente", "Ver reportes"];
+    case "cuenta": return rol === ROLES.SUPERADMIN ? ["/super-admin", "Ver cuentas"] : null;
+    case "mantenimiento": return [rol === ROLES.INQUILINO ? "/reportes" : "/reportes-agente", "Ver reportes"];
     case "mensaje": return ["/chat", "Ir al chat"];
     case "visita": return ["/agenda", "Ver agenda"];
     case "contrato": return [
-      { 4: "/mis-propiedades", 5: "/dashboard" }[rol] ?? "/propiedades",
+      { [ROLES.PROPIETARIO]: "/mis-propiedades", [ROLES.INQUILINO]: "/dashboard" }[rol] ?? "/propiedades",
       "Ver alquileres y propiedades",
     ];
     case "pago": return [
-      { 4: "/cobros", 5: "/pagos" }[rol] ?? "/pagos-cobros",
-      rol === 4 ? "Ver cobros" : "Ver pagos",
+      { [ROLES.PROPIETARIO]: "/cobros", [ROLES.INQUILINO]: "/pagos" }[rol] ?? "/pagos-cobros",
+      rol === ROLES.PROPIETARIO ? "Ver cobros" : "Ver pagos",
     ];
     default: return null;
   }

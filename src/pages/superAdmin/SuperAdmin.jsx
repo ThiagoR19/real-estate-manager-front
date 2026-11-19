@@ -62,8 +62,7 @@ export default function SuperAdmin() {
   const [expanded, setExpanded] = useState({});
   const [modal, setModal] = useState(null);
   const [aEliminar, setAEliminar] = useState(null);
-  const [activationUrl, setActivationUrl] = useState("");
-  const [activationMessage, setActivationMessage] = useState("");
+  const [enviando, setEnviando] = useState(false);
 
   const cargar = useCallback(() => {
     let activo = true;
@@ -111,27 +110,40 @@ export default function SuperAdmin() {
   }
 
   async function agregarAdmin(agency, datos) {
+    setEnviando(true);
     try {
       const admin = await api.crearAdministrador({ ...datos, idInmobiliaria: agency.id });
-      setModal(null);
-      setActivationUrl(enlaceActivacion(admin.activacion));
-      setActivationMessage("Compartí el enlace con el administrador para que verifique su DNI y cree su cuenta.");
-      mostrarAviso({
-        tipo: "exito",
-        titulo: "Admin creado",
-        mensaje: "El administrador ya puede activar su cuenta con el enlace generado.",
+      setModal({
+        mode: "invitacion",
+        agency,
+        invitacion: {
+          enlace: enlaceActivacion(admin.activacion),
+          expiraEn: admin.activacion?.expiraEn,
+          persona: `${datos.nombre} ${datos.apellido}`,
+        },
       });
+      mostrarAviso({ tipo: "exito", titulo: "Invitación creada", mensaje: "Copiá el enlace y compartilo con el administrador." });
       cargar();
     } catch (causa) {
-      mostrarAviso({ tipo: "error", titulo: "No se pudo crear el admin", mensaje: causa.message });
+      mostrarAviso({ tipo: "error", titulo: "No se pudo crear la invitación", mensaje: causa.message });
+    } finally {
+      setEnviando(false);
     }
   }
 
-  async function generarEnlaceAdmin(persona) {
+  async function generarEnlaceAdmin(agency, persona) {
     try {
       const activacion = await api.generarEnlaceAdministrador(persona.id);
-      setActivationUrl(enlaceActivacion(activacion));
-      setActivationMessage(`Enlace nuevo para ${persona.nombre} ${persona.apellido}. Compartilo para que pueda crear su cuenta.`);
+      setModal({
+        mode: "invitacion",
+        agency,
+        invitacion: {
+          titulo: "Enlace generado",
+          enlace: enlaceActivacion(activacion),
+          expiraEn: activacion?.expiraEn,
+          persona: `${persona.nombre} ${persona.apellido}`,
+        },
+      });
       mostrarAviso({
         tipo: "info",
         titulo: "Enlace de activación generado",
@@ -139,15 +151,6 @@ export default function SuperAdmin() {
       });
     } catch (causa) {
       mostrarAviso({ tipo: "error", titulo: "No se pudo generar el enlace", mensaje: causa.message });
-    }
-  }
-
-  async function copiarEnlaceActivacion() {
-    try {
-      await navigator.clipboard.writeText(activationUrl);
-      mostrarAviso({ tipo: "exito", titulo: "Enlace copiado" });
-    } catch {
-      mostrarAviso({ tipo: "error", titulo: "No se pudo copiar el enlace", mensaje: "Abrilo y copialo desde la barra del navegador." });
     }
   }
 
@@ -230,13 +233,6 @@ export default function SuperAdmin() {
           </div>
         </div>
         <section className="super-admin__inmobiliaria-list" aria-label="Inmobiliarias registradas">
-          {activationUrl && (
-            <div className="super-admin__activation-notice" role="status">
-              <p>{activationMessage}</p>
-              <a href={activationUrl} target="_blank" rel="noreferrer">Abrir enlace de activación</a>
-              <button type="button" onClick={copiarEnlaceActivacion}>Copiar enlace</button>
-            </div>
-          )}
           {mensaje && (
             <p className="super-admin__no-admins">
               {mensaje}{" "}
@@ -320,7 +316,7 @@ export default function SuperAdmin() {
                             <button
                               className="super-admin__activation-link"
                               type="button"
-                              onClick={() => generarEnlaceAdmin(persona)}
+                              onClick={() => generarEnlaceAdmin(agency, persona)}
                             >
                               Generar enlace para crear cuenta
                             </button>
@@ -344,6 +340,8 @@ export default function SuperAdmin() {
           key={`${modal.mode}-${modal.agency?.id || "new"}`}
           mode={modal.mode}
           agency={modal.agency && { ...modal.agency, name: modal.agency.nombre }}
+          invitacion={modal.invitacion}
+          enviando={enviando}
           onClose={() => setModal(null)}
           onSubmit={guardarModal}
           onDelete={modal.mode === "edit" ? () => eliminarInmobiliaria(modal.agency) : undefined}
