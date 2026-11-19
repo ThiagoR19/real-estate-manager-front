@@ -11,7 +11,6 @@ import monedasIcono from "../../assets/icons/monedas.svg";
 
 const operaciones = ["Alquilar", "Comprar"];
 
-// valor del presupuesto: "mínimo-máximo" (sin máximo = "mínimo-")
 const presupuestos = {
   Alquilar: [
     { texto: "Hasta $500.000 / mes", valor: "0-500000" },
@@ -51,7 +50,6 @@ const filtrosDe = (operacion) => [
   },
 ];
 
-// Arma los query params de la búsqueda: solo agrega lo que se eligió
 function paramsDeBusqueda(operacion, formulario) {
   const datos = new FormData(formulario);
   const params = new URLSearchParams({ filter: operacion === "Alquilar" ? "rent" : "buy" });

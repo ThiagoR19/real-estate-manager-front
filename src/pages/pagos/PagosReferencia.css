@@ -38,7 +38,7 @@
   box-shadow: 0 0 5px #14215d0f;
 }
 
-.vista-pago__sidebar h1 {
+.vista-pago__sidebar h2 {
   height: 55px;
   margin: 0;
   padding: 18px 22px 0;
@@ -93,7 +93,8 @@
 }
 
 #vista-pago .vista-pago__propiedad-trigger:focus-visible {
-  outline: none;
+  outline: 2px solid #fff;
+  outline-offset: -4px;
 }
 #vista-pago .vista-pago__propiedad-value {
   flex: initial;
@@ -129,12 +130,6 @@
   font-weight: 650;
 }
 
-.vista-pago__year p {
-  margin: -3px 10px 12px 12px;
-  color: #75839b;
-  font-size: 12px;
-}
-
 .vista-pago__chevron {
   width: 12px;
   height: 12px;
@@ -157,7 +152,7 @@
 
 .vista-pago__month {
   display: grid;
-  grid-template-columns: 128px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 124px);
   align-items: center;
   width: 100%;
   min-height: 37px;
@@ -184,21 +179,8 @@
 .vista-pago__month:hover {
   background: #f1f5fa;
 }
-.vista-pago__month--neutral.is-selected {
-  background: #e2e7ed;
-  color: #153d96;
-}
-.vista-pago__month--danger.is-selected {
-  background: #ffdfe1;
-  color: #b40000;
-}
-.vista-pago__month--success.is-selected {
-  background: #d2f7df;
-  color: #14723b;
-}
-.vista-pago__month--info.is-selected {
-  background: #dbeaff;
-  color: #164cb8;
+.vista-pago__month.is-selected {
+  background: #e2edfc;
 }
 
 .vista-pago__month strong {
@@ -219,22 +201,15 @@
 }
 
 .vista-pago__month .vista-pago__status {
-  width: 124px;
+  width: 100%;
 }
 
-.vista-pago__status--neutral {
-  background: #e2e7ed;
-  color: #153d96;
-}
-
-.vista-pago__status--danger,
-.vista-pago__status--rejected {
+.vista-pago__status--danger {
   background: #ffdfe1;
   color: #b40000;
 }
 
-.vista-pago__status--success,
-.vista-pago__status--approved {
+.vista-pago__status--success {
   background: #d2f7df;
   color: #14723b;
 }
@@ -247,7 +222,7 @@
 .vista-pago__workspace {
   min-width: 0;
   min-height: calc(100dvh - 80px);
-  padding: 33px 44px 24px 45px;
+  padding: 19px 28px 24px;
   border: 1px solid #e1e8ef;
   border-bottom: 0;
   border-radius: 16px 0 0;
@@ -258,9 +233,8 @@
 .vista-pago__summary {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(28px, 7vw, 84px);
-  max-width: 1025px;
-  margin: 0 auto 28px;
+  gap: clamp(14px, 2.4vw, 36px);
+  margin: 0 0 41px;
 }
 
 .vista-pago__summary article {
@@ -272,7 +246,7 @@
   height: 56px;
   padding: 0 15px;
   border: 1px solid;
-  border-radius: 18px;
+  border-radius: 11px;
   background: #fff;
   box-shadow: 0 2px 7px #14215d0d;
 }
@@ -330,91 +304,48 @@
     brightness(93%) contrast(99%);
 }
 
-.vista-pago__metric .vista-pago__icon,
-.vista-pago__status--approved .vista-pago__icon,
-.vista-pago__status--rejected .vista-pago__icon {
+.vista-pago__metric .vista-pago__icon {
   filter: brightness(0) invert(1);
 }
 
 .vista-pago__content {
   display: grid;
-  grid-template-columns: minmax(310px, 371px) minmax(0, 1fr);
+  grid-template-columns: minmax(250px, 34%) minmax(0, 1fr);
   gap: 24px;
-  max-width: 1070px;
-  margin: 0 auto;
+  margin-inline: 16px 0;
+}
+
+.vista-pago__status--neutral {
+  background: #e1e6ec;
+  color: #263d70;
+}
+
+.vista-pago__propiedad-row > button:disabled {
+  opacity: 0.55;
+  cursor: default;
 }
 
 .vista-pago__receipt-column {
   min-width: 0;
-  padding-left: 15px;
+  align-self: start;
+  padding: 15px 22px;
+  background: #f5f7f9;
 }
 
 .vista-pago__receipt-frame {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 373px;
+  display: grid;
+  place-items: center;
+  height: clamp(260px, 28vw, 356px);
   overflow: hidden;
-  background: #f6f9fc;
-}
-
-.vista-pago__receipt {
-  position: relative;
-  width: 310px;
-  height: 356px;
-  background-color: #f8fafc;
-  background-image: var(--payment-reference);
-  background-position: -418px -213px;
-  background-repeat: no-repeat;
-  background-size: 1512px 692px;
-  box-shadow: 0 8px 15px #17235e2b;
-}
-
-.vista-pago__receipt button {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 39px;
-  height: 39px;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 2px 7px #17235e20;
-  cursor: pointer;
-}
-
-.vista-pago__receipt button .vista-pago__icon {
-  width: 18px;
-  height: 18px;
-  filter: brightness(0) saturate(100%) invert(35%) sepia(100%) saturate(1698%) hue-rotate(196deg)
-    brightness(90%) contrast(101%);
-}
-
-.vista-pago__receipt button span {
-  position: absolute;
-  top: 9px;
-  right: 8px;
-  color: #1471d5;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.vista-pago__receipt-frame.is-empty {
-  height: 373px;
+  background: #edf2f7;
 }
 
 .vista-pago__empty-receipt {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  justify-items: center;
   gap: 10px;
-  width: 100%;
-  height: 100%;
-  color: #75839b;
+  padding: 14px;
+  color: #536485;
   font-size: 14px;
 }
 
@@ -429,16 +360,21 @@
   justify-content: center;
   gap: 13px;
   min-height: 47px;
-  margin: 21px 0 0 23px;
-  padding: 7px 17px;
+  margin-top: 21px;
+  padding: 7px 12px;
   border-radius: 7px;
-  background: #eef3f7;
-  color: #657d99;
+  background: #edf1f5;
+  color: #405576;
 }
 
 .vista-pago__uploaded.is-approved {
-  background: #d2f9df;
-  color: #15713b;
+  background: #d8fae4;
+  color: #12633a;
+}
+
+.vista-pago__uploaded.is-approved .vista-pago__icon,
+.vista-pago__status--success .vista-pago__icon {
+  filter: invert(29%) sepia(65%) saturate(861%) hue-rotate(101deg) brightness(90%);
 }
 
 .vista-pago__uploaded .vista-pago__icon {
@@ -446,14 +382,11 @@
   height: 22px;
 }
 
-.vista-pago__uploaded.is-approved .vista-pago__icon {
-  filter: invert(33%) sepia(44%) saturate(967%) hue-rotate(100deg) brightness(85%) contrast(90%);
-}
-
 .vista-pago__uploaded span {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .vista-pago__uploaded strong {
@@ -461,30 +394,35 @@
 }
 
 .vista-pago__uploaded small {
-  color: #687d96;
+  color: #536889;
   font-size: 12px;
 }
 
 .vista-pago__detail {
   min-width: 0;
   padding-top: 5px;
+  color: #17235e;
+  container-type: inline-size;
 }
 
 .vista-pago__detail header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 18px;
+  margin-bottom: 13px;
 }
 
 .vista-pago__detail h1 {
   margin: 0;
   color: #11192d;
   font-size: 27px;
-  letter-spacing: -0.7px;
+  letter-spacing: -0.5px;
 }
 
 .vista-pago__detail header .vista-pago__status {
-  min-height: 36px;
+  gap: 8px;
+  min-height: 35px;
   padding: 0 19px;
   border-radius: 20px;
   font-size: 13px;
@@ -492,228 +430,385 @@
 }
 
 .vista-pago__detail header .vista-pago__icon {
-  width: 16px;
-  height: 16px;
-  margin-right: 8px;
+  width: 15px;
+  height: 15px;
 }
 
-.vista-pago__detail dl {
-  display: flex;
-  flex-direction: column;
-  gap: 13px;
-  margin: 24px 0 47px;
+.vista-pago__financials {
+  display: grid;
+  gap: 18px;
 }
 
-.vista-pago__detail dl > div {
+.vista-pago__facts,
+.vista-pago__breakdown dl {
+  margin: 0;
+}
+
+.vista-pago__facts {
+  display: grid;
+  align-content: start;
+  gap: 5px;
+}
+
+.vista-pago__facts > div {
   display: grid;
   grid-template-columns: 34px minmax(0, 1fr) auto;
   align-items: center;
   gap: 9px;
-  min-height: 38px;
+  min-height: 33px;
 }
 
-.vista-pago__detail dt,
-.vista-pago__detail dd {
-  margin: 0;
-  font-size: 16px;
+.vista-pago__facts .pagos__facts-total {
+  margin-top: 16px;
 }
 
-.vista-pago__detail dt {
-  font-weight: 650;
-}
-
-.vista-pago__detail dd {
-  min-width: 130px;
-  font-weight: 700;
-}
-
-.vista-pago__detail dl > div > .vista-pago__icon {
-  width: 21px;
-  height: 21px;
-  margin-left: 7px;
-  filter: brightness(0) saturate(100%) invert(36%) sepia(98%) saturate(1774%) hue-rotate(203deg)
-    brightness(95%) contrast(99%);
-}
-
-.vista-pago__coin {
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: #e3efff;
-  color: #17235e;
-  font-size: 21px;
+.vista-pago__facts dt,
+.vista-pago__breakdown dt {
   font-weight: 600;
 }
 
-.vista-pago__detail aside {
-  display: flex;
-  gap: 13px;
-  min-height: 79px;
-  padding: 12px 14px 11px 11px;
-  border-radius: 9px;
-  background: #d9e9ff;
+.vista-pago__facts dd,
+.vista-pago__breakdown dd {
+  margin: 0;
+  font-weight: 700;
+  text-align: right;
 }
 
-.vista-pago__detail aside > span {
+.vista-pago__round {
+  display: grid;
+  place-items: center;
+  width: 33px;
+  height: 33px;
+  border-radius: 50%;
+  background: #e1edfc;
+  color: #17235e;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.vista-pago__breakdown {
+  min-width: 0;
+}
+
+.vista-pago__breakdown h2 {
+  margin: 4px 0 13px;
+  font-size: 17px;
+}
+
+.vista-pago__breakdown dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0;
+}
+
+.vista-pago__breakdown p {
+  margin: 0;
+  color: #576986;
+  font-size: 14px;
+}
+
+@container (min-width: 545px) {
+  .vista-pago__financials {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  }
+
+  .vista-pago__breakdown {
+    padding-left: 10px;
+    border-left: 1px solid #7e8ba5;
+  }
+
+  .vista-pago__facts .pagos__facts-total {
+    margin-top: 48px;
+  }
+}
+
+.vista-pago__admin-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 27px 0 0;
+  padding: 15px 12px;
+  border-radius: 9px;
+  background: #dce9fc;
+}
+
+.vista-pago__admin-note > span {
   display: grid;
   flex: 0 0 36px;
   place-items: center;
-  width: 36px;
   height: 36px;
   border-radius: 50%;
   background: #fff;
 }
 
-.vista-pago__detail aside > span .vista-pago__icon {
-  width: 19px;
-  height: 19px;
-  filter: brightness(0) saturate(100%) invert(36%) sepia(98%) saturate(1774%) hue-rotate(203deg)
-    brightness(95%) contrast(99%);
-}
-
-.vista-pago__detail aside strong {
-  display: block;
-  margin: 1px 0 7px;
-  color: #1d54b4;
-  font-size: 16px;
-}
-
-.vista-pago__detail aside p {
-  max-width: 610px;
-  margin: 0;
-  color: #627493;
+.vista-pago__admin-note p {
+  margin: 5px 0 0;
+  color: #536685;
   font-size: 13px;
-  line-height: 1.25;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
 .vista-pago__actions {
-  display: grid;
-  grid-template-columns: minmax(200px, 235px) minmax(200px, 1fr);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 10px;
-  margin-top: 69px;
+  margin-top: 20px;
 }
 
-.vista-pago__actions label,
-.vista-pago__actions button {
-  position: relative;
+.vista-pago__actions:empty {
+  display: none;
+}
+
+.vista-pago__action {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 18px;
+  gap: 10px;
   min-height: 48px;
+  padding: 8px 16px;
+  border: 1px solid #1657bd;
   border-radius: 10px;
-  cursor: pointer;
   font-size: 14px;
-  font-weight: 750;
+  font-weight: 700;
+  line-height: 1.15;
+  text-align: center;
+  cursor: pointer;
 }
 
-.vista-pago__actions label {
-  border: 1px solid #1858c8;
+.vista-pago__action--secondary {
   background: #fff;
-  color: #1858c8;
+  color: #1253bd;
 }
 
-.vista-pago__actions img {
-  width: 20px;
-  height: 20px;
+.vista-pago__action--primary {
+  background: #1755bd;
 }
 
-.vista-pago__actions label .vista-pago__icon {
-  filter: brightness(0) saturate(100%) invert(31%) sepia(93%) saturate(1753%) hue-rotate(204deg)
-    brightness(82%) contrast(105%);
-  transform: rotate(180deg);
+.vista-pago__file {
+  position: relative;
 }
 
-.vista-pago__actions input {
+.vista-pago__file:has(:disabled) {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.vista-pago__file input {
   position: absolute;
   width: 1px;
   height: 1px;
   opacity: 0;
-  pointer-events: none;
 }
 
-.vista-pago__note {
-  margin: 14px 0 0;
-  color: #657694;
+.vista-pago__file .vista-pago__icon {
+  transform: rotate(180deg);
+}
+
+.vista-pago__note,
+.vista-pago__error {
+  margin: 13px 0 0;
+  color: #536889;
   font-size: 13px;
   text-align: right;
 }
 
-.vista-pago__feedback {
-  min-height: 18px;
-  margin: 6px 0 0;
-  color: #176c3b;
-  font-size: 13px;
-  font-weight: 650;
-  text-align: right;
+.vista-pago__error {
+  color: #a01a20;
 }
 
-.vista-pago__detail .vista-pago__mobile-only {
-  display: none;
+#vista-pago.vista-pago--sin-periodos {
+  display: block;
+  padding: 24px 12px;
+}
+
+.vista-pago__empty-page {
+  max-width: 620px;
+  margin-inline: auto;
+  padding: 24px;
+  border: 1px solid #e0e7ef;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.vista-pago__empty-page h1 {
+  margin-top: 0;
+  font-size: 24px;
+}
+
+.vista-pago__registro {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+.registro-pago__cabecera,
+.registro-pago__acciones,
+.registro-pago__importe {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.registro-pago__cabecera {
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.registro-pago__cabecera h1 {
+  margin: 0;
+}
+
+.registro-pago__volver {
+  padding: 3px 0;
+  border: 0;
+  background: none;
+  color: #1253bd;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.registro-pago__form fieldset {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.registro-pago__periodo {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.registro-pago__periodo label {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  font-weight: 600;
+}
+
+.registro-pago__periodo select {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px;
+  border: 1px solid #aabbd1;
+  border-radius: 8px;
+  background: #fff;
+  color: #17235e;
+  font: inherit;
+}
+
+.registro-pago__importe {
+  justify-content: space-between;
+  margin: 0;
+  padding: 12px;
+  border-radius: 8px;
+  background: #eaf2fc;
+}
+
+.registro-pago__archivo {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px 12px;
+  border: 1px dashed #8ea7c9;
+  border-radius: 8px;
+  color: #17235e;
+  cursor: pointer;
+}
+
+.registro-pago__archivo img {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+}
+
+.registro-pago__archivo span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.registro-pago__archivo small {
+  color: #536889;
+}
+
+.registro-pago__archivo input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.registro-pago__acciones {
+  justify-content: flex-end;
+}
+
+.registro-pago .vista-pago__error {
+  margin: 0;
+  text-align: left;
+}
+
+@media (max-width: 450px) {
+  .registro-pago {
+    padding: 17px;
+  }
+
+  .registro-pago__periodo {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 1250px) {
   #vista-pago {
-    grid-template-columns: 280px minmax(0, 1fr);
+    grid-template-columns: 266px minmax(0, 1fr);
   }
 
   .vista-pago__workspace {
-    padding-right: 25px;
-    padding-left: 25px;
+    padding-inline: 22px;
   }
 
   .vista-pago__summary {
     gap: 14px;
   }
 
-  .vista-pago__summary article {
-    gap: 9px;
-    padding-inline: 12px;
-  }
-
   .vista-pago__content {
-    grid-template-columns: 310px minmax(0, 1fr);
-  }
-
-  .vista-pago__receipt-column {
-    padding-left: 0;
-  }
-
-  .vista-pago__uploaded {
-    margin-left: 0;
+    grid-template-columns: minmax(212px, 37%) minmax(0, 1fr);
+    margin-inline: 0;
   }
 }
 
-@media (max-width: 1020px) {
+@media (min-width: 651px) and (max-width: 1000px) {
+  #vista-pago {
+    grid-template-columns: 220px minmax(0, 1fr);
+  }
+
+  .vista-pago__summary article {
+    grid-template-columns: auto 1fr;
+    height: auto;
+    min-height: 61px;
+  }
+
+  .vista-pago__summary b {
+    grid-column: 2;
+  }
+
   .vista-pago__content {
     grid-template-columns: minmax(0, 1fr);
   }
 
   .vista-pago__receipt-column {
-    width: 356px;
-    max-width: 100%;
-    margin-inline: auto;
-  }
-
-  .vista-pago__summary {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .vista-pago__summary article {
-    min-height: 52px;
-  }
-
-  .vista-pago__receipt {
-    transform: scale(0.91);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .vista-pago__chevron,
-  .vista-pago__month {
-    transition: none;
+    width: min(100%, 370px);
+    justify-self: center;
   }
 }
 
@@ -725,18 +820,9 @@
     background: #f8f9fa;
   }
 
-  #vista-pago .pago-movil__toolbar > button {
-    flex-shrink: 0;
-  }
-
-  #vista-pago .vista-pago__propiedad-row {
-    display: none;
-  }
-
   #vista-pago .vista-pago__mobile-propiedad-select {
-    display: block;
-    min-width: 0;
     flex: 1;
+    min-width: 0;
     height: 43px;
     border: 2px solid #e3edf5;
     border-radius: 10px;
@@ -746,7 +832,7 @@
   #vista-pago .vista-pago__mobile-propiedad-trigger {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 9px;
     width: 100%;
     height: 100%;
     padding: 0 8px;
@@ -757,31 +843,18 @@
     font-size: 16px;
   }
 
-  #vista-pago .vista-pago__mobile-propiedad-icon img {
-    display: block;
-    width: 28px;
-    height: 28px;
-    padding: 5px;
+  .vista-pago__mobile-propiedad-trigger .select-control__icon img {
+    width: 25px;
+    height: 25px;
   }
 
-  #vista-pago .vista-pago__mobile-propiedad-chevron {
+  .vista-pago__mobile-propiedad-trigger .select-control__chevron {
     width: 15px;
     height: 15px;
-    filter: none;
   }
 
-  #vista-pago .vista-pago__mobile-propiedad-select:focus-within,
-  #vista-pago .vista-pago__mobile-propiedad-trigger:focus,
-  #vista-pago .vista-pago__mobile-propiedad-trigger:focus-visible {
-    outline: none;
-    box-shadow: none;
-  }
-
-  #vista-pago > .pago-movil__close {
+  #vista-pago .pago-movil__close {
     top: 52px;
-    display: grid;
-    place-items: center;
-    line-height: 1;
   }
 
   #vista-pago .vista-pago__sidebar {
@@ -794,8 +867,11 @@
     min-height: min(610px, calc(100dvh - 70px));
   }
 
+  #vista-pago .vista-pago__propiedad-row {
+    display: none;
+  }
+
   #vista-pago .vista-pago__years {
-    display: block;
     padding: 0 20px 15px;
   }
 
@@ -804,7 +880,7 @@
   }
 
   #vista-pago .vista-pago__month {
-    grid-template-columns: minmax(0, 1fr) 124px;
+    grid-template-columns: minmax(0, 1fr) minmax(106px, 124px);
     padding-left: 16px;
   }
 
@@ -822,38 +898,27 @@
   }
 
   #vista-pago .vista-pago__summary.is-open {
-    display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: 12px;
+    gap: 11px;
     margin: 0;
   }
 
-  #vista-pago .vista-pago__summary article {
+  .vista-pago__summary article {
     height: auto;
-    min-height: 56px;
-    gap: 10px;
-    padding: 10px 12px;
-    border-radius: 11px;
-  }
-
-  #vista-pago .vista-pago__summary strong {
-    font-size: 13px;
-    white-space: normal;
-  }
-
-  #vista-pago .vista-pago__summary b {
-    font-size: 15px;
+    min-height: 44px;
+    padding: 5px 12px;
   }
 
   #vista-pago .vista-pago__content {
     display: flex;
-    flex-direction: column;
+    margin-inline: 0;
     gap: 0;
   }
 
-  #vista-pago .vista-pago__detail {
+  #vista-pago .vista-pago__detail,
+  #vista-pago .vista-pago__financials {
     display: contents;
-    padding: 0;
+    container-type: normal;
   }
 
   #vista-pago .pagos__detail-heading {
@@ -863,188 +928,72 @@
   }
 
   #vista-pago .pagos__detail-heading h1 {
-    font-size: 26px;
+    font-size: clamp(22px, 6.5vw, 26px);
   }
 
   #vista-pago .pagos__detail-heading .vista-pago__status {
-    min-height: 35px;
-    padding: 0 16px;
+    padding-inline: 13px;
   }
 
   #vista-pago .vista-pago__receipt-column {
-    width: 100%;
-    max-width: none;
-    margin: 0;
-    padding: 12px 22px 14px;
+    padding: 12px clamp(10px, 5vw, 22px) 14px;
   }
 
-  #vista-pago .vista-pago__receipt-frame:not(.is-open) {
+  #vista-pago .vista-pago__receipt-frame {
     display: none;
   }
 
-  #vista-pago .vista-pago__uploaded {
-    margin: 10px 0 0;
-    padding: 7px 12px;
+  #vista-pago .vista-pago__uploaded:not(.is-approved) {
+    margin-top: 0;
   }
 
-  .vista-pago__status--approved .vista-pago__icon {
-    filter: invert(33%) sepia(44%) saturate(967%) hue-rotate(100deg) brightness(85%) contrast(90%);
+  #vista-pago .vista-pago__facts {
+    margin: 18px -4px 0;
   }
 
-  #vista-pago .pagos__facts {
-    order: 2;
-    gap: 5px;
-    margin: 18px -5px 0;
-    padding: 0;
-    color: #17235e;
+  #vista-pago .vista-pago__facts > div {
+    min-height: 34px;
   }
 
-  #vista-pago .pagos__facts > div {
-    grid-template-columns: 34px minmax(0, 1fr) auto;
-    gap: 8px;
-    min-height: 38px;
-  }
-
-  #vista-pago .pagos__facts dt,
-  #vista-pago .pagos__facts dd {
+  #vista-pago .vista-pago__facts dt,
+  #vista-pago .vista-pago__facts dd,
+  #vista-pago .vista-pago__breakdown dl {
     font-size: 14px;
   }
 
-  #vista-pago .pagos__facts dd {
-    grid-column: auto;
-    min-width: 0;
-    text-align: right;
+  #vista-pago .vista-pago__breakdown dl > div {
+    padding-inline: 6px;
   }
 
-  #vista-pago .pagos__facts > div.vista-pago__mobile-only {
-    display: grid;
+  #vista-pago .vista-pago__admin-note {
     margin-top: 16px;
   }
 
-  #vista-pago section.vista-pago__mobile-only {
-    display: block;
-    color: #17235e;
-  }
-
-  #vista-pago .vista-pago__breakdown {
-    order: 3;
-    width: 100%;
-    margin-top: 24px;
-    padding: 0;
-    border: 0;
-  }
-
-  #vista-pago .vista-pago__breakdown h3 {
-    margin-bottom: 12px;
-    font-size: 18px;
-  }
-
-  #vista-pago .vista-pago__breakdown > div {
-    min-height: 32px;
-    padding: 4px 7px;
-    font-size: 14px;
-  }
-
-  .vista-pago__breakdown-note {
-    margin: 8px 7px 0;
-    color: #7a849b;
-    font-size: 13px;
-    line-height: 1.3;
-  }
-
-  #vista-pago .pagos__admin-note {
-    order: 4;
-    min-height: 0;
-    margin: 20px 0 0;
-    padding: 12px 10px;
-  }
-
-  #vista-pago .pagos__admin-note strong {
-    margin-bottom: 5px;
-    font-size: 14px;
-  }
-
   #vista-pago .vista-pago__actions {
-    order: 5;
-    grid-template-columns: minmax(0, 1fr);
-    width: 100%;
-    margin-top: 20px;
+    display: flex;
+    justify-content: flex-start;
   }
 
-  #vista-pago .vista-pago__actions .pagos__button {
-    gap: 8px;
-    min-width: 0;
-    width: 100%;
-    padding: 0 7px;
-    font-size: 14px;
-    line-height: 1.2;
+  #vista-pago .vista-pago__actions:empty {
+    display: none;
   }
 
-  #vista-pago .vista-pago__note {
+  .vista-pago__action {
+    flex: 1 1 135px;
+    gap: 6px;
+    padding: 6px 8px;
+    font-size: 13px;
+  }
+
+  .vista-pago__error {
     order: 6;
-    margin: 14px 3px 0;
     text-align: left;
-    line-height: 1.3;
-  }
-
-  #vista-pago .vista-pago__feedback {
-    order: 7;
-    min-height: 0;
-    margin: 8px 0 0;
-    text-align: left;
-  }
-
-  .vista-pago__actions .pagos__button img {
-    flex-shrink: 0;
-  }
-
-  .vista-pago__receipt-frame.is-open .pago-movil__close {
-    z-index: 62;
   }
 }
 
-@media (max-width: 370px) {
-  #vista-pago .pagos__detail-heading {
-    gap: 8px;
-    margin-inline: 0;
-  }
-
-  #vista-pago .pagos__detail-heading h1 {
-    font-size: 22px;
-  }
-
-  #vista-pago .pagos__detail-heading .vista-pago__status {
-    padding: 0 12px;
-    font-size: 12px;
-  }
-
-  #vista-pago .pagos__facts dt,
-  #vista-pago .pagos__facts dd {
-    font-size: 12px;
-  }
-
-  #vista-pago .vista-pago__receipt-column {
-    padding-inline: 10px;
-  }
-
-  #vista-pago .vista-pago__years {
-    padding-inline: 14px;
-  }
-
-  #vista-pago .vista-pago__month {
-    grid-template-columns: minmax(0, 1fr) 112px;
-    padding-left: 12px;
-  }
-
-  #vista-pago .vista-pago__month .vista-pago__status {
-    width: 112px;
-    padding-inline: 4px;
-    font-size: 11px;
-  }
-
-  #vista-pago .vista-pago__actions .pagos__button {
-    gap: 5px;
-    padding: 0 5px;
-    font-size: 12px;
+@media (prefers-reduced-motion: reduce) {
+  .vista-pago__chevron,
+  .vista-pago__month {
+    transition: none;
   }
 }

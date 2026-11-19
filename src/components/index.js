@@ -5,18 +5,11 @@ export { default as ConfirmarEliminacionModal } from "./confirmarEliminacion/Con
 export { default as AccionesEntidad } from "./accionesEntidad/AccionesEntidad";
 export { default as Footer } from "./footer/Footer";
 export { default as AccesoGoogle } from "./accesoGoogle/AccesoGoogle";
-export { Icono } from "./inicio/IconoInicio";
 export { default as PanelImagen } from "./panelImagen/PanelImagen";
 export { default as NavegacionPortada } from "./navegacionPortada/NavegacionPortada";
 export { default as EncabezadoPublico } from "./encabezadoPublico/EncabezadoPublico";
 export { default as TextoLegal } from "./textoLegal/TextoLegal";
-export {
-  default as GestionModal,
-  AccionesModal,
-  CampoModal,
-  EntradaModal,
-  ModalSelect,
-} from "./gestionModal/GestionModal";
+export { default as GestionModal, AccionesModal, CampoModal, EntradaModal, ModalSelect, } from "./gestionModal/GestionModal";
 export { default as CapaModal } from "./capaModal/CapaModal";
 export { default as Navbar } from "./navbar/Navbar";
 export { default as PanelNotificaciones } from "./panelNotificaciones/PanelNotificaciones";

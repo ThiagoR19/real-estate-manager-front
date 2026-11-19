@@ -19,13 +19,16 @@
 
 :where(#pagos-agente) button,
 :where(#pagos-agente) input,
-:where(#pagos-agente) select {
+:where(#pagos-agente) select,
+:where(#pagos-agente) textarea {
   font: inherit;
 }
 
 #pagos-agente button:focus-visible,
 #pagos-agente input:focus-visible,
-#pagos-agente select:focus-visible {
+#pagos-agente select:focus-visible,
+#pagos-agente summary:focus-visible,
+#pagos-agente textarea:focus-visible {
   outline: 2px solid #2178c4;
   outline-offset: 2px;
 }
@@ -213,6 +216,182 @@
   flex-direction: column;
   margin-right: 24px;
   padding: 14px 20px 10px 32px;
+}
+
+.pagos-agente__queue {
+  margin-bottom: 18px;
+  padding: 10px 14px;
+  border: 1px solid #dce7f7;
+  border-radius: 9px;
+  background: #f6f9fe;
+}
+
+.pagos-agente__queue summary {
+  padding-block: 3px;
+  color: var(--pagos-azul);
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.pagos-agente__queue-count {
+  display: inline-block;
+  min-width: 24px;
+  margin-inline-start: 8px;
+  padding: 2px 6px;
+  border-radius: 20px;
+  background: #e1ecfc;
+  color: #13448b;
+  font-size: 12px;
+  text-align: center;
+}
+
+.pagos-agente__queue-body {
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.pagos-agente__queue-body p {
+  margin: 2px 0 0;
+  color: #526583;
+  font-size: 13px;
+}
+
+.pagos-agente__queue-body ul {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  max-height: 220px;
+  margin: 0;
+  padding: 2px;
+  overflow: auto;
+  list-style: none;
+}
+
+.pagos-agente__queue-body li button {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 3px 8px;
+  align-items: center;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #dce7f7;
+  border-radius: 6px;
+  background: #fff;
+  color: var(--pagos-azul);
+  cursor: pointer;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+
+.pagos-agente__queue-body li button:hover,
+.pagos-agente__queue-body li button[aria-current="true"] {
+  border-color: #afc8ed;
+  background: #e9f2fd;
+}
+
+.pagos-agente__queue-body li button > span:not(.pagos-agente__queue-action) {
+  grid-row: 2;
+  color: #526583;
+}
+
+.pagos-agente__queue-action {
+  grid-row: 1 / span 2;
+  grid-column: 2;
+  color: #13448b;
+  font-weight: 700;
+}
+
+.pagos-agente__queue-refresh {
+  justify-self: end;
+  padding: 3px 0;
+  border: 0;
+  background: transparent;
+  color: #13448b;
+  cursor: pointer;
+  font-size: 13px;
+  text-decoration: underline;
+}
+
+.pagos-agente__queue button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.pagos-agente__review {
+  display: grid;
+  justify-items: start;
+  gap: 14px;
+  padding: clamp(12px, 3vw, 22px);
+  border: 1px solid var(--pagos-borde);
+  border-radius: 9px;
+  background: #fff;
+  overflow-wrap: anywhere;
+}
+
+.pagos-agente__review > .pagos-agente__queue-refresh {
+  justify-self: start;
+}
+
+.pagos-agente__review-heading {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+}
+
+.pagos-agente__review h2 {
+  margin: 0;
+  font-size: 23px;
+}
+
+.pagos-agente__review p {
+  margin: 4px 0;
+  color: #526583;
+  font-size: 14px;
+}
+
+.pagos-agente__review-detail,
+.pagos-agente__review .pagos-agente__rejection {
+  width: min(100%, 540px);
+}
+
+.pagos-agente__review-detail dl {
+  margin: 0 0 10px;
+}
+
+.pagos-agente__review-detail dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--pagos-borde);
+  font-size: 14px;
+}
+
+.pagos-agente__review-detail dd {
+  margin: 0;
+  text-align: right;
+}
+
+.pagos-agente__review-receipt {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 9px 12px;
+  border: 1px solid #1858c8;
+  border-radius: 6px;
+  background: #fff;
+  color: #13448b;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .pagos-agente__toolbar {
@@ -584,6 +763,33 @@
   color: #fff;
 }
 
+.pagos-agente__rejection label {
+  grid-column: 1 / -1;
+}
+
+.pagos-agente__note {
+  display: grid;
+  gap: 6px;
+  margin-top: 14px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.pagos-agente__note textarea {
+  width: 100%;
+  padding: 8px;
+  resize: vertical;
+  border: 1px solid #c8d6ea;
+  border-radius: 6px;
+  background: #fff;
+  color: inherit;
+  font-weight: 400;
+}
+
+.pagos-agente__note textarea:disabled {
+  background: #f4f7fa;
+}
+
 .pagos-agente__receipt {
   display: flex;
   min-width: 0;
@@ -595,21 +801,23 @@
 .pagos-agente__receipt-preview {
   display: flex;
   flex: 1;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 300px;
+  gap: 12px;
+  min-height: 190px;
   margin: 0 6px;
   background: #f1f2f4;
   box-shadow: 0 0 16px #14205714;
+  color: var(--pagos-azul);
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
 }
 
 button.pagos-agente__receipt-preview {
-  padding: 0;
+  padding: 10px;
   border: 0;
-  font: inherit;
-}
-
-button.pagos-agente__receipt-preview:not(:disabled) {
   cursor: pointer;
 }
 
@@ -622,17 +830,39 @@ button.pagos-agente__receipt-preview:not(:disabled) {
   opacity: 0.5;
 }
 
-.pagos-agente__receipt-preview img:not(.pagos-agente__icon) {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
 .pagos-agente__receipt-preview .pagos-agente__icon {
-  width: 160px;
-  height: 160px;
+  width: 56px;
+  height: 56px;
   opacity: 0.45;
   filter: invert(69%) sepia(10%) saturate(398%) hue-rotate(183deg) brightness(93%) contrast(87%);
+}
+
+button.pagos-agente__receipt-preview:hover .pagos-agente__icon {
+  opacity: 1;
+}
+
+.pagos-agente__receipt-upload {
+  align-self: stretch;
+  margin-top: 8px;
+  padding: 8px;
+  border: 1px solid #1858c8;
+  border-radius: 6px;
+  background: #fff;
+  color: #13448b;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.pagos-agente__receipt-upload:focus-within {
+  outline: 2px solid #2178c4;
+  outline-offset: 2px;
+}
+
+.pagos-agente__receipt-upload:has(input:disabled) {
+  cursor: wait;
+  opacity: 0.6;
 }
 
 .pagos-agente__receipt-caption {
@@ -735,12 +965,6 @@ button.pagos-agente__receipt-preview:not(:disabled) {
 .pagos-agente__total-line b {
   font-weight: 500;
   white-space: nowrap;
-}
-
-.pagos-agente__total-empty {
-  margin: 15px 4px;
-  color: #7a849b;
-  font-size: 12px;
 }
 
 .pagos-agente__total-sum {

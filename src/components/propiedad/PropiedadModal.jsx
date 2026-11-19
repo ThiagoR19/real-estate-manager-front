@@ -1,19 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import {
-  bathIcon,
-  bedIcon,
-  calendarIcon,
-  carIcon,
-  boltIcon,
-  dropletIcon,
-  fireFlameSimpleIcon,
-  locationDotIcon,
-  plusIcon,
-  rulerCombinedIcon,
-  userIcon,
-  xIcon,
-} from "../../assets/icons";
+import { bathIcon, bedIcon, calendarIcon, carIcon, boltIcon, dropletIcon, fireFlameSimpleIcon, locationDotIcon, plusIcon, rulerCombinedIcon, userIcon, xIcon, } from "../../assets/icons";
 import { Boton, mostrarAviso } from "../index";
 import { api } from "../../services/api.js";
 import useClosingTransition from "../../hooks/useClosingTransition.js";
@@ -133,15 +120,19 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
     setForm((current) => {
       const type = name === "tipo" ? value : current.contract.tipo;
       const status = catalogs.estados.find((item) => item.nombre === (type === "Venta" ? "Vendida" : "Alquilada"));
-      return { ...current, contractEnabled: true, statusId: status?.id ?? current.statusId,
-        contract: { ...current.contract, [name]: value } };
+      return {
+        ...current, contractEnabled: true, statusId: status?.id ?? current.statusId,
+        contract: { ...current.contract, [name]: value }
+      };
     });
   }
 
   function toggleService(id) {
-    setForm((current) => ({ ...current, services: current.services.includes(id)
-      ? current.services.filter((value) => value !== id)
-      : [...current.services, id] }));
+    setForm((current) => ({
+      ...current, services: current.services.includes(id)
+        ? current.services.filter((value) => value !== id)
+        : [...current.services, id]
+    }));
   }
 
   function addPhotos(event) {
@@ -167,7 +158,7 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
   async function submit(event) {
     event.preventDefault();
     if (form.contractEnabled && form.contract.tipo === "Alquiler" && form.contract.fechaInicio && form.contract.fechaFin &&
-        form.contract.fechaFin < form.contract.fechaInicio) {
+      form.contract.fechaFin < form.contract.fechaInicio) {
       setSection("documentation");
       mostrarAviso({ tipo: "error", titulo: "Fechas inválidas", mensaje: "La fecha de fin debe ser posterior al inicio." });
       return;
@@ -235,8 +226,8 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
         let current = saved;
         try {
           current = await api.obtenerPropiedad(saved.id);
-        } catch {
-          // Se conserva la respuesta original para informar el guardado parcial.
+        } catch (e) {
+          console.error(e)
         }
         await onSubmit(current, cause.message);
       } else {
@@ -515,8 +506,10 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
                 </div>
                 <div className="propiedad-modal__card-body propiedad-modal__services-grid">
                   {(catalogs.servicios || []).map((service) => {
-                    const icon = { Agua: dropletIcon, Gas: fireFlameSimpleIcon,
-                      Luz: boltIcon, Estacionamiento: carIcon }[service.nombre];
+                    const icon = {
+                      Agua: dropletIcon, Gas: fireFlameSimpleIcon,
+                      Luz: boltIcon, Estacionamiento: carIcon
+                    }[service.nombre];
                     const checked = form.services.includes(service.id);
                     return (
                       <label className={`propiedad-modal__service${checked ? " is-checked" : ""}${icon ? "" : " no-icon"}`} key={service.id}>
@@ -609,8 +602,10 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
                         aria-label={`Quitar documento ${index + 1}`}
                         onClick={() => setForm((current) => {
                           const documents = current.documents.filter((_, i) => i !== index);
-                          return { ...current, documents,
-                            ...(documents.length ? {} : { contractEnabled: false, contract: contratoVacio() }) };
+                          return {
+                            ...current, documents,
+                            ...(documents.length ? {} : { contractEnabled: false, contract: contratoVacio() })
+                          };
                         })}
                       >
                         <img src={xIcon} alt="" />

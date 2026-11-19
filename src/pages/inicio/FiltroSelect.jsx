@@ -2,7 +2,6 @@ import "./FiltroSelect.css";
 
 import flechaIcono from "../../assets/icons/angle-down-solid-full.svg";
 
-// Cada opción puede ser un texto o { texto, valor } cuando lo que se envía no es lo que se muestra
 const normalizar = (opcion) => (typeof opcion === "string" ? { texto: opcion, valor: opcion } : opcion);
 
 export default function FiltroSelect({ id, name, etiqueta, icono, opciones = [], className = "" }) {

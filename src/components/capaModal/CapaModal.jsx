@@ -8,7 +8,7 @@ import "./CapaModal.css";
 export default function CapaModal({
   abierto,
   onCerrar,
-  posicion = "centro",
+  posicion = "derecha",
   etiqueta,
   children,
 }) {

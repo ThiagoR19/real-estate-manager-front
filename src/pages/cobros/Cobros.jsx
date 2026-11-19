@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   buildingColumnsIcon,
   calendarIcon,
   checkIcon,
   downloadIcon,
   fileLinesIcon,
+  imageIcon,
   optionsIcon,
+  paperPlaneIcon,
   xIcon,
 } from "../../assets/icons";
 import { Boton, mostrarAviso } from "../../components";
@@ -17,13 +19,20 @@ import useHistorialPeriodos, {
   nombreMes,
   nombrePeriodo,
 } from "../../hooks/useHistorialPeriodos";
-import { api } from "../../services/api";
+import {
+  cobro as obtenerCobro,
+  cobros as listarCobros,
+  descargarComprobanteCobro,
+  obtenerComprobanteCobro,
+  solicitarRevisionCobro,
+} from "../../services/cobros";
+import { DialogoComprobante, DialogoRevision, VistaComprobante } from "../pagos/Comprobante";
 import "../pagos/PagosMovil.css";
 import "./Cobros.css";
 
 const ESTADOS = {
   Pendiente: { texto: "En proceso", tono: "info" },
-  Liquidado: { texto: "Liquidado", tono: "success" },
+  Liquidado: { texto: "Cobrado", tono: "success" },
   Anulado: { texto: "Anulado", tono: "neutral" },
 };
 
@@ -47,23 +56,18 @@ function estadoDe(cobro) {
   return ESTADOS[cobro?.estado] ?? { texto: cobro?.estado ?? "—", tono: "neutral" };
 }
 
-function notaDe(cobro) {
-  if (cobro.detalle) return cobro.detalle;
-  if (cobro.estado === "Liquidado") {
-    return `Se le informa la transferencia del dinero correspondiente a ${nombrePeriodo(cobro.periodo).toLowerCase()}.`;
-  }
-  if (cobro.estado === "Anulado") return "Esta liquidación fue anulada.";
-  return "La liquidación de este período está en proceso.";
-}
-
 export default function Cobros() {
-  const historial = useHistorialPeriodos(api.cobros, api.cobro);
+  const historial = useHistorialPeriodos(listarCobros, obtenerCobro);
   const { items, contratos, contrato, delContrato, anios, detalle: cobro } = historial;
   const [openYears, setOpenYears] = useState({});
   const [timelineOpen, setTimelineOpen] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
+  const [dialogo, setDialogo] = useState(null);
+  const abrirCronologia = useRef(null);
+  const cerrarCronologia = useRef(null);
   const estado = estadoDe(cobro);
   const hasReceipt = Boolean(cobro?.tieneComprobante);
+  const comprobante = { cargar: obtenerComprobanteCobro, id: cobro?.id, nombre: cobro?.nombreArchivo, version: cobro?.fechaComprobante };
   const contar = (condicion) => `${delContrato.filter(condicion).length}/${delContrato.length}`;
 
   useEffect(() => {
@@ -78,8 +82,15 @@ export default function Cobros() {
     return () => document.removeEventListener("keydown", closeOnEscape);
   }, [timelineOpen, summaryOpen]);
 
-  function chooseProperty(propiedad) {
-    historial.elegirContrato(contratos.find((item) => item.propiedad === propiedad).idContrato);
+  useEffect(() => {
+    if (!timelineOpen) return;
+    const boton = abrirCronologia.current;
+    cerrarCronologia.current?.focus();
+    return () => boton?.focus();
+  }, [timelineOpen]);
+
+  function chooseProperty(etiqueta) {
+    historial.elegirContrato(contratos.find((item) => item.etiqueta === etiqueta).idContrato);
   }
 
   function changeProperty(direction) {
@@ -96,30 +107,32 @@ export default function Cobros() {
   }
 
   function downloadReceipt() {
-    api.descargarComprobanteCobro(cobro.id, cobro.nombreArchivo).catch((error) =>
+    descargarComprobanteCobro(cobro.id, cobro.nombreArchivo).catch((error) =>
       mostrarAviso({ tipo: "error", titulo: "No se pudo descargar el comprobante", mensaje: error.message }),
     );
   }
 
   if (!items || !items.length || !cobro) {
     return (
-      <main id="cobros">
-        <p className="cobros__feedback" role="status">
-          {items?.length === 0 ? historial.error || "Todavía no tenés liquidaciones registradas." : "Cargando cobros..."}
-        </p>
+      <main id="cobros" className="cobros--sin-periodos">
+        <section className="cobros__empty-page">
+          <h1>Zona de cobro</h1>
+          <p role="status">{historial.error || (items ? "Todavía no tenés liquidaciones registradas." : "Cargando cobros…")}</p>
+          {historial.error && <Boton text="Reintentar" onClick={historial.recargar} />}
+        </section>
       </main>
     );
   }
 
-  const propertyOptions = contratos.map((item) => item.propiedad);
+  const propertyOptions = contratos.map((item) => item.etiqueta);
 
   return (
     <main id="cobros">
       <div className="pago-movil__toolbar">
         <SelectDesplegable
           label="Propiedad"
-          placeholder={contrato?.propiedad}
-          value={contrato?.propiedad}
+          placeholder={contrato?.etiqueta}
+          value={contrato?.etiqueta}
           options={propertyOptions}
           onChange={chooseProperty}
           icon={buildingColumnsIcon}
@@ -131,6 +144,7 @@ export default function Cobros() {
           blurOnSelect
         />
         <button
+          ref={abrirCronologia}
           type="button"
           aria-label="Abrir cronología"
           aria-controls="cobros-chronology"
@@ -143,8 +157,17 @@ export default function Cobros() {
           <Icono src={optionsIcon} />
         </button>
       </div>
+      {(timelineOpen || summaryOpen) && (
+        <button
+          className="pago-movil__fondo"
+          type="button"
+          aria-label="Cerrar panel"
+          onClick={() => { setTimelineOpen(false); setSummaryOpen(false); }}
+        />
+      )}
       {timelineOpen && (
         <button
+          ref={cerrarCronologia}
           className="pago-movil__close"
           type="button"
           aria-label="Cerrar cronología"
@@ -181,8 +204,8 @@ export default function Cobros() {
           </button>
           <SelectDesplegable
             label="Seleccionar propiedad"
-            placeholder={contrato?.propiedad}
-            value={contrato?.propiedad}
+            placeholder={contrato?.etiqueta}
+            value={contrato?.etiqueta}
             options={propertyOptions}
             onChange={chooseProperty}
             className="cobros__propiedad-select"
@@ -197,13 +220,14 @@ export default function Cobros() {
         </div>
         <div className="cobros__years">
           {anios.map(({ anio, periodos }, index) => {
-            const abierto = openYears[anio] ?? index === 0;
+            const clave = `${contrato.idContrato}|${anio}`;
+            const abierto = openYears[clave] ?? index === 0;
             return (
               <section className="cobros__year" key={anio}>
                 <button
                   className="cobros__year-toggle"
                   type="button"
-                  onClick={() => toggleYear(anio, abierto)}
+                  onClick={() => toggleYear(clave, abierto)}
                   aria-expanded={abierto}
                 >
                   <strong>{anio}</strong>
@@ -263,29 +287,26 @@ export default function Cobros() {
 
         <div className="cobros__content">
           <article className="cobros__receipt-column">
-            <button
-              className="pago-movil__open-receipt"
-              type="button"
-              disabled={!hasReceipt}
-              onClick={downloadReceipt}
-            >
-              <Icono src={fileLinesIcon} />
-              {hasReceipt ? "Descargar comprobante" : "Sin comprobante"}
-            </button>
-            <div className="cobros__receipt-frame is-empty">
-              <div className="cobros__empty-receipt">
-                <Icono src={fileLinesIcon} />
-                {hasReceipt ? cobro.nombreArchivo : "Sin comprobante"}
-              </div>
+            {hasReceipt && (
+              <button className="pago-movil__open-receipt" type="button" onClick={() => setDialogo("comprobante")}>
+                <Icono src={imageIcon} />
+                Abrir comprobante
+              </button>
+            )}
+            <div className="cobros__receipt-frame">
+              {hasReceipt ? (
+                <VistaComprobante {...comprobante} onAbrir={() => setDialogo("comprobante")} />
+              ) : (
+                <div className="cobros__empty-receipt"><Icono src={fileLinesIcon} />Sin comprobante</div>
+              )}
             </div>
             <div className={`cobros__receipt-status${hasReceipt ? " is-approved" : ""}`}>
               <Icono src={fileLinesIcon} />
               <span>
                 <strong>{hasReceipt ? "Comprobante cargado" : "Sin comprobante cargado"}</strong>
                 <small>
-                  {hasReceipt
-                    ? formatearFechaHora(cobro.fechaComprobante)
-                    : "Esperando la transferencia de la inmobiliaria"}
+                  {hasReceipt && formatearFechaHora(cobro.fechaComprobante)}
+                  {!hasReceipt && cobro.estado === "Pendiente" && "Esperando la transferencia de la inmobiliaria"}
                 </small>
               </span>
             </div>
@@ -302,12 +323,12 @@ export default function Cobros() {
             <div className="cobros__financials">
               <div className="cobros__facts">
                 <div>
-                  <Icono src={calendarIcon} />
+                  <span className="cobros__round-symbol" aria-hidden="true"><Icono src={calendarIcon} /></span>
                   <strong>Fecha de cobro:</strong>
                   <b>{formatearFecha(cobro.fechaPagoInquilino)}</b>
                 </div>
                 <div>
-                  <Icono src={calendarIcon} />
+                  <span className="cobros__round-symbol" aria-hidden="true"><Icono src={calendarIcon} /></span>
                   <strong>Fecha de liquidación:</strong>
                   <b>{formatearFecha(cobro.fechaCobro)}</b>
                 </div>
@@ -323,14 +344,18 @@ export default function Cobros() {
                 </div>
                 <div className="cobros__facts-total">
                   <span className="cobros__round-symbol">$</span>
-                  <strong>Monto total:</strong>
+                  <strong>Monto total{cobro.moneda ? ` (${cobro.moneda})` : ""}:</strong>
                   <b>{formatearMonto(cobro.montoNeto)}</b>
                 </div>
               </div>
 
               <section className="cobros__breakdown" aria-label="Detalle del cobro">
                 <h3>Detalle del cobro</h3>
-                {cobro.conceptos?.length ? (
+                {historial.cargandoDetalle ? (
+                  <p role="status">Cargando detalle…</p>
+                ) : historial.errorDetalle ? (
+                  <button type="button" onClick={historial.recargar}>Reintentar detalle</button>
+                ) : cobro.conceptos?.length ? (
                   cobro.conceptos.map((linea) => (
                     <div key={linea.idConcepto}>
                       <span>{linea.nombre}:</span>
@@ -344,22 +369,33 @@ export default function Cobros() {
                 )}
               </section>
             </div>
-            <aside className="cobros__admin-note">
-              <span>
-                <Icono src={fileLinesIcon} />
-              </span>
-              <div>
-                <strong>Detalle de administración</strong>
-                <p>{notaDe(cobro)}</p>
-              </div>
-            </aside>
-            <Boton className="cobros__download" onClick={downloadReceipt} disabled={!hasReceipt}>
-              <Icono src={downloadIcon} />
-              <span>Descargar comprobante</span>
-            </Boton>
+            {cobro.detalle && (
+              <aside className="cobros__admin-note">
+                <span><Icono src={fileLinesIcon} /></span>
+                <div><strong>Detalle de administración</strong><p>{cobro.detalle}</p></div>
+              </aside>
+            )}
+            <div className="cobros__actions">
+              {hasReceipt && (
+                <Boton className="cobros__download" onClick={downloadReceipt}>
+                  <Icono src={downloadIcon} />
+                  <span>Descargar comprobante</span>
+                </Boton>
+              )}
+              {cobro.estado === "Liquidado" && (
+                <Boton className="cobros__review" icon={paperPlaneIcon} text="Solicitar revisión" onClick={() => setDialogo("revision")} />
+              )}
+            </div>
+            {cobro.estado === "Liquidado" && hasReceipt && (
+              <p className="cobros__note">El comprobante queda disponible para consultas y descarga.</p>
+            )}
           </article>
         </div>
       </section>
+      {dialogo === "comprobante" && <DialogoComprobante {...comprobante} onCerrar={() => setDialogo(null)} />}
+      {dialogo === "revision" && (
+        <DialogoRevision periodo={nombrePeriodo(cobro.periodo)} solicitar={solicitarRevisionCobro} id={cobro.id} onCerrar={() => setDialogo(null)} />
+      )}
     </main>
   );
 }

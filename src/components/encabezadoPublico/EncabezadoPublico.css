@@ -126,8 +126,10 @@
   cursor: pointer;
 }
 
-.EncabezadoPublico__buscar .icono-inicio {
+.EncabezadoPublico__buscar button img {
+  display: block;
   width: 18px;
+  height: 18px;
 }
 
 .EncabezadoPublico .EncabezadoPublico__ingresar {

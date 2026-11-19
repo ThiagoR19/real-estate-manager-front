@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { mostrarAviso } from "../components/avisos/almacenAvisos";
 
 const MESES = [
   "Enero",
@@ -43,11 +42,21 @@ export function formatearMonto(valor) {
   return Number(valor).toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
+export function etiquetarContratos(contratos) {
+  const repetidos = new Map();
+  for (const { propiedad } of contratos) repetidos.set(propiedad, (repetidos.get(propiedad) ?? 0) + 1);
+  return contratos.map((contrato) => {
+    const { propiedad, idContrato } = contrato;
+    const etiqueta = repetidos.get(propiedad) > 1 ? `${propiedad} · Contrato ${idContrato}` : propiedad;
+    return { ...contrato, etiqueta };
+  });
+}
+
 export default function useHistorialPeriodos(listar, consultar) {
   const [items, setItems] = useState(null);
   const [error, setError] = useState("");
-  const [idContrato, setIdContrato] = useState(null);
-  const [idSeleccionado, setIdSeleccionado] = useState(null);
+  const [contratoElegido, setContratoElegido] = useState(null);
+  const [periodoElegido, setPeriodoElegido] = useState(null);
   const [recargas, setRecargas] = useState(0);
   const [estado, setEstado] = useState({ clave: null, detalle: null });
 
@@ -58,8 +67,6 @@ export default function useHistorialPeriodos(listar, consultar) {
         if (!activo) return;
         setItems(lista);
         setError("");
-        setIdContrato((actual) => actual ?? lista[0]?.idContrato ?? null);
-        setIdSeleccionado((actual) => actual ?? lista[0]?.id ?? null);
       })
       .catch((causa) => {
         if (!activo) return;
@@ -71,7 +78,16 @@ export default function useHistorialPeriodos(listar, consultar) {
     };
   }, [listar, recargas]);
 
-  const clave = idSeleccionado ? `${idSeleccionado}|${recargas}` : null;
+  const contratosPorId = new Map();
+  for (const { idContrato, propiedad } of items ?? []) {
+    contratosPorId.set(idContrato, { idContrato, propiedad });
+  }
+  const contratos = etiquetarContratos([...contratosPorId.values()]);
+  const idContrato = contratosPorId.has(contratoElegido) ? contratoElegido : contratos[0]?.idContrato;
+  const delContrato = (items ?? []).filter((item) => item.idContrato === idContrato);
+  const seleccionado = delContrato.find((item) => item.id === periodoElegido || item.periodo === periodoElegido) ?? delContrato[0] ?? null;
+  const idSeleccionado = seleccionado?.id;
+  const clave = idSeleccionado == null ? null : `${idSeleccionado}|${recargas}`;
 
   useEffect(() => {
     if (!clave) return undefined;
@@ -80,42 +96,40 @@ export default function useHistorialPeriodos(listar, consultar) {
       .then((detalle) => {
         if (!activo) return;
         setEstado({ clave, detalle });
-        setError("");
       })
       .catch((causa) => {
         if (!activo) return;
-        setEstado({ clave, detalle: null });
-        mostrarAviso({ tipo: "error", titulo: "No se pudo cargar el detalle", mensaje: causa.message });
+        setEstado({ clave, detalle: null, error: causa.message });
       });
     return () => {
       activo = false;
     };
   }, [consultar, clave, idSeleccionado]);
 
-  const contratos = [];
-  for (const item of items ?? []) {
-    if (!contratos.some((contrato) => contrato.idContrato === item.idContrato)) {
-      contratos.push({ idContrato: item.idContrato, propiedad: item.propiedad });
-    }
-  }
-
-  const delContrato = (items ?? []).filter((item) => item.idContrato === idContrato);
   const anios = [...new Set(delContrato.map((item) => item.periodo.slice(0, 4)))].map((anio) => ({
     anio,
     periodos: delContrato.filter((item) => item.periodo.startsWith(anio)),
   }));
-  const seleccionado = (items ?? []).find((item) => item.id === idSeleccionado) ?? null;
   const detalle = estado.clave === clave && estado.detalle ? estado.detalle : seleccionado;
 
   function elegir(id) {
-    setIdSeleccionado(id);
-    setError("");
+    setPeriodoElegido(id);
   }
 
-  function elegirContrato(nuevoId) {
-    setError("");
-    setIdContrato(nuevoId);
-    setIdSeleccionado(items.find((item) => item.idContrato === nuevoId)?.id ?? null);
+  function incorporar(item) {
+    setItems((actual) => [item, ...(actual ?? []).filter(({ id }) => id !== item.id)]);
+    setContratoElegido(item.idContrato);
+    setPeriodoElegido(item.id);
+    recargar();
+  }
+
+  function recargar() {
+    setRecargas((cantidad) => cantidad + 1);
+  }
+
+  function elegirContrato(nuevoId, periodo = null) {
+    setContratoElegido(nuevoId);
+    setPeriodoElegido(periodo);
   }
 
   function moverContrato(direccion) {
@@ -134,9 +148,11 @@ export default function useHistorialPeriodos(listar, consultar) {
     seleccionado,
     detalle,
     cargandoDetalle: Boolean(clave) && estado.clave !== clave,
+    errorDetalle: estado.clave === clave ? estado.error : null,
     elegirContrato,
     moverContrato,
     elegir,
-    recargar: () => setRecargas((cantidad) => cantidad + 1),
+    incorporar,
+    recargar,
   };
 }

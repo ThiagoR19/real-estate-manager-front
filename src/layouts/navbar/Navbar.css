@@ -154,11 +154,6 @@
   font-weight: 700;
   cursor: pointer;
 }
-.navbar__logout-error {
-  margin: 8px 0 0;
-  color: #991b1b;
-  font-size: 12px;
-}
 .navbar__drawer-avatar {
   display: grid;
   place-items: center;
@@ -253,39 +248,6 @@
   position: relative;
   padding-right: 18px;
   border-right: 1px solid #d6d6d6;
-}
-
-.navbar__notifications summary {
-  display: grid;
-  place-items: center;
-  width: 28px;
-  height: 36px;
-  list-style: none;
-  cursor: pointer;
-}
-
-.navbar__notifications summary::-webkit-details-marker {
-  display: none;
-}
-
-.navbar__notifications summary img {
-  width: 23px;
-  height: 23px;
-}
-
-.navbar__notifications p {
-  position: absolute;
-  top: 40px;
-  right: 0;
-  z-index: 30;
-  width: 250px;
-  margin: 0;
-  padding: 18px;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 4px 16px #17235e14;
-  font-size: 14px;
 }
 
 .navbar__account-link {

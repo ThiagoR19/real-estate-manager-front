@@ -6,7 +6,6 @@ export default function TituloSeccion({ titulo, subtitulo, id, className = "" })
       <h2 className="TituloSeccion__titulo" id={id}>
         {titulo}
       </h2>
-
       {subtitulo && <p className="TituloSeccion__subtitulo">{subtitulo}</p>}
     </header>
   );

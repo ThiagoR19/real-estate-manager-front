@@ -20,14 +20,12 @@ const IMAGENES = [
 
 const TEXTO_BOTON = { guardando: "Guardando...", guardado: "Cambios guardados" };
 
-// Pasa el archivo elegido en un input file a onElegir y limpia el input
 function leerArchivo(event, onElegir) {
   const file = event.target.files?.[0];
   event.target.value = "";
   if (file) onElegir(file);
 }
 
-// Esfera de la tarjeta: el logo llenando el círculo o, si no hay, las iniciales con el estilo de avatar
 function EsferaLogo({ logo, nombre }) {
   const [primera = "", segunda = ""] = nombre.trim().split(/\s+/);
   if (logo) {
@@ -44,7 +42,6 @@ function EsferaLogo({ logo, nombre }) {
   );
 }
 
-// Título de cada sección del formulario
 function EncabezadoSeccion({ icon, title, description }) {
   return (
     <div className="inmobiliaria__section-heading">
@@ -59,7 +56,6 @@ function EncabezadoSeccion({ icon, title, description }) {
   );
 }
 
-// Input de texto: vacío, con el dato guardado como placeholder
 function CampoTexto({ campo, valor, guardado, onChange, disabled }) {
   return (
     <label className={`inmobiliaria__field${campo.ancho ? " inmobiliaria__field--wide" : ""}`}>
@@ -81,7 +77,6 @@ function CampoTexto({ campo, valor, guardado, onChange, disabled }) {
   );
 }
 
-// Recuadro para subir una imagen, con su vista previa
 function CampoCarga({ imagen, url, onElegir, disabled }) {
   const inputRef = useRef(null);
   const etiqueta = imagen.label.toLowerCase();
@@ -116,7 +111,6 @@ function CampoCarga({ imagen, url, onElegir, disabled }) {
   );
 }
 
-// Vista Mi inmobiliaria: tarjeta con logo, nombre y ubicación, y formulario de datos e imágenes
 export default function Inmobiliaria() {
   const { guardado, campos, imagenes, estado, cambiarCampo, cambiarImagen, guardar } = useMiInmobiliaria();
   const logoInputRef = useRef(null);

@@ -82,12 +82,10 @@ body:has(#inmobiliaria) {
   user-select: none;
 }
 
-/* Con el id para ganarle a "#inmobiliaria img { object-fit: contain }": el logo llena la esfera */
 #inmobiliaria .inmobiliaria__identity-logo {
   object-fit: cover;
 }
 
-/* Sin logo: iniciales sobre el fondo de avatarClass */
 .inmobiliaria__identity-logo--iniciales {
   display: grid;
   place-items: center;
@@ -300,10 +298,6 @@ body:has(#inmobiliaria) {
 .inmobiliaria__upload span {
   font-size: 14px;
   line-height: 1.3;
-}
-
-.inmobiliaria__upload input {
-  display: none;
 }
 
 .inmobiliaria__upload-field > input,

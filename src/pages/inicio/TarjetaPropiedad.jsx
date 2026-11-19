@@ -8,10 +8,8 @@ import banoIcono from "../../assets/icons/duchaIcon.svg";
 import superficieIcono from "../../assets/icons/medidaIcon.svg";
 import ojoIcono from "../../assets/icons/ojoVistoIcon.svg";
 
-// Imagen que se muestra si la propiedad no tiene foto o la foto no carga
 const IMAGEN_POR_DEFECTO = "/images%20(1).jpg";
 
-// Cambia una foto que no cargó por la imagen por defecto (una sola vez)
 function usarImagenPorDefecto(event) {
   if (event.currentTarget.dataset.porDefecto) return;
   event.currentTarget.dataset.porDefecto = "true";

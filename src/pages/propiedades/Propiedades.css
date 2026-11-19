@@ -266,8 +266,7 @@
   margin-top: 9px;
 }
 
-.propiedades__details-button,
-.propiedades__more-button {
+.propiedades__details-button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -292,21 +291,7 @@
   height: 20px;
 }
 
-.propiedades__more-button {
-  flex: 0 0 56px;
-  padding: 0;
-}
-
-.propiedades__more-button span {
-  position: relative;
-  top: -4px;
-  letter-spacing: 2px;
-  font-size: 21px;
-  font-weight: 700;
-}
-
-.propiedades__details-button:hover,
-.propiedades__more-button:hover {
+.propiedades__details-button:hover {
   border-color: #c5dff3;
   background: #f7fbff;
 }
@@ -450,7 +435,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .propiedades__details-button,
-  .propiedades__more-button,
   .propiedades__new-button {
     transition: none;
   }

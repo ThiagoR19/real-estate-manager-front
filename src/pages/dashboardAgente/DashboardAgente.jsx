@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { calendarIcon, plusIconWhite, toolboxIcon, userIcon } from "../../assets/icons";
 import {
-  TarjetaActividad as SharedActivityCard,
-  TarjetaRendimiento as SharedPerformanceCard,
+  TarjetaActividad,
+  TarjetaRendimiento,
   mostrarAviso,
 } from "../../components";
 import { api } from "../../services/api";
@@ -194,13 +194,13 @@ export default function DashboardAgente() {
 
         <div className="dashboard-agente__grid">
           <TarjetaAgenda fecha={datos.fecha} agenda={datos.agenda} />
-          <SharedPerformanceCard
+          <TarjetaRendimiento
             className="dashboard-agente__performance-card"
             indicadores={datos.indicadores}
             grafico={datos.rendimiento}
           />
           <TarjetaReportes reportes={datos.reportesSinRevisar} />
-          <SharedActivityCard />
+          <TarjetaActividad />
         </div>
       </div>
     </main>

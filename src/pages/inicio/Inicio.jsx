@@ -8,10 +8,8 @@ import "./Inicio.css";
 import { useCallback, useEffect, useState } from "react";
 import { api } from "../../services/api";
 
-// Cantidad de propiedades que se muestran en "Propiedades destacadas"
 const CANTIDAD_DESTACADAS = 8;
 
-// Tarjetas de relleno que se ven en skeleton mientras llegan las destacadas
 const TARJETAS_RELLENO = Array.from({ length: 4 }, (_, indice) => ({
   id: `relleno-${indice}`,
   titulo: "Propiedad destacada",
@@ -22,8 +20,6 @@ const TARJETAS_RELLENO = Array.from({ length: 4 }, (_, indice) => ({
   operacion: "Venta",
 }));
 
-// loading y datos vienen de LayoutPublico (datos de la inmobiliaria); acá solo se piden las destacadas.
-// Mientras falte cualquiera de las dos cosas la vista se muestra en skeleton.
 export default function Inicio({ loading, datos }) {
   const [cargandoPropiedades, setCargandoPropiedades] = useState(true);
   const [propiedades, setPropiedades] = useState([]);

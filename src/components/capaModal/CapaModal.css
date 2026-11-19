@@ -49,29 +49,6 @@
   transform: none;
 }
 
-
-.CapaModal__contenido--centro {
-  top: 50%;
-  left: 50%;
-  max-width: calc(100% - 32px);
-  max-height: calc(100% - 32px);
-  opacity: 0;
-  transform: translate(-50%, -50%) scale(0.95);
-}
-
-.CapaModal--abierta .CapaModal__contenido--centro {
-  opacity: 1;
-  transform: translate(-50%, -50%);
-}
-
-@media (max-width: 760px) {
-  .CapaModal__contenido--centro {
-    max-width: calc(100% - 16px);
-    max-height: calc(100dvh - 24px);
-    overflow-y: auto;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .CapaModal,
   .CapaModal__fondo,

@@ -1,5 +1,5 @@
 import { Link, useLocation, useSearchParams } from "wouter";
-import { Icono } from "../inicio/IconoInicio";
+import { magnifyingGlassIcon } from "../../assets/icons";
 import useBuscadorZona from "../../hooks/useBuscadorZona";
 import "./EncabezadoPublico.css";
 
@@ -34,7 +34,7 @@ function BuscadorZona({ filtroActivo }) {
         onChange={(event) => setTexto(event.target.value)}
       />
       <button type="submit" aria-label="Buscar">
-        <Icono name="search" />
+        <img src={magnifyingGlassIcon} alt="" />
       </button>
     </form>
   );

@@ -12,7 +12,7 @@ export { default as Inicio } from "./inicio/Inicio";
 export { default as Indec } from "./indec/Indec";
 export { default as MisPropiedades } from "./misPropiedades/MisPropiedades";
 export { default as Propietarios } from "./propietarios/Propietarios";
-export { default as Pagos } from "./pagos/PagosReferencia";
+export { default as Pagos } from "./pagos/Pagos";
 export { default as PagosYCobros } from "./pagosYCobros/PagosYCobros";
 export { default as Profesionales } from "./profesionales/Profesionales";
 export { default as Perfil } from "./perfil/Perfil";

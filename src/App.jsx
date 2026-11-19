@@ -13,7 +13,6 @@ import { api } from "./services/api.js";
 
 let yaSeHizo = false;
 const validar = ["/", "/propiedades-publicas", "/propiedad-publica", "/sobre-nosotros", "/inicio"]
-// Las vistas de la landing van todas dentro de LayoutPublico (header, datos de la inmobiliaria y footer)
 const RUTAS_LANDING = /^\/(inicio|sobre-nosotros|propiedades-publicas|propiedad-publica)?\/?$/
 const dashboardsPorRol = {
   2: Dashboard,

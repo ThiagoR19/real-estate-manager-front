@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { xIcon as closeIcon } from "../../assets/icons";
+import { xIcon } from "../../assets/icons";
 import brandLogo from "../../assets/logoAGI.png";
 import {
   todosLosElementos,
@@ -180,7 +180,7 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
             aria-label="Cerrar menú"
             onClick={onClose}
           >
-            <img src={closeIcon} alt="" />
+            <img src={xIcon} alt="" />
           </button>
         </div>
 

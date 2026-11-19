@@ -285,11 +285,6 @@
     letter-spacing: 0.6px;
   }
 
-  .Nosotros__estadisticas {
-    border-bottom: none;
-    padding-bottom: 20px;
-  }
-
   .Servicios {
     padding: 34px clamp(10px, 7vw, 28px) 40px;
   }

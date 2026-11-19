@@ -1,14 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "wouter";
-import {
-  angleDownIcon,
-  checkToastIcon,
-  clockToastIcon,
-  infoToastIcon,
-  warningToastIcon,
-  xIcon,
-  xToastIcon,
-} from "../../assets/icons";
+import { angleDownIcon, checkToastIcon, clockToastIcon, infoToastIcon, warningToastIcon, xIcon, xToastIcon } from "../../assets/icons";
 import "./Aviso.css";
 
 const iconos = {

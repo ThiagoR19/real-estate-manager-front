@@ -43,159 +43,6 @@ body:has(#perfil) {
   outline-offset: 4px;
 }
 
-.perfil__header {
-  display: flex;
-  align-items: center;
-  gap: 19px;
-  height: 61px;
-  padding: 0 19px 0 12px;
-  border-bottom: 1px solid #e1e4e9;
-  background: #fff;
-  box-shadow: 0 1px 3px #17235e0a;
-}
-
-.perfil__menu-button {
-  display: grid;
-  flex-shrink: 0;
-  place-items: center;
-  width: 27px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: inherit;
-  cursor: pointer;
-}
-
-.perfil__menu-icon {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  width: 26px;
-}
-
-.perfil__menu-icon i {
-  display: block;
-  height: 4px;
-  border-radius: 3px;
-  background: #17235e;
-}
-
-.perfil__brand {
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  gap: 25px;
-}
-
-.perfil__brand-icon {
-  width: 37px;
-  height: 40px;
-  filter: brightness(0) saturate(100%) invert(52%) sepia(92%) saturate(2012%) hue-rotate(150deg) brightness(94%) contrast(101%) !important;
-}
-
-.perfil__brand strong {
-  font-size: 31px;
-  font-weight: 750;
-  line-height: 1;
-}
-
-.perfil__header-nav {
-  display: flex;
-  align-items: center;
-  height: 36px;
-  font-size: 21px;
-  white-space: nowrap;
-}
-
-.perfil__header-nav-link {
-  display: flex;
-  align-items: center;
-  height: 100%;
-  padding-right: 20px;
-  border-right: 1px solid #d6d6d6;
-  font-weight: 700;
-}
-
-.perfil__header-nav-current {
-  padding-left: 15px;
-  font-weight: 500;
-}
-
-.perfil__account {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-left: auto;
-}
-
-.perfil__notifications {
-  position: relative;
-  padding-right: 18px;
-  border-right: 1px solid #d6d6d6;
-}
-
-.perfil__notifications summary {
-  display: grid;
-  place-items: center;
-  width: 28px;
-  height: 36px;
-  list-style: none;
-  cursor: pointer;
-}
-
-.perfil__notifications summary::-webkit-details-marker {
-  display: none;
-}
-
-.perfil__notifications summary img {
-  width: 23px;
-  height: 23px;
-}
-
-.perfil__notifications p {
-  position: absolute;
-  top: 40px;
-  right: 0;
-  z-index: 2;
-  width: 250px;
-  margin: 0;
-  padding: 18px;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 4px 16px #17235e14;
-  font-size: 14px;
-}
-
-.perfil__account-link {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.perfil__account-link>span {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-size: 14px;
-  line-height: 1.2;
-  white-space: nowrap;
-}
-
-.perfil__account-link small {
-  font-size: 10px;
-}
-
-.perfil__account-avatar {
-  display: block;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background-position: -1460px -10px;
-  background-size: 1521px 766px;
-  background-repeat: no-repeat;
-}
-
 .perfil__layout {
   display: grid;
   grid-template-columns: 373px minmax(0, 1fr);
@@ -289,10 +136,6 @@ body:has(#perfil) {
   font-size: 13px;
   line-height: 1.35;
   overflow-wrap: anywhere;
-}
-
-.perfil__photo-feedback--error {
-  color: #991b1b;
 }
 
 .perfil__identity-card h1 {
@@ -583,31 +426,6 @@ body:has(#perfil) {
   filter: brightness(0) saturate(100%) invert(20%) sepia(91%) saturate(2031%) hue-rotate(341deg) brightness(88%) contrast(101%) !important;
 }
 
-.perfil__logout-error {
-  position: absolute;
-  right: 0;
-  bottom: 55px;
-  width: min(420px, 90vw);
-  margin: 0;
-  color: #991b1b;
-  font-size: 13px;
-  text-align: right;
-}
-
-.perfil__save-feedback {
-  position: absolute;
-  right: 0;
-  bottom: 55px;
-  margin: 0;
-  color: #166534;
-  font-size: 13px;
-  text-align: right;
-}
-
-.perfil__save-feedback--error {
-  color: #991b1b;
-}
-
 .perfil__save-button img {
   width: 18px;
   height: 18px;
@@ -653,42 +471,6 @@ body:has(#perfil) {
 }
 
 @media (max-width: 760px) {
-  .perfil__header {
-    gap: 13px;
-    padding-right: 12px;
-  }
-
-  .perfil__brand {
-    gap: 8px;
-  }
-
-  .perfil__brand strong {
-    font-size: 25px;
-  }
-
-  .perfil__header-nav {
-    font-size: 16px;
-  }
-
-  .perfil__header-nav-link {
-    padding-right: 12px;
-  }
-
-  .perfil__header-nav-current {
-    padding-left: 12px;
-  }
-
-  .perfil__account {
-    gap: 10px;
-  }
-
-  .perfil__notifications {
-    padding-right: 8px;
-  }
-
-  .perfil__account-link>span {
-    display: none;
-  }
 
   .perfil__layout {
     grid-template-columns: minmax(0, 1fr);
@@ -730,38 +512,6 @@ body:has(#perfil) {
 }
 
 @media (max-width: 460px) {
-  .perfil__header {
-    gap: 10px;
-  }
-
-  .perfil__brand-icon {
-    width: 30px;
-  }
-
-  .perfil__header-nav {
-    font-size: 14px;
-  }
-
-  .perfil__header-nav-link {
-    border-right: 0;
-    padding-right: 0;
-  }
-
-  .perfil__header-nav-current {
-    display: none;
-  }
-
-  .perfil__notifications {
-    border-right: 0;
-    padding-right: 0;
-  }
-
-  .perfil__account-avatar {
-    width: 36px;
-    height: 36px;
-    background-position: -1251.43px -8.57px;
-    background-size: 1303.71px 656.57px;
-  }
 
   .perfil__fields--personal,
   .perfil__fields--passwords {
@@ -963,13 +713,6 @@ body:has(#perfil) {
     flex-wrap: wrap;
   }
 
-  .perfil__save-feedback {
-    position: static;
-    order: -1;
-    width: 100%;
-    text-align: left;
-  }
-
   .perfil__actions {
     justify-content: stretch;
   }
@@ -980,12 +723,6 @@ body:has(#perfil) {
     flex: 1;
     padding: 10px 8px;
     font-size: 13px;
-  }
-
-  .perfil__logout-error {
-    position: fixed;
-    right: 16px;
-    bottom: 72px;
   }
 
   .perfil__password-hint {

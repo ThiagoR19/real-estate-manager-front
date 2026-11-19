@@ -5,10 +5,10 @@ import {
   circleInfoIcon,
   desktopIcon,
   envelopeIcon,
-  fileLinesIcon as fileIcon,
+  fileLinesIcon,
   houseIcon,
   lockIcon,
-  shieldHalvedIcon as shieldIcon,
+  shieldHalvedIcon,
   userIcon,
 } from "../../assets/icons";
 import "./Terminos.css";
@@ -17,7 +17,7 @@ const sections = [
   {
     id: "introduccion",
     title: "Introducción",
-    icon: fileIcon,
+    icon: fileLinesIcon,
     text: "AGI Propiedades es una plataforma para organizar la gestión inmobiliaria en un solo lugar. Permite administrar propiedades, propietarios, inquilinos, agentes, contratos, pagos y comunicaciones de forma más simple y ordenada.",
   },
   {
@@ -41,7 +41,7 @@ const sections = [
   {
     id: "responsabilidades",
     title: "Responsabilidades",
-    icon: shieldIcon,
+    icon: shieldHalvedIcon,
     text: "AGI Propiedades brinda herramientas para facilitar la gestión, pero cada usuario debe revisar la información antes de tomar decisiones o compartirla. La plataforma no reemplaza el asesoramiento legal, contable o profesional que pueda requerir cada operación.",
   },
   {
@@ -159,7 +159,7 @@ export default function Terminos({ publico = false }) {
           </header>
 
           <label className="terminos__mobile-documentation">
-            <img src={fileIcon} alt="" />
+            <img src={fileLinesIcon} alt="" />
             <span className="sr-only">Ir a sección</span>
             <select
               value={activeSection}

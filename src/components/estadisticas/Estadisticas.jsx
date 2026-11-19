@@ -1,15 +1,13 @@
 import "./Estadisticas.css";
 
-
-
 export default function Estadisticas({ className = "", vendidas = 0, anios = 0, activas = 0 }) {
-  
+
   const calcularClientesSatisfechos = (aniosExp, propVendidas) => {
-    const baseSatisfaccion = 88; 
+    const baseSatisfaccion = 88;
     const bonoExperiencia = Math.min((Number(aniosExp) || 0) * 1.2, 4);
     const bonoVentas = Math.min((Number(propVendidas) || 0) * 0.35, 6);
     let porcentajeFinal = baseSatisfaccion + bonoExperiencia + bonoVentas;
-    
+
     return Math.round(Math.min(Math.max(porcentajeFinal, 85), 99));
   };
 

@@ -3,7 +3,7 @@ import { Link } from "wouter";
 import { api } from "../../services/api";
 import PageSkeleton from "../../components/skeleton/PageSkeleton";
 
-import { TarjetaActividad as SharedActivityCard, TarjetaRendimiento as SharedPerformanceCard } from "../../components";
+import { TarjetaActividad, TarjetaRendimiento } from "../../components";
 import initials from "../../utils/initials"
 import avatar from "../../utils/avatarClass"
 import { mostrarAviso } from "../../components"
@@ -107,14 +107,14 @@ export default function Dashboard() {
           <TarjetaAgentes
             agents={datos.topAgentes}
           />
-          <SharedPerformanceCard
+          <TarjetaRendimiento
             indicadores={datos.indicadores}
             grafico={datos.rendimiento}
           />
           <TarjetaEstado
             valores={datos.estadosPropiedades}
           />
-          <SharedActivityCard className="dashboard-shared-activity" />
+          <TarjetaActividad className="dashboard-shared-activity" />
         </div>
       </main>
     );

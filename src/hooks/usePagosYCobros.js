@@ -71,10 +71,15 @@ async function detalleDePago(contrato, periodo) {
     contrato: datosContrato,
     registro: pago,
     estado,
+    nota: pago?.detalle ?? "",
     editable: !pago || PAGO_EDITABLE.includes(estado),
     puedeAprobar: Boolean(pago) && !["Aprobado", "Anulado"].includes(estado),
     puedeRechazar: estado === "En revision",
-    comprobante: comprobante ? { nombre: comprobante.nombreArchivo, fecha: comprobante.fechaCarga } : null,
+    comprobante: comprobante ? {
+      nombre: comprobante.nombreArchivo,
+      fecha: comprobante.fechaCarga,
+      motivoRechazo: comprobante.motivoRechazo,
+    } : null,
     lineas: armarLineas(
       conceptos,
       pago?.conceptos,
@@ -95,6 +100,7 @@ async function detalleDeCobro(persona, contrato, periodo) {
     pago,
     registro: cobro,
     estado: cobro?.estado ?? (pagoAprobado ? "Sin liquidar" : "Esperando el pago del inquilino"),
+    nota: cobro?.detalle ?? "",
     editable: cobro ? cobro.estado === "Pendiente" : pagoAprobado,
     puedeAprobar: cobro?.estado === "Pendiente",
     puedeRechazar: false,
@@ -113,10 +119,14 @@ export default function usePagosYCobros() {
   const hoy = new Date();
   const [personas, setPersonas] = useState(null);
   const [seleccion, setSeleccion] = useState(null);
+  const [idRevision, setIdRevision] = useState(null);
   const [anio, setAnio] = useState(hoy.getFullYear());
   const [mes, setMes] = useState(hoy.getMonth() + 1);
   const [recargas, setRecargas] = useState(0);
-  const [estado, setEstado] = useState({ clave: null, detalle: null });
+  const [intentosPendientes, setIntentosPendientes] = useState(0);
+  const [estado, setEstado] = useState(null);
+  const [estadoRevision, setEstadoRevision] = useState(null);
+  const [pendientes, setPendientes] = useState(null);
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState("");
 
@@ -124,8 +134,11 @@ export default function usePagosYCobros() {
   const contrato = persona?.contratos.find((item) => item.idContrato === seleccion?.idContrato) ?? null;
   const periodo = `${anio}-${String(mes).padStart(2, "0")}`;
   const clave = contrato ? `${persona.id}|${contrato.idContrato}|${periodo}|${recargas}` : null;
-  const cargando = Boolean(clave) && estado.clave !== clave;
-  const detalle = estado.detalle;
+  const cargando = Boolean(clave) && estado?.clave !== clave;
+  const detalle = estado?.clave === clave ? estado.detalle : null;
+  const revision = estadoRevision?.id === idRevision && estadoRevision.recargas === recargas
+    ? estadoRevision
+    : null;
 
   useEffect(() => {
     let activo = true;
@@ -148,6 +161,29 @@ export default function usePagosYCobros() {
   }, []);
 
   useEffect(() => {
+    let activo = true;
+    api.pagos({ estado: "En revision" })
+      .then((items) => activo && setPendientes({ items, error: "" }))
+      .catch((error) => activo && setPendientes({ items: [], error: error.message }));
+
+    return () => {
+      activo = false;
+    };
+  }, [intentosPendientes, recargas]);
+
+  useEffect(() => {
+    if (!idRevision) return undefined;
+    let activo = true;
+    api.pago(idRevision)
+      .then((pago) => activo && setEstadoRevision({ id: idRevision, recargas, pago }))
+      .catch((error) => activo && setEstadoRevision({ id: idRevision, recargas, error: error.message }));
+
+    return () => {
+      activo = false;
+    };
+  }, [idRevision, recargas]);
+
+  useEffect(() => {
     if (!clave) return undefined;
     let activo = true;
     const pedido = persona.tipo === "Locatario"
@@ -158,8 +194,7 @@ export default function usePagosYCobros() {
       .then((nuevo) => activo && setEstado({ clave, detalle: nuevo }))
       .catch((error) => {
         if (!activo) return;
-        setEstado({ clave, detalle: null });
-        mostrarAviso({ tipo: "error", titulo: "No se pudo cargar el detalle", mensaje: error.message });
+        setEstado({ clave, detalle: null, error: error.message });
       });
     return () => {
       activo = false;
@@ -167,7 +202,14 @@ export default function usePagosYCobros() {
   }, [clave, persona, contrato, periodo]);
 
   function elegir(nuevaPersona, nuevoContrato) {
+    setIdRevision(null);
     setSeleccion({ idPersona: nuevaPersona.id, idContrato: nuevoContrato.idContrato });
+  }
+
+  function elegirRevision(id) {
+    if (id === idRevision) return;
+    setEstadoRevision(null);
+    setIdRevision(id);
   }
 
   function cambiarPeriodo(nuevoAnio, nuevoMes) {
@@ -175,14 +217,17 @@ export default function usePagosYCobros() {
     setMes(nuevoMes);
   }
 
-  function cambiarLineas(cambiar) {
-    setEstado((actual) => ({ ...actual, detalle: { ...actual.detalle, lineas: cambiar(actual.detalle.lineas) } }));
+  function cambiarDetalle(cambiar) {
+    setEstado((actual) => {
+      if (actual?.clave !== clave || !actual?.detalle) return actual;
+      return { ...actual, detalle: { ...actual.detalle, ...cambiar(actual.detalle) } };
+    });
   }
 
   function actualizarLinea(idConcepto, cambios) {
-    cambiarLineas((lineas) =>
-      lineas.map((linea) => (linea.idConcepto === idConcepto ? { ...linea, ...cambios } : linea)),
-    );
+    cambiarDetalle(({ lineas }) => ({
+      lineas: lineas.map((linea) => (linea.idConcepto === idConcepto ? { ...linea, ...cambios } : linea)),
+    }));
   }
 
   async function ejecutar(accion, titulo, mensaje) {
@@ -194,6 +239,7 @@ export default function usePagosYCobros() {
       return true;
     } catch (error) {
       mostrarAviso({ tipo: "error", titulo: "No se pudo completar la acción", mensaje: error.message });
+      if (error.cause?.response?.status === 409) setRecargas((cantidad) => cantidad + 1);
       return false;
     } finally {
       setGuardando(false);
@@ -201,7 +247,11 @@ export default function usePagosYCobros() {
   }
 
   function cambiarComision(porcentaje) {
-    setEstado((actual) => ({ ...actual, detalle: { ...actual.detalle, porcentaje } }));
+    cambiarDetalle(() => ({ porcentaje }));
+  }
+
+  function cambiarNota(nota) {
+    cambiarDetalle(() => ({ nota }));
   }
 
   function enviar() {
@@ -209,17 +259,18 @@ export default function usePagosYCobros() {
       .filter(estaIncluida)
       .map((linea) => ({ idConcepto: linea.idConcepto, monto: parseAmount(linea.monto) }));
     const registro = detalle.registro;
+    const nota = detalle.nota.trim() || null;
 
     if (persona.tipo === "Locatario") {
       return ejecutar(
         () =>
           registro
             ? api.modificarPago(registro.id, {
-                fechaVencimiento: new Date(registro.fechaVencimiento).toLocaleDateString("en-CA"),
-                detalle: registro.detalle,
+                fechaVencimiento: registro.fechaVencimiento.slice(0, 10),
+                detalle: nota,
                 conceptos,
               })
-            : api.crearPago({ idContrato: contrato.idContrato, periodo, conceptos }),
+            : api.crearPago({ idContrato: contrato.idContrato, periodo, conceptos, detalle: nota }),
         registro ? "Pago actualizado" : "Pago enviado",
         registro ? "Se guardaron los cambios del pago." : `El pago fue enviado a ${persona.nombre}.`,
       );
@@ -235,21 +286,34 @@ export default function usePagosYCobros() {
     return ejecutar(
       () =>
         registro
-          ? api.modificarCobro(registro.id, { conceptos, detalle: registro.detalle, ...comision })
-          : api.crearCobro({ idPago: detalle.pago.id, idPropietario: persona.idPropietario, conceptos, ...comision }),
+          ? api.modificarCobro(registro.id, { conceptos, detalle: nota, ...comision })
+          : api.crearCobro({
+              idPago: detalle.pago.id,
+              idPropietario: persona.idPropietario,
+              conceptos,
+              detalle: nota,
+              ...comision,
+            }),
       registro ? "Liquidación actualizada" : "Liquidación enviada",
       registro ? "Se guardaron los cambios de la liquidación." : `La liquidación fue enviada a ${persona.nombre}.`,
     );
   }
 
   function aprobar() {
-    return persona.tipo === "Locatario"
-      ? ejecutar(() => api.aprobarPago(detalle.registro.id), "Pago marcado como pagado", `${persona.nombre}: el estado del pago se actualizó.`)
-      : ejecutar(() => api.marcarCobroPagado(detalle.registro.id), "Liquidación pagada", `${persona.nombre}: la liquidación se marcó como pagada.`);
+    if (idRevision || persona.tipo === "Locatario") return decidirPago();
+    return ejecutar(() => api.marcarCobroPagado(detalle.registro.id), "Liquidación pagada", `${persona.nombre}: la liquidación se marcó como pagada.`);
   }
 
-  function rechazar(motivo) {
-    return ejecutar(() => api.rechazarPago(detalle.registro.id, motivo), "Pago marcado como impago", `${persona.nombre}: el estado del pago se actualizó.`);
+  function decidirPago(motivo) {
+    const pago = idRevision ? revision.pago : detalle.registro;
+    const nombre = idRevision ? `${pago.nombre} ${pago.apellido}` : persona.nombre;
+    const comprobante = pago.comprobantes?.[0];
+    const idComprobante = pago.estado === "En revision" && comprobante?.estado === "PENDIENTE"
+      ? comprobante.id
+      : undefined;
+    return motivo
+      ? ejecutar(() => api.rechazarPago(pago.id, motivo, idComprobante), "Pago rechazado", `Se rechazó el pago de ${nombre}.`)
+      : ejecutar(() => api.aprobarPago(pago.id, undefined, idComprobante), "Pago aprobado", `Se aprobó el pago de ${nombre}.`);
   }
 
   async function agregarConcepto(nombre, monto, temporal) {
@@ -267,10 +331,9 @@ export default function usePagosYCobros() {
     setGuardando(true);
     try {
       const concepto = await api.crearConceptoPago({ nombre });
-      cambiarLineas((lineas) => [
-        ...lineas,
-        { idConcepto: concepto.id, nombre: concepto.nombre, monto, checked: true, tono },
-      ]);
+      cambiarDetalle(({ lineas }) => ({
+        lineas: [...lineas, { idConcepto: concepto.id, nombre: concepto.nombre, monto, checked: true, tono }],
+      }));
       mostrarAviso({ tipo: "info", titulo: "Concepto agregado", mensaje: `${concepto.nombre} se agregó al detalle.` });
       return true;
     } catch (error) {
@@ -281,12 +344,17 @@ export default function usePagosYCobros() {
     }
   }
 
-  function descargarComprobante() {
-    const { registro, comprobante } = detalle;
-    const descargar = persona.tipo === "Locatario" ? api.descargarComprobantePago : api.descargarComprobanteCobro;
-    return descargar(registro.id, comprobante.nombre).catch((error) =>
-      mostrarAviso({ tipo: "error", titulo: "No se pudo descargar el comprobante", mensaje: error.message }),
+  function subirComprobanteCobro(archivo) {
+    return ejecutar(
+      () => api.subirComprobanteCobro(detalle.registro.id, archivo),
+      "Comprobante cargado",
+      "El comprobante quedó asociado a la liquidación.",
     );
+  }
+
+  function actualizarPendientes() {
+    setPendientes(null);
+    setIntentosPendientes((cantidad) => cantidad + 1);
   }
 
   return {
@@ -299,15 +367,21 @@ export default function usePagosYCobros() {
     detalle,
     cargando,
     guardando,
-    error,
+    error: error || (!cargando ? estado?.error : ""),
+    pendientes,
+    idRevision,
+    revision,
+    elegirRevision,
+    actualizarPendientes,
     elegir,
     cambiarPeriodo,
     actualizarLinea,
     cambiarComision,
+    cambiarNota,
     enviar,
     aprobar,
-    rechazar,
+    rechazar: decidirPago,
     agregarConcepto,
-    descargarComprobante,
+    subirComprobanteCobro,
   };
 }

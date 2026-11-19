@@ -21,11 +21,14 @@ export const modificarPago = (id, body) => request(`/pagos/${id}`, { method: "PU
 
 export const eliminarPago = (id) => request(`/pagos/${id}`, { method: "DELETE" }).then(datos);
 
-export const aprobarPago = (id, medioPago) =>
-  request(`/pagos/${id}/aprobar`, { method: "PATCH", body: medioPago ? { medioPago } : {} }).then(datos);
+export const aprobarPago = (id, medioPago, idComprobante) =>
+  request(`/pagos/${id}/aprobar`, {
+    method: "PATCH",
+    body: { medioPago: medioPago || undefined, idComprobante },
+  }).then(datos);
 
-export const rechazarPago = (id, motivo) =>
-  request(`/pagos/${id}/rechazar`, { method: "PATCH", body: { motivo } }).then(datos);
+export const rechazarPago = (id, motivo, idComprobante) =>
+  request(`/pagos/${id}/rechazar`, { method: "PATCH", body: { motivo, idComprobante } }).then(datos);
 
 export const prepararCobro = (idContrato, idPropietario, periodo) =>
   request(`/cobros/preparar?${queryDe({ idContrato, idPropietario, periodo })}`).then(datos);

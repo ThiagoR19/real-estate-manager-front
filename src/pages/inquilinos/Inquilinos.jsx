@@ -3,9 +3,9 @@ import PageSkeleton from "../../components/skeleton/PageSkeleton";
 import {
   calendarIcon,
   envelopeIcon,
-  fileLinesIcon as fileIcon,
+  fileLinesIcon,
   houseIcon,
-  locationDotIcon as locationIcon,
+  locationDotIcon,
   magnifyingGlassIcon,
   peopleIcon,
   phoneIcon,
@@ -32,7 +32,7 @@ import initials from "../../utils/initials.js";
 
 const filterDefinitions = [
   { label: "Propiedad", icon: houseIcon, all: "Todas las propiedades" },
-  { label: "Estado", icon: locationIcon, all: "Todos los estados" },
+  { label: "Estado", icon: locationDotIcon, all: "Todos los estados" },
   { label: "Vencimiento", icon: calendarIcon, all: "Todos los vencimientos" },
 ];
 
@@ -275,7 +275,7 @@ export default function Inquilinos() {
       {
         label: "Contratos vigentes",
         value: tenants.filter((tenant) => tenant.estadoContrato === "Vigente").length,
-        icon: fileIcon,
+        icon: fileLinesIcon,
         tone: "info",
       },
       {

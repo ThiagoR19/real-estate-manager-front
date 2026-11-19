@@ -1,0 +1,146 @@
+.comprobante__vista,
+.comprobante__dialogo-vista {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.comprobante__imagen,
+.comprobante__pdf {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  border: 0;
+  object-fit: contain;
+}
+
+.comprobante__mensaje {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  max-width: 100%;
+  margin: 0;
+  padding: 14px;
+  color: #405576;
+  font-size: 14px;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.comprobante__mensaje img {
+  width: 28px;
+  height: 28px;
+}
+
+.comprobante__ampliar {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  padding: 10px;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 9px #17235e33;
+  cursor: pointer;
+}
+
+.comprobante__ampliar img {
+  width: 20px;
+  height: 20px;
+}
+
+.comprobante__dialogo {
+  box-sizing: border-box;
+  width: min(100% - 24px, 700px);
+  max-height: calc(100dvh - 24px);
+  padding: 16px;
+  overflow: auto;
+  border: 1px solid #e2e9f3;
+  border-radius: 14px;
+  background: #fff;
+  color: #17235e;
+}
+
+.comprobante__dialogo::backdrop {
+  background: #101a3599;
+}
+
+.comprobante__dialogo > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 13px;
+}
+
+.comprobante__dialogo h2 {
+  margin: 0;
+  font-size: 21px;
+}
+
+.comprobante__dialogo > header button {
+  width: 38px;
+  height: 38px;
+  border: 1px solid #dce6f3;
+  border-radius: 8px;
+  background: #f5f8fc;
+  color: #17235e;
+  font-size: 23px;
+  cursor: pointer;
+}
+
+.comprobante__dialogo-vista {
+  height: min(65dvh, 680px);
+  background: #f4f7fa;
+}
+
+.comprobante__dialogo-boton {
+  margin: 14px 0 0 auto;
+}
+
+.comprobante__dialogo:has(.comprobante__revision) {
+  width: min(100% - 24px, 460px);
+}
+
+.comprobante__revision {
+  display: grid;
+  gap: 13px;
+}
+
+.comprobante__revision p {
+  margin: 0;
+}
+
+.comprobante__revision [role="alert"] {
+  color: #a01a20;
+}
+
+.comprobante__revision label {
+  display: grid;
+  gap: 7px;
+  font-weight: 600;
+}
+
+.comprobante__revision textarea {
+  width: 100%;
+  min-height: 90px;
+  padding: 9px;
+  resize: vertical;
+  border: 1px solid #aabbd1;
+  border-radius: 7px;
+  color: inherit;
+  font: inherit;
+}
+
+.comprobante__revision > button {
+  justify-self: end;
+}

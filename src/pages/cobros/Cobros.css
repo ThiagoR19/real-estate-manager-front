@@ -134,12 +134,6 @@
   font-weight: 650;
 }
 
-.cobros__year p {
-  margin: -3px 10px 12px 12px;
-  color: #75839b;
-  font-size: 12px;
-}
-
 .cobros__chevron {
   width: 12px;
   height: 12px;
@@ -196,11 +190,6 @@
   color: #153d96;
 }
 
-.cobros__month--danger.is-selected {
-  background: #ffdfe1;
-  color: #b40000;
-}
-
 .cobros__month--success.is-selected {
   background: #d2f7df;
   color: #14723b;
@@ -241,11 +230,6 @@
 .cobros__status--neutral {
   background: #e2e7ed;
   color: #153d96;
-}
-
-.cobros__status--danger {
-  background: #ffdfe1;
-  color: #b40000;
 }
 
 .cobros__status--success {
@@ -363,51 +347,6 @@
   background: #f6f9fc;
 }
 
-.cobros__receipt {
-  flex-shrink: 0;
-  width: 310px;
-  height: 356px;
-  background-color: #f8fafc;
-  background-image: var(--payment-reference);
-  background-position: -418px -213px;
-  background-repeat: no-repeat;
-  background-size: 1512px 692px;
-  box-shadow: 0 8px 15px #17235e2b;
-}
-
-.cobros__zoom {
-  position: absolute;
-  top: 17px;
-  right: 25px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 39px;
-  height: 39px;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 2px 7px #17235e20;
-  cursor: pointer;
-}
-
-.cobros__zoom .cobros__icon {
-  width: 18px;
-  height: 18px;
-  filter: brightness(0) saturate(100%) invert(35%) sepia(100%) saturate(1698%) hue-rotate(196deg)
-    brightness(90%) contrast(101%);
-}
-
-.cobros__zoom span {
-  position: absolute;
-  top: 9px;
-  right: 8px;
-  color: #1471d5;
-  font-size: 13px;
-  font-weight: 700;
-}
-
 .cobros__empty-receipt {
   display: flex;
   align-items: center;
@@ -517,11 +456,8 @@
 }
 
 .cobros__facts .cobros__icon {
-  width: 21px;
-  height: 21px;
-  margin-left: 7px;
-  filter: brightness(0) saturate(100%) invert(36%) sepia(98%) saturate(1774%) hue-rotate(203deg)
-    brightness(95%) contrast(99%);
+  width: 20px;
+  height: 20px;
 }
 
 .cobros__facts strong,
@@ -631,24 +567,67 @@
   line-height: 1.4;
 }
 
-.cobros__download {
+.cobros__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.cobros__actions:empty {
+  display: none;
+}
+
+.cobros__download,
+.cobros__review {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
-  width: max-content;
-  max-width: 100%;
   min-height: 48px;
-  margin: 32px 0 0 auto;
-  padding: 10px 20px;
+  padding: 8px 16px;
   border: 1px solid #1858c8;
   border-radius: 10px;
-  background: #fff;
-  color: #1858c8;
   font-size: 14px;
   font-weight: 750;
   line-height: 1.3;
   cursor: pointer;
+}
+
+.cobros__download {
+  background: #fff;
+  color: #1858c8;
+}
+
+.cobros__review {
+  background: #1755bd;
+}
+
+.cobros__note {
+  margin: 14px 0 0;
+  color: #536889;
+  font-size: 13px;
+  text-align: right;
+}
+
+#cobros.cobros--sin-periodos {
+  display: block;
+  padding: 24px 12px;
+}
+
+.cobros__empty-page {
+  max-width: 620px;
+  margin-inline: auto;
+  padding: 24px;
+  border: 1px solid #e0e7ef;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.cobros__empty-page h1 {
+  margin-top: 0;
+  font-size: 24px;
 }
 
 .cobros__download:hover:not(:disabled) {
@@ -684,69 +663,7 @@
     brightness(93%) contrast(99%);
 }
 
-.cobros__receipt-dialog {
-  width: 440px;
-  max-width: calc(100vw - 24px);
-  max-height: calc(100dvh - 24px);
-  margin: auto;
-  padding: 74px 30px 58px;
-  overflow: auto;
-  border: 1px solid #e1e8ef;
-  border-radius: 16px;
-  background: #f6f9fc;
-  box-shadow: 0 16px 50px #17235e40;
-  opacity: 0;
-  transform: translateY(6px) scale(0.99);
-  transition:
-    opacity 160ms ease,
-    transform 160ms ease,
-    display 160ms allow-discrete;
-}
-
-.cobros__receipt-dialog[open] {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  place-items: center;
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
-
 @starting-style {
-  .cobros__receipt-dialog[open] {
-    opacity: 0;
-    transform: translateY(6px) scale(0.99);
-  }
-}
-
-.cobros__receipt-dialog::backdrop {
-  background: rgb(16 26 53 / 0%);
-  transition: background-color 160ms ease;
-}
-
-.cobros__receipt-dialog[open]::backdrop {
-  background: #101a35a6;
-}
-
-.cobros__receipt-dialog .cobros__receipt {
-  transform: scale(1.2);
-}
-
-#cobros .cobros__dialog-close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  padding: 0;
-  border: 1px solid #d8e1ed;
-  border-radius: 50%;
-  background: #fff;
-  color: #17235e;
-  font-size: 28px;
-  line-height: 1;
-  cursor: pointer;
 }
 
 @media (max-width: 1250px) {
@@ -774,10 +691,6 @@
 
   .cobros__receipt-column {
     padding-left: 0;
-  }
-
-  .cobros__zoom {
-    right: 8px;
   }
 
   .cobros__receipt-status {
@@ -953,7 +866,7 @@
   #cobros .cobros__detail-heading {
     flex-wrap: wrap;
     gap: 10px;
-    margin: 0 6px 12px;
+    margin: 0 6px 6px;
   }
 
   #cobros .cobros__detail-heading h2 {
@@ -974,6 +887,11 @@
   #cobros .cobros__receipt-status {
     margin: 10px 0 0;
     padding: 7px 12px;
+    line-height: 1.2;
+  }
+
+  #cobros .cobros__receipt-status:not(.is-approved) {
+    margin-top: 0;
   }
 
   #cobros .cobros__facts {
@@ -986,6 +904,7 @@
   #cobros .cobros__facts > div {
     grid-template-columns: 34px minmax(0, 1fr) auto;
     gap: 8px;
+    min-height: 33px;
   }
 
   #cobros .cobros__facts strong,
@@ -1002,7 +921,7 @@
   #cobros .cobros__breakdown {
     order: 3;
     width: 100%;
-    margin-top: 24px;
+    margin-top: 16px;
     padding: 0;
     border: 0;
   }
@@ -1021,8 +940,8 @@
   #cobros .cobros__admin-note {
     order: 4;
     min-height: 0;
-    margin-top: 20px;
-    padding: 12px 10px;
+    margin-top: 12px;
+    padding: 9px 10px;
   }
 
   #cobros .cobros__admin-note strong {
@@ -1030,11 +949,25 @@
     font-size: 14px;
   }
 
-  #cobros .cobros__download {
+  #cobros .cobros__actions {
     order: 5;
-    width: 100%;
-    margin-top: 20px;
-    padding-inline: 12px;
+    justify-content: flex-start;
+    margin-inline: 4px;
+    margin-top: 16px;
+  }
+
+  #cobros .cobros__actions > button {
+    flex: 1 1 135px;
+    width: auto;
+    margin: 0;
+    padding-inline: 8px;
+    font-size: 13px;
+  }
+
+  #cobros .cobros__note {
+    order: 6;
+    margin-inline: 3px;
+    text-align: left;
   }
 
   #cobros .cobros__feedback {
@@ -1042,16 +975,6 @@
     min-height: 0;
     margin: 8px 0 0;
     text-align: left;
-  }
-}
-
-@media (max-width: 450px) {
-  .cobros__receipt-dialog {
-    padding: 44px 0 12px;
-  }
-
-  .cobros__receipt-dialog .cobros__receipt {
-    transform: scale(0.9);
   }
 }
 
@@ -1096,9 +1019,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .cobros__chevron,
-  .cobros__month,
-  .cobros__receipt-dialog,
-  .cobros__receipt-dialog::backdrop {
+  .cobros__month {
     transition: none;
   }
 }

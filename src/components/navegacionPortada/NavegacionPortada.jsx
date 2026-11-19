@@ -5,7 +5,6 @@ import "./NavegacionPortada.css";
 import lupaIcono from "../../assets/icons/search.svg";
 import useBuscadorZona from "../../hooks/useBuscadorZona";
 
-
 const enlaces = [
   { texto: "Inicio", href: "/inicio" },
   { texto: "Comprar", href: "/propiedades-publicas?filter=buy" },

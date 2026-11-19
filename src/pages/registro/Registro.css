@@ -375,10 +375,6 @@
     grid-column: 1 / -1;
   }
 
-  .Registro__google {
-    display: contents;
-  }
-
   .Registro .AccesoGoogle__separador {
     display: none;
   }

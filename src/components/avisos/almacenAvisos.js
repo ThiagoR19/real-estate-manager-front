@@ -8,8 +8,6 @@ function avisar() {
   oyentes.forEach((oyente) => oyente());
 }
 
-
-
 export function mostrarAviso({ tipo = "exito", titulo, mensaje, accion } = {}) {
   const id = siguienteId++;
   const tipoValido = TIPOS_AVISO.includes(tipo) ? tipo : "info";

@@ -645,19 +645,6 @@ body:has(#agenda) {
 .agenda__sidebar-backdrop {
   display: none;
 }
-.agenda__feedback {
-  position: fixed;
-  right: 20px;
-  bottom: 20px;
-  z-index: 100;
-  margin: 0;
-  padding: 12px 16px;
-  border: 1px solid #c8dff3;
-  border-radius: 9px;
-  background: #fff;
-  box-shadow: 0 5px 18px #17235e24;
-  font-size: 13px;
-}
 
 @media (max-width: 1160px) {
   .agenda__topbar {

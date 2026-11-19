@@ -27,8 +27,7 @@ export default function GestionModal({
   const closeTimer = useRef(null);
   const [rendered, setRendered] = useState(isOpen);
   const [closing, setClosing] = useState(false);
-  const closingRef = useRef(closing);
-  closingRef.current = closing;
+  const closingRef = useRef(false);
 
   useEffect(() => {
     closeRef.current = onClose;
@@ -37,6 +36,7 @@ export default function GestionModal({
   useEffect(() => {
     if (isOpen) {
       window.clearTimeout(closeTimer.current);
+      closingRef.current = false;
       setRendered(true);
       setClosing(false);
       return undefined;
@@ -44,6 +44,7 @@ export default function GestionModal({
 
     if (!rendered) return undefined;
 
+    closingRef.current = true;
     setClosing(true);
     closeTimer.current = window.setTimeout(() => {
       setRendered(false);

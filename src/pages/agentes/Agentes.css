@@ -92,97 +92,6 @@ body:has(#agentes) {
   gap: 9px 16px;
 }
 
-.agentes__summary-card {
-  display: grid;
-  grid-template-columns: 38px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 10px;
-  min-height: 47px;
-  padding: 6px 16px 6px 14px;
-  border: 1px solid transparent;
-  border-radius: 13px;
-  box-shadow: 0 2px 4px #17235e1c;
-}
-
-.agentes__summary-card--danger {
-  border-color: #ffd3d6;
-  background: #ffe1e2;
-}
-
-.agentes__summary-card--warning {
-  border-color: #f5dfb5;
-  background: #fff8ec;
-}
-
-.agentes__summary-card--success {
-  border-color: #c4e9d1;
-  background: #edfff3;
-}
-
-.agentes__summary-card--info {
-  border-color: #c8d6ff;
-  background: #edf2ff;
-}
-
-.agentes__summary-icon {
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-}
-
-.agentes__summary-icon img {
-  width: 16px;
-  height: 16px;
-  filter: brightness(0) invert(1);
-}
-
-.agentes__summary-card--danger .agentes__summary-icon {
-  background: #bb3035;
-}
-
-.agentes__summary-card--warning .agentes__summary-icon {
-  background: #bc8617;
-}
-
-.agentes__summary-card--success .agentes__summary-icon {
-  background: #21854b;
-}
-
-.agentes__summary-card--info .agentes__summary-icon {
-  background: #233a94;
-}
-
-.agentes__summary-card strong {
-  overflow: hidden;
-  font-size: 13px;
-  font-weight: 650;
-  line-height: 1.1;
-  text-overflow: ellipsis;
-}
-
-.agentes__summary-card b {
-  font-size: 21px;
-  font-weight: 500;
-}
-
-.agentes__summary-card--danger b {
-  color: #b32a2d;
-}
-
-.agentes__summary-card--warning b {
-  color: #a9700b;
-}
-
-.agentes__summary-card--success b {
-  color: #13713c;
-}
-
-.agentes__summary-card--info b {
-  color: #1d337e;
-}
-
 .agentes__toolbar {
   display: grid;
   grid-template-columns: minmax(245px, 1fr) minmax(180px, 220px) auto;
@@ -473,10 +382,6 @@ body:has(#agentes) {
   max-width: min(540px, calc(100vw - 44px));
 }
 
-.agentes__notice p {
-  margin: 0 0 8px;
-}
-
 body:has(#agentes) .navbar__search {
   display: none;
 }
@@ -514,22 +419,6 @@ body:has(#agentes) .navbar__search {
 
   .agentes__summary {
     gap: 8px;
-  }
-
-  .agentes__summary-card {
-    grid-template-columns: 30px;
-    justify-content: center;
-    gap: 2px;
-    padding: 8px;
-    text-align: center;
-  }
-
-  .agentes__summary-card strong {
-    display: none;
-  }
-
-  .agentes__summary-card b {
-    font-size: 18px;
   }
 
   .agentes__toolbar {
@@ -718,8 +607,7 @@ body:has(#agentes) .navbar__search {
 
 @media (prefers-reduced-motion: reduce) {
 
-  .agentes__new-button,
-  .agentes__actions {
+  .agentes__new-button {
     transition: none;
   }
 }

@@ -9,7 +9,6 @@
     sans-serif;
 }
 
-/* Header de portada superpuesto arriba del hero de Inicio y Sobre nosotros */
 .LayoutPublico__portada {
   position: absolute;
   top: 0;
@@ -18,7 +17,6 @@
   z-index: 2;
 }
 
-/* El hero deja arriba el espacio que ocupa el header de portada */
 .LayoutPublico .Inicio,
 .LayoutPublico .Portada {
   padding-top: var(--alto-portada, 0px);

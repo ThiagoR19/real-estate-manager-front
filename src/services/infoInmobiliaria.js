@@ -1,12 +1,8 @@
 import { request } from "../utils/request.js";
 import { assetUrl } from "../utils/assetUrl.js";
 
-// Inmobiliaria de esta instancia del front (se define en el .env de cada despliegue)
 const ID_INMOBILIARIA = import.meta.env.VITE_ID_INMOBILIARIA;
 
-// GET /infoInmobiliaria/:id (público, no necesita sesión): datos de la inmobiliaria para la landing.
-// Devuelve { id, aniosExperiencia, propiedadesVendidas, propiedadesActivas, urlLogo, urlBanner, urlPrincipal, ... }
-// con las URLs de las imágenes completas (o null). Usa auth: false para que un error nunca mande al visitante al login.
 export function infoInmobiliaria(id = ID_INMOBILIARIA) {
   if (!id) {
     return Promise.reject(new Error("Falta VITE_ID_INMOBILIARIA en el .env"));
@@ -19,8 +15,6 @@ export function infoInmobiliaria(id = ID_INMOBILIARIA) {
   }));
 }
 
-// GET /infoInmobiliaria/:id/propiedades?limit=N (público): propiedades publicadas para la landing,
-// ya con la forma que usa TarjetaPropiedad. limite: de 1 a 12 (6 por defecto).
 export function propiedadesDestacadas(limite = 6, id = ID_INMOBILIARIA) {
   if (!id) {
     return Promise.reject(new Error("Falta VITE_ID_INMOBILIARIA en el .env"));

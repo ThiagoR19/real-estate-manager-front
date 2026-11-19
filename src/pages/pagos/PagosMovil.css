@@ -1,13 +1,26 @@
 .pago-movil__toolbar,
 .pago-movil__summary-toggle,
 .pago-movil__close,
+.pago-movil__fondo,
 .pago-movil__open-receipt,
 .pago-movil__chronology {
   display: none;
 }
 
 @media (max-width: 650px) {
-  :is(#pagos, #cobros, #vista-pago) {
+  .pago-movil__fondo {
+    position: fixed;
+    z-index: 39;
+    inset: 0;
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: #101a3566;
+    cursor: pointer;
+  }
+
+  :is(#cobros, #vista-pago) {
     position: relative;
     display: block;
     min-height: calc(100dvh - 40px);
@@ -96,7 +109,7 @@
     box-shadow: 0 1px 5px #17235e20;
   }
 
-  :is(#pagos, #vista-pago, #cobros):has(
+  :is(#vista-pago, #cobros):has(
       .pagos__sidebar.is-open,
       .cobros__sidebar.is-open
     )
@@ -110,7 +123,7 @@
   }
 
   .pago-movil__desktop,
-  :is(.pagos__propiedad-switcher, .cobros__propiedad-select) {
+  .cobros__propiedad-select {
     display: none;
   }
 
@@ -162,13 +175,13 @@
     box-shadow: 0 25px 35px #17235e40;
   }
 
-  :is(.pagos__summary-card, .cobros__summary-card) {
+  .cobros__summary-card {
     height: 43px;
     border-radius: 11px;
     padding: 0 16px;
   }
 
-  :is(.pagos__summary-card, .cobros__summary-card) strong {
+  .cobros__summary-card strong {
     font-size: 14px;
   }
 
@@ -224,7 +237,7 @@
     white-space: nowrap;
   }
 
-  :is(.pagos__detail-heading, .cobros__detail-heading) .pagos__status,
+  .pagos__detail-heading .pagos__status,
   .cobros__detail-heading .cobros__status {
     padding: 0 17px;
   }
@@ -262,17 +275,6 @@
 
   :is(.pagos__receipt-frame, .cobros__receipt-frame) {
     display: none;
-  }
-
-  :is(.pagos__receipt-frame, .cobros__receipt-frame).is-open {
-    position: fixed;
-    z-index: 61;
-    inset: 65px 15px 25px;
-    display: flex;
-    height: auto;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 0 0 100vmax #0008;
   }
 
   :is(.pagos__uploaded, .cobros__receipt-status) {
@@ -339,30 +341,12 @@
     margin: 16px 0 0;
   }
 
-  :is(.pagos__actions, .cobros__download) {
+  .pagos__actions {
     order: 5;
     margin-top: 20px;
   }
 
-  .pagos__actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-
-  .pagos__button {
-    min-width: 0;
-    gap: 8px;
-    padding: 0 8px;
-    font-size: 14px;
-  }
-
-  .cobros__download {
-    width: 235px;
-    margin-left: auto;
-  }
-
-  :is(.pagos__disclaimer, .cobros__disclaimer) {
+  .pagos__disclaimer {
     order: 6;
     margin: 14px 3px 0;
     color: #657694;

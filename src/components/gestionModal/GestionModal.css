@@ -302,24 +302,6 @@
     padding: 0 6px;
     font-size: 14px;
   }
-  .gestion-modal--person-agent .gestion-modal__field:nth-child(4) {
-    order: 6;
-  }
-  .gestion-modal--person-agent .gestion-modal__field:nth-child(5) {
-    order: 4;
-  }
-  .gestion-modal--person-agent .gestion-modal__field:nth-child(6) {
-    order: 7;
-  }
-  .gestion-modal--person-agent .gestion-modal__field:nth-child(7) {
-    order: 5;
-  }
-  .gestion-modal--person-agent .gestion-modal__field:nth-child(8) {
-    order: 8;
-  }
-  .gestion-modal--person-agent .gestion-modal__field:nth-child(-n + 3) {
-    order: 1;
-  }
   .gestion-modal--confirmation .gestion-modal__actions {
     padding-right: 0;
   }

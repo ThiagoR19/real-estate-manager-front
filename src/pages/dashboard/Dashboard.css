@@ -634,118 +634,11 @@
   height: 28px;
 }
 
-.dashboard-estado-key {
-  display: grid;
-  place-items: center;
-  width: 29px;
-  height: 29px;
-  font-size: 32px;
-  font-weight: 700;
-  transform: rotate(-28deg);
-}
-
 .dashboard-actividad-card {
   display: flex;
   grid-column: 2 / 4;
   flex-direction: column;
   padding: 10px 15px 9px;
-}
-
-.dashboard-actividad-card__heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 0 8px;
-  border-bottom: 1px solid #e2e8ef;
-}
-
-.dashboard-actividad-card__heading .dashboard-card__title {
-  color: #19316e;
-  font-size: 14px;
-}
-
-.dashboard-actividad-card__heading .dashboard-icon {
-  width: 25px;
-  height: 25px;
-}
-
-.dashboard-actividad-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.dashboard-actividad-actions button {
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: #3369dd;
-  cursor: pointer;
-  font: inherit;
-  font-size: 11px;
-}
-
-.dashboard-actividad-actions button[aria-label] {
-  color: #7886a1;
-  font-size: 32px;
-  font-weight: 300;
-  line-height: 16px;
-}
-
-.dashboard-actividad-list {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  flex: 1;
-  gap: 7px 18px;
-  padding: 7px 28px 0;
-}
-
-.dashboard-actividad-item {
-  display: grid;
-  grid-template-columns: 35px 1fr auto;
-  align-items: center;
-  min-width: 0;
-  gap: 9px;
-}
-
-.dashboard-actividad-item__icon {
-  display: grid;
-  place-items: center;
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  background: #deebff;
-}
-
-.dashboard-actividad-item__icon .dashboard-icon {
-  width: 20px;
-  height: 20px;
-}
-
-.dashboard-actividad-item div {
-  display: flex;
-  min-width: 0;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.dashboard-actividad-item strong {
-  overflow: hidden;
-  color: #23418e;
-  font-size: 11px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.dashboard-actividad-item small,
-.dashboard-actividad-item time {
-  color: #8390aa;
-  font-size: 10px;
-  white-space: nowrap;
-}
-
-.dashboard-actividad-item time {
-  margin-left: 5px;
 }
 
 .visually-hidden {
@@ -1016,12 +909,6 @@
   .dashboard-actividad-card {
     min-height: 225px;
   }
-
-  .dashboard-actividad-list {
-    grid-template-columns: 1fr 1fr;
-    padding-right: 0;
-    padding-left: 0;
-  }
 }
 
 
@@ -1079,10 +966,6 @@
 
   .dashboard-agente {
     grid-template-columns: 72px minmax(0, 1fr) 130px;
-  }
-
-  .dashboard-actividad-list {
-    grid-template-columns: 1fr;
   }
 }
 

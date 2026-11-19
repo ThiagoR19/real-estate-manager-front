@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
-import { houseIcon, locationDotIcon as locationIcon, plusIcon, tagIcon } from "../../assets/icons";
+import { houseIcon, locationDotIcon, plusIcon, tagIcon } from "../../assets/icons";
 import {
   PropiedadModal,
   ConfirmarEliminacionModal,
@@ -45,7 +45,7 @@ function buildFilterOptions(catalogs, properties) {
     {
       id: "location",
       label: "Ubicación",
-      icon: locationIcon,
+      icon: locationDotIcon,
       options: ["Todas", ...new Set(properties.map((item) => item.ubicacion).filter(Boolean))],
     },
     {

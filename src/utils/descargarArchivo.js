@@ -13,18 +13,13 @@ async function mensajeDeError(error) {
   return payload?.error?.mensaje;
 }
 
-export async function descargarArchivo(ruta, nombre) {
+export async function obtenerArchivo(ruta) {
   try {
     const { data } = await http.get(ruta, {
       headers: { Authorization: `Bearer ${obtenerSesion()?.token || ""}` },
       responseType: "blob",
     });
-    const url = URL.createObjectURL(data);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = nombre;
-    link.click();
-    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    return data;
   } catch (error) {
     const status = error.response?.status;
     if (status === 401) {
@@ -37,4 +32,17 @@ export async function descargarArchivo(ruta, nombre) {
       { cause: error },
     );
   }
+}
+
+export function descargarBlob(archivo, nombre) {
+  const url = URL.createObjectURL(archivo);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = nombre;
+  link.click();
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+export async function descargarArchivo(ruta, nombre) {
+  descargarBlob(await obtenerArchivo(ruta), nombre);
 }

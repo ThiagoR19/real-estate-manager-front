@@ -1,12 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { CapaModal, PanelNotificaciones } from "../../components";
-import {
-  barsIcon as menuIcon,
-  bellIcon,
-  magnifyingGlassIcon as searchIcon,
-  xIcon as closeIcon,
-} from "../../assets/icons";
+import { barsIcon, bellIcon, magnifyingGlassIcon, xIcon } from "../../assets/icons";
 import brandLogo from "../../assets/logoAGI.png";
 import { rolCuentaParaRuta, todosLosElementos, elementoActivo, etiquetasPagina } from "../navegacion";
 import { api } from "../../services/api.js";
@@ -198,7 +193,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
         aria-controls="main-navigation"
         onClick={onToggleMenu}
       >
-        <img className="navbar__menu-icon" src={menuOpen ? closeIcon : menuIcon} alt="" />
+        <img className="navbar__menu-icon" src={menuOpen ? xIcon : barsIcon} alt="" />
       </button>
 
       <Link
@@ -218,7 +213,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
 
       {showSearch && (
         <label className="navbar__search">
-          <img src={searchIcon} alt="" />
+          <img src={magnifyingGlassIcon} alt="" />
           <input
             type="search"
             placeholder={searchPlaceholder}

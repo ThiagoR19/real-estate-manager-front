@@ -3,7 +3,7 @@ import {
   clockIcon,
   calendarIcon,
   envelopeIcon,
-  locationDotIcon as locationIcon,
+  locationDotIcon,
   magnifyingGlassIcon,
   peopleIcon,
   phoneIcon,
@@ -47,7 +47,7 @@ function FiltroZona({ value, onChange, zones }) {
       value={value}
       options={zones}
       onChange={onChange}
-      icon={locationIcon}
+      icon={locationDotIcon}
       className="agentes__filter"
       triggerClassName="agentes__filter-trigger"
       iconClassName="agentes__filter-icon"
@@ -158,7 +158,7 @@ function AgenteModal({ agent, areas, onClose, onSubmit }) {
               <input type="hidden" name="idArea" value={selectedArea ? areaId : ""} />
               <ModalSelect
                 label="Zona"
-                icon={locationIcon}
+                icon={locationDotIcon}
                 options={["Sin asignar", ...areas.map((area) => area.nombre)]}
                 value={selectedArea?.nombre || "Sin asignar"}
                 onChange={(nombre) => setAreaId(nombre === "Sin asignar" ? "" : String(areas.find((area) => area.nombre === nombre)?.id ?? ""))}

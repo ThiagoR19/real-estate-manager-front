@@ -7,8 +7,8 @@ import {
   cameraIcon,
   clockIcon,
   houseIcon,
-  locationDotIcon as locationIcon,
-  rulerCombinedIcon as rulerIcon,
+  locationDotIcon,
+  rulerCombinedIcon,
   userIcon,
 } from "../../assets/icons";
 import { PropiedadModal, AccionesPropiedad, ConfirmarEliminacionModal, mostrarAviso } from "../../components";
@@ -78,7 +78,7 @@ export default function Propiedad() {
 
   const propertyDetails = [
     { label: "Tipo", value: propertyData?.tipo, icon: houseIcon },
-    { label: "Ubicación", value: propertyData?.ubicacion, icon: locationIcon },
+    { label: "Ubicación", value: propertyData?.ubicacion, icon: locationDotIcon },
     { label: "Estado comercial", value: propertyData?.estadoComercial, icon: clockIcon },
     {
       label: "Agente asignado",
@@ -111,7 +111,7 @@ export default function Propiedad() {
     { label: "Habitaciones", value: propertyData?.habitaciones ?? 0, icon: bedIcon },
     { label: "Antigüedad (años)", value: propertyData?.antiguedad ?? 0, icon: calendarIcon },
     { label: "Baños", value: propertyData?.banos ?? 0, icon: bathIcon },
-    { label: "Superficie (m²)", value: propertyData?.tamano ?? 0, icon: rulerIcon },
+    { label: "Superficie (m²)", value: propertyData?.tamano ?? 0, icon: rulerCombinedIcon },
   ];
 
   function changeImage(direction) {

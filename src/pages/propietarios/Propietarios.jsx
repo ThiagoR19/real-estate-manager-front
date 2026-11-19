@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   envelopeIcon,
-  fileLinesIcon as fileIcon,
+  fileLinesIcon,
   clockIcon,
   magnifyingGlassIcon,
   peopleIcon,
@@ -49,7 +49,7 @@ const summaryCards = (summary, activeOwners) => [
   { key: "cobrosPendientes", label: "Cobros pendientes", value: summary?.cobrosPendientes.total ?? "—", icon: xIcon, tone: "danger" },
   { key: "liquidacionesPorGenerar", label: "Liquidaciones por generar", value: summary?.liquidacionesPorGenerar.total ?? "—", icon: clockIcon, tone: "warning" },
   { key: "propietariosActivos", label: "Propietarios activos", value: activeOwners, icon: peopleIcon, tone: "success" },
-  { key: "cobrosAcreditados", label: "Cobros acreditados", value: summary?.cobrosAcreditados.total ?? "—", icon: fileIcon, tone: "info" },
+  { key: "cobrosAcreditados", label: "Cobros acreditados", value: summary?.cobrosAcreditados.total ?? "—", icon: fileLinesIcon, tone: "info" },
 ];
 
 function FilaPropietario({ owner, onEdit, onDelete, onGenerateActivation }) {

@@ -38,12 +38,6 @@
   white-space: nowrap;
 }
 
-.super-admin__side-item svg {
-  width: 25px;
-  height: 25px;
-  flex: none;
-}
-
 .super-admin__workspace {
   min-width: 0;
   padding: 16px 23px 40px 11px;
@@ -179,21 +173,6 @@
   text-decoration: underline;
 }
 
-.super-admin__inmobiliaria-logo--ua,
-.super-admin__inmobiliaria-logo--st {
-  background-image: url("../../assets/superAdminReference.png");
-  background-repeat: no-repeat;
-  background-size: 1521px 692px;
-}
-
-.super-admin__inmobiliaria-logo--ua {
-  background-position: -340px -236px;
-}
-
-.super-admin__inmobiliaria-logo--st {
-  background-position: -333px -327px;
-}
-
 .super-admin__inmobiliaria h2 {
   min-width: 0;
   margin: 0 0 0 8px;
@@ -302,21 +281,6 @@
   color: #fff;
   font-size: 18px;
   font-weight: 700;
-}
-
-.super-admin__avatar--ep,
-.super-admin__avatar--mm {
-  background-image: url("../../assets/superAdminReference.png");
-  background-repeat: no-repeat;
-  background-size: 1521px 692px;
-}
-
-.super-admin__avatar--ep {
-  background-position: -364px -418px;
-}
-
-.super-admin__avatar--mm {
-  background-position: -656px -418px;
 }
 
 .super-admin__admin h3 {

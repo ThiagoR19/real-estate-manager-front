@@ -12,8 +12,8 @@ import {
   dropletIcon,
   fireFlameSimpleIcon,
   houseIcon,
-  locationDotIcon as locationIcon,
-  rulerCombinedIcon as rulerIcon,
+  locationDotIcon,
+  rulerCombinedIcon,
   userIcon,
   whatsappIcon,
   angleDownIcon,
@@ -56,13 +56,13 @@ function DetallePropiedad({ propiedad }) {
     { label: "Habitaciones", value: propiedad.habitaciones, icon: bedIcon },
     { label: "Antigüedad (años)", value: propiedad.antiguedad, icon: calendarIcon },
     { label: "Baños", value: propiedad.banios, icon: bathIcon },
-    { label: "Superficie (m²)", value: propiedad.tamanio, icon: rulerIcon },
+    { label: "Superficie (m²)", value: propiedad.tamanio, icon: rulerCombinedIcon },
   ];
 
   const details = [
     { label: "Tipo", value: propiedad.tipo, icon: houseIcon },
     { label: "Disponibilidad", value: propiedad.estadoComercial || `Disponible ${propiedad.operacion}`, icon: clockIcon },
-    { label: "Ubicación", value: propiedad.ubicacion || "A consultar", icon: locationIcon },
+    { label: "Ubicación", value: propiedad.ubicacion || "A consultar", icon: locationDotIcon },
     { label: "Agente asignado", value: propiedad.agente || "A confirmar", icon: userIcon },
   ];
 
