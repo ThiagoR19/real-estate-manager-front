@@ -101,6 +101,8 @@ VITE_GOOGLE_CLIENT_ID=
 | Propietario | `4` | Dashboard, propiedades propias, cobros, chat y reportes. |
 | Inquilino | `5` | Dashboard, pagos, chat y reportes. |
 
+Los IDs definidos en `src/utils/roles.js` deben coincidir exactamente con `roles.id` en la base de datos y con `config/roles.js` del backend. El frontend usa esos valores fijos para elegir dashboards, rutas y navegación; el backend los usa para asignar roles y aplicar permisos. El esquema SQL solo garantiza esta numeración al importar los roles en una tabla vacía. En una base existente, comprobar la correspondencia con `SELECT id, nombre FROM roles ORDER BY id;`.
+
 Las páginas pueden mostrar controles adicionales según el rol y el estado de los datos. La autorización final siempre se decide en el backend, incluida la pertenencia a la inmobiliaria.
 
 ## Flujos principales
