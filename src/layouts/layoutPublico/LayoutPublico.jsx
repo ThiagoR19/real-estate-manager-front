@@ -47,55 +47,16 @@ export default function LayoutPublico() {
   return (
     <InmobiliariaPublicaContext.Provider value={estado}>
       <Skeleton className="LayoutPublico" cargando={cargando} style={{ "--alto-portada": `${esPortada ? altoPortada : 0}px` }}>
-        {esPortada ? (
-          <div className="LayoutPublico__portada" ref={portadaRef}>
-            <NavegacionPortada URLLogo={logo} />
-          </div>
-        ) : (
-          <EncabezadoPublico logo={logo} />
-        )}
-
+        {esPortada ? (<div className="LayoutPublico__portada" ref={portadaRef}> <NavegacionPortada URLLogo={logo} /></div>) : (<EncabezadoPublico logo={logo} />)}
         <Switch>
-          <Route path="/sobre-nosotros">
-            {
-              () => {
-                return (
-                  <SobreNosotros
-                    datos={inmobiliaria}
-                    loading={cargando}
-                  />)
-              }
-            }
-          </Route>
+          <Route path="/sobre-nosotros">{() => { return (<SobreNosotros loading={cargando} datos={inmobiliaria} />) }}</Route>
           <Route path="/propiedades-publicas" component={PropiedadesPublicas} />
           <Route path="/propiedad-publica" component={PropiedadPublica} />
-          <Route path="/inicio">
-            {
-              () => {
-                return (<Inicio
-                  loading={estado.cargando}
-                  datos={inmobiliaria}
-                />)
-              }
-            }
-          </Route>
-          <Route path="/">
-            {
-              () => {
-                return (<Inicio
-                  loading={estado.cargando}
-                  datos={inmobiliaria}
-                />)
-              }
-            }
-          </Route>
+          <Route path="/inicio">{() => { return (<Inicio loading={estado.cargando} datos={inmobiliaria} />) }}</Route>
+          <Route path="/">{() => { return (<Inicio loading={estado.cargando} datos={inmobiliaria} />) }}</Route>
         </Switch>
 
-        <Footer
-          anios={inmobiliaria?.aniosExperiencia}
-          URLLogo={logo}
-          inmobiliaria={inmobiliaria?.nombre}
-        />
+        <Footer anios={inmobiliaria?.aniosExperiencia} URLLogo={logo} inmobiliaria={inmobiliaria?.nombre} />
       </Skeleton>
     </InmobiliariaPublicaContext.Provider>
   );

@@ -12,7 +12,7 @@ function guardarToken(token) {
     if (token) localStorage.setItem(CLAVE_TOKEN, token);
     else localStorage.removeItem(CLAVE_TOKEN);
   }
-  catch {  }
+  catch (e) { console.error(e) }
 }
 
 export async function sumarVisita(idInmobiliaria) {

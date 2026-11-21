@@ -136,9 +136,7 @@ export default function usePagosYCobros() {
   const clave = contrato ? `${persona.id}|${contrato.idContrato}|${periodo}|${recargas}` : null;
   const cargando = Boolean(clave) && estado?.clave !== clave;
   const detalle = estado?.clave === clave ? estado.detalle : null;
-  const revision = estadoRevision?.id === idRevision && estadoRevision.recargas === recargas
-    ? estadoRevision
-    : null;
+  const revision = estadoRevision?.id === idRevision && estadoRevision.recargas === recargas ? estadoRevision : null;
 
   useEffect(() => {
     let activo = true;
@@ -186,9 +184,7 @@ export default function usePagosYCobros() {
   useEffect(() => {
     if (!clave) return undefined;
     let activo = true;
-    const pedido = persona.tipo === "Locatario"
-      ? detalleDePago(contrato, periodo)
-      : detalleDeCobro(persona, contrato, periodo);
+    const pedido = persona.tipo === "Locatario" ? detalleDePago(contrato, periodo) : detalleDeCobro(persona, contrato, periodo);
 
     pedido
       .then((nuevo) => activo && setEstado({ clave, detalle: nuevo }))
@@ -266,10 +262,10 @@ export default function usePagosYCobros() {
         () =>
           registro
             ? api.modificarPago(registro.id, {
-                fechaVencimiento: registro.fechaVencimiento.slice(0, 10),
-                detalle: nota,
-                conceptos,
-              })
+              fechaVencimiento: registro.fechaVencimiento.slice(0, 10),
+              detalle: nota,
+              conceptos,
+            })
             : api.crearPago({ idContrato: contrato.idContrato, periodo, conceptos, detalle: nota }),
         registro ? "Pago actualizado" : "Pago enviado",
         registro ? "Se guardaron los cambios del pago." : `El pago fue enviado a ${persona.nombre}.`,
@@ -288,12 +284,12 @@ export default function usePagosYCobros() {
         registro
           ? api.modificarCobro(registro.id, { conceptos, detalle: nota, ...comision })
           : api.crearCobro({
-              idPago: detalle.pago.id,
-              idPropietario: persona.idPropietario,
-              conceptos,
-              detalle: nota,
-              ...comision,
-            }),
+            idPago: detalle.pago.id,
+            idPropietario: persona.idPropietario,
+            conceptos,
+            detalle: nota,
+            ...comision,
+          }),
       registro ? "Liquidación actualizada" : "Liquidación enviada",
       registro ? "Se guardaron los cambios de la liquidación." : `La liquidación fue enviada a ${persona.nombre}.`,
     );

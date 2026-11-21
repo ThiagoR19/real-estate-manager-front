@@ -25,9 +25,7 @@ function useComprobante(cargar, id, archivo, version) {
     };
   }, [cargar, id, archivo, version]);
 
-  return resultado?.id === id && resultado?.archivo === archivo && resultado?.version === version
-    ? resultado
-    : null;
+  return resultado?.id === id && resultado?.archivo === archivo && resultado?.version === version ? resultado : null;
 }
 
 function ContenidoComprobante({ resultado, nombre, ampliado = false }) {

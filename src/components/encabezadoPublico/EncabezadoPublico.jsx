@@ -11,8 +11,7 @@ const enlaces = [
 ];
 
 function BuscadorZona({ filtroActivo }) {
-  const { texto, setTexto, abierto, inputRef, buscar, cerrarSiSale, cerrarConEscape } =
-    useBuscadorZona(filtroActivo ?? "buy");
+  const { texto, setTexto, abierto, inputRef, buscar, cerrarSiSale, cerrarConEscape } = useBuscadorZona(filtroActivo ?? "buy");
 
   return (
     <form

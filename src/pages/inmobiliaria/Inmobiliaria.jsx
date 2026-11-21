@@ -28,9 +28,7 @@ function leerArchivo(event, onElegir) {
 
 function EsferaLogo({ logo, nombre }) {
   const [primera = "", segunda = ""] = nombre.trim().split(/\s+/);
-  if (logo) {
-    return <img className="inmobiliaria__identity-logo" src={logo} alt={`Logo de ${nombre || "la inmobiliaria"}`} />;
-  }
+  if (logo) <img className="inmobiliaria__identity-logo" src={logo} alt={`Logo de ${nombre || "la inmobiliaria"}`} />;
   return (
     <span
       className={`inmobiliaria__identity-logo inmobiliaria__identity-logo--iniciales ${avatarClass(primera, segunda)}`}

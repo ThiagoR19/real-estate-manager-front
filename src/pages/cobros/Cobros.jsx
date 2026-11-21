@@ -1,31 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  buildingColumnsIcon,
-  calendarIcon,
-  checkIcon,
-  downloadIcon,
-  fileLinesIcon,
-  imageIcon,
-  optionsIcon,
-  paperPlaneIcon,
-  xIcon,
-} from "../../assets/icons";
+import { buildingColumnsIcon, calendarIcon, checkIcon, downloadIcon, fileLinesIcon, imageIcon, optionsIcon, paperPlaneIcon, xIcon, } from "../../assets/icons";
 import { Boton, mostrarAviso } from "../../components";
 import SelectDesplegable from "../../components/select/SelectDesplegable";
-import useHistorialPeriodos, {
-  formatearFecha,
-  formatearFechaHora,
-  formatearMonto,
-  nombreMes,
-  nombrePeriodo,
-} from "../../hooks/useHistorialPeriodos";
-import {
-  cobro as obtenerCobro,
-  cobros as listarCobros,
-  descargarComprobanteCobro,
-  obtenerComprobanteCobro,
-  solicitarRevisionCobro,
-} from "../../services/cobros";
+import useHistorialPeriodos, { formatearFecha, formatearFechaHora, formatearMonto, nombreMes, nombrePeriodo } from "../../hooks/useHistorialPeriodos";
+import { cobro as obtenerCobro, cobros as listarCobros, descargarComprobanteCobro, obtenerComprobanteCobro, solicitarRevisionCobro } from "../../services/cobros";
 import { DialogoComprobante, DialogoRevision, VistaComprobante } from "../pagos/Comprobante";
 import "../pagos/PagosMovil.css";
 import "./Cobros.css";

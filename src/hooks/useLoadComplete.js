@@ -1,18 +1,11 @@
 import { useEffect, useState } from "react";
 
-
 const LIMITE_ESPERA = 8000;
 
-
-
-const waitForImage = (img) =>
-  img.complete
-    ? Promise.resolve()
-    : new Promise((resolver) => {
-        img.addEventListener("load", resolver, { once: true });
-        img.addEventListener("error", resolver, { once: true });
-      });
-
+const waitForImage = (img) => img.complete ? Promise.resolve() : new Promise((resolver) => {
+  img.addEventListener("load", resolver, { once: true });
+  img.addEventListener("error", resolver, { once: true });
+});
 
 
 export default function useLoadComplete(ref, extraImages = []) {
@@ -20,11 +13,7 @@ export default function useLoadComplete(ref, extraImages = []) {
 
   useEffect(() => {
     let activo = true;
-
-
-    const visibleImages = [
-      ...(ref.current?.querySelectorAll('img:not([loading="lazy"])') ?? []),
-    ].map(waitForImage);
+    const visibleImages = [...(ref.current?.querySelectorAll('img:not([loading="lazy"])') ?? []),].map(waitForImage);
 
     const backgroundImages = extraImages.map((src) => {
       const img = new Image();

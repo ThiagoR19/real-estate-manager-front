@@ -1,26 +1,26 @@
-import { obtenerDashboard } from "./dashboard.js";
-import { agentes, areas, crearAgente, generarEnlaceAgente, actualizarAgente, eliminarAgente } from "./agentes.js";
-import { propietarios, resumenPropietarios, crearPropietario, generarEnlacePropietario, actualizarPropietario, eliminarPropietario } from "./propietarios.js";
-import { obtenerSesion, guardarSesion, limpiarSesion, login, loginGoogle, registrar, registrarGoogle, verificarDniInvitacion, cerrarSesion } from "./login.js";
-import { catalogosPropiedades, propiedades, propiedad, archivosPropiedad, crearPropiedad, actualizarPropiedad, eliminarPropiedad, subirArchivosPropiedad, renombrarDocumentoPropiedad, eliminarArchivoPropiedad, descargarDocumentoPropiedad, obtenerPropiedad } from "./propiedades.js";
-import { perfil, actualizarPerfil, actualizarContrasena, actualizarFotoPerfil } from "./perfil.js";
-import { profesionales, crearProfesional, actualizarProfesional, eliminarProfesional, valorarProfesional } from "./profesionales.js";
-import { inquilinos, inquilino, archivosInquilino, crearInquilino, generarEnlaceInquilino, actualizarInquilino, eliminarInquilino, subirArchivosInquilino, eliminarArchivoInquilino, descargarDocumentoInquilino } from "./inquilinos.js";
-import { indec, crearIndec } from "./indec.js";
-import { sumarVisita } from "./contVisita.js";
-import { visitas, todasLasVisitas, clientesVisitas, crearClienteVisita, crearVisita, actualizarVisita, cancelarVisita } from "./visitas.js";
-import { conversaciones, contactos, mensajes, enviarMensaje, iniciarConversacion, marcarLeido } from "./chats.js";
-import { contratos, reportes } from "./propiedadesPropietario.js";
-import { catalogosReportes, crearReporte, actualizarReporte, subirImagenesReporte } from "./reportes.js";
-import { documentosContrato, descargarDocumento } from "./documentos.js";
-import { notificaciones, marcarNotificacionLeida } from "./notificaciones.js";
-import { inmobiliarias, todosLosAdministradores, todosLosAgentes, panelSuperAdmin, crearInmobiliaria, eliminarInmobiliaria, renombrarInmobiliaria, crearAdministrador, eliminarAdministrador, generarEnlaceAdministrador, administradorAAgente, agenteAAdministrador } from "./inmobiliarias.js";
-import { miInmobiliaria, actualizarMiInmobiliaria } from "./miInmobiliaria.js";
-import { infoInmobiliaria, propiedadesDestacadas, catalogoPropiedades, propiedadPublica } from "./infoInmobiliaria.js";
-import { pagos, pago, subirComprobantePago, marcarPagoPagado, descargarComprobantePago } from "./pagos.js";
-import { cobros, cobro, descargarComprobanteCobro } from "./cobros.js";
 import { conceptosPago, crearConceptoPago, inquilinosConAlquiler, propietariosConAlquiler, prepararPago, crearPago, modificarPago, eliminarPago, aprobarPago, rechazarPago, prepararCobro, crearCobro, modificarCobro, eliminarCobro, subirComprobanteCobro, marcarCobroPagado } from "./pagosYCobros.js";
+import { inmobiliarias, todosLosAdministradores, todosLosAgentes, panelSuperAdmin, crearInmobiliaria, eliminarInmobiliaria, renombrarInmobiliaria, crearAdministrador, eliminarAdministrador, generarEnlaceAdministrador, administradorAAgente, agenteAAdministrador } from "./inmobiliarias.js";
+import { catalogosPropiedades, propiedades, propiedad, archivosPropiedad, crearPropiedad, actualizarPropiedad, eliminarPropiedad, subirArchivosPropiedad, renombrarDocumentoPropiedad, eliminarArchivoPropiedad, descargarDocumentoPropiedad, obtenerPropiedad } from "./propiedades.js";
+import { inquilinos, inquilino, archivosInquilino, crearInquilino, generarEnlaceInquilino, actualizarInquilino, eliminarInquilino, subirArchivosInquilino, eliminarArchivoInquilino, descargarDocumentoInquilino } from "./inquilinos.js";
+import { obtenerSesion, guardarSesion, limpiarSesion, login, loginGoogle, registrar, registrarGoogle, verificarDniInvitacion, cerrarSesion } from "./login.js";
+import { propietarios, resumenPropietarios, crearPropietario, generarEnlacePropietario, actualizarPropietario, eliminarPropietario } from "./propietarios.js";
+import { visitas, todasLasVisitas, clientesVisitas, crearClienteVisita, crearVisita, actualizarVisita, cancelarVisita } from "./visitas.js";
+import { profesionales, crearProfesional, actualizarProfesional, eliminarProfesional, valorarProfesional } from "./profesionales.js";
+import { infoInmobiliaria, propiedadesDestacadas, catalogoPropiedades, propiedadPublica } from "./infoInmobiliaria.js";
+import { agentes, areas, crearAgente, generarEnlaceAgente, actualizarAgente, eliminarAgente } from "./agentes.js";
+import { conversaciones, contactos, mensajes, enviarMensaje, iniciarConversacion, marcarLeido } from "./chats.js";
+import { pagos, pago, subirComprobantePago, marcarPagoPagado, descargarComprobantePago } from "./pagos.js";
+import { catalogosReportes, crearReporte, actualizarReporte, subirImagenesReporte } from "./reportes.js";
+import { perfil, actualizarPerfil, actualizarContrasena, actualizarFotoPerfil } from "./perfil.js";
+import { miInmobiliaria, actualizarMiInmobiliaria } from "./miInmobiliaria.js";
+import { notificaciones, marcarNotificacionLeida } from "./notificaciones.js";
+import { documentosContrato, descargarDocumento } from "./documentos.js";
+import { cobros, cobro, descargarComprobanteCobro } from "./cobros.js";
+import { contratos, reportes } from "./propiedadesPropietario.js";
+import { obtenerDashboard } from "./dashboard.js";
 import { assetUrl } from "../utils/assetUrl.js";
+import { sumarVisita } from "./contVisita.js";
+import { indec, crearIndec } from "./indec.js";
 
 export const api = {
   agentes,
