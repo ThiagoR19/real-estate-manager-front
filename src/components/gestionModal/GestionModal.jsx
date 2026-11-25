@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useId, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Boton, SelectDesplegable } from "../index";
 import "./GestionModal.css";
@@ -7,67 +7,50 @@ const ModalCloseContext = createContext(null);
 const MODAL_TRANSITION_MS = 160;
 
 function transitionDuration() {
-  return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
-    ? 0
-    : MODAL_TRANSITION_MS;
+  return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ? 0 : MODAL_TRANSITION_MS;
 }
 
-export default function GestionModal({
-  isOpen = true,
-  onClose,
-  title,
-  subtitle,
-  variant = "",
-  children,
-}) {
+export default function GestionModal({ isOpen = true, onClose, title, subtitle, variant = "", children }) {
   const titleId = useId();
   const descriptionId = useId();
   const dialogRef = useRef(null);
   const closeRef = useRef(onClose);
-  const closeTimer = useRef(null);
-  const [rendered, setRendered] = useState(isOpen);
-  const [closing, setClosing] = useState(false);
-  const closingRef = useRef(false);
+  const [visibility, setVisibility] = useState(() => ({
+    isOpen,
+    phase: isOpen ? "open" : "closed",
+  }));
+  const { isOpen: previousIsOpen, phase } = visibility;
+
+  if (previousIsOpen !== isOpen) {
+    let nextPhase = phase;
+    if (isOpen) nextPhase = "open";
+    else if (phase !== "closed") nextPhase = "closing";
+    setVisibility({ isOpen, phase: nextPhase });
+  }
+
+  const rendered = phase !== "closed";
+  const closing = phase === "closing" || phase === "close-requested";
+
+  const requestClose = useCallback(() => {
+    setVisibility((current) => {
+      if (current.phase !== "open") return current;
+      return { ...current, phase: "close-requested" };
+    });
+  }, []);
 
   useEffect(() => {
     closeRef.current = onClose;
   }, [onClose]);
 
   useEffect(() => {
-    if (isOpen) {
-      window.clearTimeout(closeTimer.current);
-      closingRef.current = false;
-      setRendered(true);
-      setClosing(false);
-      return undefined;
-    }
+    if (!closing) return undefined;
 
-    if (!rendered) return undefined;
-
-    closingRef.current = true;
-    setClosing(true);
-    closeTimer.current = window.setTimeout(() => {
-      setRendered(false);
-      setClosing(false);
+    const closeTimer = window.setTimeout(() => {
+      setVisibility({ isOpen, phase: "closed" });
+      if (phase === "close-requested") closeRef.current?.();
     }, transitionDuration());
-    return () => window.clearTimeout(closeTimer.current);
-  }, [isOpen, rendered]);
-
-  useEffect(
-    () => () => window.clearTimeout(closeTimer.current),
-    [],
-  );
-
-  function requestClose() {
-    if (closingRef.current || !rendered) return;
-    closingRef.current = true;
-    setClosing(true);
-    window.clearTimeout(closeTimer.current);
-    closeTimer.current = window.setTimeout(() => {
-      setRendered(false);
-      closeRef.current?.();
-    }, transitionDuration());
-  }
+    return () => window.clearTimeout(closeTimer);
+  }, [closing, isOpen, phase]);
 
   useEffect(() => {
     if (!rendered) return undefined;
@@ -85,7 +68,7 @@ export default function GestionModal({
     (focusable()[0] || dialog).focus();
 
     function handleKeyDown(event) {
-      if (closingRef.current) return;
+      if (dialog.closest("[inert]")) return;
       if (event.key === "Escape" && !event.defaultPrevented) requestClose();
       if (event.key !== "Tab") return;
       const controls = focusable();
@@ -115,7 +98,7 @@ export default function GestionModal({
       document.removeEventListener("keydown", handleKeyDown);
       if (previousFocus?.isConnected) previousFocus.focus?.();
     };
-  }, [rendered]);
+  }, [rendered, requestClose]);
 
   if (!rendered) return null;
 

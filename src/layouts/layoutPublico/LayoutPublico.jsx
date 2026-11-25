@@ -4,13 +4,13 @@ import { EncabezadoPublico, Footer, NavegacionPortada, Skeleton, mostrarAviso } 
 import { Inicio, PropiedadesPublicas, PropiedadPublica, SobreNosotros } from "../../pages/index.js";
 import { InmobiliariaPublicaContext } from "../../hooks/useInmobiliariaPublica";
 import { api } from "../../services/api";
-import logoPorDefecto from "../../assets/icons/kaiken.svg";
+import { kaikenIcon } from "../../assets/icons";
 import "./LayoutPublico.css";
 
 export default function LayoutPublico() {
   const [estado, setEstado] = useState({ inmobiliaria: null, cargando: true });
   const { inmobiliaria, cargando } = estado;
-  const logo = cargando ? undefined : inmobiliaria?.urlLogo || logoPorDefecto;
+  const logo = cargando ? undefined : inmobiliaria?.urlLogo || kaikenIcon;
 
   useEffect(() => {
     let activo = true;

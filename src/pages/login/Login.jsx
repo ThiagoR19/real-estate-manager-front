@@ -5,8 +5,7 @@ import { Skeleton, PanelImagen, CampoTexto, BotonPrincipal, TextoLegal, AccesoGo
 import { api } from "../../services/api.js";
 import { dashboardPorRol } from "../../layouts/navegacion.js";
 
-import mailIcon from "../../assets/icons/loginMail.svg";
-import lockIcon from "../../assets/icons/loginLock.svg";
+import { loginMailIcon, loginLockIcon } from "../../assets/icons";
 
 import "./Login.css";
 
@@ -92,7 +91,7 @@ export default function Login() {
             label="Usuario"
             tipo="text"
             placeholder="Tu usuario"
-            icono={mailIcon}
+            icono={loginMailIcon}
             autoComplete="username"
             required
             className="login__field"
@@ -103,7 +102,7 @@ export default function Login() {
             label="Contraseña"
             tipo="password"
             placeholder="Ingresa tu contraseña"
-            icono={lockIcon}
+            icono={loginLockIcon}
             autoComplete="current-password"
             required
             conOjo

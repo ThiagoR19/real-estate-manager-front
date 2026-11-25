@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { mostrarAviso } from "../avisos/almacenAvisos";
-import googleIcono from "../../assets/icons/loginGoogle.svg";
+import { loginGoogleIcon } from "../../assets/icons";
 import "./AccesoGoogle.css";
 
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -75,7 +75,7 @@ export default function AccesoGoogle({ texto, className = "", onCredential, onEr
       {texto && <div className="AccesoGoogle__separador"><span>{texto}</span></div>}
       {clientIdValido && !unavailable ? <div className="AccesoGoogle__botonGoogle" ref={container} /> :
         <div><button className="AccesoGoogle__boton" type="button" disabled>
-          <span className="AccesoGoogle__icono"><img src={googleIcono} alt="" /></span>Google
+          <span className="AccesoGoogle__icono"><img src={loginGoogleIcon} alt="" /></span>Google
         </button><p className="AccesoGoogle__noDisponible">{mensajeNoDisponible}</p></div>}
     </div>
   );

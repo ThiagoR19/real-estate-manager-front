@@ -1,3 +1,9 @@
-export { default as Header } from "./header/Header";
-export { default as Navbar } from "./navbar/Navbar";
-export { default as LayoutPublico } from "./layoutPublico/LayoutPublico";
+import Header from "./header/Header";
+import Navbar from "./navbar/Navbar";
+import LayoutPublico from "./layoutPublico/LayoutPublico";
+
+export {
+  Header,
+  Navbar,
+  LayoutPublico,
+};

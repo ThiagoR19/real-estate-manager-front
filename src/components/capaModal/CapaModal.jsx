@@ -3,18 +3,8 @@ import { createPortal } from "react-dom";
 
 import "./CapaModal.css";
 
-
-
-export default function CapaModal({
-  abierto,
-  onCerrar,
-  posicion = "derecha",
-  etiqueta,
-  children,
-}) {
+export default function CapaModal({ abierto, onCerrar, posicion = "derecha", etiqueta, children }) {
   const contenidoRef = useRef(null);
-
-
   const onCerrarRef = useRef(onCerrar);
 
   useEffect(() => {

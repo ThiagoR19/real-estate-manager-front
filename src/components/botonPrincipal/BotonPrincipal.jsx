@@ -1,18 +1,9 @@
 import "./BotonPrincipal.css";
 
-import flechaIcono from "../../assets/icons/loginArrow.svg";
-import avionIcono from "../../assets/icons/paper-plane-regular-full.svg";
-import checkIcono from "../../assets/icons/check-solid-full.svg";
+import { loginArrowIcon, paperPlaneIcon, checkIcon } from "../../assets/icons";
 
 
-export default function BotonPrincipal({
-  texto,
-  textoEnviando = "Enviando",
-  textoListo = "¡Listo!",
-  estado = "inactivo",
-  tipo = "submit",
-  className = "",
-}) {
+export default function BotonPrincipal({ texto, textoEnviando = "Enviando", textoListo = "¡Listo!", estado = "inactivo", tipo = "submit", className = "" }) {
   const ocupado = estado !== "inactivo";
 
   return (
@@ -27,7 +18,7 @@ export default function BotonPrincipal({
       <span className="BotonPrincipal__capa BotonPrincipal__capa--inactivo" aria-hidden={ocupado}>
         {texto}
         <span className="BotonPrincipal__icono">
-          <img src={flechaIcono} alt="" />
+          <img src={loginArrowIcon} alt="" />
         </span>
       </span>
 
@@ -36,7 +27,7 @@ export default function BotonPrincipal({
         aria-hidden={estado !== "enviando"}
       >
         <span className="BotonPrincipal__avion">
-          <img src={avionIcono} alt="" />
+          <img src={paperPlaneIcon} alt="" />
         </span>
         {textoEnviando}
         <span className="BotonPrincipal__puntos">
@@ -51,7 +42,7 @@ export default function BotonPrincipal({
         aria-hidden={estado !== "listo"}
       >
         <span className="BotonPrincipal__check">
-          <img src={checkIcono} alt="" />
+          <img src={checkIcon} alt="" />
         </span>
         {textoListo}
       </span>

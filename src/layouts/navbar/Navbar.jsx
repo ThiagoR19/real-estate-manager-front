@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { xIcon } from "../../assets/icons";
 import brandLogo from "../../assets/logoAGI.png";
@@ -31,8 +31,11 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
   const [user, setUser] = useState(() => api.obtenerSesion()?.usuario);
   const [photoLoadError, setPhotoLoadError] = useState(false);
   const [rendered, setRendered] = useState(menuOpen);
-  const [closing, setClosing] = useState(false);
-  const closeTimer = useRef(null);
+  const closing = !menuOpen;
+
+  if (menuOpen && !rendered) {
+    setRendered(true);
+  }
 
   useEffect(() => {
     const syncUser = () => {
@@ -58,28 +61,14 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
     }
   }
   useEffect(() => {
-    if (menuOpen) {
-      window.clearTimeout(closeTimer.current);
-      setRendered(true);
-      setClosing(false);
-      return undefined;
-    }
+    if (menuOpen || !rendered) return undefined;
 
-    if (!rendered) return undefined;
-
-    setClosing(true);
     const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    closeTimer.current = window.setTimeout(() => {
+    const closeTimer = window.setTimeout(() => {
       setRendered(false);
-      setClosing(false);
     }, reduceMotion ? 0 : 180);
-    return () => window.clearTimeout(closeTimer.current);
-  }, [menuOpen]);
-
-  useEffect(
-    () => () => window.clearTimeout(closeTimer.current),
-    [],
-  );
+    return () => window.clearTimeout(closeTimer);
+  }, [menuOpen, rendered]);
 
   useEffect(() => {
     if (!rendered) return undefined;

@@ -11,13 +11,11 @@ const iconos = {
   recordatorio: clockToastIcon,
 };
 
-
 const EXPANDIR = 500;
 const CONTRAER = 5000;
 const SALIR = CONTRAER + 3000;
 const ANIMACION = 400;
 const COLAPSO = 250;
-
 
 export default function Aviso({ tipo = "exito", titulo, mensaje, accion, onFin }) {
   const [fase, setFase] = useState("entrando");

@@ -17,22 +17,6 @@
   color: #101a35;
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
 }
-.pildora-resumen--interactive {
-  width: 100%;
-  cursor: pointer;
-  text-align: left;
-}
-.pildora-resumen--interactive:hover,
-.pildora-resumen--interactive.is-selected {
-  border-color: var(--pill-color);
-}
-.pildora-resumen--interactive:disabled {
-  cursor: wait;
-}
-.pildora-resumen--interactive:focus-visible {
-  outline: 2px solid var(--pill-color);
-  outline-offset: 2px;
-}
 .pildora-resumen--danger {
   --pill-color: #991b1b;
   --pill-ring: #ed9292;

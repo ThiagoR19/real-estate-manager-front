@@ -2,8 +2,7 @@ import { useState } from "react";
 
 import "./CampoTexto.css";
 
-import ojoIcono from "../../assets/icons/loginEye.svg";
-import ojoTachadoIcono from "../../assets/icons/loginLockEye.svg";
+import { loginEyeIcon, loginLockEyeIcon } from "../../assets/icons";
 
 export default function CampoTexto({
   id,
@@ -57,7 +56,7 @@ export default function CampoTexto({
             onClick={() => setMostrar(!mostrar)}
             aria-label={mostrar ? "Ocultar contraseña" : "Mostrar contraseña"}
           >
-            <img src={mostrar ? ojoTachadoIcono : ojoIcono} alt="" />
+            <img src={mostrar ? loginLockEyeIcon : loginEyeIcon} alt="" />
           </button>
         )}
       </div>

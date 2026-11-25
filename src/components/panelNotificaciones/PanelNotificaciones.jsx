@@ -2,8 +2,7 @@ import { useState } from "react";
 import Notificacion from "./Notificacion";
 import { ROLES } from "../../utils/roles.js";
 
-import campanaIcono from "../../assets/icons/campanaNoti.svg";
-import cerrarIcono from "../../assets/icons/closeNotis.svg";
+import { campanaIcono, cerrarIcono } from "../../assets/icons";
 
 const filtros = [
   { id: "todas", texto: "Todas", cumple: () => true },
