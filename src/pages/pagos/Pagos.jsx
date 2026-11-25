@@ -1,39 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  buildingColumnsIcon,
-  calendarIcon,
-  checkIcon,
-  commentsIcon,
-  downloadIcon,
-  fileLinesIcon,
-  imageIcon,
-  optionsIcon,
-  paperPlaneIcon,
-  plusIconWhite,
-  xIcon,
-} from "../../assets/icons";
+import { buildingColumnsIcon, calendarIcon, checkIcon, commentsIcon, downloadIcon, fileLinesIcon, imageIcon, optionsIcon, paperPlaneIcon, plusIconWhite, xIcon } from "../../assets/icons";
 import { Boton, mostrarAviso } from "../../components";
 import SelectDesplegable from "../../components/select/SelectDesplegable";
-import useHistorialPeriodos, {
-  etiquetarContratos,
-  formatearFecha,
-  formatearFechaHora,
-  formatearMonto,
-  nombreMes,
-  nombrePeriodo,
-} from "../../hooks/useHistorialPeriodos";
-import {
-  contratosDisponiblesParaPago,
-  descargarComprobantePago,
-  marcarPagoPagado,
-  obtenerComprobantePago,
-  pago,
-  pagos,
-  solicitarRevisionPago,
-  subirComprobantePago,
-  TIPOS_COMPROBANTE,
-  validarComprobante,
-} from "../../services/pagos";
+import useHistorialPeriodos, { etiquetarContratos, formatearFecha, formatearFechaHora, formatearMonto, nombreMes, nombrePeriodo } from "../../hooks/useHistorialPeriodos";
+import { contratosDisponiblesParaPago, descargarComprobantePago, marcarPagoPagado, obtenerComprobantePago, pago, pagos, solicitarRevisionPago, subirComprobantePago, TIPOS_COMPROBANTE, validarComprobante } from "../../services/pagos";
 import { DialogoComprobante, DialogoRevision, VistaComprobante } from "./Comprobante";
 import RegistroPago from "./RegistroPago";
 import "./PagosMovil.css";

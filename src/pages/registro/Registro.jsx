@@ -2,16 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link, useLocation } from "wouter";
 
-import {
-  Skeleton,
-  Marca,
-  PanelImagen,
-  CampoTexto,
-  BotonPrincipal,
-  TextoLegal,
-  AccesoGoogle,
-  mostrarAviso,
-} from "../../components";
+import { Skeleton, Marca, PanelImagen, CampoTexto, BotonPrincipal, TextoLegal, AccesoGoogle, mostrarAviso } from "../../components";
 import Login from "../login/Login";
 import { limpiarBorradorRegistro, obtenerBorradorRegistro } from "../../services/borradorRegistro.js";
 import { api } from "../../services/api.js";

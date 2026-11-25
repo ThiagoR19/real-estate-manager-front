@@ -1,23 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "wouter";
-import {
-  bathIcon,
-  bedIcon,
-  cameraIcon,
-  calendarIcon,
-  boltIcon,
-  carIcon,
-  checkIcon,
-  clockIcon,
-  dropletIcon,
-  fireFlameSimpleIcon,
-  houseIcon,
-  locationDotIcon,
-  rulerCombinedIcon,
-  userIcon,
-  whatsappIcon,
-  angleDownIcon,
-} from "../../assets/icons";
+import { bathIcon, bedIcon, cameraIcon, calendarIcon, boltIcon, carIcon, checkIcon, clockIcon, dropletIcon, fireFlameSimpleIcon, houseIcon, locationDotIcon, rulerCombinedIcon, userIcon, whatsappIcon, angleDownIcon } from "../../assets/icons";
 import { api } from "../../services/api";
 import { Skeleton, mostrarAviso } from "../../components";
 import { PublicPropertySkeleton } from "../../components/skeleton/PublicSkeletons";

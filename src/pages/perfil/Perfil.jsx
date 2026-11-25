@@ -1,19 +1,6 @@
 import { memo, useCallback, useEffect, useState } from "react";
 import { useLocation } from "wouter";
-import {
-  addressCardIcon,
-  cameraIcon,
-  checkIcon,
-  envelopeIcon,
-  eyeIcon,
-  eyeSlashIcon,
-  locationDotIcon,
-  lockIcon,
-  phoneIcon,
-  trashCanIcon,
-  userIcon,
-  infoToastIcon
-} from "../../assets/icons";
+import { addressCardIcon, cameraIcon, checkIcon, envelopeIcon, eyeIcon, eyeSlashIcon, locationDotIcon, lockIcon, phoneIcon, trashCanIcon, userIcon, infoToastIcon } from "../../assets/icons";
 import "./Perfil.css";
 import { Boton, mostrarAviso } from "../../components";
 import { api } from "../../services/api.js";
@@ -149,11 +136,7 @@ export default function Perfil() {
 
     const values = Object.fromEntries(new FormData(form));
 
-    const payload = Object.fromEntries(
-      personalFields
-        .map(({ id }) => [id, String(values[id] ?? "").trim()])
-        .filter(([, value]) => value !== ""),
-    );
+    const payload = Object.fromEntries(personalFields.map(({ id }) => [id, String(values[id] ?? "").trim()]).filter(([, value]) => value !== ""),);
 
     const contraseñaActual = values["current-password"];
     const contraseñaNueva = values["new-password"];
@@ -236,8 +219,7 @@ export default function Perfil() {
   }, [showProfile]);
 
   const iniciales = initials(profile.nombre, profile.apellido);
-  const profilePhotoUrl =
-    profile.urlFotoPerfil && !photoLoadError ? api.urlRecurso(profile.urlFotoPerfil) : "";
+  const profilePhotoUrl = profile.urlFotoPerfil && !photoLoadError ? api.urlRecurso(profile.urlFotoPerfil) : "";
   const cuentaGoogleSinContrasena = Number(profile.googleVinculado) === 1 && Number(profile.tieneContrasena) !== 1;
 
   return (

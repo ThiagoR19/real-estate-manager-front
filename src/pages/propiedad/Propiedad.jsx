@@ -1,16 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useParams } from "wouter";
-import {
-  bathIcon,
-  bedIcon,
-  calendarIcon,
-  cameraIcon,
-  clockIcon,
-  houseIcon,
-  locationDotIcon,
-  rulerCombinedIcon,
-  userIcon,
-} from "../../assets/icons";
+import { bathIcon, bedIcon, calendarIcon, cameraIcon, clockIcon, houseIcon, locationDotIcon, rulerCombinedIcon, userIcon } from "../../assets/icons";
 import { PropiedadModal, AccionesPropiedad, ConfirmarEliminacionModal, mostrarAviso } from "../../components";
 import PageSkeleton from "../../components/skeleton/PageSkeleton";
 import houseImage from "/images (1).jpg";

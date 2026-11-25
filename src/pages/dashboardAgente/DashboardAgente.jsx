@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { calendarIcon, plusIconWhite, toolboxIcon, userIcon } from "../../assets/icons";
-import {
-  TarjetaActividad,
-  TarjetaRendimiento,
-  mostrarAviso,
-} from "../../components";
+import { TarjetaActividad, TarjetaRendimiento, mostrarAviso } from "../../components";
 import { api } from "../../services/api";
 import PageSkeleton from "../../components/skeleton/PageSkeleton";
 import fotoPorDefecto from "/images (1).jpg";

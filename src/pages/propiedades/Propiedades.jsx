@@ -1,17 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { houseIcon, locationDotIcon, plusIcon, tagIcon } from "../../assets/icons";
-import {
-  PropiedadModal,
-  ConfirmarEliminacionModal,
-  SelectDesplegable,
-  Boton,
-  TarjetaPropiedadSimple,
-  Paginacion,
-  usePaginacion,
-  PROPERTY_PAGE_SIZE,
-  mostrarAviso,
-} from "../../components";
+import { PropiedadModal, ConfirmarEliminacionModal, SelectDesplegable, Boton, TarjetaPropiedadSimple, Paginacion, usePaginacion, PROPERTY_PAGE_SIZE, mostrarAviso } from "../../components";
 import { api } from "../../services/api.js";
 import PageSkeleton from "../../components/skeleton/PageSkeleton";
 import "./Propiedades.css";

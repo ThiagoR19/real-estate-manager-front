@@ -147,43 +147,22 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
   const unread = notifications.filter((item) => !item.leida);
   const currentItem = todosLosElementos.find(({ href }) => elementoActivo(pathname, href));
   const isPayments = pathname === "/pagos" || pathname.startsWith("/pagos/");
-  const isProperties =
-    pathname === "/propiedades" ||
-    pathname.startsWith("/propiedades/") ||
-    pathname === "/propiedad" ||
-    pathname.startsWith("/propiedad/");
-  const isPaymentsAndCollections =
-    pathname === "/pagos-cobros" || pathname.startsWith("/pagos-cobros/");
-  const isOwnerDashboard =
-    pathname === "/dashboard-propietario" || pathname === "/mis-propiedades" || pathname === "/cobros";
-  const isAdminDashboard =
-    pathname === "/admin-dashboard" || pathname === "/super-admin" || pathname === "/indec";
+  const isProperties = pathname === "/propiedades" || pathname.startsWith("/propiedades/") || pathname === "/propiedad" || pathname.startsWith("/propiedad/");
+  const isPaymentsAndCollections = pathname === "/pagos-cobros" || pathname.startsWith("/pagos-cobros/");
+  const isOwnerDashboard = pathname === "/dashboard-propietario" || pathname === "/mis-propiedades" || pathname === "/cobros";
+  const isAdminDashboard = pathname === "/admin-dashboard" || pathname === "/super-admin" || pathname === "/indec";
   const isSuperAdmin = pathname === "/super-admin";
   const isChat = pathname === "/chat";
   const accountRole = rolCuentaParaRuta(pathname);
-  const roleName =
-    NOMBRE_ROL[role] || accountRole;
-  const accountName = user
-    ? (`${user.nombre || ""} ${user.apellido || ""}`.trim() || user.usuario || "Cuenta")
-    : "Cuenta";
+  const roleName = NOMBRE_ROL[role] || accountRole;
+  const accountName = user ? (`${user.nombre || ""} ${user.apellido || ""}`.trim() || user.usuario || "Cuenta") : "Cuenta";
   const userInitials = initials(user?.nombre, user?.apellido);
-  const currentLabel = isPayments
-    ? "Zona de pago"
-    : pathname.startsWith("/propiedad/")
-      ? "Propiedad"
-      : (currentItem?.etiquetaRuta ?? currentItem?.etiqueta ?? etiquetasPagina[pathname] ?? "Dashboard");
-  const searchPlaceholder = isPaymentsAndCollections
-    ? "Buscar propietario/locatario"
-    : isProperties
-      ? "Buscar propiedades..."
-      : "Buscar contacto...";
-  const showSearch =
-    isPaymentsAndCollections || pathname === "/propiedades" || pathname === "/profesionales";
+  const currentLabel = isPayments ? "Zona de pago" : pathname.startsWith("/propiedad/") ? "Propiedad" : (currentItem?.etiquetaRuta ?? currentItem?.etiqueta ?? etiquetasPagina[pathname] ?? "Dashboard");
+  const searchPlaceholder = isPaymentsAndCollections ? "Buscar propietario/locatario" : isProperties ? "Buscar propiedades..." : "Buscar contacto...";
+  const showSearch = isPaymentsAndCollections || pathname === "/propiedades" || pathname === "/profesionales";
 
   return (
-    <header
-      className={`navbar__header${isPayments ? " navbar__header--pagos" : ""}${isOwnerDashboard ? " navbar__header--dashboard-owner" : ""}${isAdminDashboard ? " navbar__header--dashboard" : ""}${isChat ? " navbar__header--chat" : ""}${isSuperAdmin ? " navbar__header--super-admin" : ""}`}
-    >
+    <header className={`navbar__header${isPayments ? " navbar__header--pagos" : ""}${isOwnerDashboard ? " navbar__header--dashboard-owner" : ""}${isAdminDashboard ? " navbar__header--dashboard" : ""}${isChat ? " navbar__header--chat" : ""}${isSuperAdmin ? " navbar__header--super-admin" : ""}`}>
       <button
         className="navbar__menu-button"
         type="button"

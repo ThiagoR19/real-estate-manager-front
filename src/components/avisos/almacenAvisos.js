@@ -1,8 +1,7 @@
-
 let avisos = [];
 let siguienteId = 1;
 const oyentes = new Set();
-export const TIPOS_AVISO = Object.freeze(["exito", "advertencia", "error", "info", "recordatorio"]);
+export const TIPOS_AVISO = ["exito", "advertencia", "error", "info", "recordatorio"];
 
 function avisar() {
   oyentes.forEach((oyente) => oyente());

@@ -1,13 +1,6 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import {
-  addressCardIcon,
-  envelopeIcon,
-  houseIcon,
-  locationDotIcon,
-  phoneIcon,
-  userIcon,
-} from "../../assets/icons";
+import { addressCardIcon, envelopeIcon, houseIcon, locationDotIcon, phoneIcon, userIcon } from "../../assets/icons";
 import { SelectDesplegable, Boton, mostrarAviso } from "../../components";
 import useClosingTransition from "../../hooks/useClosingTransition.js";
 import { propiedades } from "../../services/propiedades.js";

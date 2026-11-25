@@ -1,22 +1,8 @@
 import { useEffect, useState } from "react";
-import {
-  angleDownIcon,
-  checkIcon,
-  circleInfoIcon,
-  fileLinesIcon,
-  imageIcon,
-  paperPlaneIcon,
-  plusIconWhite,
-  xIcon,
-} from "../../assets/icons";
+import { angleDownIcon, checkIcon, circleInfoIcon, fileLinesIcon, imageIcon, paperPlaneIcon, plusIconWhite, xIcon } from "../../assets/icons";
 import { PanelDeslizable, mostrarAviso } from "../../components";
 import useConsultaMedia from "../../hooks/useConsultaMedia";
-import usePagosYCobros, {
-  CONCEPTO_ALQUILER,
-  calcularLiquidacion,
-  estaIncluida,
-  parseAmount,
-} from "../../hooks/usePagosYCobros";
+import usePagosYCobros, { CONCEPTO_ALQUILER, calcularLiquidacion, estaIncluida, parseAmount } from "../../hooks/usePagosYCobros";
 import { obtenerComprobanteCobro } from "../../services/cobros";
 import { TIPOS_COMPROBANTE, obtenerComprobantePago, validarComprobante } from "../../services/pagos";
 import { DialogoComprobante } from "../pagos/Comprobante";

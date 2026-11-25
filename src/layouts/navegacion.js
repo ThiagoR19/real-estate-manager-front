@@ -1,15 +1,4 @@
-import {
-  briefcaseIcon,
-  buildingColumnsIcon,
-  calendarIcon,
-  chartColumnIcon,
-  commentsIcon,
-  fileLinesIcon,
-  houseIcon,
-  peopleIcon,
-  walletIcon,
-  userIcon,
-} from "../assets/icons";
+import { briefcaseIcon, buildingColumnsIcon, calendarIcon, chartColumnIcon, commentsIcon, fileLinesIcon, houseIcon, peopleIcon, walletIcon, userIcon } from "../assets/icons";
 import { PERSONAL, ROLES, TODOS_LOS_ROLES } from "../utils/roles.js";
 
 export function inicioDelRol(rol) {

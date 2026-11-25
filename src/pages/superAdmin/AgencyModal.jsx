@@ -100,11 +100,7 @@ export default function AgencyModal({
   return (
     <GestionModal
       title={title}
-      subtitle={
-        isAdmin
-          ? `Ingresá los datos del nuevo administrador de “${agency?.name || "la inmobiliaria"}” para generar su invitación`
-          : "Ingrese la info básica de la inmobiliaria"
-      }
+      subtitle={isAdmin ? `Ingresá los datos del nuevo administrador de “${agency?.name || "la inmobiliaria"}” para generar su invitación` : "Ingrese la info básica de la inmobiliaria"}
       onClose={onClose}
       variant="inmobiliaria"
     >

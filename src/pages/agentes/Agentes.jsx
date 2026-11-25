@@ -1,31 +1,6 @@
 import { useEffect, useState } from "react";
-import {
-  clockIcon,
-  calendarIcon,
-  envelopeIcon,
-  locationDotIcon,
-  magnifyingGlassIcon,
-  peopleIcon,
-  phoneIcon,
-  plusIcon,
-  xIcon,
-} from "../../assets/icons";
-import {
-  SelectDesplegable,
-  Boton,
-  PildoraResumen,
-  GestionModal,
-  AccionesModal,
-  CampoModal,
-  EntradaModal,
-  ModalSelect,
-  ConfirmarEliminacionModal,
-  AccionesEntidad,
-  AvisoEnlaceActivacion,
-  Paginacion,
-  usePaginacion,
-  mostrarAviso,
-} from "../../components";
+import { clockIcon, calendarIcon, envelopeIcon, locationDotIcon, magnifyingGlassIcon, peopleIcon, phoneIcon, plusIcon, xIcon } from "../../assets/icons";
+import { SelectDesplegable, Boton, PildoraResumen, GestionModal, AccionesModal, CampoModal, EntradaModal, ModalSelect, ConfirmarEliminacionModal, AccionesEntidad, AvisoEnlaceActivacion, Paginacion, usePaginacion, mostrarAviso } from "../../components";
 import { api } from "../../services/api.js";
 import PageSkeleton from "../../components/skeleton/PageSkeleton";
 import avatarClass from "../../utils/avatarClass.js";
@@ -34,9 +9,7 @@ import "./Agentes.css";
 
 function enlaceActivacion(activacion) {
   if (activacion?.enlace) return activacion.enlace;
-  return activacion?.codigo
-    ? `${window.location.origin}/activar?codigo=${encodeURIComponent(activacion.codigo)}`
-    : "";
+  return activacion?.codigo ? `${window.location.origin}/activar?codigo=${encodeURIComponent(activacion.codigo)}` : "";
 }
 
 function FiltroZona({ value, onChange, zones }) {
