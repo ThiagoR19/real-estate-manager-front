@@ -4,7 +4,7 @@ import { CapaModal, PanelNotificaciones } from "../../components";
 import { barsIcon, bellIcon, magnifyingGlassIcon, xIcon } from "../../assets/icons";
 import brandLogo from "../../assets/logoAGI.png";
 import { NOMBRE_ROL, ROLES, TODOS_LOS_ROLES } from "../../utils/roles.js";
-import { rolCuentaParaRuta, todosLosElementos, elementoActivo, etiquetasPagina } from "../navegacion";
+import { rolCuentaParaRuta, todosLosElementos, elementoActivo, etiquetasPagina, inicioDelRol } from "../navegacion";
 import { api } from "../../services/api.js";
 import initials from "../../utils/initials.js";
 import "./Header.css";
@@ -175,7 +175,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
       </button>
 
       <Link
-        href={isSuperAdmin ? "/super-admin" : "/dashboard"}
+        href={inicioDelRol(role)}
         className="navbar__brand"
         aria-label="AGI, inicio"
       >
