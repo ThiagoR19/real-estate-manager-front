@@ -1,5 +1,8 @@
 .Inicio {
-  min-height: 71vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: max(71vh, clamp(400px, 30vw, 560px));
   overflow-x: hidden;
   font-family:
     "Inter",
@@ -8,14 +11,6 @@
     "Segoe UI",
     Roboto,
     sans-serif;
-  background-color: var(--blanc);
-}
-
-.Inicio {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  height: clamp(400px, 30vw, 560px);
   background-color: var(--azulClaroInfo);
   background-image: url("../../assets/homeHero.png");
   background-size: cover;
@@ -90,7 +85,6 @@
 
 @media (max-width: 768px) {
   .Inicio {
-    height: auto;
     min-height: 243px;
     padding-bottom: 3px;
     background-position: 65% center;

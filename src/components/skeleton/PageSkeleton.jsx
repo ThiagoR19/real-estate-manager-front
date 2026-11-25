@@ -110,6 +110,77 @@ function PropertiesSkeleton() {
   );
 }
 
+function PropertySkeleton() {
+  return (
+    <main
+      id="propiedad"
+      className="page-skeleton page-skeleton--property"
+      aria-busy="true"
+      aria-label="Cargando propiedad"
+      role="status"
+    >
+      <div className="propiedad__page" aria-hidden="true">
+        <div className="propiedad__title-row">
+          <Bar width="42%" height={32} />
+          <Bar width={100} height={34} />
+        </div>
+        <div className="propiedad__layout">
+          <div className="propiedad__left-column">
+            <div className="propiedad__gallery">
+              <div className="propiedad__gallery-main">
+                <Bar height="100%" />
+              </div>
+              <div className="propiedad__gallery-thumbnails">
+                {Array.from({ length: 3 }, (_, index) => (
+                  <div className="propiedad__thumbnail" key={index}>
+                    <Bar height="100%" />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="propiedad__stats">
+              {Array.from({ length: 4 }, (_, index) => (
+                <div className="propiedad__stat-card" key={index}>
+                  <Bar width={45} height={45} />
+                  <Bar width="35%" />
+                  <Bar width={40} height={40} round />
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="propiedad__right-column">
+            <div className="propiedad__info-card">
+              <Bar width={160} height={25} />
+              <div className="page-skeleton__property-description">
+                <Bar />
+                <Bar width="85%" />
+                <Bar width="65%" />
+              </div>
+              <div className="propiedad__details">
+                {Array.from({ length: 7 }, (_, index) => (
+                  <div className="propiedad__detail-row" key={index}>
+                    <Bar width={21} height={21} />
+                    <Bar width="80%" />
+                    <Bar width="75%" />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="propiedad__due-card">
+              <Bar width="60%" height={20} />
+              <div className="propiedad__due-grid">
+                {Array.from({ length: 4 }, (_, index) => (
+                  <Bar width="75%" height={30} key={index} />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}
+
 function IndecSkeleton() {
   return (
     <main
@@ -314,6 +385,7 @@ export default function PageSkeleton({ variant, title }) {
     );
   }
   if (variant === "properties") return <PropertiesSkeleton />;
+  if (variant === "property") return <PropertySkeleton />;
   if (variant === "indec") return <IndecSkeleton />;
   if (variant === "dashboard") return <DashboardSkeleton kind={title} />;
   if (variant === "chat") return <ChatSkeleton />;

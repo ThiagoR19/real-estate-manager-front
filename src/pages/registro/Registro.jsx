@@ -18,7 +18,6 @@ import { api } from "../../services/api.js";
 
 import mailIcono from "../../assets/icons/loginMail.svg";
 import candadoIcono from "../../assets/icons/loginLock.svg";
-import fondo from "../../assets/loginFondo.png";
 
 import "./Registro.css";
 
@@ -111,7 +110,6 @@ export default function Registro() {
     <Skeleton
       as="main"
       className={`Registro ${saliendo ? "Registro--saliendo" : ""}`}
-      fondos={[fondo]}
       style={variablesSalida}
     >
       <section className="Registro__panel" ref={panelRef}>

@@ -19,6 +19,10 @@
 .page-skeleton__property { overflow: hidden; }
 .page-skeleton__property > .page-skeleton__bar { border-radius: 0; }
 .page-skeleton__property-copy { display: grid; gap: 13px; padding: 20px; }
+#propiedad.page-skeleton { padding: 0; }
+.page-skeleton--property .propiedad__stat-card { gap: 12px; }
+.page-skeleton--property .propiedad__stat-card > :last-child { margin-left: auto; }
+.page-skeleton__property-description { display: grid; gap: 10px; margin: 12px 0; }
 .page-skeleton__indec { max-width: 1000px; overflow: hidden; }
 .page-skeleton__indec-row { display: flex; justify-content: space-between; gap: 20px; padding: 19px 25px; border-bottom: 1px solid #edf1f6; }
 .page-skeleton--dashboard { background: #f5f8fb; }

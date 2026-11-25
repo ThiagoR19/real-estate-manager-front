@@ -4,7 +4,6 @@ import { Skeleton, PanelImagen, CampoTexto, BotonPrincipal, TextoLegal, mostrarA
 import { api } from "../../services/api.js";
 import { guardarBorradorRegistro } from "../../services/borradorRegistro.js";
 import addressCardIcon from "../../assets/icons/address-card-regular-full.svg";
-import background from "../../assets/loginFondo.png";
 import "./ConfirmarRegistro.css";
 
 export default function ConfirmarRegistro() {
@@ -36,7 +35,7 @@ export default function ConfirmarRegistro() {
   }
 
   return (
-    <Skeleton as="main" className="confirmar-registro" fondos={[background]}>
+    <Skeleton as="main" className="confirmar-registro">
       <PanelImagen conMarca className="confirmar-registro__background" />
       <section className="confirmar-registro__card" aria-labelledby="confirmar-registro-title">
         <form className="confirmar-registro__form" onSubmit={handleSubmit}>

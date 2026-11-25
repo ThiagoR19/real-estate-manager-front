@@ -13,9 +13,7 @@ export async function request(path, { method = "GET", body, auth = true } = {}) 
   try {
     const { data: result } = await http.request({ url: path, method, data: body, headers });
     if (result.status !== "success") {
-      const details = result.error?.detalles
-        ?.map(({ campo, problema }) => `${campo}: ${problema}`)
-        .join("; ");
+      const details = result.error?.detalles?.map(({ campo, problema }) => `${campo}: ${problema}`).join("; ");
       throw new Error(
         details || result.error?.mensaje || "La API devolvió una respuesta inválida.",
       );
@@ -34,8 +32,8 @@ export async function request(path, { method = "GET", body, auth = true } = {}) 
       .join("; ");
     throw new Error(
       details ||
-        payload?.error?.mensaje ||
-        (status ? `Error HTTP ${status}` : "No se pudo conectar con el servidor."),
+      payload?.error?.mensaje ||
+      (status ? `Error HTTP ${status}` : "No se pudo conectar con el servidor."),
       { cause: error },
     );
   }

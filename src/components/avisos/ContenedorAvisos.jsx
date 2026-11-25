@@ -3,7 +3,6 @@ import Aviso from "./Aviso";
 import { leerAvisos, quitarAviso, suscribirAvisos } from "./almacenAvisos";
 import "./Aviso.css";
 
-
 export default function ContenedorAvisos() {
   const avisos = useSyncExternalStore(suscribirAvisos, leerAvisos);
 

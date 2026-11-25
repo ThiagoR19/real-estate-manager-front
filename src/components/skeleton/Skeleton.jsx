@@ -1,27 +1,8 @@
-import { useRef } from "react";
-
 import "./Skeleton.css";
 
-import useLoadComplete from "../../hooks/useLoadComplete";
-
-export default function Skeleton({
-  as: Etiqueta = "div",
-  className = "",
-  fondos = [],
-  cargando = false,
-  children,
-  ...props
-}) {
-  const ref = useRef(null);
-  const loaded = useLoadComplete(ref, fondos) && !cargando;
-
+export default function Skeleton({ as: Etiqueta = "div", className = "", cargando = false, children, ...props }) {
   return (
-    <Etiqueta
-      ref={ref}
-      className={`${className} ${loaded ? "" : "Skeleton"}`}
-      aria-busy={!loaded}
-      {...props}
-    >
+    <Etiqueta className={`${className} ${cargando ? "Skeleton" : ""}`} aria-busy={cargando} {...props}>
       {children}
     </Etiqueta>
   );

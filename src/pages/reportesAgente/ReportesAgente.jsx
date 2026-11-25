@@ -123,7 +123,7 @@ export default function ReportesAgente() {
   }
 
   return (
-    <Skeleton as="main" id="reportes-agent">
+    <Skeleton as="main" id="reportes-agent" cargando={loading}>
       <section className="reportes__hero" aria-labelledby="reportes-title">
         <div><h1 id="reportes-title">Reportes</h1><p>Gestioná los reportes de tus propiedades</p></div>
         {puedeCrearReporte && <button className="reportes__create-button" type="button"

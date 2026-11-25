@@ -34,8 +34,7 @@ export function subirArchivosPropiedad(id, kind, files, titulo) {
   return request(`/propiedades/${id}/archivos/${kind}`, { method: "POST", body });
 }
 
-export const renombrarDocumentoPropiedad = (id, fileId, titulo) =>
-  request(`/propiedades/${id}/archivos/documentos/${fileId}`, { method: "PATCH", body: { titulo } });
+export const renombrarDocumentoPropiedad = (id, fileId, titulo) => request(`/propiedades/${id}/archivos/documentos/${fileId}`, { method: "PATCH", body: { titulo } });
 
 export const eliminarArchivoPropiedad = (id, kind, fileId) => request(`/propiedades/${id}/archivos/${kind}/${fileId}`, { method: "DELETE" });
 

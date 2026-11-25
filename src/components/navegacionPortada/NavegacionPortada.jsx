@@ -23,7 +23,7 @@ export default function NavegacionPortada({ className = "", URLLogo }) {
   };
 
   return (
-    <header className={`NavegacionPortada ${className}`}>
+    <header className={`NavegacionPortada ${className}`} role="banner">
       <Link href="/inicio" className="NavegacionPortada__marca" aria-label="Kaiken Propiedades, inicio">
         <img src={URLLogo} alt="Logo" />
       </Link>

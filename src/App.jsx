@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useLayoutEffect } from "react";
 const idInmobi = import.meta.env.VITE_ID_INMOBILIARIA;
-import { Redirect, Route, Switch, useLocation } from "wouter";
+import { Redirect, Route, Switch, useLocation, useSearch } from "wouter";
 import { SobreNosotros, Inmobiliaria, Agentes, DashboardAgente, Chat, Cobros, ConfirmarRegistro, Dashboard, DashboardPropietario, Indec, Login, MisPropiedades, Propietarios, Pagos, PagosYCobros, Profesionales, Perfil, Propiedades, Propiedad, Registro, ReportesAgente, Agenda, SuperAdmin, Inquilinos, DashboardInquilino, Terminos } from "./pages/index.js";
 
 import { Header, Navbar, LayoutPublico } from "./layouts/index.js";
@@ -16,6 +16,7 @@ let yaSeHizo = false;
 const validar = ["/", "/propiedades-publicas", "/propiedad-publica", "/sobre-nosotros", "/inicio"]
 
 const RUTAS_LANDING = /^\/(inicio|sobre-nosotros|propiedades-publicas|propiedad-publica)?\/?$/
+
 const dashboardsPorRol = {
   [ROLES.ADMIN]: Dashboard,
   [ROLES.AGENTE]: DashboardAgente,
@@ -33,8 +34,19 @@ function DashboardPorRol() {
   return <DashboardDelRol />;
 }
 
-function VistaConTransicion({ children }) {
+function VistaConTransicion({ children, scrollAlInicio = false }) {
   const [pathname] = useLocation();
+  const search = useSearch();
+
+  useLayoutEffect(() => {
+    if (!scrollAlInicio) return;
+    const destino = document.getElementById(window.location.hash.slice(1));
+    if (destino) {
+      destino.scrollIntoView({ behavior: "instant", block: "start" });
+    } else {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    }
+  }, [pathname, search, scrollAlInicio]);
 
   return (
     <div className="view-transition" key={pathname}>
@@ -52,11 +64,9 @@ function SoloConRol({ ruta, children }) {
 function RutaPrivada({ path, ruta = path, component: Componente }) {
   return (
     <Route path={path}>
-      {() => (
-        <SoloConRol ruta={ruta}>
-          <Componente />
-        </SoloConRol>
-      )}
+      <SoloConRol ruta={ruta}>
+        <Componente />
+      </SoloConRol>
     </Route>
   );
 }
@@ -119,19 +129,19 @@ function App() {
     <>
       <Switch>
         <Route path={RUTAS_LANDING}>
-          <VistaConTransicion><LayoutPublico /></VistaConTransicion>
+          <VistaConTransicion scrollAlInicio><LayoutPublico /></VistaConTransicion>
         </Route>
-        <Route path="/login"><VistaConTransicion><Login /></VistaConTransicion></Route>
+        <Route path="/login"><VistaConTransicion scrollAlInicio><Login /></VistaConTransicion></Route>
         <Route path="/terminos">
           {obtenerSesion()?.token ? (
             <AuthenticatedApp />
           ) : (
-            <VistaConTransicion><Terminos publico /></VistaConTransicion>
+            <VistaConTransicion scrollAlInicio><Terminos publico /></VistaConTransicion>
           )}
         </Route>
-        <Route path="/registro"><VistaConTransicion><Registro /></VistaConTransicion></Route>
-        <Route path="/activar"><VistaConTransicion><ConfirmarRegistro /></VistaConTransicion></Route>
-        <Route path="/confirmar-registro"><VistaConTransicion><ConfirmarRegistro /></VistaConTransicion></Route>
+        <Route path="/registro"><VistaConTransicion scrollAlInicio><Registro /></VistaConTransicion></Route>
+        <Route path="/activar"><VistaConTransicion scrollAlInicio><ConfirmarRegistro /></VistaConTransicion></Route>
+        <Route path="/confirmar-registro"><VistaConTransicion scrollAlInicio><ConfirmarRegistro /></VistaConTransicion></Route>
         <Route>
           <AuthenticatedApp />
         </Route>

@@ -12,14 +12,10 @@ export default function TarjetaPropiedadSimple({
   variant = "managed",
 }) {
   const isPublic = variant === "public";
-  const image = isPublic
-    ? property.photos?.[0]?.src || property.image || propertyImage
-    : api.urlRecurso(property.imagenes?.[0]?.url) || propertyImage;
+  const image = isPublic ? property.photos?.[0]?.src || property.image || propertyImage : api.urlRecurso(property.imagenes?.[0]?.url) || propertyImage;
   const title = isPublic ? property.title : property.nombre;
   const location = isPublic ? property.location : property.ubicacion;
-  const status = isPublic
-    ? property.status || (property.operation === "buy" ? "Disponible Venta" : "Disponible Alquiler")
-    : property.estadoComercial;
+  const status = isPublic ? property.status || (property.operation === "buy" ? "Disponible Venta" : "Disponible Alquiler") : property.estadoComercial;
 
   function openProperty() {
     onOpen?.(property);

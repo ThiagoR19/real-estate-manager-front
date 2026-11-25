@@ -12,6 +12,7 @@ import {
   userIcon,
 } from "../../assets/icons";
 import { PropiedadModal, AccionesPropiedad, ConfirmarEliminacionModal, mostrarAviso } from "../../components";
+import PageSkeleton from "../../components/skeleton/PageSkeleton";
 import houseImage from "/images (1).jpg";
 import { api } from "../../services/api.js";
 import "./Propiedad.css";
@@ -144,12 +145,7 @@ export default function Propiedad() {
     }
   }
 
-  if (loading)
-    return (
-      <main id="propiedad">
-        <div className="propiedad__page">Cargando propiedad...</div>
-      </main>
-    );
+  if (loading) return <PageSkeleton variant="property" />;
   if (!propertyData)
     return (
       <main id="propiedad">

@@ -7,7 +7,6 @@ import { dashboardPorRol } from "../../layouts/navegacion.js";
 
 import mailIcon from "../../assets/icons/loginMail.svg";
 import lockIcon from "../../assets/icons/loginLock.svg";
-import fondo from "../../assets/loginFondo.png";
 
 import "./Login.css";
 
@@ -79,7 +78,7 @@ export default function Login() {
   }, []);
 
   return (
-    <Skeleton as="main" className="login" fondos={[fondo]}>
+    <Skeleton as="main" className="login">
       <PanelImagen conMarca className={`login__hero ${fromRegister ? "Skeleton-no" : ""}`} />
       <section className="login__panel">
         <form className="login__form" onSubmit={handleSubmit}>

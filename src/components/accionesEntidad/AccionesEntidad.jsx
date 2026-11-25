@@ -14,31 +14,37 @@ export default function AccionesEntidad({
   className = "",
   variant = "table",
 }) {
-  const [open, setOpen] = useState(false);
-  const [position, setPosition] = useState({ top: 0, left: 0 });
-  const rootRef = useRef(null);
+  const [position, setPosition] = useState(null);
+  const open = position !== null;
   const triggerRef = useRef(null);
   const menuRef = useRef(null);
   const initialFocusRef = useRef(0);
   const menuId = useId();
+  const actions = [
+    { label: `Editar ${entity}`, icon: penIcon, onClick: onEdit },
+    ...(onGenerateActivation
+      ? [{ label: "Generar enlace", icon: linkIcon, onClick: onGenerateActivation }]
+      : []),
+    { label: `Eliminar ${entity}`, icon: trashCanIcon, onClick: onDelete },
+  ];
 
   useEffect(() => {
-    if (!open) return undefined;
+    if (!position) return undefined;
 
     const menuItems = menuRef.current?.querySelectorAll('[role="menuitem"]');
     menuItems?.[initialFocusRef.current]?.focus({ preventScroll: true });
 
     function dismissOutside(event) {
-      if (!rootRef.current?.contains(event.target) && !menuRef.current?.contains(event.target))
-        setOpen(false);
+      if (!triggerRef.current?.contains(event.target) && !menuRef.current?.contains(event.target))
+        setPosition(null);
     }
 
     function dismissOnScroll(event) {
-      if (!menuRef.current?.contains(event.target)) setOpen(false);
+      if (!menuRef.current?.contains(event.target)) setPosition(null);
     }
 
     function dismissOnResize() {
-      setOpen(false);
+      setPosition(null);
     }
 
     document.addEventListener("pointerdown", dismissOutside);
@@ -51,7 +57,7 @@ export default function AccionesEntidad({
       document.removeEventListener("scroll", dismissOnScroll, true);
       window.removeEventListener("resize", dismissOnResize);
     };
-  }, [open]);
+  }, [position]);
 
   function openMenu(focusIndex = 0) {
     const rect = triggerRef.current.getBoundingClientRect();
@@ -62,11 +68,10 @@ export default function AccionesEntidad({
         ? { top: rect.bottom + 5 }
         : { bottom: window.innerHeight - rect.top + 5 }),
     });
-    setOpen(true);
   }
 
   function closeMenu() {
-    setOpen(false);
+    setPosition(null);
     triggerRef.current?.focus({ preventScroll: true });
   }
 
@@ -77,28 +82,40 @@ export default function AccionesEntidad({
 
   function handleMenuKeyDown(event) {
     event.stopPropagation();
-    if (event.key === "Escape") {
-      event.preventDefault();
-      closeMenu();
-    } else if (event.key === "Tab") {
-      closeMenu();
-    } else if (["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) {
-      event.preventDefault();
-      const items = [...menuRef.current.querySelectorAll('[role="menuitem"]')];
-      const index = items.indexOf(document.activeElement);
-      const next =
-        event.key === "Home"
-          ? 0
-          : event.key === "End"
-            ? items.length - 1
-            : (index + (event.key === "ArrowDown" ? 1 : -1) + items.length) % items.length;
-      items[next]?.focus({ preventScroll: true });
+    const items = [...menuRef.current.querySelectorAll('[role="menuitem"]')];
+    const index = items.indexOf(document.activeElement);
+    let next;
+
+    switch (event.key) {
+      case "Escape":
+        event.preventDefault();
+        closeMenu();
+        return;
+      case "Tab":
+        closeMenu();
+        return;
+      case "Home":
+        next = 0;
+        break;
+      case "End":
+        next = items.length - 1;
+        break;
+      case "ArrowDown":
+        next = (index + 1) % items.length;
+        break;
+      case "ArrowUp":
+        next = (index - 1 + items.length) % items.length;
+        break;
+      default:
+        return;
     }
+
+    event.preventDefault();
+    items[next]?.focus({ preventScroll: true });
   }
 
   return (
     <div
-      ref={rootRef}
       className={`acciones-entidad acciones-entidad--${variant} ${className}`.trim()}
       onClick={(event) => event.stopPropagation()}
       onKeyDown={(event) => event.stopPropagation()}
@@ -115,7 +132,7 @@ export default function AccionesEntidad({
         onKeyDown={(event) => {
           if (event.key === "ArrowDown" || event.key === "ArrowUp") {
             event.preventDefault();
-            openMenu(event.key === "ArrowUp" ? (onGenerateActivation ? 2 : 1) : 0);
+            openMenu(event.key === "ArrowUp" ? actions.length - 1 : 0);
           } else if (event.key === "Escape" && open) {
             event.preventDefault();
             closeMenu();
@@ -140,25 +157,18 @@ export default function AccionesEntidad({
             onClick={(event) => event.stopPropagation()}
             onKeyDown={handleMenuKeyDown}
           >
-            <button type="button" role="menuitem" tabIndex={-1} onClick={() => runAction(onEdit)}>
-              <img src={penIcon} alt="" aria-hidden="true" />
-              Editar {entity}
-            </button>
-            {onGenerateActivation && (
+            {actions.map(({ label, icon, onClick }) => (
               <button
+                key={label}
                 type="button"
                 role="menuitem"
                 tabIndex={-1}
-                onClick={() => runAction(onGenerateActivation)}
+                onClick={() => runAction(onClick)}
               >
-                <img src={linkIcon} alt="" aria-hidden="true" />
-                Generar enlace
+                <img src={icon} alt="" aria-hidden="true" />
+                {label}
               </button>
-            )}
-            <button type="button" role="menuitem" tabIndex={-1} onClick={() => runAction(onDelete)}>
-              <img src={trashCanIcon} alt="" aria-hidden="true" />
-              Eliminar {entity}
-            </button>
+            ))}
           </div>,
           document.body,
         )}

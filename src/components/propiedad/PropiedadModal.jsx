@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 import { bathIcon, bedIcon, calendarIcon, carIcon, boltIcon, dropletIcon, fireFlameSimpleIcon, locationDotIcon, plusIcon, rulerCombinedIcon, userIcon, xIcon, } from "../../assets/icons";
+import useClosingTransition from "../../hooks/useClosingTransition.js";
+import { useEffect, useRef, useState } from "react";
 import { Boton, mostrarAviso } from "../index";
 import { api } from "../../services/api.js";
-import useClosingTransition from "../../hooks/useClosingTransition.js";
+import { createPortal } from "react-dom";
 import "./PropiedadModal.css";
 
 function contratoVacio() {
@@ -95,12 +95,14 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
     };
   }, [isOpen, close, saving]);
 
-  useEffect(
-    () => () => {
-      for (const url of objectUrls.current) URL.revokeObjectURL(url);
-    },
-    [],
-  );
+  useEffect(() => {
+    const urls = objectUrls.current;
+    return () => {
+      for (const url of urls) {
+        URL.revokeObjectURL(url);
+      }
+    };
+  }, []);
   if (!isOpen) return null;
 
   function change(event) {

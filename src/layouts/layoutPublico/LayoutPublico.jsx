@@ -1,5 +1,5 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Route, Switch, useLocation } from "wouter";
+import { useEffect, useState } from "react";
+import { Route, Switch } from "wouter";
 import { EncabezadoPublico, Footer, NavegacionPortada, Skeleton, mostrarAviso } from "../../components";
 import { Inicio, PropiedadesPublicas, PropiedadPublica, SobreNosotros } from "../../pages/index.js";
 import { InmobiliariaPublicaContext } from "../../hooks/useInmobiliariaPublica";
@@ -7,14 +7,8 @@ import { api } from "../../services/api";
 import logoPorDefecto from "../../assets/icons/kaiken.svg";
 import "./LayoutPublico.css";
 
-const RUTAS_PORTADA = ["/", "/inicio", "/sobre-nosotros"];
-
 export default function LayoutPublico() {
-  const [ubicacion] = useLocation();
   const [estado, setEstado] = useState({ inmobiliaria: null, cargando: true });
-  const [altoPortada, setAltoPortada] = useState(0);
-  const portadaRef = useRef(null);
-  const esPortada = RUTAS_PORTADA.includes(ubicacion);
   const { inmobiliaria, cargando } = estado;
   const logo = cargando ? undefined : inmobiliaria?.urlLogo || logoPorDefecto;
 
@@ -34,26 +28,27 @@ export default function LayoutPublico() {
     };
   }, []);
 
-  useLayoutEffect(() => {
-    const header = portadaRef.current;
-    if (!header) return undefined;
-    const medir = () => setAltoPortada(header.offsetHeight);
-    medir();
-    const observador = new ResizeObserver(medir);
-    observador.observe(header);
-    return () => observador.disconnect();
-  }, [esPortada]);
+  const navegacion = <NavegacionPortada URLLogo={logo} />;
+  const encabezado = <EncabezadoPublico logo={logo} />;
+  const inicio = <Inicio loading={cargando} datos={inmobiliaria} navegacion={navegacion} />;
 
   return (
     <InmobiliariaPublicaContext.Provider value={estado}>
-      <Skeleton className="LayoutPublico" cargando={cargando} style={{ "--alto-portada": `${esPortada ? altoPortada : 0}px` }}>
-        {esPortada ? (<div className="LayoutPublico__portada" ref={portadaRef}> <NavegacionPortada URLLogo={logo} /></div>) : (<EncabezadoPublico logo={logo} />)}
+      <Skeleton className="LayoutPublico" cargando={cargando}>
         <Switch>
-          <Route path="/sobre-nosotros">{() => { return (<SobreNosotros loading={cargando} datos={inmobiliaria} />) }}</Route>
-          <Route path="/propiedades-publicas" component={PropiedadesPublicas} />
-          <Route path="/propiedad-publica" component={PropiedadPublica} />
-          <Route path="/inicio">{() => { return (<Inicio loading={estado.cargando} datos={inmobiliaria} />) }}</Route>
-          <Route path="/">{() => { return (<Inicio loading={estado.cargando} datos={inmobiliaria} />) }}</Route>
+          <Route path="/sobre-nosotros">
+            <SobreNosotros loading={cargando} datos={inmobiliaria} navegacion={navegacion} />
+          </Route>
+          <Route path="/propiedades-publicas">
+            {encabezado}
+            <PropiedadesPublicas />
+          </Route>
+          <Route path="/propiedad-publica">
+            {encabezado}
+            <PropiedadPublica />
+          </Route>
+          <Route path="/inicio">{inicio}</Route>
+          <Route path="/">{inicio}</Route>
         </Switch>
 
         <Footer anios={inmobiliaria?.aniosExperiencia} URLLogo={logo} inmobiliaria={inmobiliaria?.nombre} />

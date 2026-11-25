@@ -1,5 +1,4 @@
 .LayoutPublico {
-  position: relative;
   font-family:
     "Inter",
     system-ui,
@@ -7,17 +6,4 @@
     "Segoe UI",
     Roboto,
     sans-serif;
-}
-
-.LayoutPublico__portada {
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  z-index: 2;
-}
-
-.LayoutPublico .Inicio,
-.LayoutPublico .Portada {
-  padding-top: var(--alto-portada, 0px);
 }

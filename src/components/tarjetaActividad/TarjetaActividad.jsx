@@ -14,10 +14,6 @@ function visitTime(fecha) {
   return esHoy ? `Hoy ${hora}` : `${date.getDate()}/${date.getMonth() + 1} ${hora}`;
 }
 
-function Icono({ src, className = "" }) {
-  return <img className={`dashboard-icon ${className}`} src={src} alt="" aria-hidden="true" />;
-}
-
 export default function TarjetaActividad({ className = "dashboard-agente__card dashboard-agente__activity-card" }) {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -32,9 +28,7 @@ export default function TarjetaActividad({ className = "dashboard-agente__card d
         if (!vigente) return;
         setVisitas(resultado.data);
         setTotalPages(resultado.paginacion?.paginas || 1);
-        setVista((anterior) => anterior.pagina === page
-          ? anterior
-          : { pagina: page, direccion: page > anterior.pagina ? "siguiente" : "anterior" });
+        setVista((anterior) => anterior.pagina === page ? anterior : { pagina: page, direccion: page > anterior.pagina ? "siguiente" : "anterior" });
       })
       .catch(() => vigente && setVisitas([]));
     return () => { vigente = false; };
@@ -52,7 +46,9 @@ export default function TarjetaActividad({ className = "dashboard-agente__card d
         {visitas.length === 0 && <p className="dashboard-actividad-empty">No hay visitas programadas.</p>}
         {visitas.map((visita) => (
           <article className="dashboard-agente__activity-item" key={visita.id}>
-            <span className="dashboard-agente__activity-icon"><Icono src={calendarIcon} /></span>
+            <span className="dashboard-agente__activity-icon">
+              <img className="dashboard-icon" src={calendarIcon} alt="" aria-hidden="true" />
+            </span>
             <span><strong>Visita con {visita.clienteNombre} {visita.clienteApellido}</strong><small>Propiedad: {visita.propiedad}</small></span>
             <time dateTime={visita.fecha}>{visitTime(visita.fecha)}</time>
           </article>

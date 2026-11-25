@@ -19,9 +19,7 @@ const months = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "
 const fullMonths = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
 function porcentaje(actual, anterior) {
-  if (anterior == null || anterior == 0) {
-    anterior = 1
-  }
+  if (anterior == null || anterior == 0) { anterior = 1 }
   let total = Math.round((actual * 100) / anterior)
   let devolver
   let peor = false
