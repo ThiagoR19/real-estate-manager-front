@@ -122,13 +122,11 @@ function App() {
           <VistaConTransicion><LayoutPublico /></VistaConTransicion>
         </Route>
         <Route path="/login"><VistaConTransicion><Login /></VistaConTransicion></Route>
-        <Route path="/terminos">
-          {obtenerSesion()?.token ? (
-            <AuthenticatedApp />
-          ) : (
+        {!obtenerSesion()?.token && (
+          <Route path="/terminos">
             <VistaConTransicion><Terminos publico /></VistaConTransicion>
-          )}
-        </Route>
+          </Route>
+        )}
         <Route path="/registro"><VistaConTransicion><Registro /></VistaConTransicion></Route>
         <Route path="/activar"><VistaConTransicion><ConfirmarRegistro /></VistaConTransicion></Route>
         <Route path="/confirmar-registro"><VistaConTransicion><ConfirmarRegistro /></VistaConTransicion></Route>
