@@ -34,9 +34,7 @@ import "./Agentes.css";
 
 function enlaceActivacion(activacion) {
   if (activacion?.enlace) return activacion.enlace;
-  return activacion?.codigo
-    ? `${window.location.origin}/activar?codigo=${encodeURIComponent(activacion.codigo)}`
-    : "";
+  return activacion?.codigo ? `${window.location.origin}/activar?codigo=${encodeURIComponent(activacion.codigo)}` : "";
 }
 
 function FiltroZona({ value, onChange, zones }) {
