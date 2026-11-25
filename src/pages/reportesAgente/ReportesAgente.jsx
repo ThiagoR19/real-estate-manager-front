@@ -4,10 +4,7 @@ import { api } from "../../services/api.js";
 import { assetUrl } from "../../utils/assetUrl.js";
 import { ROLES, rolActual } from "../../utils/roles.js";
 import { estadoReporte } from "../../utils/estadoReporte.js";
-import {
-  angleDownIcon, calendarIcon, checkIcon, clockIcon, commentsIcon, houseIcon,
-  locationDotIcon, magnifyingGlassIcon, plusIconWhite,
-} from "../../assets/icons";
+import { angleDownIcon, calendarIcon, checkIcon, clockIcon, commentsIcon, houseIcon, locationDotIcon, magnifyingGlassIcon, plusIconWhite } from "../../assets/icons";
 import ReporteModal from "./ReporteModal";
 import "./ReportesAgente.css";
 

@@ -1,16 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
-import {
-  bellIcon,
-  calendarIcon,
-  checkIcon,
-  circleInfoIcon,
-  commentsIcon,
-  fileLinesIcon,
-  penIcon,
-  toolboxIcon,
-  xIcon,
-} from "../../assets/icons";
+import { bellIcon, calendarIcon, checkIcon, circleInfoIcon, commentsIcon, fileLinesIcon, penIcon, toolboxIcon, xIcon } from "../../assets/icons";
 import { mostrarAviso } from "../../components";
 import { api } from "../../services/api";
 import { estadoReporte } from "../../utils/estadoReporte.js";

@@ -1,11 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-
 import { Skeleton, PanelImagen, CampoTexto, BotonPrincipal, TextoLegal, AccesoGoogle, mostrarAviso } from "../../components";
-
-import { api } from "../../services/api.js";
 import { inicioDelRol } from "../../layouts/navegacion.js";
-
 import { loginMailIcon, loginLockIcon } from "../../assets/icons";
+import { api } from "../../services/api.js";
 
 import "./Login.css";
 

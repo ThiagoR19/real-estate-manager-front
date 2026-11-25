@@ -1,25 +1,7 @@
 import { useEffect, useState } from "react";
-import {
-  envelopeIcon,
-  fileLinesIcon,
-  clockIcon,
-  magnifyingGlassIcon,
-  peopleIcon,
-  phoneIcon,
-  plusIcon,
-  xIcon,
-} from "../../assets/icons";
+import { envelopeIcon, fileLinesIcon, clockIcon, magnifyingGlassIcon, peopleIcon, phoneIcon, plusIcon, xIcon } from "../../assets/icons";
 import propertyImage from "/images.jpg";
-import {
-  Boton,
-  PildoraResumen,
-  ConfirmarEliminacionModal,
-  AccionesEntidad,
-  AvisoEnlaceActivacion,
-  Paginacion,
-  usePaginacion,
-  mostrarAviso,
-} from "../../components";
+import { Boton, PildoraResumen, ConfirmarEliminacionModal, AccionesEntidad, AvisoEnlaceActivacion, Paginacion, usePaginacion, mostrarAviso } from "../../components";
 import PersonaModal from "./PersonaModal";
 import "./Propietarios.css";
 import { api } from "../../services/api.js";

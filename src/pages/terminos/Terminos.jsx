@@ -1,16 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "wouter";
-import {
-  arrowsRotateIcon,
-  circleInfoIcon,
-  desktopIcon,
-  envelopeIcon,
-  fileLinesIcon,
-  houseIcon,
-  lockIcon,
-  shieldHalvedIcon,
-  userIcon,
-} from "../../assets/icons";
+import { arrowsRotateIcon, circleInfoIcon, desktopIcon, envelopeIcon, fileLinesIcon, houseIcon, lockIcon, shieldHalvedIcon, userIcon } from "../../assets/icons";
 import "./Terminos.css";
 
 const sections = [

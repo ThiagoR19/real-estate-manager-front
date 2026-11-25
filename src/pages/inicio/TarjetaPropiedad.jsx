@@ -2,13 +2,7 @@ import { Link } from "wouter";
 
 import "./TarjetaPropiedad.css";
 
-import {
-  ubiIcon,
-  camaIcon,
-  duchaIcon,
-  medidaIcon,
-  ojoVistoIcon,
-} from "../../assets/icons";
+import { ubiIcon, camaIcon, duchaIcon, medidaIcon, ojoVistoIcon } from "../../assets/icons";
 
 const IMAGEN_POR_DEFECTO = "/images%20(1).jpg";
 

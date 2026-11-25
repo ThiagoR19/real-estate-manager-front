@@ -1,28 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import PageSkeleton from "../../components/skeleton/PageSkeleton";
-import {
-  calendarIcon,
-  envelopeIcon,
-  fileLinesIcon,
-  houseIcon,
-  locationDotIcon,
-  magnifyingGlassIcon,
-  peopleIcon,
-  phoneIcon,
-  plusIcon,
-  xIcon,
-} from "../../assets/icons";
-import {
-  SelectDesplegable,
-  ConfirmarEliminacionModal,
-  AccionesEntidad,
-  AvisoEnlaceActivacion,
-  Boton,
-  PildoraResumen,
-  Paginacion,
-  usePaginacion,
-  mostrarAviso,
-} from "../../components";
+import { calendarIcon, envelopeIcon, fileLinesIcon, houseIcon, locationDotIcon, magnifyingGlassIcon, peopleIcon, phoneIcon, plusIcon, xIcon } from "../../assets/icons";
+import { SelectDesplegable, ConfirmarEliminacionModal, AccionesEntidad, AvisoEnlaceActivacion, Boton, PildoraResumen, Paginacion, usePaginacion, mostrarAviso } from "../../components";
 import InquilinoModal from "./InquilinoModal";
 import "./Inquilinos.css";
 import { api } from "../../services/api.js";

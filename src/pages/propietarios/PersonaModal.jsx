@@ -1,14 +1,5 @@
 import { useState } from "react";
-import {
-  addressCardIcon,
-  buildingColumnsIcon,
-  envelopeIcon,
-  houseIcon,
-  locationDotIcon,
-  peopleIcon,
-  phoneIcon,
-  userIcon,
-} from "../../assets/icons";
+import { addressCardIcon, buildingColumnsIcon, envelopeIcon, houseIcon, locationDotIcon, peopleIcon, phoneIcon, userIcon } from "../../assets/icons";
 import { GestionModal, AccionesModal, CampoModal, EntradaModal, ModalSelect, mostrarAviso } from "../../components";
 
 const propertyOptions = ["Av. San Martín 1250", "Av. Santa Fe 850"];

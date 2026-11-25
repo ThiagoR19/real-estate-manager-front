@@ -1,15 +1,7 @@
 import { Skeleton, Estadisticas, TituloSeccion } from "../../components";
 
 import fondoPortada from "../../assets/nosotrosHero.png";
-import {
-  manosIcon,
-  libroIcon,
-  medallaIcon,
-  casaNosotrosIcon,
-  valanzaIcon,
-  camaraNosotrosIcon,
-  llaveNosotrosIcon,
-} from "../../assets/icons";
+import { manosIcon, libroIcon, medallaIcon, casaNosotrosIcon, valanzaIcon, camaraNosotrosIcon, llaveNosotrosIcon } from "../../assets/icons";
 
 import "./SobreNosotros.css";
 
