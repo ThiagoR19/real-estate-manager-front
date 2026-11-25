@@ -117,11 +117,12 @@ export default function Login() {
 
         </form>
 
-        {cuentasPassword.length > 0 && <div className="login__organizaciones">
-          <p>Elegí la inmobiliaria para continuar:</p>
-          {cuentasPassword.map((cuenta) => <button key={cuenta.idUsuario} type="button"
-            onClick={() => completarPassword(cuenta.idUsuario)} disabled={submitState === "enviando"}>{cuenta.inmobiliaria}</button>)}
-        </div>}
+        {cuentasPassword.length > 0 &&
+          <div className="login__organizaciones">
+            <p>Elegí la inmobiliaria para continuar:</p>
+            {cuentasPassword.map((cuenta) => <button key={cuenta.idUsuario} type="button"
+              onClick={() => completarPassword(cuenta.idUsuario)} disabled={submitState === "enviando"}>{cuenta.inmobiliaria}</button>)}
+          </div>}
 
         <AccesoGoogle texto="o continúa con" modo="/login" onCredential={completarGoogle} className="login__google" />
         {cuentasGoogle.length > 0 && <div className="login__organizaciones">

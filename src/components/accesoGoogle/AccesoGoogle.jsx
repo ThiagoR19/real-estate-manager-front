@@ -24,9 +24,16 @@ function cargarGoogle() {
   return scriptPromise;
 }
 
+function cubrirBoton(capa) {
+  if (!capa?.offsetWidth || !capa.offsetHeight) return;
+  const { offsetWidth: ancho, offsetHeight: alto } = capa.parentElement;
+  capa.style.transform = `scale(${ancho / capa.offsetWidth}, ${alto / capa.offsetHeight})`;
+}
+
 export default function AccesoGoogle({ texto, className = "", onCredential, onError, modo }) {
   const container = useRef(null);
   const [unavailable, setUnavailable] = useState(false);
+  const disponible = clientIdValido && !unavailable;
   const mensajeNoDisponible = !clientId
     ? "Falta configurar VITE_GOOGLE_CLIENT_ID en el .env del frontend. Reiniciá Vite después de agregarla."
     : !clientIdValido
@@ -44,6 +51,7 @@ export default function AccesoGoogle({ texto, className = "", onCredential, onEr
     const handler = (credential) => credentialHandler.current?.(credential);
     callbacks.set(modo, handler);
     let active = true;
+    let observador;
     cargarGoogle().then(() => {
       if (!active || !container.current) return;
       if (!initialized) {
@@ -55,8 +63,12 @@ export default function AccesoGoogle({ texto, className = "", onCredential, onEr
       }
       window.google.accounts.id.renderButton(container.current, {
         type: "standard", theme: "outline", size: "large", text: "continue_with",
-        shape: "rectangular", width: 320,
+        shape: "rectangular", width: 400,
       });
+      const capa = container.current;
+      observador = new ResizeObserver(() => cubrirBoton(capa));
+      observador.observe(capa.parentElement);
+      observador.observe(capa);
     }).catch((error) => {
       if (active) {
         setUnavailable(true);
@@ -66,6 +78,7 @@ export default function AccesoGoogle({ texto, className = "", onCredential, onEr
     });
     return () => {
       active = false;
+      observador?.disconnect();
       if (callbacks.get(modo) === handler) callbacks.delete(modo);
     };
   }, [modo]);
@@ -73,10 +86,13 @@ export default function AccesoGoogle({ texto, className = "", onCredential, onEr
   return (
     <div className={`AccesoGoogle ${className}`}>
       {texto && <div className="AccesoGoogle__separador"><span>{texto}</span></div>}
-      {clientIdValido && !unavailable ? <div className="AccesoGoogle__botonGoogle" ref={container} /> :
-        <div><button className="AccesoGoogle__boton" type="button" disabled>
+      <div className="AccesoGoogle__contenedor">
+        <button className="AccesoGoogle__boton" type="button" disabled={!disponible} tabIndex={-1} aria-hidden={disponible}>
           <span className="AccesoGoogle__icono"><img src={loginGoogleIcon} alt="" /></span>Google
-        </button><p className="AccesoGoogle__noDisponible">{mensajeNoDisponible}</p></div>}
+        </button>
+        {disponible && <div className="AccesoGoogle__capaGoogle" ref={container} />}
+      </div>
+      {!disponible && <p className="AccesoGoogle__noDisponible">{mensajeNoDisponible}</p>}
     </div>
   );
 }

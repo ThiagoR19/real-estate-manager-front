@@ -20,7 +20,16 @@
   background-color: var(--azulGris);
 }
 
-.AccesoGoogle__botonGoogle { display: flex; justify-content: center; min-height: 42px; }
+.AccesoGoogle__contenedor { position: relative; }
+.AccesoGoogle__capaGoogle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transform-origin: 0 0;
+}
+.AccesoGoogle__contenedor:hover .AccesoGoogle__boton:not(:disabled) { background-color: var(--casiBlanc); }
+.AccesoGoogle__contenedor:focus-within .AccesoGoogle__boton { outline: 2px solid var(--azulClaro); outline-offset: 2px; }
 .AccesoGoogle__noDisponible { text-align: center; color: var(--azulGris); font-size: 13px; }
 
 .AccesoGoogle__boton {
