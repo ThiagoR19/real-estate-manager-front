@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Skeleton, PanelImagen, CampoTexto, BotonPrincipal, TextoLegal, AccesoGoogle, mostrarAviso } from "../../components";
 
 import { api } from "../../services/api.js";
-import { dashboardPorRol } from "../../layouts/navegacion.js";
+import { inicioDelRol } from "../../layouts/navegacion.js";
 
 import mailIcon from "../../assets/icons/loginMail.svg";
 import lockIcon from "../../assets/icons/loginLock.svg";
@@ -40,8 +40,7 @@ export default function Login() {
       }
       api.guardarSesion(session);
       setSubmitState("listo");
-      const destination = dashboardPorRol[Number(session.usuario?.rol)] ?? "/dashboard";
-      window.location.assign(destination);
+      window.location.assign(inicioDelRol(Number(session.usuario?.rol)));
     } catch (cause) {
       mostrarAviso({ tipo: "error", titulo: "No se pudo iniciar sesión", mensaje: cause.message });
       setSubmitState("inactivo");
@@ -55,7 +54,7 @@ export default function Login() {
       const { usuario, password } = credencialesPassword.current;
       const session = await api.login(usuario, password, idUsuario);
       api.guardarSesion(session);
-      window.location.assign(dashboardPorRol[Number(session.usuario?.rol)] ?? "/dashboard");
+      window.location.assign(inicioDelRol(Number(session.usuario?.rol)));
     } catch (cause) {
       mostrarAviso({ tipo: "error", titulo: "No se pudo iniciar sesión", mensaje: cause.message });
       setSubmitState("inactivo");
@@ -71,7 +70,7 @@ export default function Login() {
         return;
       }
       api.guardarSesion(result);
-      window.location.assign(dashboardPorRol[Number(result.usuario?.rol)] ?? "/dashboard");
+      window.location.assign(inicioDelRol(Number(result.usuario?.rol)));
     } catch (cause) {
       mostrarAviso({ tipo: "error", titulo: "No se pudo iniciar sesión con Google", mensaje: cause.message });
     }

@@ -4,7 +4,7 @@ import { Redirect, Route, Switch, useLocation, useSearch } from "wouter";
 import { SobreNosotros, Inmobiliaria, Agentes, DashboardAgente, Chat, Cobros, ConfirmarRegistro, Dashboard, DashboardPropietario, Indec, Login, MisPropiedades, Propietarios, Pagos, PagosYCobros, Profesionales, Perfil, Propiedades, Propiedad, Registro, ReportesAgente, Agenda, SuperAdmin, Inquilinos, DashboardInquilino, Terminos } from "./pages/index.js";
 
 import { Header, Navbar, LayoutPublico } from "./layouts/index.js";
-import { dashboardPorRol, puedeEntrar } from "./layouts/navegacion.js";
+import { inicioDelRol, puedeEntrar } from "./layouts/navegacion.js";
 import { obtenerSesion } from "./services/login.js";
 import { ROLES, rolActual } from "./utils/roles.js";
 import { ContenedorAvisos } from "./components/index.js";
@@ -58,7 +58,7 @@ function VistaConTransicion({ children, scrollAlInicio = false }) {
 function SoloConRol({ ruta, children }) {
   const rol = rolActual();
   if (puedeEntrar(rol, ruta)) return children;
-  return <Redirect to={dashboardPorRol[rol] ?? "/inicio"} replace />;
+  return <Redirect to={inicioDelRol(rol)} replace />;
 }
 
 function RutaPrivada({ path, ruta = path, component: Componente }) {

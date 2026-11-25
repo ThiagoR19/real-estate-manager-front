@@ -12,13 +12,11 @@ import {
 } from "../assets/icons";
 import { PERSONAL, ROLES, TODOS_LOS_ROLES } from "../utils/roles.js";
 
-export const dashboardPorRol = {
-  [ROLES.SUPERADMIN]: "/super-admin",
-  [ROLES.ADMIN]: "/dashboard",
-  [ROLES.AGENTE]: "/dashboard",
-  [ROLES.PROPIETARIO]: "/dashboard",
-  [ROLES.INQUILINO]: "/dashboard",
-};
+export function inicioDelRol(rol) {
+  const numero = Number(rol);
+  if (numero === ROLES.SUPERADMIN) return "/super-admin";
+  return TODOS_LOS_ROLES.includes(numero) ? "/dashboard" : "/inicio";
+}
 
 const SIN_SUPERADMIN = [ROLES.ADMIN, ROLES.AGENTE, ROLES.PROPIETARIO, ROLES.INQUILINO];
 
