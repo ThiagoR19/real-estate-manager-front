@@ -1,20 +1,22 @@
 import { Skeleton, Estadisticas, TituloSeccion } from "../../components";
 
 import fondoPortada from "../../assets/nosotrosHero.png";
-import confianzaIcono from "../../assets/icons/manosIcon.svg";
-import transparenciaIcono from "../../assets/icons/libroIcon.svg";
-import excelenciaIcono from "../../assets/icons/medallaIcon.svg";
-import tasacionIcono from "../../assets/icons/casaNosotrosIcon.svg";
-import legalIcono from "../../assets/icons/valanzaIcon.svg";
-import camaraIcono from "../../assets/icons/camaraNosotrosIcon.svg";
-import llaveIcono from "../../assets/icons/llaveNosotrosIcon.svg";
+import {
+  manosIcon,
+  libroIcon,
+  medallaIcon,
+  casaNosotrosIcon,
+  valanzaIcon,
+  camaraNosotrosIcon,
+  llaveNosotrosIcon,
+} from "../../assets/icons";
 
 import "./SobreNosotros.css";
 
 const valores = [
-  { titulo: "Confianza", texto: "Garantizamos relaciones seguras", icono: confianzaIcono },
-  { titulo: "Transparencia", texto: "Información clara en cada paso", icono: transparenciaIcono },
-  { titulo: "Excelencia", texto: "Calidad en cada operación", icono: excelenciaIcono },
+  { titulo: "Confianza", texto: "Garantizamos relaciones seguras", icono: manosIcon },
+  { titulo: "Transparencia", texto: "Información clara en cada paso", icono: libroIcon },
+  { titulo: "Excelencia", texto: "Calidad en cada operación", icono: medallaIcon },
 ];
 
 const servicios = [
@@ -22,22 +24,22 @@ const servicios = [
     titulo: "Tasaciones profesionales",
     texto:
       "Determinamos el valor real y competitivo de tu propiedad con un análisis exhaustivo del mercado actual.",
-    icono: tasacionIcono,
+    icono: casaNosotrosIcon,
   },
   {
     titulo: "Asesoramiento legal",
     texto: "Te acompañamos con contratos claros y gestiones seguras en cada etapa de la operación.",
-    icono: legalIcono,
+    icono: valanzaIcon,
   },
   {
     titulo: "Fotografía profesional",
     texto: "Mostramos tu propiedad con imágenes de calidad que destacan sus mejores espacios.",
-    icono: camaraIcono,
+    icono: camaraNosotrosIcon,
   },
   {
     titulo: "Administración de alquileres",
     texto: "Nos ocupamos de cobros, contratos y mantenimiento para que no tengas que preocuparte.",
-    icono: llaveIcono,
+    icono: llaveNosotrosIcon,
   },
 ];
 

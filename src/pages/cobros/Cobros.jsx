@@ -3,7 +3,7 @@ import { buildingColumnsIcon, calendarIcon, checkIcon, downloadIcon, fileLinesIc
 import { Boton, mostrarAviso } from "../../components";
 import SelectDesplegable from "../../components/select/SelectDesplegable";
 import useHistorialPeriodos, { formatearFecha, formatearFechaHora, formatearMonto, nombreMes, nombrePeriodo } from "../../hooks/useHistorialPeriodos";
-import { cobro as obtenerCobro, cobros as listarCobros, descargarComprobanteCobro, obtenerComprobanteCobro, solicitarRevisionCobro } from "../../services/cobros";
+import { cobro, cobros, descargarComprobanteCobro, obtenerComprobanteCobro, solicitarRevisionCobro } from "../../services/cobros";
 import { DialogoComprobante, DialogoRevision, VistaComprobante } from "../pagos/Comprobante";
 import "../pagos/PagosMovil.css";
 import "./Cobros.css";
@@ -35,17 +35,17 @@ function estadoDe(cobro) {
 }
 
 export default function Cobros() {
-  const historial = useHistorialPeriodos(listarCobros, obtenerCobro);
-  const { items, contratos, contrato, delContrato, anios, detalle: cobro } = historial;
+  const historial = useHistorialPeriodos(cobros, cobro);
+  const { items, contratos, contrato, delContrato, anios, detalle: cobroSeleccionado } = historial;
   const [openYears, setOpenYears] = useState({});
   const [timelineOpen, setTimelineOpen] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [dialogo, setDialogo] = useState(null);
   const abrirCronologia = useRef(null);
   const cerrarCronologia = useRef(null);
-  const estado = estadoDe(cobro);
-  const hasReceipt = Boolean(cobro?.tieneComprobante);
-  const comprobante = { cargar: obtenerComprobanteCobro, id: cobro?.id, nombre: cobro?.nombreArchivo, version: cobro?.fechaComprobante };
+  const estado = estadoDe(cobroSeleccionado);
+  const hasReceipt = Boolean(cobroSeleccionado?.tieneComprobante);
+  const comprobante = { cargar: obtenerComprobanteCobro, id: cobroSeleccionado?.id, nombre: cobroSeleccionado?.nombreArchivo, version: cobroSeleccionado?.fechaComprobante };
   const contar = (condicion) => `${delContrato.filter(condicion).length}/${delContrato.length}`;
 
   useEffect(() => {
@@ -85,12 +85,12 @@ export default function Cobros() {
   }
 
   function downloadReceipt() {
-    descargarComprobanteCobro(cobro.id, cobro.nombreArchivo).catch((error) =>
+    descargarComprobanteCobro(cobroSeleccionado.id, cobroSeleccionado.nombreArchivo).catch((error) =>
       mostrarAviso({ tipo: "error", titulo: "No se pudo descargar el comprobante", mensaje: error.message }),
     );
   }
 
-  if (!items || !items.length || !cobro) {
+  if (!items || !items.length || !cobroSeleccionado) {
     return (
       <main id="cobros" className="cobros--sin-periodos">
         <section className="cobros__empty-page">
@@ -215,7 +215,7 @@ export default function Cobros() {
                   <div className="cobros__months">
                     {periodos.map((item) => {
                       const { texto, tono } = estadoDe(item);
-                      const elegido = item.id === cobro.id;
+                      const elegido = item.id === cobroSeleccionado.id;
                       return (
                         <button
                           className={`cobros__month cobros__month--${tono}${elegido ? " is-selected" : ""}`}
@@ -246,7 +246,7 @@ export default function Cobros() {
           <TarjetaResumen
             icon={fileLinesIcon}
             label="Total del período"
-            value={formatearMonto(cobro.montoNeto)}
+            value={formatearMonto(cobroSeleccionado.montoNeto)}
             tone="blue"
           />
           <TarjetaResumen
@@ -283,8 +283,8 @@ export default function Cobros() {
               <span>
                 <strong>{hasReceipt ? "Comprobante cargado" : "Sin comprobante cargado"}</strong>
                 <small>
-                  {hasReceipt && formatearFechaHora(cobro.fechaComprobante)}
-                  {!hasReceipt && cobro.estado === "Pendiente" && "Esperando la transferencia de la inmobiliaria"}
+                  {hasReceipt && formatearFechaHora(cobroSeleccionado.fechaComprobante)}
+                  {!hasReceipt && cobroSeleccionado.estado === "Pendiente" && "Esperando la transferencia de la inmobiliaria"}
                 </small>
               </span>
             </div>
@@ -292,9 +292,9 @@ export default function Cobros() {
 
           <article className="cobros__detail" aria-labelledby="cobros-title">
             <header className="cobros__detail-heading">
-              <h2 id="cobros-title">{nombrePeriodo(cobro.periodo)}</h2>
+              <h2 id="cobros-title">{nombrePeriodo(cobroSeleccionado.periodo)}</h2>
               <span className={`cobros__status cobros__status--${estado.tono}`}>
-                {cobro.estado === "Liquidado" && <Icono src={checkIcon} />}
+                {cobroSeleccionado.estado === "Liquidado" && <Icono src={checkIcon} />}
                 {estado.texto}
               </span>
             </header>
@@ -303,27 +303,27 @@ export default function Cobros() {
                 <div>
                   <span className="cobros__round-symbol" aria-hidden="true"><Icono src={calendarIcon} /></span>
                   <strong>Fecha de cobro:</strong>
-                  <b>{formatearFecha(cobro.fechaPagoInquilino)}</b>
+                  <b>{formatearFecha(cobroSeleccionado.fechaPagoInquilino)}</b>
                 </div>
                 <div>
                   <span className="cobros__round-symbol" aria-hidden="true"><Icono src={calendarIcon} /></span>
                   <strong>Fecha de liquidación:</strong>
-                  <b>{formatearFecha(cobro.fechaCobro)}</b>
+                  <b>{formatearFecha(cobroSeleccionado.fechaCobro)}</b>
                 </div>
                 <div>
                   <span className="cobros__round-symbol">$</span>
                   <strong>Monto cobrado:</strong>
-                  <b>{formatearMonto(cobro.montoBruto)}</b>
+                  <b>{formatearMonto(cobroSeleccionado.montoBruto)}</b>
                 </div>
                 <div>
                   <span className="cobros__round-symbol">%</span>
                   <strong>Comisión inmobiliaria:</strong>
-                  <b>{cobro.comision ? `-${formatearMonto(cobro.comision)}` : formatearMonto(0)}</b>
+                  <b>{cobroSeleccionado.comision ? `-${formatearMonto(cobroSeleccionado.comision)}` : formatearMonto(0)}</b>
                 </div>
                 <div className="cobros__facts-total">
                   <span className="cobros__round-symbol">$</span>
-                  <strong>Monto total{cobro.moneda ? ` (${cobro.moneda})` : ""}:</strong>
-                  <b>{formatearMonto(cobro.montoNeto)}</b>
+                  <strong>Monto total{cobroSeleccionado.moneda ? ` (${cobroSeleccionado.moneda})` : ""}:</strong>
+                  <b>{formatearMonto(cobroSeleccionado.montoNeto)}</b>
                 </div>
               </div>
 
@@ -333,8 +333,8 @@ export default function Cobros() {
                   <p role="status">Cargando detalle…</p>
                 ) : historial.errorDetalle ? (
                   <button type="button" onClick={historial.recargar}>Reintentar detalle</button>
-                ) : cobro.conceptos?.length ? (
-                  cobro.conceptos.map((linea) => (
+                ) : cobroSeleccionado.conceptos?.length ? (
+                  cobroSeleccionado.conceptos.map((linea) => (
                     <div key={linea.idConcepto}>
                       <span>{linea.nombre}:</span>
                       <b>{formatearMonto(linea.monto)}</b>
@@ -347,10 +347,10 @@ export default function Cobros() {
                 )}
               </section>
             </div>
-            {cobro.detalle && (
+            {cobroSeleccionado.detalle && (
               <aside className="cobros__admin-note">
                 <span><Icono src={fileLinesIcon} /></span>
-                <div><strong>Detalle de administración</strong><p>{cobro.detalle}</p></div>
+                <div><strong>Detalle de administración</strong><p>{cobroSeleccionado.detalle}</p></div>
               </aside>
             )}
             <div className="cobros__actions">
@@ -360,11 +360,11 @@ export default function Cobros() {
                   <span>Descargar comprobante</span>
                 </Boton>
               )}
-              {cobro.estado === "Liquidado" && (
+              {cobroSeleccionado.estado === "Liquidado" && (
                 <Boton className="cobros__review" icon={paperPlaneIcon} text="Solicitar revisión" onClick={() => setDialogo("revision")} />
               )}
             </div>
-            {cobro.estado === "Liquidado" && hasReceipt && (
+            {cobroSeleccionado.estado === "Liquidado" && hasReceipt && (
               <p className="cobros__note">El comprobante queda disponible para consultas y descarga.</p>
             )}
           </article>
@@ -372,7 +372,7 @@ export default function Cobros() {
       </section>
       {dialogo === "comprobante" && <DialogoComprobante {...comprobante} onCerrar={() => setDialogo(null)} />}
       {dialogo === "revision" && (
-        <DialogoRevision periodo={nombrePeriodo(cobro.periodo)} solicitar={solicitarRevisionCobro} id={cobro.id} onCerrar={() => setDialogo(null)} />
+        <DialogoRevision periodo={nombrePeriodo(cobroSeleccionado.periodo)} solicitar={solicitarRevisionCobro} id={cobroSeleccionado.id} onCerrar={() => setDialogo(null)} />
       )}
     </main>
   );

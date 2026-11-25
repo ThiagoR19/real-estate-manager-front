@@ -1,29 +1,61 @@
-export { default as SobreNosotros } from "./sobreNosotros/SobreNosotros";
-export { default as Inmobiliaria } from "./inmobiliaria/Inmobiliaria";
-export { default as Agentes } from "./agentes/Agentes";
-export { default as Chat } from "./chat/Chat";
-export { default as Cobros } from "./cobros/Cobros";
-export { default as Dashboard } from "./dashboard/Dashboard";
-export { default as DashboardAgente } from "./dashboardAgente/DashboardAgente";
-export { default as DashboardInquilino } from "./dashboardInquilino/DashboardInquilino";
-export { default as DashboardPropietario } from "./dashboardPropietario/DashboardPropietario";
-export { default as Login } from "./login/Login";
-export { default as Inicio } from "./inicio/Inicio";
-export { default as Indec } from "./indec/Indec";
-export { default as MisPropiedades } from "./misPropiedades/MisPropiedades";
-export { default as Propietarios } from "./propietarios/Propietarios";
-export { default as Pagos } from "./pagos/Pagos";
-export { default as PagosYCobros } from "./pagosYCobros/PagosYCobros";
-export { default as Profesionales } from "./profesionales/Profesionales";
-export { default as Perfil } from "./perfil/Perfil";
-export { default as Propiedades } from "./propiedades/Propiedades";
-export { default as PropiedadesPublicas } from "./propiedadesPublicas/PropiedadesPublicas";
-export { default as PropiedadPublica } from "./propiedadPublica/PropiedadPublica";
-export { default as Propiedad } from "./propiedad/Propiedad";
-export { default as Registro } from "./registro/Registro";
-export { default as ConfirmarRegistro } from "./confirmarRegistro/ConfirmarRegistro";
-export { default as ReportesAgente } from "./reportesAgente/ReportesAgente";
-export { default as Agenda } from "./agenda/Agenda";
-export { default as SuperAdmin } from "./superAdmin/SuperAdmin";
-export { default as Inquilinos } from "./inquilinos/Inquilinos";
-export { default as Terminos } from "./terminos/Terminos";
+import SobreNosotros from "./sobreNosotros/SobreNosotros";
+import Inmobiliaria from "./inmobiliaria/Inmobiliaria";
+import Agentes from "./agentes/Agentes";
+import Chat from "./chat/Chat";
+import Cobros from "./cobros/Cobros";
+import Dashboard from "./dashboard/Dashboard";
+import DashboardAgente from "./dashboardAgente/DashboardAgente";
+import DashboardInquilino from "./dashboardInquilino/DashboardInquilino";
+import DashboardPropietario from "./dashboardPropietario/DashboardPropietario";
+import Login from "./login/Login";
+import Inicio from "./inicio/Inicio";
+import Indec from "./indec/Indec";
+import MisPropiedades from "./misPropiedades/MisPropiedades";
+import Propietarios from "./propietarios/Propietarios";
+import Pagos from "./pagos/Pagos";
+import PagosYCobros from "./pagosYCobros/PagosYCobros";
+import Profesionales from "./profesionales/Profesionales";
+import Perfil from "./perfil/Perfil";
+import Propiedades from "./propiedades/Propiedades";
+import PropiedadesPublicas from "./propiedadesPublicas/PropiedadesPublicas";
+import PropiedadPublica from "./propiedadPublica/PropiedadPublica";
+import Propiedad from "./propiedad/Propiedad";
+import Registro from "./registro/Registro";
+import ConfirmarRegistro from "./confirmarRegistro/ConfirmarRegistro";
+import ReportesAgente from "./reportesAgente/ReportesAgente";
+import Agenda from "./agenda/Agenda";
+import SuperAdmin from "./superAdmin/SuperAdmin";
+import Inquilinos from "./inquilinos/Inquilinos";
+import Terminos from "./terminos/Terminos";
+
+export {
+  SobreNosotros,
+  Inmobiliaria,
+  Agentes,
+  Chat,
+  Cobros,
+  Dashboard,
+  DashboardAgente,
+  DashboardInquilino,
+  DashboardPropietario,
+  Login,
+  Inicio,
+  Indec,
+  MisPropiedades,
+  Propietarios,
+  Pagos,
+  PagosYCobros,
+  Profesionales,
+  Perfil,
+  Propiedades,
+  PropiedadesPublicas,
+  PropiedadPublica,
+  Propiedad,
+  Registro,
+  ConfirmarRegistro,
+  ReportesAgente,
+  Agenda,
+  SuperAdmin,
+  Inquilinos,
+  Terminos,
+};

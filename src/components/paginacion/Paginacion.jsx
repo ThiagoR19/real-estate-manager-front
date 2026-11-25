@@ -12,7 +12,7 @@ export default function Paginacion({ page, totalPages, total, onPageChange, page
   return (
     <nav className="paginacion" aria-label="Paginación">
       <span className="paginacion__count">
-        Mostrando {first}–{last} de {total}
+        Mostrando {first} - {last} de {total}
         {mostrarTamanoPagina && ` · ${pageSize} por página`}
       </span>
       <div className="paginacion__buttons">

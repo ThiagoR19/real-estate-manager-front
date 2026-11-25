@@ -1,12 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { buildingColumnsIcon, magnifyingGlassIcon, paperPlaneIcon, userIcon } from "../../assets/icons";
+import { agiLogo, buildingColumnsIcon, magnifyingGlassIcon, paperPlaneIcon, userIcon } from "../../assets/icons";
 import SelectDesplegable from "../../components/select/SelectDesplegable";
 import { mostrarAviso } from "../../components";
 import { api } from "../../services/api.js";
 import PageSkeleton from "../../components/skeleton/PageSkeleton";
 import { obtenerSesion } from "../../services/login.js";
 import { obtenerSocket } from "../../services/socket.js";
-import agiLogo from "../../assets/icons/agiLogo.svg";
 import "./Chat.css";
 
 const RESPALDO_MS = 60000;

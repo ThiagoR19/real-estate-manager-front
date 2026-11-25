@@ -27,8 +27,8 @@ import {
   descargarComprobantePago,
   marcarPagoPagado,
   obtenerComprobantePago,
-  pago as obtenerPago,
-  pagos as listarPagos,
+  pago,
+  pagos,
   solicitarRevisionPago,
   subirComprobantePago,
   TIPOS_COMPROBANTE,
@@ -284,8 +284,8 @@ function DetallePago({ pago, cargando, error, recargar }) {
 }
 
 export default function Pagos() {
-  const historial = useHistorialPeriodos(listarPagos, obtenerPago);
-  const { items, contratos, contrato, delContrato, anios, detalle: pago } = historial;
+  const historial = useHistorialPeriodos(pagos, pago);
+  const { items, contratos, contrato, delContrato, anios, detalle: pagoSeleccionado } = historial;
   const [aniosAbiertos, setAniosAbiertos] = useState({});
   const [panel, setPanel] = useState(null);
   const [formularioAbierto, setFormularioAbierto] = useState(false);
@@ -356,13 +356,13 @@ export default function Pagos() {
     );
   }
 
-  if (formularioAbierto || !pago) {
+  if (formularioAbierto || !pagoSeleccionado) {
     return (
       <main id="vista-pago" className="vista-pago--sin-periodos">
         <section className="vista-pago__empty-page registro-pago" aria-labelledby="vista-pago-title">
           <header className="registro-pago__cabecera">
             <h1 id="vista-pago-title">Registrar pago</h1>
-            {pago && (
+            {pagoSeleccionado && (
               <button type="button" className="registro-pago__volver" onClick={() => setFormularioAbierto(false)}>
                 Volver al historial
               </button>
@@ -452,7 +452,7 @@ export default function Pagos() {
         <div className="vista-pago__years pagos__years">
           {anios.map(({ anio, periodos }) => {
             const clave = `${contrato.idContrato}|${anio}`;
-            const abierto = aniosAbiertos[clave] ?? pago.periodo.startsWith(anio);
+            const abierto = aniosAbiertos[clave] ?? pagoSeleccionado.periodo.startsWith(anio);
             return (
               <section className="vista-pago__year pagos__year" key={anio}>
                 <button
@@ -468,9 +468,9 @@ export default function Pagos() {
                     {periodos.map((item) => (
                       <button
                         key={item.id}
-                        className={`vista-pago__month pagos__month${item.id === pago.id ? " is-selected" : ""}`}
+                        className={`vista-pago__month pagos__month${item.id === pagoSeleccionado.id ? " is-selected" : ""}`}
                         type="button"
-                        aria-pressed={item.id === pago.id}
+                        aria-pressed={item.id === pagoSeleccionado.id}
                         onClick={() => { historial.elegir(item.id); setPanel(null); }}
                       >
                         <strong>{nombreMes(item.periodo)}</strong><EstadoPago estado={estadoDe(item)} />
@@ -495,7 +495,7 @@ export default function Pagos() {
           </div>
         )}
         <ResumenPagos abierto={resumenAbierto} periodos={delContrato} />
-        <DetallePago key={pago.id} pago={pago} cargando={historial.cargandoDetalle} error={historial.errorDetalle} recargar={historial.recargar} />
+        <DetallePago key={pagoSeleccionado.id} pago={pagoSeleccionado} cargando={historial.cargandoDetalle} error={historial.errorDetalle} recargar={historial.recargar} />
       </section>
     </main>
   );

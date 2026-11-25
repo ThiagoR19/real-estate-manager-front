@@ -3,7 +3,7 @@ import { Link, useSearchParams } from "wouter";
 import { TarjetaPropiedadSimple, Paginacion, Skeleton, mostrarAviso } from "../../components";
 import { PublicPropertiesSkeleton, PublicSkeletonBar } from "../../components/skeleton/PublicSkeletons";
 import { api } from "../../services/api";
-import filterIcon from "../../assets/icons/options.svg";
+import { optionsIcon } from "../../assets/icons";
 import "./PropiedadesPublicas.css";
 
 const DORMITORIOS = ["Todos", "1", "2", "3", "4+"];
@@ -306,7 +306,7 @@ export default function PropiedadesPublicas() {
               aria-controls="propiedad-publica-filters"
               onClick={() => setFiltersOpen(true)}
             >
-              <img src={filterIcon} alt="" />
+              <img src={optionsIcon} alt="" />
             </button>
           </div>
 

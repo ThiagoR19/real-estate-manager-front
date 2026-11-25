@@ -1,15 +1,10 @@
 import "./PildoraResumen.css";
 
-export default function PildoraResumen({ icon, label, value, tone = "info", onClick, selected = false, disabled = false }) {
-  const Element = onClick ? "button" : "div";
+export default function PildoraResumen({ icon, label, value, tone = "info" }) {
   return (
-    <Element
-      className={`pildora-resumen pildora-resumen--${tone}${onClick ? " pildora-resumen--interactive" : ""}${selected ? " is-selected" : ""}`}
-      type={onClick ? "button" : undefined}
-      onClick={onClick}
-      disabled={onClick ? disabled : undefined}
-      aria-pressed={onClick ? selected : undefined}
-      role={onClick ? undefined : "group"}
+    <div
+      className={`pildora-resumen pildora-resumen--${tone}`}
+      role="group"
       aria-label={`${label}: ${value}`}
     >
       <span className="pildora-resumen__icon">
@@ -17,6 +12,6 @@ export default function PildoraResumen({ icon, label, value, tone = "info", onCl
       </span>
       <strong className="pildora-resumen__label">{label}</strong>
       <span className="pildora-resumen__value">{value}</span>
-    </Element>
+    </div>
   );
 }

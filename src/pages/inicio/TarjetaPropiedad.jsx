@@ -2,11 +2,13 @@ import { Link } from "wouter";
 
 import "./TarjetaPropiedad.css";
 
-import ubicacionIcono from "../../assets/icons/ubiIcon.svg";
-import camaIcono from "../../assets/icons/camaIcon.svg";
-import banoIcono from "../../assets/icons/duchaIcon.svg";
-import superficieIcono from "../../assets/icons/medidaIcon.svg";
-import ojoIcono from "../../assets/icons/ojoVistoIcon.svg";
+import {
+  ubiIcon,
+  camaIcon,
+  duchaIcon,
+  medidaIcon,
+  ojoVistoIcon,
+} from "../../assets/icons";
 
 const IMAGEN_POR_DEFECTO = "/images%20(1).jpg";
 
@@ -20,9 +22,9 @@ export default function TarjetaPropiedad({ propiedad, className = "" }) {
   const { titulo, direccion, imagen, dormitorios, banos, superficie, operacion, estadoComercial } = propiedad;
 
   const caracteristicas = [
-    { icono: camaIcono, valor: dormitorios, nombre: "Dormitorios" },
-    { icono: banoIcono, valor: banos, nombre: "Baños" },
-    { icono: superficieIcono, valor: superficie === "-" ? "-" : `${superficie} m²`, nombre: "Superficie" },
+    { icono: camaIcon, valor: dormitorios, nombre: "Dormitorios" },
+    { icono: duchaIcon, valor: banos, nombre: "Baños" },
+    { icono: medidaIcon, valor: superficie === "-" ? "-" : `${superficie} m²`, nombre: "Superficie" },
   ];
 
   return (
@@ -39,7 +41,7 @@ export default function TarjetaPropiedad({ propiedad, className = "" }) {
 
         <p className="TarjetaPropiedad__direccion">
           <span className="TarjetaPropiedad__icono">
-            <img src={ubicacionIcono} alt="" />
+            <img src={ubiIcon} alt="" />
           </span>
           {direccion}
         </p>
@@ -65,7 +67,7 @@ export default function TarjetaPropiedad({ propiedad, className = "" }) {
 
         <Link href={`/propiedad-publica?id=${propiedad.id}`} className="TarjetaPropiedad__detalle">
           <span className="TarjetaPropiedad__detalle-icono">
-            <img src={ojoIcono} alt="" />
+            <img src={ojoVistoIcon} alt="" />
           </span>
           Ver detalle
         </Link>

@@ -2,7 +2,7 @@ import { Link, useLocation } from "wouter";
 
 import "./NavegacionPortada.css";
 
-import lupaIcono from "../../assets/icons/search.svg";
+import { searchIcon } from "../../assets/icons";
 import useBuscadorZona from "../../hooks/useBuscadorZona";
 
 const enlaces = [
@@ -74,7 +74,7 @@ export default function NavegacionPortada({ className = "", URLLogo }) {
           />
 
           <button type="submit" className="NavegacionPortada__buscar-boton" aria-label="Buscar">
-            <img src={lupaIcono} alt="" />
+            <img src={searchIcon} alt="" />
           </button>
         </form>
 

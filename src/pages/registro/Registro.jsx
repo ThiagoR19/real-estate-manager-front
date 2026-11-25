@@ -16,8 +16,7 @@ import Login from "../login/Login";
 import { limpiarBorradorRegistro, obtenerBorradorRegistro } from "../../services/borradorRegistro.js";
 import { api } from "../../services/api.js";
 
-import mailIcono from "../../assets/icons/loginMail.svg";
-import candadoIcono from "../../assets/icons/loginLock.svg";
+import { loginMailIcon, loginLockIcon } from "../../assets/icons";
 
 import "./Registro.css";
 
@@ -129,7 +128,7 @@ export default function Registro() {
               id="registro-usuario"
               label="Nombre de usuario"
               placeholder="Elegí un nombre de usuario"
-              icono={mailIcono}
+              icono={loginMailIcon}
               autoComplete="username"
               required
               className="Registro__campo-email"
@@ -140,7 +139,7 @@ export default function Registro() {
               label="Contraseña"
               tipo="password"
               placeholder="Ingresa tu contraseña"
-              icono={candadoIcono}
+              icono={loginLockIcon}
               autoComplete="new-password"
               required
               minLength={8}
@@ -152,7 +151,7 @@ export default function Registro() {
               label="Confirmar contraseña"
               tipo="password"
               placeholder="Repite tu contraseña"
-              icono={candadoIcono}
+              icono={loginLockIcon}
               autoComplete="new-password"
               required
               minLength={8}

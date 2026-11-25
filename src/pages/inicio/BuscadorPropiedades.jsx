@@ -5,9 +5,7 @@ import "./BuscadorPropiedades.css";
 
 import FiltroSelect from "./FiltroSelect";
 
-import ubicacionIcono from "../../assets/icons/location-dot-solid-full.svg";
-import camaIcono from "../../assets/icons/bed-solid-full.svg";
-import monedasIcono from "../../assets/icons/monedas.svg";
+import { locationDotIcon, bedIcon, monedasIcon } from "../../assets/icons";
 
 const operaciones = ["Alquilar", "Comprar"];
 
@@ -31,21 +29,21 @@ const filtrosDe = (operacion) => [
     id: "buscador-ubicacion",
     name: "ubicacion",
     etiqueta: "Ubicación",
-    icono: ubicacionIcono,
+    icono: locationDotIcon,
     opciones: ["CABA", "Belgrano", "Palermo", "Recoleta", "Núñez"],
   },
   {
     id: "buscador-habitaciones",
     name: "habitaciones",
     etiqueta: "Habitaciones",
-    icono: camaIcono,
+    icono: bedIcon,
     opciones: ["1", "2", "3", { texto: "4 o más", valor: "4+" }],
   },
   {
     id: "buscador-presupuesto",
     name: "presupuesto",
     etiqueta: "Presupuesto",
-    icono: monedasIcono,
+    icono: monedasIcon,
     opciones: presupuestos[operacion],
   },
 ];

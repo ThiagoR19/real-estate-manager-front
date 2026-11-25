@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import agiLogo from "../../assets/icons/agiLogo.svg";
+import { agiLogo } from "../../assets/icons";
 import "./Footer.css";
 
 const navegacion = [

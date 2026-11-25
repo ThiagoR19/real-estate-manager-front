@@ -1,6 +1,6 @@
 import "./FiltroSelect.css";
 
-import flechaIcono from "../../assets/icons/angle-down-solid-full.svg";
+import { angleDownIcon } from "../../assets/icons";
 
 const normalizar = (opcion) => (typeof opcion === "string" ? { texto: opcion, valor: opcion } : opcion);
 
@@ -23,7 +23,7 @@ export default function FiltroSelect({ id, name, etiqueta, icono, opciones = [],
       </select>
 
       <span className="FiltroSelect__flecha">
-        <img src={flechaIcono} alt="" />
+        <img src={angleDownIcon} alt="" />
       </span>
     </div>
   );
