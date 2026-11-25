@@ -3,6 +3,7 @@ import Notificacion from "./Notificacion";
 import { ROLES } from "../../utils/roles.js";
 
 import { campanaIcono, cerrarIcono } from "../../assets/icons";
+import "./PanelNotificaciones.css";
 
 const filtros = [
   { id: "todas", texto: "Todas", cumple: () => true },

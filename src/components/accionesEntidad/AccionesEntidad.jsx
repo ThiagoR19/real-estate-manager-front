@@ -5,15 +5,7 @@ import "./AccionesEntidad.css";
 
 const menuWidth = 176;
 
-export default function AccionesEntidad({
-  entity,
-  name,
-  onEdit,
-  onDelete,
-  onGenerateActivation,
-  className = "",
-  variant = "table",
-}) {
+export default function AccionesEntidad({ entity, name, onEdit, onDelete, onGenerateActivation, className = "", variant = "table" }) {
   const [position, setPosition] = useState(null);
   const open = position !== null;
   const triggerRef = useRef(null);
