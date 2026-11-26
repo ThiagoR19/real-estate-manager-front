@@ -161,13 +161,7 @@ export default function Agentes() {
   const zones = ["Todas las zonas", ...new Set(areas.map((area) => area.nombre))];
   const visibleAgents = agents.filter(
     (agent) =>
-      [agent.nombre, agent.apellido, agent.dni, agent.correo, agent.zona].some((value) =>
-        String(value ?? "")
-          .toLowerCase()
-          .includes(query.toLowerCase()),
-      ) &&
-      (zone === zones[0] || agent.zona === zone),
-  );
+      [agent.nombre, agent.apellido, agent.dni, agent.correo, agent.zona].some((value) => String(value ?? "").toLowerCase().includes(query.toLowerCase()),) && (zone === zones[0] || agent.zona === zone),);
   const today = new Date().toDateString();
   const todayVisits = visits.filter((visit) => new Date(visit.fecha).toDateString() === today).length;
   const cancelledVisits = visits.filter((visit) => visit.estado === "Cancelada").length;
@@ -192,25 +186,16 @@ export default function Agentes() {
   }, []);
 
   async function saveAgent(body) {
-    const result =
-      modal.mode === "edit"
-        ? await api.actualizarAgente(modal.person.id, body)
-        : await api.crearAgente(body);
-    setAgents((current) =>
-      modal.mode === "edit"
-        ? current.map((agent) => (agent.id === result.id ? result : agent))
-        : [...current, result],
-    );
+    const result = modal.mode === "edit" ? await api.actualizarAgente(modal.person.id, body) : await api.crearAgente(body);
+    setAgents((current) => modal.mode === "edit" ? current.map((agent) => (agent.id === result.id ? result : agent)) : [...current, result],);
+
     const urlActivacion = enlaceActivacion(result.activacion);
     setActivationUrl(modal.mode === "edit" ? "" : urlActivacion);
-    setNotice(modal.mode === "edit" || !urlActivacion
-      ? ""
-      : "Agente creado. Copiá el enlace y compartilo para que active su cuenta.");
-    mostrarAviso({
-      tipo: "exito",
-      titulo: modal.mode === "edit" ? "Agente actualizado" : "Agente creado",
-      mensaje: modal.mode === "edit" ? "Los datos del agente se guardaron." : "El agente ya está en la lista.",
-    });
+
+    setNotice(modal.mode === "edit" || !urlActivacion ? "" : "Agente creado. Copiá el enlace y compartilo para que active su cuenta.");
+
+    mostrarAviso({tipo: "exito", titulo: modal.mode === "edit" ? "Agente actualizado" : "Agente creado", mensaje: modal.mode === "edit" ? "Los datos del agente se guardaron." : "El agente ya está en la lista.",});
+
     setModal(null);
   }
 
@@ -218,6 +203,7 @@ export default function Agentes() {
     try {
       setError("");
       const activacion = await api.generarEnlaceAgente(agent.id);
+      
       setActivationUrl(enlaceActivacion(activacion));
       setNotice(`Enlace nuevo para ${agent.nombre || `DNI ${agent.dni}`}. Compartilo con el agente para activar su cuenta.`);
     } catch (cause) {
