@@ -220,7 +220,6 @@ export default function Agentes() {
       const activacion = await api.generarEnlaceAgente(agent.id);
       setActivationUrl(enlaceActivacion(activacion));
       setNotice(`Enlace nuevo para ${agent.nombre || `DNI ${agent.dni}`}. Compartilo con el agente para activar su cuenta.`);
-      mostrarAviso({ tipo: "info", titulo: "Enlace de activación generado", mensaje: "Copialo y compartilo con el agente para que active su cuenta." });
     } catch (cause) {
       mostrarAviso({ tipo: "error", titulo: "No se pudo generar el enlace", mensaje: cause.message });
     }

@@ -140,8 +140,12 @@ function App() {
           )}
         </Route>
         <Route path="/registro"><VistaConTransicion scrollAlInicio><Registro /></VistaConTransicion></Route>
-        <Route path="/activar"><VistaConTransicion scrollAlInicio><ConfirmarRegistro /></VistaConTransicion></Route>
-        <Route path="/confirmar-registro"><VistaConTransicion scrollAlInicio><ConfirmarRegistro /></VistaConTransicion></Route>
+        <Route path="/activar">
+          <VistaConTransicion scrollAlInicio><ConfirmarRegistro /></VistaConTransicion>
+        </Route>
+        <Route path="/confirmar-registro">
+          <VistaConTransicion scrollAlInicio><ConfirmarRegistro /></VistaConTransicion>
+        </Route>
         <Route>
           <AuthenticatedApp />
         </Route>
