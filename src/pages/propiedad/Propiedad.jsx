@@ -1,3 +1,4 @@
+import { assetUrl } from "../../utils/assetUrl.js";
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useParams } from "wouter";
 import { bathIcon, bedIcon, calendarIcon, cameraIcon, clockIcon, houseIcon, locationDotIcon, rulerCombinedIcon, userIcon } from "../../assets/icons";
@@ -169,7 +170,7 @@ export default function Propiedad() {
                   className="propiedad__gallery-main-image"
                   src={
                     imagenesGaleria[indiceImagenActiva].url
-                      ? api.urlRecurso(imagenesGaleria[indiceImagenActiva].url)
+                      ? assetUrl(imagenesGaleria[indiceImagenActiva].url)
                       : imagenesGaleria[indiceImagenActiva].src
                   }
                   alt={
@@ -216,7 +217,7 @@ export default function Propiedad() {
                     aria-current={imagenActiva === index ? "true" : undefined}
                     onClick={() => setImagenActiva(index)}
                   >
-                    <img src={image.url ? api.urlRecurso(image.url) : image.src} alt="" />
+                    <img src={image.url ? assetUrl(image.url) : image.src} alt="" />
                   </button>
                 ))}
               </div>

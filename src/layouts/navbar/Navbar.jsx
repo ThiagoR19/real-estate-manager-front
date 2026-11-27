@@ -1,3 +1,5 @@
+import { assetUrl } from "../../utils/assetUrl.js";
+import { obtenerSesion } from "../../utils/sesion.js";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { xIcon } from "../../assets/icons";
@@ -28,7 +30,7 @@ function ElementoNavegacion({ item, pathname, onNavigate }) {
 
 export default function Navbar({ menuOpen = false, onClose = () => {} }) {
   const [pathname] = useLocation();
-  const [user, setUser] = useState(() => api.obtenerSesion()?.usuario);
+  const [user, setUser] = useState(() => obtenerSesion()?.usuario);
   const [photoLoadError, setPhotoLoadError] = useState(false);
   const [rendered, setRendered] = useState(menuOpen);
   const closing = !menuOpen;
@@ -39,7 +41,7 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
 
   useEffect(() => {
     const syncUser = () => {
-      setUser(api.obtenerSesion()?.usuario);
+      setUser(obtenerSesion()?.usuario);
       setPhotoLoadError(false);
     };
     window.addEventListener("session-updated", syncUser);
@@ -154,7 +156,7 @@ export default function Navbar({ menuOpen = false, onClose = () => {} }) {
         </nav>
         <Link href="/perfil" className="navbar__drawer-account" onClick={onClose}>
           {user?.urlFotoPerfil && !photoLoadError ? (
-            <img className="navbar__drawer-avatar" src={api.urlRecurso(user.urlFotoPerfil)} alt="" onError={() => setPhotoLoadError(true)} />
+            <img className="navbar__drawer-avatar" src={assetUrl(user.urlFotoPerfil)} alt="" onError={() => setPhotoLoadError(true)} />
           ) : (
             <span className={`navbar__drawer-avatar ${avatarClass(user?.nombre, user?.apellido)}`} aria-hidden="true">
               {initials(user?.nombre, user?.apellido)}

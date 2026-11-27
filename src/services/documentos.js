@@ -1,5 +1,5 @@
 import { http, request } from "../utils/request.js";
-import { obtenerSesion } from "./login.js";
+import { obtenerSesion } from "../utils/sesion.js";
 
 export async function documentosContrato(idContrato) {
   const items = [];

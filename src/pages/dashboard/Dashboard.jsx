@@ -1,3 +1,4 @@
+import { assetUrl } from "../../utils/assetUrl.js";
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { api } from "../../services/api";
@@ -24,7 +25,7 @@ function TarjetaAgentes({ agents }) {
         {agents.map((agent) =>
           <div className="dashboard-agente" key={`AG${initials(agent.nombre, agent.apellido)}${agent.idAgente}`}>
             {agent.urlFotoPerfil
-              ? <img className="dashboard-avatar dashboard-avatar--foto" src={api.urlRecurso(agent.urlFotoPerfil)} alt="" aria-hidden="true" />
+              ? <img className="dashboard-avatar dashboard-avatar--foto" src={assetUrl(agent.urlFotoPerfil)} alt="" aria-hidden="true" />
               : <div className={`dashboard-avatar ${avatar(agent.nombre, agent.apellido)}`} aria-hidden="true">
                 {initials(agent.nombre, agent.apellido)}
               </div>}

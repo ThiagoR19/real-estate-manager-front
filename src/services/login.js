@@ -1,22 +1,5 @@
 import { request } from "../utils/request.js";
-
-export function obtenerSesion() {
-  try {
-    return JSON.parse(localStorage.getItem("agi-session"));
-  } catch {
-    return null;
-  }
-}
-
-export function guardarSesion(session) {
-  localStorage.setItem("agi-session", JSON.stringify(session));
-  window.dispatchEvent(new Event("session-updated"));
-}
-
-export function limpiarSesion() {
-  localStorage.removeItem("agi-session");
-  window.dispatchEvent(new Event("session-updated"));
-}
+import { limpiarSesion } from "../utils/sesion.js";
 
 export const login = (usuario, password, idUsuario) =>
   request("/auth/login", {

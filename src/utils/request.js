@@ -1,5 +1,5 @@
 import axios from "axios";
-import { limpiarSesion, obtenerSesion } from "../services/login.js";
+import { limpiarSesion, obtenerSesion } from "./sesion.js";
 
 export const apiBase = (import.meta.env.VITE_API_URL || "/api").replace(/\/$/, "");
 export const http = axios.create({ baseURL: apiBase });

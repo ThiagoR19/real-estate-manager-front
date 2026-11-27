@@ -1,5 +1,5 @@
 import { http, request } from "../utils/request.js";
-import { limpiarSesion, obtenerSesion } from "./login.js";
+import { limpiarSesion, obtenerSesion } from "../utils/sesion.js";
 
 export async function inquilinos() {
   const items = [];

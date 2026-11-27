@@ -1,10 +1,11 @@
+import { guardarSesion } from "../../utils/sesion.js";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link, useLocation } from "wouter";
 
 import { Skeleton, Marca, PanelImagen, CampoTexto, BotonPrincipal, TextoLegal, AccesoGoogle, mostrarAviso } from "../../components";
 import Login from "../login/Login";
-import { limpiarBorradorRegistro, obtenerBorradorRegistro } from "../../services/borradorRegistro.js";
+import { limpiarBorradorRegistro, obtenerBorradorRegistro } from "../../utils/borradorRegistro.js";
 import { api } from "../../services/api.js";
 
 import { loginMailIcon, loginLockIcon } from "../../assets/icons";
@@ -49,7 +50,7 @@ export default function Registro() {
     setStatus("enviando");
     try {
       const session = await api.registrar({ verificacion: draft.verificacion, usuario, password });
-      api.guardarSesion(session);
+      guardarSesion(session);
       limpiarBorradorRegistro();
       window.location.assign("/perfil");
     } catch (cause) {
@@ -64,7 +65,7 @@ export default function Registro() {
     setStatus("enviando");
     try {
       const session = await api.registrarGoogle(draft.verificacion, credential);
-      api.guardarSesion(session);
+      guardarSesion(session);
       limpiarBorradorRegistro();
       window.location.assign("/perfil");
     } catch (cause) {

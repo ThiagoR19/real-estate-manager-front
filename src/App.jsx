@@ -5,7 +5,7 @@ import { SobreNosotros, Inmobiliaria, Agentes, DashboardAgente, Chat, Cobros, Co
 
 import { Header, Navbar, LayoutPublico } from "./layouts/index.js";
 import { inicioDelRol, puedeEntrar } from "./layouts/navegacion.js";
-import { obtenerSesion } from "./services/login.js";
+import { obtenerSesion } from "./utils/sesion.js";
 import { ROLES, rolActual } from "./utils/roles.js";
 import { ContenedorAvisos } from "./components/index.js";
 

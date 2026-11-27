@@ -1,3 +1,4 @@
+import { assetUrl } from "../../utils/assetUrl.js";
 import { useEffect, useMemo, useState } from "react";
 import { angleDownIcon, buildingColumnsIcon, clockIcon, fileLinesIcon, houseIcon, locationDotIcon, peopleIcon, tagIcon, toolboxIcon, userIcon, walletIcon, xIcon } from "../../assets/icons";
 import { SelectDesplegable, PildoraResumen, Paginacion, usePaginacion, PROPERTY_PAGE_SIZE, mostrarAviso } from "../../components";
@@ -337,7 +338,7 @@ export default function MisPropiedades() {
                     {report.imagenes?.[0]?.url && (
                       <img
                         className="propiedades-propietario__report-image"
-                        src={api.urlRecurso(report.imagenes[0].url)}
+                        src={assetUrl(report.imagenes[0].url)}
                         alt=""
                       />
                     )}
@@ -365,7 +366,7 @@ export default function MisPropiedades() {
                       <span className="propiedades-propietario__report-gallery">
                         {report.imagenes?.map((image) => (
                           <img
-                            src={api.urlRecurso(image.url)}
+                            src={assetUrl(image.url)}
                             alt={`Imagen del reporte ${report.titulo}`}
                             key={image.id}
                           />

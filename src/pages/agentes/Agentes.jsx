@@ -1,3 +1,4 @@
+import { assetUrl } from "../../utils/assetUrl.js";
 import { useEffect, useState } from "react";
 import { clockIcon, calendarIcon, envelopeIcon, locationDotIcon, magnifyingGlassIcon, peopleIcon, phoneIcon, plusIcon, xIcon } from "../../assets/icons";
 import { SelectDesplegable, Boton, PildoraResumen, GestionModal, AccionesModal, CampoModal, EntradaModal, ModalSelect, ConfirmarEliminacionModal, AccionesEntidad, AvisoEnlaceActivacion, Paginacion, usePaginacion, mostrarAviso } from "../../components";
@@ -37,7 +38,7 @@ function FilaAgente({ agente, onEdit, onDelete, onGenerateActivation }) {
         <div className="agentes__person">
           <span className={`agentes__avatar ${avatarClass(agente.nombre, agente.apellido)}`}>
             {agente.urlFotoPerfil ? (
-              <img src={api.urlRecurso(agente.urlFotoPerfil)} alt="" />
+              <img src={assetUrl(agente.urlFotoPerfil)} alt="" />
             ) : (
               initials(agente.nombre, agente.apellido)
             )}

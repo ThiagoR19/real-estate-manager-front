@@ -1,4 +1,4 @@
-import { obtenerSesion } from "../services/login.js";
+import { obtenerSesion } from "./sesion.js";
 
 export const ROLES = {
   SUPERADMIN: 1,

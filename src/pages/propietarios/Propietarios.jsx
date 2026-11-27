@@ -11,9 +11,7 @@ import initials from "../../utils/initials.js";
 
 function enlaceActivacion(activacion) {
   if (activacion?.enlace) return activacion.enlace;
-  return activacion?.codigo
-    ? `${window.location.origin}/activar?codigo=${encodeURIComponent(activacion.codigo)}`
-    : "";
+  return activacion?.codigo ? `${window.location.origin}/activar?codigo=${encodeURIComponent(activacion.codigo)}` : "";
 }
 
 const prepararPropietario = (propietario) => ({
@@ -161,21 +159,21 @@ export default function Propietarios() {
   async function guardarPropietario(data) {
     const raw = modal.mode === "edit"
       ? await api.actualizarPropietario(modal.persona.id, {
-          nombre: data.nombre || null, apellido: data.apellido || null,
-          correo: data.correo || null, telefono: data.telefono || null,
-          direccion: data.direccion || null, cbu: data.cbu || null,
-          alias: data.alias || null, activo: data.estado === "Activo",
-        })
+        nombre: data.nombre || null, apellido: data.apellido || null,
+        correo: data.correo || null, telefono: data.telefono || null,
+        direccion: data.direccion || null, cbu: data.cbu || null,
+        alias: data.alias || null, activo: data.estado === "Activo",
+      })
       : await api.crearPropietario({
-          nombre: data.nombre,
-          apellido: data.apellido,
-          dni: data.dni,
-          correo: data.correo || null,
-          telefono: data.telefono || null,
-          direccion: data.direccion || null,
-          cbu: data.cbu || null,
-          alias: data.alias || null,
-        });
+        nombre: data.nombre,
+        apellido: data.apellido,
+        dni: data.dni,
+        correo: data.correo || null,
+        telefono: data.telefono || null,
+        direccion: data.direccion || null,
+        cbu: data.cbu || null,
+        alias: data.alias || null,
+      });
     const saved = prepararPropietario(raw);
     setPropietarios((current) => modal.mode === "edit"
       ? current.map((propietario) => propietario.id === saved.id ? saved : propietario)

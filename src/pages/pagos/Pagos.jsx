@@ -3,7 +3,8 @@ import { buildingColumnsIcon, calendarIcon, checkIcon, commentsIcon, downloadIco
 import { Boton, mostrarAviso } from "../../components";
 import SelectDesplegable from "../../components/select/SelectDesplegable";
 import useHistorialPeriodos, { etiquetarContratos, formatearFecha, formatearFechaHora, formatearMonto, nombreMes, nombrePeriodo } from "../../hooks/useHistorialPeriodos";
-import { contratosDisponiblesParaPago, descargarComprobantePago, marcarPagoPagado, obtenerComprobantePago, pago, pagos, solicitarRevisionPago, subirComprobantePago, TIPOS_COMPROBANTE, validarComprobante } from "../../services/pagos";
+import { contratosDisponiblesParaPago, descargarComprobantePago, marcarPagoPagado, obtenerComprobantePago, pago, pagos, solicitarRevisionPago, subirComprobantePago } from "../../services/pagos";
+import { TIPOS_COMPROBANTE, validarComprobante } from "../../utils/comprobantes.js";
 import { DialogoComprobante, DialogoRevision, VistaComprobante } from "./Comprobante";
 import RegistroPago from "./RegistroPago";
 import "./PagosMovil.css";

@@ -2,7 +2,8 @@ import { useState } from "react";
 import { fileLinesIcon, paperPlaneIcon } from "../../assets/icons";
 import { Boton } from "../../components";
 import { formatearMonto, nombrePeriodo } from "../../hooks/useHistorialPeriodos";
-import { registrarPagoConComprobante, TIPOS_COMPROBANTE, validarComprobante } from "../../services/pagos";
+import { registrarPagoConComprobante } from "../../services/pagos";
+import { TIPOS_COMPROBANTE, validarComprobante } from "../../utils/comprobantes.js";
 import { DialogoComprobante } from "./Comprobante";
 
 export default function RegistroPago({

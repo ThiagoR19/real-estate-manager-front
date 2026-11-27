@@ -1,5 +1,5 @@
 import { http } from "./request.js";
-import { limpiarSesion, obtenerSesion } from "../services/login.js";
+import { limpiarSesion, obtenerSesion } from "./sesion.js";
 
 async function mensajeDeError(error) {
   let payload = error.response?.data;

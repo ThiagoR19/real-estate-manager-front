@@ -1,5 +1,5 @@
 import { io } from "socket.io-client";
-import { obtenerSesion } from "./login.js";
+import { obtenerSesion } from "../utils/sesion.js";
 
 let socket = null;
 let tokenActual = null;

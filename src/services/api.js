@@ -2,7 +2,7 @@ import { conceptosPago, crearConceptoPago, inquilinosConAlquiler, propietariosCo
 import { inmobiliarias, todosLosAdministradores, todosLosAgentes, panelSuperAdmin, crearInmobiliaria, eliminarInmobiliaria, renombrarInmobiliaria, crearAdministrador, eliminarAdministrador, generarEnlaceAdministrador, administradorAAgente, agenteAAdministrador } from "./inmobiliarias.js";
 import { catalogosPropiedades, propiedades, propiedad, archivosPropiedad, crearPropiedad, actualizarPropiedad, eliminarPropiedad, subirArchivosPropiedad, renombrarDocumentoPropiedad, eliminarArchivoPropiedad, descargarDocumentoPropiedad, obtenerPropiedad } from "./propiedades.js";
 import { inquilinos, inquilino, archivosInquilino, crearInquilino, generarEnlaceInquilino, actualizarInquilino, eliminarInquilino, subirArchivosInquilino, eliminarArchivoInquilino, descargarDocumentoInquilino } from "./inquilinos.js";
-import { obtenerSesion, guardarSesion, limpiarSesion, login, loginGoogle, registrar, registrarGoogle, verificarDniInvitacion, cerrarSesion } from "./login.js";
+import { login, loginGoogle, registrar, registrarGoogle, verificarDniInvitacion, cerrarSesion } from "./login.js";
 import { propietarios, resumenPropietarios, crearPropietario, generarEnlacePropietario, actualizarPropietario, eliminarPropietario } from "./propietarios.js";
 import { visitas, todasLasVisitas, clientesVisitas, crearClienteVisita, crearVisita, actualizarVisita, cancelarVisita } from "./visitas.js";
 import { profesionales, crearProfesional, actualizarProfesional, eliminarProfesional, valorarProfesional } from "./profesionales.js";
@@ -18,7 +18,6 @@ import { documentosContrato, descargarDocumento } from "./documentos.js";
 import { cobros, cobro, descargarComprobanteCobro } from "./cobros.js";
 import { contratos, reportes } from "./propiedadesPropietario.js";
 import { obtenerDashboard } from "./dashboard.js";
-import { assetUrl } from "../utils/assetUrl.js";
 import { sumarVisita } from "./contVisita.js";
 import { indec, crearIndec } from "./indec.js";
 
@@ -40,16 +39,12 @@ export const api = {
   eliminarAdministrador,
   actualizarAgente,
   eliminarAgente,
-  obtenerSesion,
-  guardarSesion,
-  limpiarSesion,
   login,
   loginGoogle,
   registrar,
   registrarGoogle,
   verificarDniInvitacion,
   cerrarSesion,
-  urlRecurso: assetUrl,
   catalogosPropiedades,
   propiedades,
   propiedad,

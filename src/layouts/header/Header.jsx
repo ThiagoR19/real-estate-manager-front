@@ -1,3 +1,5 @@
+import { assetUrl } from "../../utils/assetUrl.js";
+import { obtenerSesion, guardarSesion } from "../../utils/sesion.js";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { CapaModal, PanelNotificaciones } from "../../components";
@@ -14,7 +16,7 @@ const identidadSesion = (sesion) => sesion?.token ?? null;
 export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
   const [pathname] = useLocation();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const [session, setSession] = useState(() => api.obtenerSesion());
+  const [session, setSession] = useState(() => obtenerSesion());
   const user = session?.usuario;
   const role = Number(user?.rol);
   const sessionToken = identidadSesion(session);
@@ -45,7 +47,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
 
   useEffect(() => {
     const syncUser = () => {
-      const nextSession = api.obtenerSesion();
+      const nextSession = obtenerSesion();
       const nextIdentity = identidadSesion(nextSession);
       if (nextIdentity !== notificationsIdentity.current) {
         notificationsIdentity.current = nextIdentity;
@@ -72,13 +74,13 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
 
   useEffect(() => {
     let active = true;
-    const initialSession = api.obtenerSesion();
+    const initialSession = obtenerSesion();
     const userId = initialSession?.usuario?.id;
     if (!initialSession?.token || userId == null) return undefined;
 
     api.perfil().then((profile) => {
       if (!active) return;
-      const currentSession = api.obtenerSesion();
+      const currentSession = obtenerSesion();
       if (
         !currentSession?.token ||
         String(currentSession.usuario?.id) !== String(userId)
@@ -96,7 +98,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
         updatedUser.apellido !== currentUser.apellido ||
         updatedUser.urlFotoPerfil !== currentUser.urlFotoPerfil
       ) {
-        api.guardarSesion({ ...currentSession, usuario: updatedUser });
+        guardarSesion({ ...currentSession, usuario: updatedUser });
       }
     }).catch(() => {
 
@@ -245,7 +247,7 @@ export default function Header({ menuOpen = false, onToggleMenu = () => { } }) {
           {user?.urlFotoPerfil && !photoLoadError ? (
             <img
               className="navbar__account-avatar navbar__account-avatar--photo"
-              src={api.urlRecurso(user.urlFotoPerfil)}
+              src={assetUrl(user.urlFotoPerfil)}
               alt=""
               onError={() => setPhotoLoadError(true)}
             />

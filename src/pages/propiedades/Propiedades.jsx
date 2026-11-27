@@ -111,11 +111,7 @@ export default function Propiedades() {
 
   useEffect(() => {
     if (!cargando && !error && (!catalogos.tipos.length || !catalogos.estados.length)) {
-      mostrarAviso({
-        tipo: "advertencia",
-        titulo: "Faltan datos para crear propiedades",
-        mensaje: "La base de datos necesita tipos y estados comerciales configurados.",
-      });
+      mostrarAviso({ tipo: "advertencia", titulo: "Faltan datos para crear propiedades", mensaje: "La base de datos necesita tipos y estados comerciales configurados.", });
     }
   }, [catalogos.estados.length, catalogos.tipos.length, error, cargando]);
 

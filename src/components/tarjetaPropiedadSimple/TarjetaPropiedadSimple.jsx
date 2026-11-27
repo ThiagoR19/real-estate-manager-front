@@ -1,8 +1,8 @@
+import { assetUrl } from "../../utils/assetUrl.js";
 import { Link } from "wouter";
 import { bathIcon, bedIcon, eyeIcon, rulerCombinedIcon, locationDotIcon } from "../../assets/icons";
 import { AccionesPropiedad } from "../index";
 import propertyImage from "/images (1).jpg";
-import { api } from "../../services/api.js";
 
 export default function TarjetaPropiedadSimple({
   propiedad,
@@ -12,7 +12,7 @@ export default function TarjetaPropiedadSimple({
   variant = "managed",
 }) {
   const isPublic = variant === "public";
-  const image = isPublic ? propiedad.photos?.[0]?.src || propiedad.image || propertyImage : api.urlRecurso(propiedad.imagenes?.[0]?.url) || propertyImage;
+  const image = isPublic ? propiedad.photos?.[0]?.src || propiedad.image || propertyImage : assetUrl(propiedad.imagenes?.[0]?.url) || propertyImage;
   const title = isPublic ? propiedad.title : propiedad.nombre;
   const location = isPublic ? propiedad.location : propiedad.ubicacion;
   const status = isPublic ? propiedad.status || (propiedad.operation === "buy" ? "Disponible Venta" : "Disponible Alquiler") : propiedad.estadoComercial;

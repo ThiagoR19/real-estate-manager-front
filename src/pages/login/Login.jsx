@@ -1,4 +1,6 @@
+import { guardarSesion } from "../../utils/sesion.js";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useLocation } from "wouter";
 import { Skeleton, PanelImagen, CampoTexto, BotonPrincipal, TextoLegal, AccesoGoogle, mostrarAviso } from "../../components";
 import { inicioDelRol } from "../../layouts/navegacion.js";
 import { loginMailIcon, loginLockIcon } from "../../assets/icons";
@@ -7,6 +9,7 @@ import { api } from "../../services/api.js";
 import "./Login.css";
 
 export default function Login() {
+  const [, navigate] = useLocation();
   const [submitState, setSubmitState] = useState("inactivo");
   const [googleCredential, setGoogleCredential] = useState("");
   const [cuentasGoogle, setCuentasGoogle] = useState([]);
@@ -34,9 +37,9 @@ export default function Login() {
         setSubmitState("inactivo");
         return;
       }
-      api.guardarSesion(session);
+      guardarSesion(session);
       setSubmitState("listo");
-      window.location.assign(inicioDelRol(Number(session.usuario?.rol)));
+      navigate(inicioDelRol(Number(session.usuario?.rol)), { replace: true });
     } catch (cause) {
       mostrarAviso({ tipo: "error", titulo: "No se pudo iniciar sesión", mensaje: cause.message });
       setSubmitState("inactivo");
@@ -49,8 +52,8 @@ export default function Login() {
     try {
       const { usuario, password } = credencialesPassword.current;
       const session = await api.login(usuario, password, idUsuario);
-      api.guardarSesion(session);
-      window.location.assign(inicioDelRol(Number(session.usuario?.rol)));
+      guardarSesion(session);
+      navigate(inicioDelRol(Number(session.usuario?.rol)), { replace: true });
     } catch (cause) {
       mostrarAviso({ tipo: "error", titulo: "No se pudo iniciar sesión", mensaje: cause.message });
       setSubmitState("inactivo");
@@ -65,12 +68,12 @@ export default function Login() {
         setCuentasGoogle(result.cuentas);
         return;
       }
-      api.guardarSesion(result);
-      window.location.assign(inicioDelRol(Number(result.usuario?.rol)));
+      guardarSesion(result);
+      navigate(inicioDelRol(Number(result.usuario?.rol)), { replace: true });
     } catch (cause) {
       mostrarAviso({ tipo: "error", titulo: "No se pudo iniciar sesión con Google", mensaje: cause.message });
     }
-  }, []);
+  }, [navigate]);
 
   return (
     <Skeleton as="main" className="login">

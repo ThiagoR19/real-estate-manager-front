@@ -10,7 +10,7 @@ import SelectDesplegable from "../../components/select/SelectDesplegable";
 import { mostrarAviso } from "../../components";
 import { api } from "../../services/api.js";
 import PageSkeleton from "../../components/skeleton/PageSkeleton";
-import { obtenerSesion } from "../../services/login.js";
+import { obtenerSesion } from "../../utils/sesion.js";
 import { obtenerSocket } from "../../services/socket.js";
 import "./Chat.css";
 

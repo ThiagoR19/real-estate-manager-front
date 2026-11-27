@@ -1,3 +1,5 @@
+import { assetUrl } from "../../utils/assetUrl.js";
+import { obtenerSesion } from "../../utils/sesion.js";
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { calendarIcon, plusIconWhite, toolboxIcon, userIcon } from "../../assets/icons";
@@ -14,7 +16,7 @@ function Icono({ src, className = "" }) {
 }
 
 function imagen(carpeta, nombre) {
-  return nombre ? api.urlRecurso(`/uploads/${carpeta}/${nombre}`) : fotoPorDefecto;
+  return nombre ? assetUrl(`/uploads/${carpeta}/${nombre}`) : fotoPorDefecto;
 }
 
 function fechaLarga(fecha) {
@@ -137,7 +139,7 @@ function TarjetaReportes({ reportes }) {
 export default function DashboardAgente() {
   const [datos, setDatos] = useState(null);
   const [error, setError] = useState(false);
-  const nombre = api.obtenerSesion()?.usuario?.nombre;
+  const nombre = obtenerSesion()?.usuario?.nombre;
 
   useEffect(() => {
     let vigente = true;

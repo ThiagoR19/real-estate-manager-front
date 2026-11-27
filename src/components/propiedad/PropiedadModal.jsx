@@ -1,3 +1,4 @@
+import { assetUrl } from "../../utils/assetUrl.js";
 import { bathIcon, bedIcon, calendarIcon, carIcon, boltIcon, dropletIcon, fireFlameSimpleIcon, locationDotIcon, plusIcon, rulerCombinedIcon, userIcon, xIcon, } from "../../assets/icons";
 import useClosingTransition from "../../hooks/useClosingTransition.js";
 import { useEffect, useRef, useState } from "react";
@@ -115,7 +116,7 @@ function formularioInicial(propiedad, catalogos) {
     publicada: Boolean(propiedad?.publicada),
     fotos: (propiedad?.imagenes || []).map((imagen) => ({
       ...imagen,
-      src: api.urlRecurso(imagen.url),
+      src: assetUrl(imagen.url),
       alt: `Foto de ${propiedad.nombre}`,
     })),
     documentos: (propiedad?.documentos || []).map((documento) => ({

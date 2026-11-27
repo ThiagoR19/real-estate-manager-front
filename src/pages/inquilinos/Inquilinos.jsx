@@ -1,3 +1,4 @@
+import { assetUrl } from "../../utils/assetUrl.js";
 import { useEffect, useMemo, useState } from "react";
 import PageSkeleton from "../../components/skeleton/PageSkeleton";
 import { calendarIcon, envelopeIcon, fileLinesIcon, houseIcon, locationDotIcon, magnifyingGlassIcon, peopleIcon, phoneIcon, plusIcon, xIcon } from "../../assets/icons";
@@ -203,7 +204,7 @@ export default function Inquilinos() {
         if (propertyResult.status === "fulfilled") {
           setPropertyImages(Object.fromEntries(propertyResult.value
             .filter((propiedad) => propiedad.imagenes?.[0]?.url)
-            .map((propiedad) => [propiedad.id, api.urlRecurso(propiedad.imagenes[0].url)])));
+            .map((propiedad) => [propiedad.id, assetUrl(propiedad.imagenes[0].url)])));
         } else {
           mostrarAviso({
             tipo: "advertencia",

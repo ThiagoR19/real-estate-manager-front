@@ -1,3 +1,4 @@
+import { assetUrl } from "../../utils/assetUrl.js";
 import { useCallback, useEffect, useState } from "react";
 import { api } from "../../services/api";
 import PageSkeleton from "../../components/skeleton/PageSkeleton";
@@ -14,7 +15,7 @@ function AgencyLogo({ agency }) {
   if (agency.imagenLogo) {
     return (
       <span className="super-admin__inmobiliaria-logo" aria-hidden="true">
-        <img src={api.urlRecurso(`/uploads/logos/${agency.imagenLogo}`)} alt="" />
+        <img src={assetUrl(`/uploads/logos/${agency.imagenLogo}`)} alt="" />
       </span>
     );
   }
@@ -31,7 +32,7 @@ function PersonAvatar({ persona }) {
   if (persona.urlFotoPerfil && !fotoRota) {
     return (
       <span className="super-admin__avatar">
-        <img src={api.urlRecurso(persona.urlFotoPerfil)} alt="" onError={() => setFotoRota(true)} />
+        <img src={assetUrl(persona.urlFotoPerfil)} alt="" onError={() => setFotoRota(true)} />
       </span>
     );
   }

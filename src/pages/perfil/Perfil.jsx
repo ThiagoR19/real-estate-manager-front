@@ -1,3 +1,5 @@
+import { assetUrl } from "../../utils/assetUrl.js";
+import { obtenerSesion, guardarSesion } from "../../utils/sesion.js";
 import { memo, useCallback, useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { addressCardIcon, cameraIcon, checkIcon, envelopeIcon, eyeIcon, eyeSlashIcon, locationDotIcon, lockIcon, phoneIcon, trashCanIcon, userIcon, infoToastIcon } from "../../assets/icons";
@@ -100,9 +102,9 @@ export default function Perfil() {
   const showProfile = useCallback((updated, token) => {
     setProfile(updated);
     setPhotoLoadError(false);
-    const session = api.obtenerSesion();
+    const session = obtenerSesion();
     if (session)
-      api.guardarSesion({
+      guardarSesion({
         ...session,
         token: token || session.token,
         usuario: {
@@ -219,7 +221,7 @@ export default function Perfil() {
   }, [showProfile]);
 
   const iniciales = initials(profile.nombre, profile.apellido);
-  const profilePhotoUrl = profile.urlFotoPerfil && !photoLoadError ? api.urlRecurso(profile.urlFotoPerfil) : "";
+  const profilePhotoUrl = profile.urlFotoPerfil && !photoLoadError ? assetUrl(profile.urlFotoPerfil) : "";
   const cuentaGoogleSinContrasena = Number(profile.googleVinculado) === 1 && Number(profile.tieneContrasena) !== 1;
 
   return (

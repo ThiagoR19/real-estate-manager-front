@@ -1,3 +1,4 @@
+import { obtenerSesion } from "../../utils/sesion.js";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "wouter";
 import { circleInfoIcon, commentsIcon, paperPlaneIcon, smailing, toolplumbing } from "../../assets/icons";
@@ -55,7 +56,7 @@ function porcentaje(parte, total) {
 }
 
 function ConversacionRapida({ chat }) {
-  const idUsuario = api.obtenerSesion()?.usuario?.id;
+  const idUsuario = obtenerSesion()?.usuario?.id;
   const [messages, setMessages] = useState(() => [...(chat?.mensajes ?? [])].reverse());
   const [draft, setDraft] = useState("");
   const [enviando, setEnviando] = useState(false);
@@ -285,7 +286,7 @@ function AccesoReportes({ reportes }) {
 export default function DashboardPropietario() {
   const [datos, setDatos] = useState(null);
   const [error, setError] = useState(false);
-  const nombre = api.obtenerSesion()?.usuario?.nombre;
+  const nombre = obtenerSesion()?.usuario?.nombre;
 
   useEffect(() => {
     let vigente = true;

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { Skeleton, PanelImagen, CampoTexto, BotonPrincipal, TextoLegal, mostrarAviso } from "../../components";
 import { api } from "../../services/api.js";
-import { guardarBorradorRegistro } from "../../services/borradorRegistro.js";
+import { guardarBorradorRegistro } from "../../utils/borradorRegistro.js";
 import { addressCardIcon } from "../../assets/icons";
 import "./ConfirmarRegistro.css";
 

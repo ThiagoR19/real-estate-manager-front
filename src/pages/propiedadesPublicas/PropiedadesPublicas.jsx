@@ -7,6 +7,7 @@ import { optionsIcon } from "../../assets/icons";
 import "./PropiedadesPublicas.css";
 
 const DORMITORIOS = ["Todos", "1", "2", "3", "4+"];
+
 const MONEDAS = [
   { texto: "Pesos", valor: "ARS" },
   { texto: "USD", valor: "USD" },
@@ -63,9 +64,7 @@ function BarraLateralFiltros({ params, cambiarFiltros, tipos, cargandoTipos, ope
     cambiarFiltros({ tipo: elegidos.join(",") });
   };
 
-  const cambiarPrecio = (clave) => (event) =>
-    cambiarFiltros({ [clave]: event.target.value.replace(/\D/g, "") });
-
+  const cambiarPrecio = (clave) => (event) => cambiarFiltros({ [clave]: event.target.value.replace(/\D/g, "") });
   const limpiar = () => cambiarFiltros(Object.fromEntries(PARAMS_FILTRO.map((clave) => [clave, ""])));
 
   const hrefOperacion = (valor) => {

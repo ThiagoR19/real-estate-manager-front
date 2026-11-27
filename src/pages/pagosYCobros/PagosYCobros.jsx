@@ -4,7 +4,8 @@ import { PanelDeslizable, mostrarAviso } from "../../components";
 import useConsultaMedia from "../../hooks/useConsultaMedia";
 import usePagosYCobros, { CONCEPTO_ALQUILER, calcularLiquidacion, estaIncluida, parseAmount } from "../../hooks/usePagosYCobros";
 import { obtenerComprobanteCobro } from "../../services/cobros";
-import { TIPOS_COMPROBANTE, obtenerComprobantePago, validarComprobante } from "../../services/pagos";
+import { obtenerComprobantePago } from "../../services/pagos";
+import { TIPOS_COMPROBANTE, validarComprobante } from "../../utils/comprobantes.js";
 import { DialogoComprobante } from "../pagos/Comprobante";
 import "./PagosYCobros.css";
 
