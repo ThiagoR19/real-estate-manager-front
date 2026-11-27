@@ -15,11 +15,11 @@ export default function LayoutPublico() {
     let activo = true;
     api.infoInmobiliaria()
       .then((inmobiliaria) => activo && setEstado({ inmobiliaria, cargando: false }))
-      .catch((causa) => {
-        console.error(causa);
+      .catch((error) => {
+        console.error(error);
         if (activo) {
           setEstado({ inmobiliaria: null, cargando: false });
-          mostrarAviso({ tipo: "error", titulo: "No se pudo cargar la inmobiliaria", mensaje: causa.message });
+          mostrarAviso({ tipo: "error", titulo: "No se pudo cargar la inmobiliaria", mensaje: error.message });
         }
       });
     return () => {

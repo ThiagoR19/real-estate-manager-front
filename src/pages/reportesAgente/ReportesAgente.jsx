@@ -10,9 +10,7 @@ import "./ReportesAgente.css";
 
 const ICONOS_ESTADO = { Abierto: clockIcon, "En proceso": clockIcon, Resuelto: checkIcon };
 const FOTO_REPORTE_POR_DEFECTO = "/uploads/reportes/8414853068_a71ec481ef_b.jpg";
-const fecha = (valor) => valor
-  ? new Date(`${String(valor).slice(0, 10)}T12:00:00`).toLocaleDateString("es-AR")
-  : "—";
+const fecha = (valor) => valor ? new Date(`${String(valor).slice(0, 10)}T12:00:00`).toLocaleDateString("es-AR") : "—";
 
 function Icono({ src, className = "" }) {
   return <img src={src} className={className} alt="" aria-hidden="true" />;

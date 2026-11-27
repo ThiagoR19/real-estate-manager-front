@@ -8,7 +8,7 @@ import avatarClass from "../../utils/avatarClass";
 
 import { PildoraResumen, Boton, ConfirmarEliminacionModal, mostrarAviso } from "../../components";
 import InmobiliariaModal from "./InmobiliariaModal";
-import { building, editSuper, plusIcon, trashCanIcon } from "../../assets/icons";
+import { angleDownIcon, building, editSuper, plusIcon, trashCanIcon } from "../../assets/icons";
 import "./SuperAdmin.css";
 
 function InmobiliariaLogo({ inmobiliaria }) {
@@ -69,10 +69,10 @@ export default function SuperAdmin() {
     let activo = true;
     api.panelSuperAdmin()
       .then((inmobiliarias) => activo && setEstado({ inmobiliarias, mensaje: "" }))
-      .catch((causa) => {
+      .catch((error) => {
         if (!activo) return;
-        setEstado({ inmobiliarias: [], mensaje: causa.message });
-        mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar las inmobiliarias", mensaje: causa.message });
+        setEstado({ inmobiliarias: [], mensaje: error.message });
+        mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar las inmobiliarias", mensaje: error.message });
       })
       .finally(() => activo && setLoading(false));
     return () => {
@@ -93,8 +93,8 @@ export default function SuperAdmin() {
       setModal(null);
       mostrarAviso({ tipo: "exito", titulo: exito });
       cargar();
-    } catch (causa) {
-      mostrarAviso({ tipo: "error", titulo: "No se pudo completar la acción", mensaje: causa.message });
+    } catch (error) {
+      mostrarAviso({ tipo: "error", titulo: "No se pudo completar la acción", mensaje: error.message });
     }
   }
 
@@ -125,8 +125,8 @@ export default function SuperAdmin() {
       });
       mostrarAviso({ tipo: "exito", titulo: "Invitación creada", mensaje: "Copiá el enlace y compartilo con el administrador." });
       cargar();
-    } catch (causa) {
-      mostrarAviso({ tipo: "error", titulo: "No se pudo crear la invitación", mensaje: causa.message });
+    } catch (error) {
+      mostrarAviso({ tipo: "error", titulo: "No se pudo crear la invitación", mensaje: error.message });
     } finally {
       setEnviando(false);
     }
@@ -150,8 +150,8 @@ export default function SuperAdmin() {
         titulo: "Enlace de activación generado",
         mensaje: "Compartilo con el administrador para que cree su cuenta.",
       });
-    } catch (causa) {
-      mostrarAviso({ tipo: "error", titulo: "No se pudo generar el enlace", mensaje: causa.message });
+    } catch (error) {
+      mostrarAviso({ tipo: "error", titulo: "No se pudo generar el enlace", mensaje: error.message });
     }
   }
 
@@ -187,10 +187,7 @@ export default function SuperAdmin() {
   function cambiarRol(persona, rol) {
     if (rol === persona.rol) return;
     const nombre = `${persona.nombre} ${persona.apellido}`;
-    ejecutar(
-      () => (persona.tipo === "agente" ? api.agenteAAdministrador(persona.id) : api.administradorAAgente(persona.id)),
-      `${nombre} ahora es ${rol}`,
-    );
+    ejecutar(() => (persona.tipo === "agente" ? api.agenteAAdministrador(persona.id) : api.administradorAAgente(persona.id)), `${nombre} ahora es ${rol}`,);
   }
 
   function guardarModal(valor) {
@@ -279,9 +276,7 @@ export default function SuperAdmin() {
                       aria-label={`${abierta ? "Contraer" : "Expandir"} ${inmobiliaria.nombre}`}
                       aria-expanded={abierta}
                     >
-                      <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="m6 9 6 6 6-6" />
-                      </svg>
+                      <img src={angleDownIcon} alt="" aria-hidden="true" />
                     </button>
                   </div>
                 </header>

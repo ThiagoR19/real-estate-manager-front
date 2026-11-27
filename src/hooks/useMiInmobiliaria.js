@@ -44,7 +44,7 @@ export default function useMiInmobiliaria() {
         setGuardado(respuesta.guardado);
         setImagenes(respuesta.imagenes);
       })
-      .catch((causa) => activo && mostrarAviso({ tipo: "error", titulo: "No se pudo cargar la inmobiliaria", mensaje: causa.message }))
+      .catch((error) => activo && mostrarAviso({ tipo: "error", titulo: "No se pudo cargar la inmobiliaria", mensaje: error.message }))
       .finally(() => activo && setEstado("listo"));
     return () => {
       activo = false;
@@ -89,9 +89,9 @@ export default function useMiInmobiliaria() {
       setArchivos(SIN_ARCHIVOS);
       setEstado("guardado");
       mostrarAviso({ tipo: "exito", titulo: "Cambios guardados", mensaje: "Los datos de la inmobiliaria se actualizaron" });
-    } catch (causa) {
+    } catch (error) {
       setEstado("listo");
-      mostrarAviso({ tipo: "error", titulo: "No se pudieron guardar los cambios", mensaje: causa.message });
+      mostrarAviso({ tipo: "error", titulo: "No se pudieron guardar los cambios", mensaje: error.message });
     }
   }
 

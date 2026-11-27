@@ -125,8 +125,8 @@ export function DialogoRevision({ periodo, solicitar, id, onCerrar }) {
       await solicitar(id, motivo.trim());
       mostrarAviso({ tipo: "exito", titulo: "Solicitud enviada", mensaje: "La inmobiliaria recibió tu solicitud de revisión." });
       onCerrar();
-    } catch (causa) {
-      setError(causa.message);
+    } catch (error) {
+      setError(error.message);
       setEnviando(false);
     }
   }

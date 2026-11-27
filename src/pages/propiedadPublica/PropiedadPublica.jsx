@@ -213,11 +213,11 @@ export default function PropiedadPublica() {
     let activo = true;
     api.propiedadPublica(id)
       .then((propiedad) => activo && setEstado({ id, propiedad }))
-      .catch((causa) => {
-        console.error(causa);
+      .catch((error) => {
+        console.error(error);
         if (activo) {
           setEstado({ id, propiedad: null });
-          mostrarAviso({ tipo: "error", titulo: "No se pudo cargar la propiedad", mensaje: causa.message });
+          mostrarAviso({ tipo: "error", titulo: "No se pudo cargar la propiedad", mensaje: error.message });
         }
       });
     return () => {

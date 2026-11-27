@@ -221,11 +221,11 @@ export default function PropiedadesPublicas() {
           if (!activo) return;
           setResultado({ ...datos, busqueda, error: false });
         })
-        .catch((causa) => {
-          console.error(causa);
+        .catch((error) => {
+          console.error(error);
           if (!activo) return;
           setResultado((anterior) => ({ ...anterior, busqueda, propiedades: [], paginacion: null, error: true }));
-          mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar las propiedades", mensaje: causa.message });
+          mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar las propiedades", mensaje: error.message });
         });
     }, 300);
 

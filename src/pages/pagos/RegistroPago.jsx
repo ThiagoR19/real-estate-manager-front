@@ -43,9 +43,9 @@ export default function RegistroPago({
     try {
       const pago = await registrarPagoConComprobante(contrato.idContrato, periodo.periodo, archivo);
       onRegistrado(pago);
-    } catch (causa) {
-      if (causa.cause?.response?.status === 409) onPeriodoRegistrado(contrato.idContrato, periodo.periodo);
-      else setError(causa.message);
+    } catch (error) {
+      if (error.cause?.response?.status === 409) onPeriodoRegistrado(contrato.idContrato, periodo.periodo);
+      else setError(error.message);
     } finally {
       setEnviando(false);
     }

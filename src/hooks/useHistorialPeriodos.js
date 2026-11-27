@@ -68,10 +68,10 @@ export default function useHistorialPeriodos(listar, consultar) {
         setItems(lista);
         setError("");
       })
-      .catch((causa) => {
+      .catch((error) => {
         if (!activo) return;
         setItems([]);
-        setError(causa.message);
+        setError(error.message);
       });
     return () => {
       activo = false;
@@ -97,9 +97,9 @@ export default function useHistorialPeriodos(listar, consultar) {
         if (!activo) return;
         setEstado({ clave, detalle });
       })
-      .catch((causa) => {
+      .catch((error) => {
         if (!activo) return;
-        setEstado({ clave, detalle: null, error: causa.message });
+        setEstado({ clave, detalle: null, error: error.message });
       });
     return () => {
       activo = false;

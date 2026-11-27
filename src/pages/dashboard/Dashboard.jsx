@@ -75,13 +75,13 @@ export default function Dashboard() {
     let activo = true;
     api.dashboard()
       .then((respuesta) => { if (activo) setDatos(respuesta); })
-      .catch((causa) => {
+      .catch((error) => {
         if (!activo) return;
-        setError(causa.message)
+        setError(error.message)
         mostrarAviso({
           tipo: "error",
           titulo: "No se pudo cargar el panel",
-          mensaje: causa.mensaje ?? causa.message,
+          mensaje: error.mensaje ?? error.message,
           accion: { texto: "Recargar", onClick: () => window.location.reload() },
         });
       })

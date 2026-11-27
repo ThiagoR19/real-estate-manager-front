@@ -133,9 +133,7 @@ export default function ReporteModal({ isOpen, onClose, onSubmit, propiedades = 
         <form onSubmit={enviarFormulario}>
           <section className="reporte-modal__card" aria-labelledby="reporte-modal-main-data">
             <header className="reporte-modal__section-header">
-              <span className="reporte-modal__step" aria-hidden="true">
-                1
-              </span>
+              <span className="reporte-modal__step" aria-hidden="true">1</span>
               <h3 id="reporte-modal-main-data">Datos principales</h3>
             </header>
 

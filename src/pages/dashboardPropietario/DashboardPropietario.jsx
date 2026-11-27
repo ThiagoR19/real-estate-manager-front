@@ -79,8 +79,8 @@ function ConversacionRapida({ chat }) {
       const mensaje = await api.enviarMensajeChat(conversacion.id, text);
       setMessages((currentMessages) => [...currentMessages, mensaje]);
       setDraft("");
-    } catch (causa) {
-      mostrarAviso({ tipo: "error", titulo: "No se pudo enviar", mensaje: causa.message });
+    } catch (error) {
+      mostrarAviso({ tipo: "error", titulo: "No se pudo enviar", mensaje: error.message });
     } finally {
       setEnviando(false);
     }
@@ -295,13 +295,13 @@ export default function DashboardPropietario() {
       .then((respuesta) => {
         if (vigente) setDatos(respuesta);
       })
-      .catch((causa) => {
+      .catch((error) => {
         if (!vigente) return;
         setError(true);
         mostrarAviso({
           tipo: "error",
           titulo: "No se pudo cargar el panel",
-          mensaje: causa.mensaje ?? causa.message,
+          mensaje: error.mensaje ?? error.message,
           accion: { texto: "Recargar", onClick: () => window.location.reload() },
         });
       });

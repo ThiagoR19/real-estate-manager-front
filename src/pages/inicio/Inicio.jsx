@@ -29,9 +29,9 @@ export default function Inicio({ loading, datos, navegacion }) {
     let activo = true;
     api.propiedadesDestacadas(CANTIDAD_DESTACADAS)
       .then((lista) => activo && setPropiedades(lista))
-      .catch((causa) => {
-        console.error(causa);
-        if (activo) mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar las propiedades destacadas", mensaje: causa.message });
+      .catch((error) => {
+        console.error(error);
+        if (activo) mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar las propiedades destacadas", mensaje: error.message });
       })
       .finally(() => activo && setCargandoPropiedades(false));
     return () => {

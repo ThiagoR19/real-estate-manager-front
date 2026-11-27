@@ -129,8 +129,8 @@ function DetallePago({ pago, cargando, error, recargar }) {
       setArchivo(null);
       recargar();
       mostrarAviso({ tipo: "exito", titulo: "Comprobante enviado", mensaje: "La inmobiliaria recibió el pago para revisión." });
-    } catch (causa) {
-      setErrorEnvio(causa.message);
+    } catch (error) {
+      setErrorEnvio(error.message);
     } finally {
       setEnviando(false);
     }
@@ -139,8 +139,8 @@ function DetallePago({ pago, cargando, error, recargar }) {
   async function descargar() {
     try {
       await descargarComprobantePago(pago.id, comprobante?.nombreArchivo);
-    } catch (causa) {
-      mostrarAviso({ tipo: "error", titulo: "No se pudo descargar el comprobante", mensaje: causa.message });
+    } catch (error) {
+      mostrarAviso({ tipo: "error", titulo: "No se pudo descargar el comprobante", mensaje: error.message });
     }
   }
 
@@ -273,8 +273,8 @@ export default function Pagos() {
       .then((contratos) => {
         if (activo) setDisponibilidad({ contratos: etiquetarContratos(contratos), error: "" });
       })
-      .catch((causa) => {
-        if (activo) setDisponibilidad({ contratos: [], error: causa.message });
+      .catch((error) => {
+        if (activo) setDisponibilidad({ contratos: [], error: error.message });
       });
     return () => { activo = false; };
   }, [consulta]);

@@ -158,13 +158,13 @@ export default function DashboardAgente() {
           });
         }
       })
-      .catch((causa) => {
+      .catch((error) => {
         if (!vigente) return;
         setError(true);
         mostrarAviso({
           tipo: "error",
           titulo: "No se pudo cargar el panel",
-          mensaje: causa.mensaje ?? causa.message,
+          mensaje: error.mensaje ?? error.message,
           accion: { texto: "Recargar", onClick: () => window.location.reload() },
         });
       });

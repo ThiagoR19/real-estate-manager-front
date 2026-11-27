@@ -234,17 +234,12 @@
   filter: brightness(0) invert(1);
 }
 
-.super-admin__expand svg {
+.super-admin__expand img {
   width: 18px;
   height: 18px;
-  fill: none;
-  stroke: #333;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
 }
 
-.super-admin__expand[aria-expanded="true"] svg {
+.super-admin__expand[aria-expanded="true"] img {
   transform: rotate(180deg);
 }
 
