@@ -34,10 +34,6 @@ function porcentaje(actual, anterior) {
   return { devolver, peor }
 }
 
-function Icono({ src, className = "" }) {
-  return <img className={`dashboard-icon ${className}`} src={src} alt="" aria-hidden="true" />;
-}
-
 
 function pointLabel(point, period) {
   if (period === "anio") return months[point.mes - 1];
@@ -167,32 +163,32 @@ export default function TarjetaRendimiento({ indicadores, grafico = {}, classNam
     <section className={`dashboard-card dashboard-rendimiento-card ${className}`}>
       <div className="dashboard-rendimiento-card__header">
         <div>
-          <h2 className="dashboard-card__title"><Icono src={chartColumnIcon} />{periods[period].title}</h2>
+          <h2 className="dashboard-card__title"><img className="dashboard-icon" src={chartColumnIcon} alt="" aria-hidden="true" />{periods[period].title}</h2>
           <p>Visitas a la pagina, visitas a propiedades y contratos<span className="dashboard-rendimiento-period">{periods[period].detail}</span></p>
         </div>
         <label className="dashboard-period-select">
           <span className="visually-hidden">Período del gráfico</span>
           <select value={period} onChange={(event) => setPeriod(event.target.value)}>
             {Object.entries(periods).map(([value, { option }]) => <option key={value} value={value}>{option}</option>)}
-          </select><Icono src={angleDownIcon} />
+          </select><img className="dashboard-icon" src={angleDownIcon} alt="" aria-hidden="true" />
         </label>
       </div>
       <GraficoRendimiento points={grafico[period] ?? []} period={period} />
       <div className="dashboard-kpis">
         <div className={`dashboard-kpi dashboard-kpi--green`}>
-          <span className="dashboard-kpi__icon"><Icono src={userIcon} /></span>
+          <span className="dashboard-kpi__icon"><img className="dashboard-icon" src={userIcon} alt="" aria-hidden="true" /></span>
           <span><small>inquilinos</small><b className={indi[0].peor ? "Dashboard--green" : "Dashboard--red"}>{indicadores.inquilinosActivos.actual} <em>{indi[0].devolver}</em></b></span>
         </div>
         <div className="dashboard-kpi dashboard-kpi--red">
-          <Icono src={reportGraphicIcon} className="dashboard-icon--original" />
+          <img className="dashboard-icon dashboard-icon--original" src={reportGraphicIcon} alt="" aria-hidden="true" />
           <span><small>Reportes</small><b className={indi[1].peor ? "Dashboard--green" : "Dashboard--red"}>{indicadores.reportesVigentes.actual} <em>{indi[1].devolver}</em></b></span>
         </div>
         <div className="dashboard-kpi dashboard-kpi--orange">
-          <span className="dashboard-kpi__symbol"><Icono src={moneyGraphicIcon} className="dashboard-icon--original" /></span>
+          <span className="dashboard-kpi__symbol"><img className="dashboard-icon dashboard-icon--original" src={moneyGraphicIcon} alt="" aria-hidden="true" /></span>
           <span><small>Cobros P.</small><b className={indi[2].peor ? "Dashboard--green" : "Dashboard--red"}>{indicadores.pagosAprobados.actual}<em>{indi[2].devolver}</em></b></span>
         </div>
         <div className="dashboard-kpi dashboard-kpi--purple">
-          <Icono src={contractGraphicIcon} className="dashboard-icon--original" />
+          <img className="dashboard-icon dashboard-icon--original" src={contractGraphicIcon} alt="" aria-hidden="true" />
           <span><small>Contratos</small><b className={indi[3].peor ? "Dashboard--green" : "Dashboard--red"}>{indicadores.contratosFirmados.actual} <em>{indi[3].devolver}</em></b></span>
         </div>
       </div>

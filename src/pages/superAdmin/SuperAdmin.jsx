@@ -52,9 +52,7 @@ function personasDe(inmobiliaria) {
 
 function enlaceActivacion(activacion) {
   if (activacion?.enlace) return activacion.enlace;
-  return activacion?.codigo
-    ? `${window.location.origin}/activar?codigo=${encodeURIComponent(activacion.codigo)}`
-    : "";
+  return activacion?.codigo ? `${window.location.origin}/activar?codigo=${encodeURIComponent(activacion.codigo)}` : "";
 }
 
 export default function SuperAdmin() {

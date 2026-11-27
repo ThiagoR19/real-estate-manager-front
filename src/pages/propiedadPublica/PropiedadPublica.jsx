@@ -7,12 +7,6 @@ import { PublicPropertySkeleton } from "../../components/skeleton/PublicSkeleton
 import propertyImage from "../../assets/fondoCasa.png";
 import "./PropiedadPublica.css";
 
-function IconoPropiedad({ src, className = "" }) {
-  return (
-    <img className={`propiedad-publica__icon ${className}`} src={src} alt="" aria-hidden="true" />
-  );
-}
-
 function usarImagenPorDefecto(event) {
   if (event.currentTarget.dataset.porDefecto) return;
   event.currentTarget.dataset.porDefecto = "true";
@@ -103,7 +97,7 @@ function DetallePropiedad({ propiedad }) {
                 </>
               )}
               <span className="propiedad-publica__gallery-counter">
-                <IconoPropiedad src={cameraIcon} />
+                <img className="propiedad-publica__icon" src={cameraIcon} alt="" aria-hidden="true" />
                 {activeImage + 1}/{fotos.length}
               </span>
             </div>
@@ -130,7 +124,7 @@ function DetallePropiedad({ propiedad }) {
             {stats.map((stat) => (
               <article className="propiedad-publica__stat-card" key={stat.label}>
                 <span className="propiedad-publica__stat-icon-wrap">
-                  <IconoPropiedad src={stat.icon} />
+                  <img className="propiedad-publica__icon" src={stat.icon} alt="" aria-hidden="true" />
                 </span>
                 <strong>{stat.label}</strong>
                 <span className="propiedad-publica__stat-value">{stat.value ?? "-"}</span>
@@ -156,7 +150,7 @@ function DetallePropiedad({ propiedad }) {
           <div className="propiedad-publica__details">
             {details.map((detail) => (
               <div className="propiedad-publica__detail-row" key={detail.label}>
-                <IconoPropiedad src={detail.icon} />
+                <img className="propiedad-publica__icon" src={detail.icon} alt="" aria-hidden="true" />
                 <strong>{detail.label}</strong>
                 <span>{detail.value}</span>
               </div>
@@ -168,12 +162,12 @@ function DetallePropiedad({ propiedad }) {
               <ul className="propiedad-publica__services-list">
                 {propiedad.servicios.map((servicio) => (
                   <li key={servicio.id}>
-                    <IconoPropiedad src={{
+                    <img className="propiedad-publica__icon" src={{
                       Agua: dropletIcon,
                       Gas: fireFlameSimpleIcon,
                       Luz: boltIcon,
                       Estacionamiento: carIcon,
-                    }[servicio.nombre] || checkIcon} />
+                    }[servicio.nombre] || checkIcon} alt="" aria-hidden="true" />
                     <span>{servicio.nombre}</span>
                   </li>
                 ))}

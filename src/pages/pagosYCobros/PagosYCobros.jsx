@@ -33,21 +33,6 @@ const ANIO_ACTUAL = new Date().getFullYear();
 const ANIOS = [ANIO_ACTUAL - 1, ANIO_ACTUAL, ANIO_ACTUAL + 1];
 const ESTADOS_PAGO = { "En revision": "En revisión" };
 
-function Icono({ src }) {
-  return <img className="pagos-agente__icon" src={src} alt="" aria-hidden="true" />;
-}
-
-function Chevron({ open }) {
-  return (
-    <img
-      className={`pagos-agente__chevron${open ? " is-open" : ""}`}
-      src={angleDownIcon}
-      alt=""
-      aria-hidden="true"
-    />
-  );
-}
-
 function formatearMoneda(value, moneda = "ARS") {
   return Number(value).toLocaleString("es-AR", { style: "currency", currency: moneda, minimumFractionDigits: 2 });
 }
@@ -85,7 +70,7 @@ function BotonDecision({ type, children, onClick, active, neutral, disabled }) {
       aria-pressed={active}
     >
       <span className="pagos-agente__decision-icon">
-        <Icono src={type === "approved" ? checkIcon : xIcon} />
+        <img className="pagos-agente__icon" src={type === "approved" ? checkIcon : xIcon} alt="" aria-hidden="true" />
       </span>
       <span>{children}</span>
     </button>
@@ -121,7 +106,7 @@ function PanelPersonas({ personas, query, persona, idContrato, onSelect, guardan
               aria-expanded={grupoAbierto}
             >
               {grupo.titulo}
-              <Chevron open={grupoAbierto} />
+              <img className={`pagos-agente__chevron${grupoAbierto ? " is-open" : ""}`} src={angleDownIcon} alt="" aria-hidden="true" />
             </button>
             {grupoAbierto && (
               <ul className="pagos-agente__people-list">
@@ -136,7 +121,7 @@ function PanelPersonas({ personas, query, persona, idContrato, onSelect, guardan
                         aria-expanded={personaAbierta}
                       >
                         <span>{item.nombre}</span>
-                        <Chevron open={personaAbierta} />
+                        <img className={`pagos-agente__chevron${personaAbierta ? " is-open" : ""}`} src={angleDownIcon} alt="" aria-hidden="true" />
                       </button>
                       {personaAbierta && (
                         <ul className="pagos-agente__properties-list">
@@ -303,7 +288,7 @@ function PanelRevisionPago({ revision, guardando, onVolver, onAprobar, onRechaza
                 type="button"
                 onClick={() => setComprobanteAbierto(true)}
               >
-                <Icono src={fileLinesIcon} />
+                <img className="pagos-agente__icon" src={fileLinesIcon} alt="" aria-hidden="true" />
                 Abrir comprobante
               </button>
             ) : <p>Sin comprobante</p>}
@@ -483,7 +468,7 @@ export default function PagosYCobros() {
                         <option key={value}>{value}</option>
                       ))}
                     </select>
-                    <Icono src={angleDownIcon} />
+                    <img className="pagos-agente__icon" src={angleDownIcon} alt="" aria-hidden="true" />
                   </label>
                   <label className="pagos-agente__select pagos-agente__select--month">
                     <span className="sr-only">Mes</span>
@@ -498,7 +483,7 @@ export default function PagosYCobros() {
                         </option>
                       ))}
                     </select>
-                    <Icono src={angleDownIcon} />
+                    <img className="pagos-agente__icon" src={angleDownIcon} alt="" aria-hidden="true" />
                   </label>
                 </div>
                 <h2 className="pagos-agente__person-name">{persona.nombre}</h2>
@@ -608,7 +593,7 @@ export default function PagosYCobros() {
                               title={linea.checked ? "Incluido en el detalle" : "Marcá el concepto para incluirlo en el detalle"}
                               aria-label={linea.checked ? "Incluido en el detalle" : "No incluido en el detalle"}
                             >
-                              <Icono src={circleInfoIcon} />
+                              <img className="pagos-agente__icon" src={circleInfoIcon} alt="" aria-hidden="true" />
                             </span>
                           </div>
                         );
@@ -616,11 +601,11 @@ export default function PagosYCobros() {
                     </div>
                     <div className="pagos-agente__concept-actions">
                       <button type="button" disabled={bloqueado} onClick={() => abrirFormularioConcepto("permanent")}>
-                        <Icono src={plusIconWhite} />
+                        <img className="pagos-agente__icon" src={plusIconWhite} alt="" aria-hidden="true" />
                         Nuevo concepto
                       </button>
                       <button type="button" disabled={bloqueado} onClick={() => abrirFormularioConcepto("temporary")}>
-                        <Icono src={plusIconWhite} />
+                        <img className="pagos-agente__icon" src={plusIconWhite} alt="" aria-hidden="true" />
                         Concepto temporal
                       </button>
                     </div>
@@ -677,17 +662,17 @@ export default function PagosYCobros() {
                         type="button"
                         onClick={() => setComprobanteAbierto(true)}
                       >
-                        <Icono src={fileLinesIcon} />
+                        <img className="pagos-agente__icon" src={fileLinesIcon} alt="" aria-hidden="true" />
                         Abrir comprobante
                       </button>
                     ) : (
                       <div className="pagos-agente__receipt-preview">
-                        <Icono src={imageIcon} />
+                        <img className="pagos-agente__icon" src={imageIcon} alt="" aria-hidden="true" />
                         Sin comprobante
                       </div>
                     )}
                     <div className="pagos-agente__receipt-caption">
-                      <Icono src={fileLinesIcon} />
+                      <img className="pagos-agente__icon" src={fileLinesIcon} alt="" aria-hidden="true" />
                       <span>
                         {esLocatario ? "Comprobante del inquilino" : "Comprobante de la liquidación"}
                         {detalle.comprobante && <small>{formatearFechaHora(detalle.comprobante.fecha)}</small>}
@@ -750,7 +735,7 @@ export default function PagosYCobros() {
                     onClick={datos.enviar}
                     disabled={bloqueado || !incluidas.length}
                   >
-                    <Icono src={paperPlaneIcon} />
+                    <img className="pagos-agente__icon" src={paperPlaneIcon} alt="" aria-hidden="true" />
                     {detalle.registro ? "Guardar cambios" : esLocatario ? "Enviar pago" : "Enviar liquidación"}
                   </button>
                 </div>

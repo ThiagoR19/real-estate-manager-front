@@ -17,17 +17,6 @@ const date = (value) =>
   value ? new Date(`${value}T12:00:00`).toLocaleDateString("es-AR") : "—";
 const pending = (report) => report.estado !== "Resuelto";
 
-function Icono({ src }) {
-  return (
-    <img
-      className="propiedades-propietario__icon"
-      src={src}
-      alt=""
-      aria-hidden="true"
-    />
-  );
-}
-
 export default function MisPropiedades() {
   const [contracts, setContracts] = useState([]);
   const [reports, setReports] = useState([]);
@@ -224,7 +213,7 @@ export default function MisPropiedades() {
                   reportPages.resetPage();
                 }}
               >
-                <Icono src={index === 0 ? houseIcon : buildingColumnsIcon} />
+                <img className="propiedades-propietario__icon" src={index === 0 ? houseIcon : buildingColumnsIcon} alt="" aria-hidden="true" />
                 <span>{item.name}</span>
               </button>
             ))}
@@ -244,13 +233,13 @@ export default function MisPropiedades() {
                 <div className="propiedades-propietario__facts">
                   <span>
                     <span className="propiedades-propietario__fact-icon">
-                      <Icono src={locationDotIcon} />
+                      <img className="propiedades-propietario__icon" src={locationDotIcon} alt="" aria-hidden="true" />
                     </span>
                     Ubicación: {property.address || "—"}
                   </span>
                   <span>
                     <span className="propiedades-propietario__fact-icon">
-                      <Icono src={tagIcon} />
+                      <img className="propiedades-propietario__icon" src={tagIcon} alt="" aria-hidden="true" />
                     </span>
                     Estado: {activeContract?.estado || "—"}
                   </span>
@@ -259,7 +248,7 @@ export default function MisPropiedades() {
               <div className="propiedades-propietario__facts propiedades-propietario__facts--right">
                 <span>
                   <span className="propiedades-propietario__fact-icon">
-                    <Icono src={walletIcon} />
+                    <img className="propiedades-propietario__icon" src={walletIcon} alt="" aria-hidden="true" />
                   </span>
                   Alquiler: {activeContract?.tipo === "Alquiler"
                     ? money(activeContract.montoAcordado, activeContract.moneda)
@@ -267,7 +256,7 @@ export default function MisPropiedades() {
                 </span>
                 <span>
                   <span className="propiedades-propietario__fact-icon">
-                    <Icono src={userIcon} />
+                    <img className="propiedades-propietario__icon" src={userIcon} alt="" aria-hidden="true" />
                   </span>
                   Locatario: {tenant}
                 </span>
@@ -276,7 +265,7 @@ export default function MisPropiedades() {
 
             <div className="propiedades-propietario__document">
               <div>
-                <Icono src={fileLinesIcon} />
+                <img className="propiedades-propietario__icon" src={fileLinesIcon} alt="" aria-hidden="true" />
                 <strong>
                   Contrato {activeContract?.estado?.toLowerCase() || "registrado"}
                 </strong>
@@ -311,7 +300,7 @@ export default function MisPropiedades() {
             aria-labelledby="propiedades-propietario-reportes-title"
           >
             <header>
-              <Icono src={toolboxIcon} />
+              <img className="propiedades-propietario__icon" src={toolboxIcon} alt="" aria-hidden="true" />
               <h2 id="propiedades-propietario-reportes-title">Reportes de inquilinos</h2>
               <span className="propiedades-propietario__pending">
                 {visibleReports.filter(pending).length} pendientes

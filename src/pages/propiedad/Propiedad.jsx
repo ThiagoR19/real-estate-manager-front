@@ -10,14 +10,10 @@ import "./Propiedad.css";
 
 const emptyImage = [{ src: houseImage, alt: "Propiedad sin fotos" }];
 
-function Icono({ src, className = "" }) {
-  return <img className={`propiedad__icon ${className}`} src={src} alt="" aria-hidden="true" />;
-}
-
 function FilaDetalle({ detail }) {
   return (
     <div className="propiedad__detail-row">
-      <Icono src={detail.icon} className="propiedad__detail-icon" />
+      <img className="propiedad__icon propiedad__detail-icon" src={detail.icon} alt="" aria-hidden="true" />
       <strong>{detail.label}</strong>
       <span className="propiedad__detail-value">{detail.value}</span>
     </div>
@@ -196,7 +192,7 @@ export default function Propiedad() {
                   <span aria-hidden="true">›</span>
                 </button>
                 <span className="propiedad__gallery-counter">
-                  <Icono src={cameraIcon} />
+                  <img className="propiedad__icon" src={cameraIcon} alt="" aria-hidden="true" />
                   {indiceImagenActiva + 1}/{imagenesGaleria.length}
                 </span>
               </div>
@@ -227,7 +223,7 @@ export default function Propiedad() {
               {caracteristicasPropiedad.map((stat) => (
                 <article className="propiedad__stat-card" key={stat.label}>
                   <span className="propiedad__stat-icon-wrap">
-                    <Icono src={stat.icon} className="propiedad__stat-icon" />
+                    <img className="propiedad__icon propiedad__stat-icon" src={stat.icon} alt="" aria-hidden="true" />
                   </span>
                   <strong>{stat.label}</strong>
                   <span className="propiedad__stat-value">{stat.value}</span>
@@ -251,7 +247,7 @@ export default function Propiedad() {
 
             <section className="propiedad__due-card" aria-labelledby="propiedad-due-title">
               <h2 id="propiedad-due-title">
-                <Icono src={calendarIcon} />
+                <img className="propiedad__icon" src={calendarIcon} alt="" aria-hidden="true" />
                 Datos comerciales y documentos
               </h2>
               <div className="propiedad__due-grid">

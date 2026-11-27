@@ -13,14 +13,10 @@ import "./Dashboard.css";
 import { hauseDashboardIcon, keyDashboardIcon, peopleIcon, penIcon, plusIconWhite, sellDashboardIcon } from "../../assets/icons";
 
 
-function Icono({ src, className = "" }) {
-  return <img className={`dashboard-icon ${className}`} src={src} alt="" aria-hidden="true" />;
-}
-
 function TarjetaAgentes({ agents }) {
   return (
     <section className="dashboard-card dashboard-agentes-card">
-      <h2 className="dashboard-card__title"><Icono src={peopleIcon} />Top Agentes</h2>
+      <h2 className="dashboard-card__title"><img className="dashboard-icon" src={peopleIcon} alt="" aria-hidden="true" />Top Agentes</h2>
       <div className="dashboard-agentes-list">
         {agents.map((agent) =>
           <div className="dashboard-agente" key={`AG${initials(agent.nombre, agent.apellido)}${agent.idAgente}`}>
@@ -51,13 +47,13 @@ function TarjetaEstado({ valores }) {
   return (
     <section className="dashboard-card dashboard-estado-card">
       <div className="dashboard-estado-card__heading">
-        <h2 className="dashboard-card__title"><Icono src={penIcon} />Estados</h2>
+        <h2 className="dashboard-card__title"><img className="dashboard-icon" src={penIcon} alt="" aria-hidden="true" />Estados</h2>
         <Link href="/propiedades" aria-label="Ver propiedades"></Link>
       </div>
       <div className="dashboard-estado-list">
         {statusItems.map((item) =>
           <div className="dashboard-estado-item" key={item.label}>
-            <strong>{item.label}</strong><b>{item.value}</b><Icono src={item.icon} className="dashboard-icon--original" />
+            <strong>{item.label}</strong><b>{item.value}</b><img className="dashboard-icon dashboard-icon--original" src={item.icon} alt="" aria-hidden="true" />
           </div>
         )}
       </div>

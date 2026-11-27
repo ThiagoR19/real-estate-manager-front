@@ -12,15 +12,6 @@ const ICONOS_ESTADO = { Abierto: clockIcon, "En proceso": clockIcon, Resuelto: c
 const FOTO_REPORTE_POR_DEFECTO = "/uploads/reportes/8414853068_a71ec481ef_b.jpg";
 const fecha = (valor) => valor ? new Date(`${String(valor).slice(0, 10)}T12:00:00`).toLocaleDateString("es-AR") : "—";
 
-function Icono({ src, className = "" }) {
-  return <img src={src} className={className} alt="" aria-hidden="true" />;
-}
-
-function FotoReporte({ src, className = "", label = "Foto del reporte" }) {
-  return <img className={`reportes__photo reportes__photo--uploaded ${className}`}
-    src={assetUrl(src || FOTO_REPORTE_POR_DEFECTO)} alt={label} />;
-}
-
 export default function ReportesAgente() {
   const rol = rolActual();
   const puedeCambiarEstado = rol === ROLES.ADMIN || rol === ROLES.AGENTE;
@@ -124,19 +115,19 @@ export default function ReportesAgente() {
         {puedeCrearReporte && <button className="reportes__create-button" type="button"
           disabled={cargando || !catalogos.propiedades.length || !catalogos.categorias.length}
           onClick={() => setModalCreacionAbierto(true)}>
-          <Icono src={plusIconWhite} /> Nuevo reporte
+          <img src={plusIconWhite} alt="" aria-hidden="true" /> Nuevo reporte
         </button>}
       </section>
       <div className="reportes__workspace">
         <aside className="reportes__list-panel" aria-label="Listado de reportes">
           <label className="reportes__search">
-            <Icono src={magnifyingGlassIcon} />
+            <img src={magnifyingGlassIcon} alt="" aria-hidden="true" />
             <input type="search" value={textoBusqueda}
               onChange={(event) => { setTextoBusqueda(event.target.value); resetPage(); }}
               placeholder="Buscar reportes..." aria-label="Buscar reportes" />
           </label>
           <label className="reportes__propiedad-filter">
-            <span className="reportes__propiedad-icon"><Icono src={houseIcon} /></span>
+            <span className="reportes__propiedad-icon"><img src={houseIcon} alt="" aria-hidden="true" /></span>
             <select value={propiedadSeleccionada}
               onChange={(event) => { setPropiedadSeleccionada(event.target.value); resetPage(); }}
               aria-label="Filtrar reportes por propiedad">
@@ -149,14 +140,18 @@ export default function ReportesAgente() {
               <button key={report.id} className={`reportes__list-item ${reporteActivo?.id === report.id ? "is-active" : ""}`}
                 type="button" onClick={() => setIdReporteActivo(report.id)}
                 aria-pressed={reporteActivo?.id === report.id}>
-                <FotoReporte className="reportes__list-photo" label={report.titulo} src={report.imagenes?.[0]?.url} />
+                <img
+                  className="reportes__photo reportes__photo--uploaded reportes__list-photo"
+                  src={assetUrl(report.imagenes?.[0]?.url || FOTO_REPORTE_POR_DEFECTO)}
+                  alt={report.titulo === undefined ? "Foto del reporte" : report.titulo}
+                />
                 <span className="reportes__list-copy">
                   <strong>{report.titulo}</strong>
-                  <span><Icono src={locationDotIcon} />{report.propiedad}</span>
-                  <span><Icono src={calendarIcon} />{fecha(report.fecha)}</span>
+                  <span><img src={locationDotIcon} alt="" aria-hidden="true" />{report.propiedad}</span>
+                  <span><img src={calendarIcon} alt="" aria-hidden="true" />{fecha(report.fecha)}</span>
                   <span className="reportes__list-state">{estadoReporte(report.estado)}</span>
                 </span>
-                <Icono src={angleDownIcon} className="reportes__chevron" />
+                <img src={angleDownIcon} className="reportes__chevron" alt="" aria-hidden="true" />
               </button>
             ))}
             {!cargando && !error && !visibleReports.length &&
@@ -170,17 +165,21 @@ export default function ReportesAgente() {
           {reporteActivo ? <>
             <header className="reportes__detail-header">
               <h2 id="report-detail-title">{reporteActivo.titulo}</h2>
-              <p><Icono src={locationDotIcon} />{reporteActivo.propiedad}</p>
+              <p><img src={locationDotIcon} alt="" aria-hidden="true" />{reporteActivo.propiedad}</p>
             </header>
             <div className="reportes__detail-content">
               <div className="reportes__gallery">
                 <div className="reportes__main-photo-frame">
-                  <FotoReporte className="reportes__main-photo" label={reporteActivo.titulo} src={fotos[fotoSeleccionada]?.url} />
+                  <img
+                    className="reportes__photo reportes__photo--uploaded reportes__main-photo"
+                    src={assetUrl(fotos[fotoSeleccionada]?.url || FOTO_REPORTE_POR_DEFECTO)}
+                    alt={reporteActivo.titulo === undefined ? "Foto del reporte" : reporteActivo.titulo}
+                  />
                   {fotos.length > 1 && <>
                     <button className="reportes__gallery-arrow reportes__gallery-arrow--previous" type="button"
-                      aria-label="Foto anterior" onClick={() => setSelectedPhotos((current) => ({ ...current, [reporteActivo.id]: (fotoSeleccionada - 1 + fotos.length) % fotos.length }))}><Icono src={angleDownIcon} /></button>
+                      aria-label="Foto anterior" onClick={() => setSelectedPhotos((current) => ({ ...current, [reporteActivo.id]: (fotoSeleccionada - 1 + fotos.length) % fotos.length }))}><img src={angleDownIcon} alt="" aria-hidden="true" /></button>
                     <button className="reportes__gallery-arrow reportes__gallery-arrow--next" type="button"
-                      aria-label="Foto siguiente" onClick={() => setSelectedPhotos((current) => ({ ...current, [reporteActivo.id]: (fotoSeleccionada + 1) % fotos.length }))}><Icono src={angleDownIcon} /></button>
+                      aria-label="Foto siguiente" onClick={() => setSelectedPhotos((current) => ({ ...current, [reporteActivo.id]: (fotoSeleccionada + 1) % fotos.length }))}><img src={angleDownIcon} alt="" aria-hidden="true" /></button>
                   </>}
                   {!!fotos.length && <span className="reportes__photo-count">{fotoSeleccionada + 1}/{fotos.length}</span>}
                 </div>
@@ -188,27 +187,31 @@ export default function ReportesAgente() {
                   {fotos.map((foto, index) => <button key={foto.id} className={`reportes__thumbnail-button${fotoSeleccionada === index ? " is-selected" : ""}`}
                     type="button" aria-label={`Ver foto ${index + 1}`} aria-pressed={fotoSeleccionada === index}
                     onClick={() => setSelectedPhotos((current) => ({ ...current, [reporteActivo.id]: index }))}>
-                    <FotoReporte className="reportes__thumbnail" src={foto.url} label={`Foto ${index + 1}`} />
+                    <img
+                      className="reportes__photo reportes__photo--uploaded reportes__thumbnail"
+                      src={assetUrl(foto.url || FOTO_REPORTE_POR_DEFECTO)}
+                      alt={`Foto ${index + 1}`}
+                    />
                   </button>)}
                 </div>}
               </div>
               <div className="reportes__details">
                 <article className="reportes__description-card"><h3>Descripción del problema</h3><p>{reporteActivo.descripcion || "Sin descripción."}</p></article>
                 <div className="reportes__facts">
-                  <article><h3>Propiedad</h3><p><Icono src={houseIcon} />{reporteActivo.propiedad}</p></article>
+                  <article><h3>Propiedad</h3><p><img src={houseIcon} alt="" aria-hidden="true" />{reporteActivo.propiedad}</p></article>
                   <article><h3>Tipo de problema</h3><p>{reporteActivo.categoria}</p></article>
                   <article><h3>Reportado por</h3><p>{reporteActivo.personaReporta}</p></article>
                   <article><h3>Fecha</h3><p>{fecha(reporteActivo.fecha)}</p></article>
                 </div>
                 {rol !== ROLES.AGENTE && <aside className="reportes__info-card">
-                  <span className="reportes__info-icon"><Icono src={commentsIcon} /></span>
+                  <span className="reportes__info-icon"><img src={commentsIcon} alt="" aria-hidden="true" /></span>
                   <div><h3>Información</h3><p>Te notificaremos cuando se asigne un profesional o haya novedades sobre tu reporte.</p></div>
                 </aside>}
               </div>
             </div>
             <div className="reportes__status-row">
               <div className={`reportes__status reportes__status--${reporteActivo.estado === "Resuelto" ? "solucionado" : reporteActivo.estado === "En proceso" ? "proceso" : "pendiente"}`} aria-label="Estado del reporte">
-                <Icono src={ICONOS_ESTADO[reporteActivo.estado] || clockIcon} className="reportes__status-icon" />
+                <img src={ICONOS_ESTADO[reporteActivo.estado] || clockIcon} className="reportes__status-icon" alt="" aria-hidden="true" />
                 {estadoReporte(reporteActivo.estado)}
               </div>
               {puedeCambiarEstado && <label className="reportes__status-control">

@@ -14,15 +14,11 @@ const ESTADOS = {
   Anulado: { texto: "Anulado", tono: "neutral" },
 };
 
-function Icono({ src }) {
-  return <img className="cobros__icon" src={src} alt="" aria-hidden="true" />;
-}
-
 function TarjetaResumen({ icon, label, value, tone }) {
   return (
     <article className={`cobros__summary-card cobros__summary-card--${tone}`}>
       <span className="cobros__summary-icon">
-        <Icono src={icon} />
+        <img className="cobros__icon" src={icon} alt="" aria-hidden="true" />
       </span>
       <strong>{label}</strong>
       <b>{value}</b>
@@ -132,7 +128,7 @@ export default function Cobros() {
             setSummaryOpen(false);
           }}
         >
-          <Icono src={optionsIcon} />
+          <img className="cobros__icon" src={optionsIcon} alt="" aria-hidden="true" />
         </button>
       </div>
       {(timelineOpen || summaryOpen) && (
@@ -267,7 +263,7 @@ export default function Cobros() {
           <article className="cobros__receipt-column">
             {hasReceipt && (
               <button className="pago-movil__open-receipt" type="button" onClick={() => setDialogo("comprobante")}>
-                <Icono src={imageIcon} />
+                <img className="cobros__icon" src={imageIcon} alt="" aria-hidden="true" />
                 Abrir comprobante
               </button>
             )}
@@ -275,11 +271,11 @@ export default function Cobros() {
               {hasReceipt ? (
                 <VistaComprobante {...comprobante} onAbrir={() => setDialogo("comprobante")} />
               ) : (
-                <div className="cobros__empty-receipt"><Icono src={fileLinesIcon} />Sin comprobante</div>
+                <div className="cobros__empty-receipt"><img className="cobros__icon" src={fileLinesIcon} alt="" aria-hidden="true" />Sin comprobante</div>
               )}
             </div>
             <div className={`cobros__receipt-status${hasReceipt ? " is-approved" : ""}`}>
-              <Icono src={fileLinesIcon} />
+              <img className="cobros__icon" src={fileLinesIcon} alt="" aria-hidden="true" />
               <span>
                 <strong>{hasReceipt ? "Comprobante cargado" : "Sin comprobante cargado"}</strong>
                 <small>
@@ -294,19 +290,19 @@ export default function Cobros() {
             <header className="cobros__detail-heading">
               <h2 id="cobros-title">{nombrePeriodo(cobroSeleccionado.periodo)}</h2>
               <span className={`cobros__status cobros__status--${estado.tono}`}>
-                {cobroSeleccionado.estado === "Liquidado" && <Icono src={checkIcon} />}
+                {cobroSeleccionado.estado === "Liquidado" && <img className="cobros__icon" src={checkIcon} alt="" aria-hidden="true" />}
                 {estado.texto}
               </span>
             </header>
             <div className="cobros__financials">
               <div className="cobros__facts">
                 <div>
-                  <span className="cobros__round-symbol" aria-hidden="true"><Icono src={calendarIcon} /></span>
+                  <span className="cobros__round-symbol" aria-hidden="true"><img className="cobros__icon" src={calendarIcon} alt="" aria-hidden="true" /></span>
                   <strong>Fecha de cobro:</strong>
                   <b>{formatearFecha(cobroSeleccionado.fechaPagoInquilino)}</b>
                 </div>
                 <div>
-                  <span className="cobros__round-symbol" aria-hidden="true"><Icono src={calendarIcon} /></span>
+                  <span className="cobros__round-symbol" aria-hidden="true"><img className="cobros__icon" src={calendarIcon} alt="" aria-hidden="true" /></span>
                   <strong>Fecha de liquidación:</strong>
                   <b>{formatearFecha(cobroSeleccionado.fechaCobro)}</b>
                 </div>
@@ -349,14 +345,14 @@ export default function Cobros() {
             </div>
             {cobroSeleccionado.detalle && (
               <aside className="cobros__admin-note">
-                <span><Icono src={fileLinesIcon} /></span>
+                <span><img className="cobros__icon" src={fileLinesIcon} alt="" aria-hidden="true" /></span>
                 <div><strong>Detalle de administración</strong><p>{cobroSeleccionado.detalle}</p></div>
               </aside>
             )}
             <div className="cobros__actions">
               {hasReceipt && (
                 <Boton className="cobros__download" onClick={descargarComprobante}>
-                  <Icono src={downloadIcon} />
+                  <img className="cobros__icon" src={downloadIcon} alt="" aria-hidden="true" />
                   <span>Descargar comprobante</span>
                 </Boton>
               )}

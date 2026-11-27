@@ -11,10 +11,6 @@ import "./DashboardAgente.css";
 
 const ZONA_HORARIA = "America/Argentina/Buenos_Aires";
 
-function Icono({ src, className = "" }) {
-  return <img className={className} src={src} alt="" aria-hidden="true" />;
-}
-
 function imagen(carpeta, nombre) {
   return nombre ? assetUrl(`/uploads/${carpeta}/${nombre}`) : fotoPorDefecto;
 }
@@ -53,7 +49,7 @@ function TarjetaAgenda({ fecha, agenda }) {
       aria-labelledby="agent-agenda-title"
     >
       <header className="dashboard-agente__section-heading">
-        <Icono src={calendarIcon} />
+        <img src={calendarIcon} alt="" aria-hidden="true" />
         <h2 id="agent-agenda-title">Agenda del día</h2>
         <time dateTime={fecha}>{fechaLarga(fecha)}</time>
       </header>
@@ -75,7 +71,7 @@ function TarjetaAgenda({ fecha, agenda }) {
               <strong>{visita.propiedad}</strong>
               <span>{visita.propiedadUbicacion || "Sin ubicación"}</span>
               <small>
-                <Icono src={userIcon} />
+                <img src={userIcon} alt="" aria-hidden="true" />
                 {visita.clienteNombre
                   ? `${visita.clienteNombre} ${visita.clienteApellido ?? ""}`
                   : "Sin cliente"}
@@ -99,7 +95,7 @@ function TarjetaReportes({ reportes }) {
       aria-labelledby="agent-reportes-title"
     >
       <header className="dashboard-agente__section-heading">
-        <Icono src={toolboxIcon} />
+        <img src={toolboxIcon} alt="" aria-hidden="true" />
         <h2 id="agent-reportes-title">Reportes de inquilinos</h2>
         <span className="dashboard-agente__pending">
           {reportes.total} {reportes.total === 1 ? "pendiente" : "pendientes"}
@@ -185,7 +181,7 @@ export default function DashboardAgente() {
             <p>Aquí tienes un resumen de la actividad de la inmobiliaria</p>
           </div>
           <Link className="dashboard-agente__agenda-button" href="/agenda">
-            <Icono src={plusIconWhite} />
+            <img src={plusIconWhite} alt="" aria-hidden="true" />
             Agendar cita
           </Link>
         </header>

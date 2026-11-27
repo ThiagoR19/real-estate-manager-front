@@ -29,14 +29,10 @@ function estadoDe(pago) {
   return { texto: "Sin comprobante", tono: "neutral" };
 }
 
-function Icono({ src }) {
-  return <img className="vista-pago__icon" src={src} alt="" />;
-}
-
 function EstadoPago({ estado, destacado = false }) {
   return (
     <span className={`vista-pago__status vista-pago__status--${estado.tono}`}>
-      {destacado && estado.tono === "success" && <Icono src={checkIcon} />}
+      {destacado && estado.tono === "success" && <img className="vista-pago__icon" src={checkIcon} alt="" />}
       {estado.texto}
     </span>
   );
@@ -57,7 +53,7 @@ function ResumenPagos({ abierto, periodos }) {
     >
       {tarjetas.map(({ titulo, icono, tono, contar }) => (
         <article key={titulo}>
-          <span className={`vista-pago__metric vista-pago__metric--${tono}`}><Icono src={icono} /></span>
+          <span className={`vista-pago__metric vista-pago__metric--${tono}`}><img className="vista-pago__icon" src={icono} alt="" /></span>
           <strong>{titulo}</strong>
           <b>{periodos.filter(contar).length}/{total}</b>
         </article>
@@ -69,7 +65,7 @@ function ResumenPagos({ abierto, periodos }) {
 function DatoPago({ icono, etiqueta, valor, className }) {
   return (
     <div className={className}>
-      <span className="vista-pago__round" aria-hidden="true">{icono ? <Icono src={icono} /> : "$"}</span>
+      <span className="vista-pago__round" aria-hidden="true">{icono ? <img className="vista-pago__icon" src={icono} alt="" /> : "$"}</span>
       <dt>{etiqueta}</dt>
       <dd>{valor}</dd>
     </div>
@@ -150,7 +146,7 @@ function DetallePago({ pago, cargando, error, recargar }) {
       <article className="vista-pago__receipt-column pagos__receipt-column">
         {puedePrevisualizar && (
           <button className="pago-movil__open-receipt" type="button" onClick={() => setDialogo("comprobante")}>
-            <Icono src={imageIcon} />
+            <img className="vista-pago__icon" src={imageIcon} alt="" />
             Abrir comprobante
           </button>
         )}
@@ -158,11 +154,11 @@ function DetallePago({ pago, cargando, error, recargar }) {
           {puedePrevisualizar ? (
             <VistaComprobante {...argumentosComprobante} onAbrir={() => setDialogo("comprobante")} />
           ) : (
-            <div className="vista-pago__empty-receipt"><Icono src={fileLinesIcon} />Sin comprobante</div>
+            <div className="vista-pago__empty-receipt"><img className="vista-pago__icon" src={fileLinesIcon} alt="" />Sin comprobante</div>
           )}
         </div>
         <div className={`vista-pago__uploaded pagos__uploaded${puedePrevisualizar ? " is-approved" : ""}`}>
-          <Icono src={fileLinesIcon} />
+          <img className="vista-pago__icon" src={fileLinesIcon} alt="" />
           <span>
             <strong>{archivo ? "Comprobante listo para enviar" : tieneComprobante ? "Comprobante cargado" : "Sin comprobante"}</strong>
             {archivo && <small>{archivo.name}</small>}
@@ -214,21 +210,21 @@ function DetallePago({ pago, cargando, error, recargar }) {
         </div>
         {nota && (
           <aside className="vista-pago__admin-note pagos__admin-note">
-            <span><Icono src={commentsIcon} /></span>
+            <span><img className="vista-pago__icon" src={commentsIcon} alt="" /></span>
             <div><strong>Detalle de administración</strong><p>{nota}</p></div>
           </aside>
         )}
         <div className="vista-pago__actions pagos__actions">
           {puedeEnviar && (
             <label className="vista-pago__action vista-pago__action--secondary vista-pago__file">
-              <Icono src={downloadIcon} />
+              <img className="vista-pago__icon" src={downloadIcon} alt="" />
               <span>{archivo ? "Cambiar comprobante" : "Subir comprobante"}</span>
               <input type="file" accept={TIPOS_COMPROBANTE} onChange={seleccionarArchivo} disabled={enviando || cargando} />
             </label>
           )}
           {tieneComprobante && !archivo && (
             <Boton className="vista-pago__action vista-pago__action--secondary" onClick={descargar}>
-              <Icono src={downloadIcon} />Descargar comprobante
+              <img className="vista-pago__icon" src={downloadIcon} alt="" />Descargar comprobante
             </Boton>
           )}
           {puedeEnviar ? (
@@ -386,7 +382,7 @@ export default function Pagos() {
           triggerClassName="vista-pago__mobile-propiedad-trigger"
         />
         <button ref={abrirCronologia} type="button" aria-label="Abrir cronología" aria-controls="vista-pago-chronology" aria-expanded={cronologiaAbierta} onClick={() => setPanel("cronologia")}>
-          <Icono src={optionsIcon} />
+          <img className="vista-pago__icon" src={optionsIcon} alt="" />
         </button>
       </div>
       {panel && <button className="pago-movil__fondo" type="button" aria-label="Cerrar panel" onClick={() => setPanel(null)} />}
