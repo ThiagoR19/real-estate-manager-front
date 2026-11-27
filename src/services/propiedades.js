@@ -23,31 +23,31 @@ export const actualizarPropiedad = (id, body) => request(`/propiedades/${id}`, {
 export const eliminarPropiedad = (id) => request(`/propiedades/${id}`, { method: "DELETE" });
 
 export async function obtenerPropiedad(id) {
-  const [raw, files] = await Promise.all([propiedad(id), archivosPropiedad(id)]);
-  return { ...raw, imagenes: files.imagenes || [], documentos: files.documentos || [] };
+  const [raw, archivos] = await Promise.all([propiedad(id), archivosPropiedad(id)]);
+  return { ...raw, imagenes: archivos.imagenes || [], documentos: archivos.documentos || [] };
 }
 
-export function subirArchivosPropiedad(id, kind, files, titulo) {
+export function subirArchivosPropiedad(id, tipo, archivos, titulo) {
   const body = new FormData();
-  for (const file of files) body.append(kind, file);
+  for (const archivo of archivos) body.append(tipo, archivo);
   if (titulo) body.append("titulo", titulo);
-  return request(`/propiedades/${id}/archivos/${kind}`, { method: "POST", body });
+  return request(`/propiedades/${id}/archivos/${tipo}`, { method: "POST", body });
 }
 
-export const renombrarDocumentoPropiedad = (id, fileId, titulo) => request(`/propiedades/${id}/archivos/documentos/${fileId}`, { method: "PATCH", body: { titulo } });
+export const renombrarDocumentoPropiedad = (id, archivoId, titulo) => request(`/propiedades/${id}/archivos/documentos/${archivoId}`, { method: "PATCH", body: { titulo } });
 
-export const eliminarArchivoPropiedad = (id, kind, fileId) => request(`/propiedades/${id}/archivos/${kind}/${fileId}`, { method: "DELETE" });
+export const eliminarArchivoPropiedad = (id, tipo, archivoId) => request(`/propiedades/${id}/archivos/${tipo}/${archivoId}`, { method: "DELETE" });
 
-export async function descargarDocumentoPropiedad(id, file) {
+export async function descargarDocumentoPropiedad(id, archivo) {
   try {
-    const { data } = await http.get(`/propiedades/${id}/archivos/documentos/${file.id}`, {
+    const { data } = await http.get(`/propiedades/${id}/archivos/documentos/${archivo.id}`, {
       headers: { Authorization: `Bearer ${obtenerSesion()?.token || ""}` },
       responseType: "blob",
     });
     const url = URL.createObjectURL(data);
     const link = window.document.createElement("a");
     link.href = url;
-    link.download = file.nombreArchivo;
+    link.download = archivo.nombreArchivo;
     link.click();
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   } catch (error) {

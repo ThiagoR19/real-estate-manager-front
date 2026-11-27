@@ -30,8 +30,8 @@ const formatearHora = (date) =>
     })
     : "";
 
-function ConversationAvatar({ kind, className = "" }) {
-  const isAdministration = kind === "administration";
+function ConversationAvatar({ tipo, className = "" }) {
+  const isAdministration = tipo === "administration";
   return (
     <span
       className={`chat__avatar ${isAdministration ? "chat__avatar--agi" : "chat__avatar--agent"} ${className}`}
@@ -188,7 +188,7 @@ export default function Chat() {
   const opcionesConversaciones = conversaciones.map(
     (item) => `${nombrePersona(item)} (#${item.id})`
   );
-  const kind = conversacionSeleccionada?.rol?.toLowerCase().includes("admin")
+  const tipo = conversacionSeleccionada?.rol?.toLowerCase().includes("admin")
     ? "administration"
     : "agent";
 
@@ -305,7 +305,7 @@ export default function Chat() {
                   conversation.id === idSeleccionado ? "page" : undefined
                 }
               >
-                <ConversationAvatar kind={conversation.rol?.toLowerCase().includes("admin") ? "administration" : "agent"} />
+                <ConversationAvatar tipo={conversation.rol?.toLowerCase().includes("admin") ? "administration" : "agent"} />
                 <span className="chat__conversation-copy">
                   <span className="chat__conversation-name">
                     {nombrePersona(conversation)}{" "}
@@ -332,7 +332,7 @@ export default function Chat() {
         </aside>
         <section className="chat__thread" aria-labelledby="chat-thread-title">
           <header className="chat__thread-header">
-            <ConversationAvatar kind={kind} className="chat__avatar--header" />
+            <ConversationAvatar tipo={tipo} className="chat__avatar--header" />
             <div className="chat__thread-identity">
               <h2 id="chat-thread-title"> {conversacionSeleccionada ? nombrePersona(conversacionSeleccionada) : "Nueva conversación"} </h2>
               <p>{conversacionSeleccionada?.rol || "Elegí un contacto para comenzar"}</p>
@@ -378,7 +378,7 @@ export default function Chat() {
                 >
                   {side === "incoming" && (
                     <ConversationAvatar
-                      kind={kind}
+                      tipo={tipo}
                       className="chat__avatar--message"
                     />
                   )}

@@ -21,24 +21,24 @@ export const generarEnlaceInquilino = (id) => request(`/inquilinos/${id}/activac
 export const actualizarInquilino = (id, body) => request(`/inquilinos/${id}`, { method: "PUT", body }).then(({ data }) => data);
 export const eliminarInquilino = (id) => request(`/inquilinos/${id}`, { method: "DELETE" });
 
-export function subirArchivosInquilino(id, kind, files) {
+export function subirArchivosInquilino(id, tipo, archivos) {
   const body = new FormData();
-  for (const file of files) body.append(kind, file);
-  return request(`/inquilinos/${id}/archivos/${kind}`, { method: "POST", body });
+  for (const archivo of archivos) body.append(tipo, archivo);
+  return request(`/inquilinos/${id}/archivos/${tipo}`, { method: "POST", body });
 }
 
-export const eliminarArchivoInquilino = (id, kind, fileId) => request(`/inquilinos/${id}/archivos/${kind}/${fileId}`, { method: "DELETE" });
+export const eliminarArchivoInquilino = (id, tipo, archivoId) => request(`/inquilinos/${id}/archivos/${tipo}/${archivoId}`, { method: "DELETE" });
 
-export async function descargarDocumentoInquilino(id, file) {
+export async function descargarDocumentoInquilino(id, archivo) {
   try {
-    const { data } = await http.get(`/inquilinos/${id}/archivos/documentos/${file.id}`, {
+    const { data } = await http.get(`/inquilinos/${id}/archivos/documentos/${archivo.id}`, {
       headers: { Authorization: `Bearer ${obtenerSesion()?.token || ""}` },
       responseType: "blob",
     });
     const url = URL.createObjectURL(data);
     const link = window.document.createElement("a");
     link.href = url;
-    link.download = file.fileName;
+    link.download = archivo.fileName;
     link.click();
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   } catch (error) {

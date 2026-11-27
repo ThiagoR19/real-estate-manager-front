@@ -21,9 +21,9 @@ const IMAGENES = [
 const TEXTO_BOTON = { guardando: "Guardando...", guardado: "Cambios guardados" };
 
 function leerArchivo(event, onElegir) {
-  const file = event.target.files?.[0];
+  const archivo = event.target.files?.[0];
   event.target.value = "";
-  if (file) onElegir(file);
+  if (archivo) onElegir(archivo);
 }
 
 function EsferaLogo({ logo, nombre }) {
@@ -103,7 +103,7 @@ function CampoCarga({ imagen, url, onElegir, disabled }) {
         id={`inmobiliaria-upload-${imagen.name}`}
         type="file"
         accept={FORMATOS_IMAGEN.join(",")}
-        onChange={(event) => leerArchivo(event, (file) => onElegir(imagen.name, file))}
+        onChange={(event) => leerArchivo(event, (archivo) => onElegir(imagen.name, archivo))}
       />
     </div>
   );
@@ -134,7 +134,7 @@ export default function Inmobiliaria() {
               className="inmobiliaria__identity-input"
               type="file"
               accept={FORMATOS_IMAGEN.join(",")}
-              onChange={(event) => leerArchivo(event, (file) => cambiarImagen("logo", file))}
+              onChange={(event) => leerArchivo(event, (archivo) => cambiarImagen("logo", archivo))}
               tabIndex={-1}
               aria-hidden="true"
             />

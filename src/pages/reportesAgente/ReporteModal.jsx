@@ -67,10 +67,10 @@ export default function ReporteModal({ isOpen, onClose, onSubmit, propiedades = 
   }
 
   function agregarFotos(event) {
-    const fotosSeleccionadas = Array.from(event.target.files ?? []).slice(0, Math.max(0, 10 - fotosRef.current.length)).map((file) => ({
-      id: `${file.name}-${file.lastModified}-${file.size}-${Math.random()}`,
-      archivo: file,
-      url: URL.createObjectURL(file),
+    const fotosSeleccionadas = Array.from(event.target.files ?? []).slice(0, Math.max(0, 10 - fotosRef.current.length)).map((archivo) => ({
+      id: `${archivo.name}-${archivo.lastModified}-${archivo.size}-${Math.random()}`,
+      archivo,
+      url: URL.createObjectURL(archivo),
     }));
 
     if (fotosSeleccionadas.length) {
@@ -102,7 +102,7 @@ export default function ReporteModal({ isOpen, onClose, onSubmit, propiedades = 
       idCategoria: formulario.idCategoria || categorias[0]?.id,
       nombre: formulario.nombre.trim(),
       descripcion: formulario.descripcion.trim(),
-      fotos: fotosRef.current.map(({ archivo: file }) => file),
+      fotos: fotosRef.current.map(({ archivo }) => archivo),
     });
   }
 

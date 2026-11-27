@@ -175,16 +175,16 @@ export default function Perfil() {
 
   const handlePhotoChange = async (event) => {
     const input = event.currentTarget;
-    const file = input.files?.[0];
-    if (!file) return;
+    const archivo = input.files?.[0];
+    if (!archivo) return;
 
-    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+    if (!["image/jpeg", "image/png", "image/webp"].includes(archivo.type)) {
       mostrarAviso({ tipo: "advertencia", titulo: "Formato no permitido", mensaje: "Elegí una imagen JPEG, PNG o WebP." });
       input.value = "";
       return;
     }
 
-    if (file.size > 2 * 1024 * 1024) {
+    if (archivo.size > 2 * 1024 * 1024) {
       mostrarAviso({ tipo: "advertencia", titulo: "Imagen muy pesada", mensaje: "La imagen no puede superar los 2 MiB." });
       input.value = "";
       return;
@@ -192,7 +192,7 @@ export default function Perfil() {
 
     setPhotoUploading(true);
     try {
-      showProfile(await api.actualizarFotoPerfil(file));
+      showProfile(await api.actualizarFotoPerfil(archivo));
       mostrarAviso({ tipo: "exito", titulo: "Foto actualizada", mensaje: "Tu foto de perfil se actualizó correctamente." });
     } catch (error) {
       mostrarAviso({ tipo: "error", titulo: "No se pudo subir la foto", mensaje: error.message || "Intentá nuevamente." });

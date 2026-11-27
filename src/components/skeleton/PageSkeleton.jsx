@@ -203,30 +203,30 @@ function IndecSkeleton() {
   );
 }
 
-function DashboardSkeleton({ kind }) {
-  const cardCount = kind === "inquilino" || kind === "propietario" ? 3 : 4;
+function DashboardSkeleton({ tipo }) {
+  const cardCount = tipo === "inquilino" || tipo === "propietario" ? 3 : 4;
   const id =
-    kind === "agente"
+    tipo === "agente"
       ? "dashboard-agente"
-      : kind === "inquilino"
+      : tipo === "inquilino"
         ? "dashboard-inquilino"
         : undefined;
   const extraClass =
-    kind === "administrador"
+    tipo === "administrador"
       ? " dashboard-page"
-      : kind === "propietario"
+      : tipo === "propietario"
         ? " dashboard-propietario"
         : "";
 
   return (
     <main
       id={id}
-      className={`page-skeleton page-skeleton--dashboard page-skeleton--${kind}${extraClass}`}
+      className={`page-skeleton page-skeleton--dashboard page-skeleton--${tipo}${extraClass}`}
       aria-busy="true"
       aria-label="Cargando dashboard"
       role="status"
     >
-      <Intro action={kind === "administrador" || kind === "agente"} />
+      <Intro action={tipo === "administrador" || tipo === "agente"} />
       <div className="page-skeleton__dashboard-grid">
         {Array.from({ length: cardCount }, (_, index) => (
           <div className="page-skeleton__panel page-skeleton__dashboard-card" key={index}>
@@ -387,7 +387,7 @@ export default function PageSkeleton({ variant, title }) {
   if (variant === "properties") return <PropertiesSkeleton />;
   if (variant === "property") return <PropertySkeleton />;
   if (variant === "indec") return <IndecSkeleton />;
-  if (variant === "dashboard") return <DashboardSkeleton kind={title} />;
+  if (variant === "dashboard") return <DashboardSkeleton tipo={title} />;
   if (variant === "chat") return <ChatSkeleton />;
   if (variant === "agenda") return <AgendaSkeleton />;
   if (variant === "super-admin") return <SuperAdminSkeleton />;

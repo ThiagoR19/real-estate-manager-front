@@ -304,7 +304,7 @@ export default function Propietarios() {
 
       {modal && (
         <PersonaModal
-          kind="owner"
+          tipo="owner"
           mode={modal.mode}
           persona={modal.persona}
           onClose={() => setModal(null)}

@@ -6,7 +6,7 @@ const opcionesPropiedad = ["Av. San Martín 1250", "Av. Santa Fe 850"];
 const estadosPropietario = ["Activo", "Inactivo"];
 const estadosAgente = ["Activo", "Inactivo", "Pendiente"];
 
-function formularioInicial(persona, kind) {
+function formularioInicial(persona, tipo) {
   const [nombre = "", ...apellido] = (persona?.nombreCompleto || "").trim().split(/\s+/);
 
   return {
@@ -18,7 +18,7 @@ function formularioInicial(persona, kind) {
     dni: persona?.dni || "",
     cbu: persona?.cbu || "",
     alias: persona?.alias || "",
-    propiedad: persona?.propiedad || (kind === "owner" ? persona?.direccion : "") || opcionesPropiedad[0],
+    propiedad: persona?.propiedad || (tipo === "owner" ? persona?.direccion : "") || opcionesPropiedad[0],
     zona: persona?.zona || persona?.area || "",
     estado: persona?.estado || estadosPropietario[0],
   };
@@ -35,9 +35,9 @@ function inicialesPersona(nombre) {
     .toUpperCase();
 }
 
-export default function PersonaModal({ kind, mode, persona, zones = [], onClose, onSubmit }) {
-  const [formulario, setFormulario] = useState(() => formularioInicial(persona, kind));
-  const esPropietario = kind === "owner";
+export default function PersonaModal({ tipo, mode, persona, zones = [], onClose, onSubmit }) {
+  const [formulario, setFormulario] = useState(() => formularioInicial(persona, tipo));
+  const esPropietario = tipo === "owner";
   const esEdicion = mode === "edit";
   const entidad = esPropietario ? "propietario" : "agente";
   const nombreVisible = persona?.nombreCompleto || (esPropietario ? "Propietario" : "Agente");

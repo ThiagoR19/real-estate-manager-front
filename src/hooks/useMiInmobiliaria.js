@@ -8,12 +8,12 @@ const MAX_BYTES = 2 * 1024 * 1024;
 const CAMPOS_VACIOS = { nombre: "", telefono: "", ubicacion: "" };
 const SIN_ARCHIVOS = { logo: null, banner: null, principal: null };
 
-function imagenValida(file) {
-  if (!FORMATOS_IMAGEN.includes(file.type)) {
+function imagenValida(archivo) {
+  if (!FORMATOS_IMAGEN.includes(archivo.type)) {
     mostrarAviso({ tipo: "advertencia", titulo: "Formato no permitido", mensaje: "La imagen debe ser JPG, PNG o WEBP" });
     return false;
   }
-  if (file.size > MAX_BYTES) {
+  if (archivo.size > MAX_BYTES) {
     mostrarAviso({ tipo: "advertencia", titulo: "Imagen muy pesada", mensaje: "La imagen no puede superar los 2 MB" });
     return false;
   }
@@ -61,12 +61,12 @@ export default function useMiInmobiliaria() {
     setEstado("listo");
   }
 
-  function cambiarImagen(nombre, file) {
-    if (!imagenValida(file)) return;
-    const url = URL.createObjectURL(file);
+  function cambiarImagen(nombre, archivo) {
+    if (!imagenValida(archivo)) return;
+    const url = URL.createObjectURL(archivo);
     vistasPrevias.current.push(url);
     setImagenes((actual) => ({ ...actual, [nombre]: url }));
-    setArchivos((actual) => ({ ...actual, [nombre]: file }));
+    setArchivos((actual) => ({ ...actual, [nombre]: archivo }));
     setEstado("listo");
   }
 
