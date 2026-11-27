@@ -473,10 +473,10 @@ export default function Agenda() {
         setAgentes(catalogos.agentes);
         setClientes(clientesRecibidos);
       })
-      .catch((cause) => {
+      .catch((error) => {
         if (!active) return;
-        setError(cause.message);
-        mostrarAviso({ tipo: "error", titulo: "No se pudo cargar la agenda", mensaje: cause.message });
+        setError(error.message);
+        mostrarAviso({ tipo: "error", titulo: "No se pudo cargar la agenda", mensaje: error.message });
       })
       .finally(() => { if (active) setCargando(false); });
     return () => { active = false; };

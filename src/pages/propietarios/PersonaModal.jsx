@@ -52,11 +52,11 @@ export default function PersonaModal({ kind, mode, persona, zones = [], onClose,
     const nombreCompleto = `${formulario.nombre.trim()} ${formulario.apellido.trim()}`.trim();
     try {
       await onSubmit({ ...formulario, nombreCompleto, iniciales: inicialesPersona(nombreCompleto) });
-    } catch (cause) {
+    } catch (error) {
       mostrarAviso({
         tipo: "error",
         titulo: esEdicion ? `No se pudo actualizar el ${entidad}` : `No se pudo crear el ${entidad}`,
-        mensaje: cause.message || "No se pudieron guardar los cambios.",
+        mensaje: error.message || "No se pudieron guardar los cambios.",
       });
     }
   }

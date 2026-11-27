@@ -94,10 +94,10 @@ export default function Propiedades() {
         setPropiedades(rows);
         setCatalogos(lists);
       })
-      .catch((cause) => {
+      .catch((error) => {
         if (active) {
-          setError(cause.message);
-          mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar las propiedades", mensaje: cause.message });
+          setError(error.message);
+          mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar las propiedades", mensaje: error.message });
         }
       })
       .finally(() => {
@@ -118,8 +118,8 @@ export default function Propiedades() {
   async function abrirEdicion(propiedad) {
     try {
       setModal({ mode: "edit", propiedad: await api.obtenerPropiedad(propiedad.id) });
-    } catch (cause) {
-      mostrarAviso({ tipo: "error", titulo: "No se pudo abrir la propiedad", mensaje: cause.message });
+    } catch (error) {
+      mostrarAviso({ tipo: "error", titulo: "No se pudo abrir la propiedad", mensaje: error.message });
     }
   }
 

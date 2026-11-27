@@ -99,11 +99,11 @@ export default function ProfesionalModal({ isOpen, mode, profesional, onClose, o
     event.preventDefault();
     try {
       await onSubmit({ ...formulario, nombreCompleto: `${formulario.nombre.trim()} ${formulario.apellido.trim()}`.trim() });
-    } catch (cause) {
+    } catch (error) {
       mostrarAviso({
         tipo: "error",
         titulo: esEdicion ? "No se pudo actualizar el profesional" : "No se pudo crear el profesional",
-        mensaje: cause.message,
+        mensaje: error.message,
       });
     }
   }

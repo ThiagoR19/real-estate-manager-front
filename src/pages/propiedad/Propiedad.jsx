@@ -47,10 +47,10 @@ export default function Propiedad() {
           setCatalogos(lists);
         }
       })
-      .catch((cause) => {
+      .catch((error) => {
         if (active) {
-          setError(cause.message);
-          mostrarAviso({ tipo: "error", titulo: "No se pudo cargar la propiedad", mensaje: cause.message });
+          setError(error.message);
+          mostrarAviso({ tipo: "error", titulo: "No se pudo cargar la propiedad", mensaje: error.message });
         }
       })
       .finally(() => {
@@ -130,8 +130,8 @@ export default function Propiedad() {
       await api.eliminarPropiedad(id);
       mostrarAviso({ tipo: "exito", titulo: "Propiedad eliminada", mensaje: "La propiedad se eliminó correctamente." });
       navigate("/propiedades");
-    } catch (cause) {
-      mostrarAviso({ tipo: "error", titulo: "No se pudo eliminar la propiedad", mensaje: cause.message });
+    } catch (error) {
+      mostrarAviso({ tipo: "error", titulo: "No se pudo eliminar la propiedad", mensaje: error.message });
       setModalEliminarAbierto(false);
     }
   }
@@ -281,8 +281,8 @@ export default function Propiedad() {
                         onClick={async () => {
                           try {
                             await api.descargarDocumentoPropiedad(id, document);
-                          } catch (cause) {
-                            mostrarAviso({ tipo: "error", titulo: "No se pudo descargar el documento", mensaje: cause.message });
+                          } catch (error) {
+                            mostrarAviso({ tipo: "error", titulo: "No se pudo descargar el documento", mensaje: error.message });
                           }
                         }}
                       >

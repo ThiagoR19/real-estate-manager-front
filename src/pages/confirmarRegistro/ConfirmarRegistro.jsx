@@ -28,8 +28,8 @@ export default function ConfirmarRegistro() {
       setStatus("listo");
       mostrarAviso({ tipo: "exito", titulo: "DNI verificado", mensaje: "Ya podés crear tu cuenta." });
       navigate("/registro");
-    } catch (cause) {
-      mostrarAviso({ tipo: "error", titulo: "No se pudo verificar el DNI", mensaje: cause.message });
+    } catch (error) {
+      mostrarAviso({ tipo: "error", titulo: "No se pudo verificar el DNI", mensaje: error.message });
       setStatus("inactivo");
     }
   }

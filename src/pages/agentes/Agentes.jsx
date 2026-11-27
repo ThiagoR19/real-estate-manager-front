@@ -96,11 +96,11 @@ function AgenteModal({ agente, areas, onClose, onSubmit }) {
 
     try {
       await onSubmit(body);
-    } catch (cause) {
+    } catch (error) {
       mostrarAviso({
         tipo: "error",
         titulo: agente ? "No se pudo actualizar el agente" : "No se pudo crear el agente",
-        mensaje: cause.message,
+        mensaje: error.message,
       });
     }
   }
@@ -181,10 +181,10 @@ export default function Agentes() {
         setAreas(areaRows);
         setVisitas(visitasRecibidas);
       })
-      .catch((cause) => {
+      .catch((error) => {
         if (!active) return;
-        setError(cause.message);
-        mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar los agentes", mensaje: cause.message });
+        setError(error.message);
+        mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar los agentes", mensaje: error.message });
       })
       .finally(() => { if (active) setCargando(false); });
     return () => { active = false; };
@@ -218,8 +218,8 @@ export default function Agentes() {
       setEnlaceActivacion(enlaceActivacion(activacion));
       setAviso(`Enlace nuevo para ${agente.nombre || `DNI ${agente.dni}`}. Compartilo con el agente para activar su cuenta.`);
       mostrarAviso({ tipo: "info", titulo: "Enlace de activación generado", mensaje: "Copialo y compartilo con el agente para que active su cuenta." });
-    } catch (cause) {
-      mostrarAviso({ tipo: "error", titulo: "No se pudo generar el enlace", mensaje: cause.message });
+    } catch (error) {
+      mostrarAviso({ tipo: "error", titulo: "No se pudo generar el enlace", mensaje: error.message });
     }
   }
 
@@ -231,8 +231,8 @@ export default function Agentes() {
       setEnlaceActivacion("");
       setAviso("");
       mostrarAviso({ tipo: "exito", titulo: "Agente eliminado", mensaje: "El agente se eliminó correctamente." });
-    } catch (cause) {
-      mostrarAviso({ tipo: "error", titulo: "No se pudo eliminar el agente", mensaje: cause.message });
+    } catch (error) {
+      mostrarAviso({ tipo: "error", titulo: "No se pudo eliminar el agente", mensaje: error.message });
     }
   }
 

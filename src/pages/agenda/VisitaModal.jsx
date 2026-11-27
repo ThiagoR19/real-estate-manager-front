@@ -61,11 +61,11 @@ export default function VisitaModal({
         estado: formulario.estado,
         motivo: formulario.motivo.trim(),
       });
-    } catch (cause) {
+    } catch (error) {
       mostrarAviso({
         tipo: "error",
         titulo: enEdicion ? "No se pudo guardar la visita" : "No se pudo agendar la visita",
-        mensaje: cause.message,
+        mensaje: error.message,
       });
     } finally {
       setBusy(false);

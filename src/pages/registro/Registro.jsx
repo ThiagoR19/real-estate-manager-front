@@ -53,8 +53,8 @@ export default function Registro() {
       guardarSesion(session);
       limpiarBorradorRegistro();
       window.location.assign("/perfil");
-    } catch (cause) {
-      mostrarAviso({ tipo: "error", titulo: "No se pudo crear la cuenta", mensaje: cause.message });
+    } catch (error) {
+      mostrarAviso({ tipo: "error", titulo: "No se pudo crear la cuenta", mensaje: error.message });
       setStatus("inactivo");
     }
   };
@@ -68,8 +68,8 @@ export default function Registro() {
       guardarSesion(session);
       limpiarBorradorRegistro();
       window.location.assign("/perfil");
-    } catch (cause) {
-      mostrarAviso({ tipo: "error", titulo: "No se pudo crear la cuenta con Google", mensaje: cause.message });
+    } catch (error) {
+      mostrarAviso({ tipo: "error", titulo: "No se pudo crear la cuenta con Google", mensaje: error.message });
       setStatus("inactivo");
     }
   }, [draft?.verificacion]);

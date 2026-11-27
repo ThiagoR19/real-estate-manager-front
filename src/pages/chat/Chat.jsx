@@ -78,13 +78,13 @@ export default function Chat() {
         setContactos(people);
         setIdSeleccionado(rows[0]?.id ?? null);
       })
-      .catch((cause) => {
+      .catch((error) => {
         if (!active) return;
-        setError(cause.message);
+        setError(error.message);
         mostrarAviso({
           tipo: "error",
           titulo: "No se pudieron cargar las conversaciones",
-          mensaje: cause.message,
+          mensaje: error.message,
         });
       })
       .finally(() => {
@@ -140,8 +140,8 @@ export default function Chat() {
         const recent = [...result.data].reverse();
         agregar(recent);
         await marcarLeido(Math.max(0, ...recent.map((mensaje) => mensaje.id)));
-      } catch (cause) {
-        if (active) setError(cause.message);
+      } catch (error) {
+        if (active) setError(error.message);
       }
     }
 
@@ -214,11 +214,11 @@ export default function Chat() {
       }
       setBorrador("");
       await actualizarConversaciones();
-    } catch (cause) {
+    } catch (error) {
       mostrarAviso({
         tipo: "error",
         titulo: "No se pudo enviar el mensaje",
-        mensaje: cause.message,
+        mensaje: error.message,
       });
     } finally {
       setEnviando(false);

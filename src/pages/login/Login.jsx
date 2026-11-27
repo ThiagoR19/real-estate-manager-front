@@ -40,8 +40,8 @@ export default function Login() {
       guardarSesion(session);
       setSubmitState("listo");
       navigate(inicioDelRol(Number(session.usuario?.rol)), { replace: true });
-    } catch (cause) {
-      mostrarAviso({ tipo: "error", titulo: "No se pudo iniciar sesión", mensaje: cause.message });
+    } catch (error) {
+      mostrarAviso({ tipo: "error", titulo: "No se pudo iniciar sesión", mensaje: error.message });
       setSubmitState("inactivo");
     }
   };
@@ -54,8 +54,8 @@ export default function Login() {
       const session = await api.login(usuario, password, idUsuario);
       guardarSesion(session);
       navigate(inicioDelRol(Number(session.usuario?.rol)), { replace: true });
-    } catch (cause) {
-      mostrarAviso({ tipo: "error", titulo: "No se pudo iniciar sesión", mensaje: cause.message });
+    } catch (error) {
+      mostrarAviso({ tipo: "error", titulo: "No se pudo iniciar sesión", mensaje: error.message });
       setSubmitState("inactivo");
     }
   };
@@ -70,8 +70,8 @@ export default function Login() {
       }
       guardarSesion(result);
       navigate(inicioDelRol(Number(result.usuario?.rol)), { replace: true });
-    } catch (cause) {
-      mostrarAviso({ tipo: "error", titulo: "No se pudo iniciar sesión con Google", mensaje: cause.message });
+    } catch (error) {
+      mostrarAviso({ tipo: "error", titulo: "No se pudo iniciar sesión con Google", mensaje: error.message });
     }
   }, [navigate]);
 

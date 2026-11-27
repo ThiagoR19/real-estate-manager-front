@@ -113,10 +113,10 @@ export default function Propietarios() {
     let active = true;
     api.propietarios()
       .then((rows) => { if (active) setPropietarios(rows.map(prepararPropietario)); })
-      .catch((cause) => {
+      .catch((error) => {
         if (!active) return;
-        setError(cause.message);
-        mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar los propietarios", mensaje: cause.message });
+        setError(error.message);
+        mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar los propietarios", mensaje: error.message });
       })
       .finally(() => { if (active) setCargando(false); });
     return () => { active = false; };
@@ -126,7 +126,7 @@ export default function Propietarios() {
     let active = true;
     api.resumenPropietarios()
       .then((result) => { if (active) setResumen(result); })
-      .catch((cause) => { if (active) setErrorResumen(cause.message); });
+      .catch((error) => { if (active) setErrorResumen(error.message); });
     return () => { active = false; };
   }, []);
 
@@ -134,8 +134,8 @@ export default function Propietarios() {
     try {
       setResumen(await api.resumenPropietarios());
       setErrorResumen("");
-    } catch (cause) {
-      setErrorResumen(cause.message);
+    } catch (error) {
+      setErrorResumen(error.message);
     }
   }
 
@@ -199,8 +199,8 @@ export default function Propietarios() {
       setEnlaceActivacion(enlaceActivacion(activacion));
       setAviso(`Enlace nuevo para ${propietario.nombreCompleto}. Compartilo con el propietario para activar su cuenta.`);
       mostrarAviso({ tipo: "info", titulo: "Enlace de activación generado", mensaje: "Copialo y compartilo con el propietario para que active su cuenta." });
-    } catch (cause) {
-      mostrarAviso({ tipo: "error", titulo: "No se pudo generar el enlace", mensaje: cause.message });
+    } catch (error) {
+      mostrarAviso({ tipo: "error", titulo: "No se pudo generar el enlace", mensaje: error.message });
     }
   }
 
@@ -212,8 +212,8 @@ export default function Propietarios() {
       setAviso("");
       setEnlaceActivacion("");
       mostrarAviso({ tipo: "exito", titulo: "Propietario eliminado", mensaje: "El propietario se eliminó correctamente." });
-    } catch (cause) {
-      mostrarAviso({ tipo: "error", titulo: "No se pudo eliminar al propietario", mensaje: cause.message });
+    } catch (error) {
+      mostrarAviso({ tipo: "error", titulo: "No se pudo eliminar al propietario", mensaje: error.message });
     }
     finally { setPendienteEliminar(null); }
   }

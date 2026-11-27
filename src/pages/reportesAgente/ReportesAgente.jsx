@@ -49,10 +49,10 @@ export default function ReportesAgente() {
         setIdReporteActivo(reportesActualizados[0]?.id ?? null);
         setError("");
       })
-      .catch((cause) => {
+      .catch((error) => {
         if (!active) return;
-        setError(cause.message);
-        mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar los reportes", mensaje: cause.message });
+        setError(error.message);
+        mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar los reportes", mensaje: error.message });
       })
       .finally(() => { if (active) setCargando(false); });
     return () => { active = false; };
@@ -94,14 +94,14 @@ export default function ReportesAgente() {
       resetPage();
       setModalCreacionAbierto(false);
       mostrarAviso({ tipo: "exito", titulo: "Reporte creado", mensaje: "El reporte se guardó correctamente." });
-    } catch (cause) {
+    } catch (error) {
       if (created) {
         const reportesActualizados = await api.reportes().catch(() => null);
         if (reportesActualizados) setReportes(reportesActualizados);
         setModalCreacionAbierto(false);
-        mostrarAviso({ tipo: "error", titulo: "Reporte creado sin todas las fotos", mensaje: cause.message });
+        mostrarAviso({ tipo: "error", titulo: "Reporte creado sin todas las fotos", mensaje: error.message });
       } else {
-        mostrarAviso({ tipo: "error", titulo: "No se pudo crear el reporte", mensaje: cause.message });
+        mostrarAviso({ tipo: "error", titulo: "No se pudo crear el reporte", mensaje: error.message });
       }
     } finally { setBusy(false); }
   }
@@ -114,8 +114,8 @@ export default function ReportesAgente() {
       const updated = await api.actualizarReporte(reporteActivo.id, { idEstado });
       setReportes((items) => items.map((item) => item.id === updated.id ? updated : item));
       mostrarAviso({ tipo: "exito", titulo: "Estado actualizado", mensaje: `El reporte está ${estadoReporte(updated.estado).toLowerCase()}.` });
-    } catch (cause) {
-      mostrarAviso({ tipo: "error", titulo: "No se pudo cambiar el estado", mensaje: cause.message });
+    } catch (error) {
+      mostrarAviso({ tipo: "error", titulo: "No se pudo cambiar el estado", mensaje: error.message });
     } finally { setBusy(false); }
   }
 

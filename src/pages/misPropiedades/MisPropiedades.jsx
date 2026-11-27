@@ -46,13 +46,13 @@ export default function MisPropiedades() {
         setReports(reportRows);
         setSelectedId(contractRows[0]?.idPropiedad ?? null);
       })
-      .catch((cause) => {
+      .catch((error) => {
         if (!active) return;
-        setError(cause.message);
+        setError(error.message);
         mostrarAviso({
           tipo: "error",
           titulo: "No se pudieron cargar tus propiedades",
-          mensaje: cause.message,
+          mensaje: error.message,
         });
       })
       .finally(() => {
@@ -97,13 +97,13 @@ export default function MisPropiedades() {
       .then((rows) => {
         if (active) setDocuments({ contractId: activeContractId, items: rows });
       })
-      .catch((cause) => {
+      .catch((error) => {
         if (!active) return;
-        setError(cause.message);
+        setError(error.message);
         mostrarAviso({
           tipo: "error",
           titulo: "No se pudieron cargar los documentos",
-          mensaje: cause.message,
+          mensaje: error.message,
         });
       });
     return () => {
@@ -125,11 +125,11 @@ export default function MisPropiedades() {
         titulo: "Descarga iniciada",
         mensaje: `Se inició la descarga de ${document.titulo}.`,
       });
-    } catch (cause) {
+    } catch (error) {
       mostrarAviso({
         tipo: "error",
         titulo: "No se pudo descargar el documento",
-        mensaje: cause.message,
+        mensaje: error.message,
       });
     }
   }

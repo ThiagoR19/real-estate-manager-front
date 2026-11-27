@@ -24,10 +24,10 @@ export default function Profesionales() {
     api
       .profesionales()
       .then((rows) => { if (active) setProfesionales(rows); })
-      .catch((cause) => {
+      .catch((error) => {
         if (!active) return;
-        setError(cause.message);
-        mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar los profesionales", mensaje: cause.message });
+        setError(error.message);
+        mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar los profesionales", mensaje: error.message });
       });
     return () => { active = false; };
   }, []);
@@ -80,8 +80,8 @@ export default function Profesionales() {
       setProfesionales((current) => current.filter(({ id }) => id !== profesional.id));
       mostrarAviso({ tipo: "exito", titulo: "Profesional eliminado", mensaje: `${profesional.nombre} ${profesional.apellido} fue eliminado de la lista.` });
       setPendienteEliminar(null);
-    } catch (cause) {
-      mostrarAviso({ tipo: "error", titulo: "No se pudo eliminar al profesional", mensaje: cause.message });
+    } catch (error) {
+      mostrarAviso({ tipo: "error", titulo: "No se pudo eliminar al profesional", mensaje: error.message });
     }
   }
 
@@ -95,8 +95,8 @@ export default function Profesionales() {
       setPendienteValorar(null);
       setPuntuacionSeleccionada(0);
       mostrarAviso({ tipo: "exito", titulo: "Valoración guardada", mensaje: `Valoraste a ${saved.nombre} ${saved.apellido} con ${puntuacionSeleccionada} estrellas.` });
-    } catch (cause) {
-      mostrarAviso({ tipo: "error", titulo: "No se pudo guardar la valoración", mensaje: cause.message });
+    } catch (error) {
+      mostrarAviso({ tipo: "error", titulo: "No se pudo guardar la valoración", mensaje: error.message });
     } finally {
       setEnviandoValoracion(false);
     }
