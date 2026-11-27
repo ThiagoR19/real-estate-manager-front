@@ -12,7 +12,7 @@ export default function ConfirmarRegistro() {
   const [error, setError] = useState("");
   const codigo = new URLSearchParams(window.location.search).get("codigo") || "";
 
-  async function handleSubmit(event) {
+  async function enviarFormulario(event) {
     event.preventDefault();
     if (!/^[a-f0-9]{64}$/i.test(codigo)) return;
     const dni = String(new FormData(event.currentTarget).get("authorized-id") || "").replace(/\D/g, "");
@@ -38,7 +38,7 @@ export default function ConfirmarRegistro() {
     <Skeleton as="main" className="confirmar-registro">
       <PanelImagen conMarca className="confirmar-registro__background" />
       <section className="confirmar-registro__card" aria-labelledby="confirmar-registro-title">
-        <form className="confirmar-registro__form" onSubmit={handleSubmit}>
+        <form className="confirmar-registro__form" onSubmit={enviarFormulario}>
           <header className="confirmar-registro__header"><h1 id="confirmar-registro-title">Verificación</h1><p>Ingresá el DNI autorizado por la inmobiliaria para activar tu cuenta.</p></header>
           {/^[a-f0-9]{64}$/i.test(codigo) ? <><CampoTexto id="authorized-id" label="DNI autorizado" placeholder="DNI sin puntos" icono={addressCardIcon} autoComplete="off" inputMode="numeric" required className="confirmar-registro__field"><small>Tenés 3 intentos. Si se agotan, solicitá una nueva invitación.</small></CampoTexto>{error && <p className="confirmar-registro__error" role="alert">{error}</p>}<BotonPrincipal texto="Verificar DNI" textoEnviando="Verificando" estado={status} className="confirmar-registro__submit" /></> : <p className="confirmar-registro__error">Abrí el enlace de invitación que te enviaron para verificar tu DNI.</p>}
         </form>

@@ -19,46 +19,109 @@ function contratoVacio() {
   };
 }
 
-function initialForm(property, catalogs) {
-  const contractStatus = property?.datosContrato && catalogs.estados.find((item) =>
-    item.nombre === (property.datosContrato.tipo === "Venta" ? "Vendida" : "Alquilada"));
+function buscarEstadoContrato(tipo, estados) {
+  const nombreEstado = tipo === "Venta" ? "Vendida" : "Alquilada";
+  return estados.find((estado) => estado.nombre === nombreEstado);
+}
+
+function prepararDatosContrato(contrato) {
+  const datos = {
+    fechaInicio: null,
+    fechaFin: null,
+    mesesAumento: null,
+    tipo: contrato.tipo,
+    estado: "Borrador",
+    montoInicial: null,
+    tipoAumento: null,
+    aumentoFijo: null,
+  };
+
+  if (contrato.tipo === "Venta") return datos;
+
+  datos.fechaInicio = contrato.fechaInicio || null;
+  datos.fechaFin = contrato.fechaFin || null;
+  datos.mesesAumento = contrato.mesesAumento === "" ? null : Number(contrato.mesesAumento);
+  datos.estado = contrato.estado;
+  datos.montoInicial = contrato.montoInicial === "" ? null : Number(contrato.montoInicial);
+  datos.tipoAumento = contrato.tipoAumento || null;
+
+  if (contrato.tipoAumento === "FIJO" && contrato.aumentoFijo !== "") {
+    datos.aumentoFijo = Number(contrato.aumentoFijo);
+  }
+
+  return datos;
+}
+
+function prepararDatosPropiedad(formulario, catalogos) {
+  let idEstadoComercial = formulario.idEstadoComercial;
+  let datosContrato = null;
+
+  if (formulario.contratoHabilitado) {
+    const estadoContrato = buscarEstadoContrato(formulario.contrato.tipo, catalogos.estados);
+    idEstadoComercial = estadoContrato?.id ?? idEstadoComercial;
+    datosContrato = prepararDatosContrato(formulario.contrato);
+  }
+
   return {
-    name: property?.nombre || "",
-    typeId: property?.idTipo || catalogs.tipos[0]?.id || "",
-    statusId: contractStatus?.id || property?.idEstadoComercial || catalogs.estados[0]?.id || "",
-    agentId: property?.idAgente || "",
-    ownerId: property?.idPropietario || "",
-    services: property?.servicios || [],
-    contractEnabled: Boolean(property?.datosContrato),
-    contract: {
-      fechaInicio: property?.datosContrato?.fechaInicio || "",
-      fechaFin: property?.datosContrato?.fechaFin || "",
-      mesesAumento: property?.datosContrato?.mesesAumento ?? "",
-      tipo: property?.datosContrato?.tipo || "Alquiler",
-      estado: property?.datosContrato?.estado || "Borrador",
-      montoInicial: property?.datosContrato?.montoInicial ?? "",
-      tipoAumento: property?.datosContrato?.tipoAumento || "",
-      aumentoFijo: property?.datosContrato?.aumentoFijo ?? "",
+    nombre: formulario.nombre.trim(),
+    idTipo: Number(formulario.idTipo),
+    idEstadoComercial: Number(idEstadoComercial),
+    idAgente: formulario.idAgente ? Number(formulario.idAgente) : null,
+    idPropietario: formulario.idPropietario ? Number(formulario.idPropietario) : null,
+    servicios: formulario.servicios,
+    datosContrato,
+    descripcion: formulario.descripcion.trim() || null,
+    ubicacion: formulario.ubicacion.trim() || null,
+    habitaciones: Number(formulario.habitaciones),
+    banos: Number(formulario.banos),
+    tamano: Number(formulario.tamano) > 0 ? Number(formulario.tamano) : null,
+    antiguedad: Number(formulario.antiguedad),
+    precio: formulario.precio === "" ? null : Number(formulario.precio),
+    moneda: formulario.moneda,
+    publicada: formulario.publicada,
+  };
+}
+
+function formularioInicial(propiedad, catalogos) {
+  const contrato = propiedad?.datosContrato;
+  const estadoContrato = contrato && buscarEstadoContrato(contrato.tipo, catalogos.estados);
+  return {
+    nombre: propiedad?.nombre || "",
+    idTipo: propiedad?.idTipo || catalogos.tipos[0]?.id || "",
+    idEstadoComercial: estadoContrato?.id || propiedad?.idEstadoComercial || catalogos.estados[0]?.id || "",
+    idAgente: propiedad?.idAgente || "",
+    idPropietario: propiedad?.idPropietario || "",
+    servicios: propiedad?.servicios || [],
+    contratoHabilitado: Boolean(contrato),
+    contrato: {
+      fechaInicio: contrato?.fechaInicio || "",
+      fechaFin: contrato?.fechaFin || "",
+      mesesAumento: contrato?.mesesAumento ?? "",
+      tipo: contrato?.tipo || "Alquiler",
+      estado: contrato?.estado || "Borrador",
+      montoInicial: contrato?.montoInicial ?? "",
+      tipoAumento: contrato?.tipoAumento || "",
+      aumentoFijo: contrato?.aumentoFijo ?? "",
     },
-    documentTitle: "",
-    description: property?.descripcion || "",
-    location: property?.ubicacion || "",
-    age: property?.antiguedad ?? 0,
-    bedrooms: property?.habitaciones ?? 0,
-    bathrooms: property?.banos ?? 0,
-    area: property?.tamano ?? "",
-    price: property?.precio ?? "",
-    currency: property?.moneda || "ARS",
-    published: Boolean(property?.publicada),
-    photos: (property?.imagenes || []).map((image) => ({
-      ...image,
-      src: api.urlRecurso(image.url),
-      alt: `Foto de ${property.nombre}`,
+    tituloDocumento: "",
+    descripcion: propiedad?.descripcion || "",
+    ubicacion: propiedad?.ubicacion || "",
+    antiguedad: propiedad?.antiguedad ?? 0,
+    habitaciones: propiedad?.habitaciones ?? 0,
+    banos: propiedad?.banos ?? 0,
+    tamano: propiedad?.tamano ?? "",
+    precio: propiedad?.precio ?? "",
+    moneda: propiedad?.moneda || "ARS",
+    publicada: Boolean(propiedad?.publicada),
+    fotos: (propiedad?.imagenes || []).map((imagen) => ({
+      ...imagen,
+      src: api.urlRecurso(imagen.url),
+      alt: `Foto de ${propiedad.nombre}`,
     })),
-    documents: (property?.documentos || []).map((document) => ({
-      ...document,
-      fileName: document.nombreArchivo,
-      title: document.titulo || document.nombreArchivo,
+    documentos: (propiedad?.documentos || []).map((documento) => ({
+      ...documento,
+      nombreArchivo: documento.nombreArchivo,
+      titulo: documento.titulo || documento.nombreArchivo,
     })),
   };
 }
@@ -72,10 +135,10 @@ function Campo({ label, children, className = "" }) {
   );
 }
 
-export default function PropiedadModal({ isOpen, mode, property, catalogs, onClose, onSubmit }) {
-  const [form, setForm] = useState(() => initialForm(property, catalogs));
+export default function PropiedadModal({ isOpen, mode, propiedad, catalogos, onClose, onSubmit }) {
+  const [formulario, setFormulario] = useState(() => formularioInicial(propiedad, catalogos));
   const [section, setSection] = useState("information");
-  const [saving, setSaving] = useState(false);
+  const [guardando, setGuardando] = useState(false);
   const { isClosing, close } = useClosingTransition(onClose);
   const photoInput = useRef(null);
   const documentInput = useRef(null);
@@ -86,14 +149,14 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const escape = (event) => {
-      if (event.key === "Escape" && !saving) close();
+      if (event.key === "Escape" && !guardando) close();
     };
     document.addEventListener("keydown", escape);
     return () => {
       document.body.style.overflow = previous;
       document.removeEventListener("keydown", escape);
     };
-  }, [isOpen, close, saving]);
+  }, [isOpen, close, guardando]);
 
   useEffect(() => {
     const urls = objectUrls.current;
@@ -105,142 +168,192 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
   }, []);
   if (!isOpen) return null;
 
-  function change(event) {
-    const { name, value, type, checked } = event.target;
-    setForm((current) => {
-      const quitarContrato = name === "statusId" && current.documents.length === 0;
+  function actualizarCampo(event) {
+    const { name: nombre, value, type, checked } = event.target;
+    const valor = type === "checkbox" ? checked : value;
+
+    setFormulario((actual) => {
+      const actualizado = { ...actual, [nombre]: valor };
+
+      if (nombre === "idEstadoComercial" && actual.documentos.length === 0) {
+        actualizado.contratoHabilitado = false;
+        actualizado.contrato = contratoVacio();
+      }
+
+      return actualizado;
+    });
+  }
+
+  function actualizarContrato(event) {
+    const { name: nombre, value: valor } = event.target;
+
+    setFormulario((actual) => {
+      const contrato = { ...actual.contrato, [nombre]: valor };
+      const estadoContrato = buscarEstadoContrato(contrato.tipo, catalogos.estados);
+
       return {
-        ...current,
-        [name]: type === "checkbox" ? checked : value,
-        ...(quitarContrato ? { contractEnabled: false, contract: contratoVacio() } : {}),
+        ...actual,
+        contratoHabilitado: true,
+        idEstadoComercial: estadoContrato?.id ?? actual.idEstadoComercial,
+        contrato,
       };
     });
   }
 
-  function changeContract(event) {
-    const { name, value } = event.target;
-    setForm((current) => {
-      const type = name === "tipo" ? value : current.contract.tipo;
-      const status = catalogs.estados.find((item) => item.nombre === (type === "Venta" ? "Vendida" : "Alquilada"));
-      return {
-        ...current, contractEnabled: true, statusId: status?.id ?? current.statusId,
-        contract: { ...current.contract, [name]: value }
-      };
+  function alternarServicio(id) {
+    setFormulario((actual) => {
+      let servicios;
+
+      if (actual.servicios.includes(id)) {
+        servicios = actual.servicios.filter((idServicio) => idServicio !== id);
+      } else {
+        servicios = [...actual.servicios, id];
+      }
+
+      return { ...actual, servicios };
     });
   }
 
-  function toggleService(id) {
-    setForm((current) => ({
-      ...current, services: current.services.includes(id)
-        ? current.services.filter((value) => value !== id)
-        : [...current.services, id]
-    }));
-  }
-
-  function addPhotos(event) {
-    const photos = Array.from(event.target.files || []).map((file) => {
-      const src = URL.createObjectURL(file);
+  function agregarFotos(event) {
+    const archivos = Array.from(event.target.files || []);
+    const fotos = archivos.map((archivo) => {
+      const src = URL.createObjectURL(archivo);
       objectUrls.current.push(src);
-      return { file, src, alt: file.name };
+      return { archivo, src, alt: archivo.name };
     });
-    setForm((current) => ({ ...current, photos: [...current.photos, ...photos] }));
+
+    setFormulario((actual) => ({ ...actual, fotos: [...actual.fotos, ...fotos] }));
     event.target.value = "";
   }
 
-  function addDocuments(event) {
-    const documents = Array.from(event.target.files || []).map((file) => ({
-      file,
-      fileName: file.name,
-      title: form.documentTitle.trim() || file.name.replace(/\.pdf$/i, ""),
+  function agregarDocumentos(event) {
+    const archivos = Array.from(event.target.files || []);
+    const documentos = archivos.map((archivo) => ({
+      archivo,
+      nombreArchivo: archivo.name,
+      titulo: formulario.tituloDocumento.trim() || archivo.name.replace(/\.pdf$/i, ""),
     }));
-    setForm((current) => ({ ...current, documentTitle: "", documents: [...current.documents, ...documents] }));
+
+    setFormulario((actual) => ({
+      ...actual,
+      tituloDocumento: "",
+      documentos: [...actual.documentos, ...documentos],
+    }));
     event.target.value = "";
   }
 
-  async function submit(event) {
-    event.preventDefault();
-    if (form.contractEnabled && form.contract.tipo === "Alquiler" && form.contract.fechaInicio && form.contract.fechaFin &&
-      form.contract.fechaFin < form.contract.fechaInicio) {
+  function quitarFoto(indice) {
+    setFormulario((actual) => ({
+      ...actual,
+      fotos: actual.fotos.filter((_, i) => i !== indice),
+    }));
+  }
+
+  function quitarDocumento(indice) {
+    setFormulario((actual) => {
+      const documentos = actual.documentos.filter((_, i) => i !== indice);
+      const actualizado = { ...actual, documentos };
+
+      if (documentos.length === 0) {
+        actualizado.contratoHabilitado = false;
+        actualizado.contrato = contratoVacio();
+      }
+
+      return actualizado;
+    });
+  }
+
+  function validarFormulario() {
+    const contrato = formulario.contrato;
+    const fechasInvertidas = contrato.fechaInicio && contrato.fechaFin && contrato.fechaFin < contrato.fechaInicio;
+
+    if (formulario.contratoHabilitado && contrato.tipo === "Alquiler" && fechasInvertidas) {
       setSection("documentation");
       mostrarAviso({ tipo: "error", titulo: "Fechas inválidas", mensaje: "La fecha de fin debe ser posterior al inicio." });
-      return;
+      return false;
     }
-    if (form.documents.some((document) => !document.title.trim())) {
+
+    const documentoSinTitulo = formulario.documentos.some((documento) => !documento.titulo.trim());
+    if (documentoSinTitulo) {
       setSection("documentation");
       mostrarAviso({ tipo: "error", titulo: "Falta un nombre", mensaje: "Cada documento debe tener un nombre." });
-      return;
+      return false;
     }
-    setSaving(true);
-    let saved;
-    try {
-      const isSale = form.contract.tipo === "Venta";
-      const contractStatus = catalogs.estados.find((item) => item.nombre === (isSale ? "Vendida" : "Alquilada"));
-      const body = {
-        nombre: form.name.trim(),
-        idTipo: Number(form.typeId),
-        idEstadoComercial: Number(form.contractEnabled ? contractStatus?.id ?? form.statusId : form.statusId),
-        idAgente: form.agentId ? Number(form.agentId) : null,
-        idPropietario: form.ownerId ? Number(form.ownerId) : null,
-        servicios: form.services,
-        datosContrato: form.contractEnabled ? {
-          fechaInicio: isSale ? null : form.contract.fechaInicio || null,
-          fechaFin: isSale ? null : form.contract.fechaFin || null,
-          mesesAumento: isSale || form.contract.mesesAumento === "" ? null : Number(form.contract.mesesAumento),
-          tipo: form.contract.tipo,
-          estado: isSale ? "Borrador" : form.contract.estado,
-          montoInicial: isSale || form.contract.montoInicial === "" ? null : Number(form.contract.montoInicial),
-          tipoAumento: isSale ? null : form.contract.tipoAumento || null,
-          aumentoFijo: !isSale && form.contract.tipoAumento === "FIJO" && form.contract.aumentoFijo !== ""
-            ? Number(form.contract.aumentoFijo) : null,
-        } : null,
-        descripcion: form.description.trim() || null,
-        ubicacion: form.location.trim() || null,
-        habitaciones: Number(form.bedrooms),
-        banos: Number(form.bathrooms),
-        tamano: Number(form.area) > 0 ? Number(form.area) : null,
-        antiguedad: Number(form.age),
-        precio: form.price === "" ? null : Number(form.price),
-        moneda: form.currency,
-        publicada: form.published,
-      };
-      saved = property
-        ? await api.actualizarPropiedad(property.id, body)
-        : await api.crearPropiedad(body);
-      const photos = form.photos.filter((photo) => photo.file).map((photo) => photo.file);
-      const documents = form.documents.filter((document) => document.file);
-      for (let i = 0; i < photos.length; i += 10)
-        await api.subirArchivosPropiedad(saved.id, "imagenes", photos.slice(i, i + 10));
-      for (const document of documents)
-        await api.subirArchivosPropiedad(saved.id, "documentos", [document.file], document.title.trim());
-      if (property) {
-        const keptPhotos = new Set(form.photos.map((photo) => photo.id));
-        const keptDocuments = new Set(form.documents.map((document) => document.id));
-        for (const photo of property.imagenes || [])
-          if (!keptPhotos.has(photo.id))
-            await api.eliminarArchivoPropiedad(saved.id, "imagenes", photo.id);
-        for (const document of property.documentos || [])
-          if (!keptDocuments.has(document.id))
-            await api.eliminarArchivoPropiedad(saved.id, "documentos", document.id);
+
+    return true;
+  }
+
+  async function subirArchivosNuevos(idPropiedad) {
+    const fotos = formulario.fotos.filter((foto) => foto.archivo).map((foto) => foto.archivo);
+    const documentos = formulario.documentos.filter((documento) => documento.archivo);
+
+    for (let i = 0; i < fotos.length; i += 10) {
+      const lote = fotos.slice(i, i + 10);
+      await api.subirArchivosPropiedad(idPropiedad, "imagenes", lote);
+    }
+
+    for (const documento of documentos) {
+      await api.subirArchivosPropiedad(idPropiedad, "documentos", [documento.archivo], documento.titulo.trim());
+    }
+  }
+
+  async function eliminarArchivosQuitados(idPropiedad) {
+    if (!propiedad) return;
+
+    const idsFotosConservadas = new Set(formulario.fotos.map((foto) => foto.id));
+    const idsDocumentosConservados = new Set(formulario.documentos.map((documento) => documento.id));
+
+    for (const foto of propiedad.imagenes || []) {
+      if (!idsFotosConservadas.has(foto.id)) {
+        await api.eliminarArchivoPropiedad(idPropiedad, "imagenes", foto.id);
       }
-      await onSubmit(await api.obtenerPropiedad(saved.id));
-    } catch (cause) {
-      if (saved) {
-        let current = saved;
+    }
+
+    for (const documento of propiedad.documentos || []) {
+      if (!idsDocumentosConservados.has(documento.id)) {
+        await api.eliminarArchivoPropiedad(idPropiedad, "documentos", documento.id);
+      }
+    }
+  }
+
+  async function enviarFormulario(event) {
+    event.preventDefault();
+    if (!validarFormulario()) return;
+
+    setGuardando(true);
+    let propiedadGuardada;
+
+    try {
+      const datos = prepararDatosPropiedad(formulario, catalogos);
+      if (propiedad) {
+        propiedadGuardada = await api.actualizarPropiedad(propiedad.id, datos);
+      } else {
+        propiedadGuardada = await api.crearPropiedad(datos);
+      }
+
+      await subirArchivosNuevos(propiedadGuardada.id);
+      await eliminarArchivosQuitados(propiedadGuardada.id);
+
+      const propiedadActualizada = await api.obtenerPropiedad(propiedadGuardada.id);
+      await onSubmit(propiedadActualizada);
+    } catch (error) {
+      if (propiedadGuardada) {
+        let propiedadActualizada = propiedadGuardada;
         try {
-          current = await api.obtenerPropiedad(saved.id);
-        } catch (e) {
-          console.error(e)
+          propiedadActualizada = await api.obtenerPropiedad(propiedadGuardada.id);
+        } catch (errorRecarga) {
+          console.error(errorRecarga);
         }
-        await onSubmit(current, cause.message);
+        await onSubmit(propiedadActualizada, error.message);
       } else {
         mostrarAviso({
           tipo: "error",
-          titulo: property ? "No se pudo actualizar la propiedad" : "No se pudo crear la propiedad",
-          mensaje: cause.message,
+          titulo: propiedad ? "No se pudo actualizar la propiedad" : "No se pudo crear la propiedad",
+          mensaje: error.message,
         });
       }
     } finally {
-      setSaving(false);
+      setGuardando(false);
     }
   }
 
@@ -250,9 +363,7 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
       aria-hidden={isClosing}
       inert={isClosing}
       role="presentation"
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget && !saving) close();
-      }}
+      onMouseDown={(event) => { if (event.target === event.currentTarget && !guardando) close(); }}
     >
       <section
         className={`propiedad-modal${isClosing ? " is-closing" : ""}`}
@@ -293,7 +404,7 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
             </Boton>
           </div>
         </header>
-        <form onSubmit={submit}>
+        <form onSubmit={enviarFormulario}>
           {section === "information" ? (
             <div className="propiedad-modal__information" role="tabpanel" aria-label="Información">
               <div className="propiedad-modal__column propiedad-modal__column--main">
@@ -306,20 +417,20 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
                     <Campo label="Nombre">
                       <input
                         className="propiedad-modal__plain-input"
-                        name="name"
-                        value={form.name}
-                        onChange={change}
+                        name="nombre"
+                        value={formulario.nombre}
+                        onChange={actualizarCampo}
                         placeholder="Nombre de la propiedad"
                       />
                     </Campo>
                     <Campo label="Tipo">
                       <select
                         className="propiedad-modal__plain-input"
-                        name="typeId"
-                        value={form.typeId}
-                        onChange={change}
+                        name="idTipo"
+                        value={formulario.idTipo}
+                        onChange={actualizarCampo}
                       >
-                        {catalogs.tipos.map((type) => (
+                        {catalogos.tipos.map((type) => (
                           <option key={type.id} value={type.id}>
                             {type.nombre}
                           </option>
@@ -329,27 +440,27 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
                     <Campo label="Descripción" className="propiedad-modal__field--full">
                       <div className="propiedad-modal__textarea-wrap">
                         <textarea
-                          name="description"
-                          value={form.description}
-                          onChange={change}
+                          name="descripcion"
+                          value={formulario.descripcion}
+                          onChange={actualizarCampo}
                           placeholder="Descripción de la propiedad"
                         />
-                        <span>{form.description.length}</span>
+                        <span>{formulario.descripcion.length}</span>
                       </div>
                     </Campo>
                     <Campo label="Ubicación">
                       <span className="propiedad-modal__input-wrap">
                         <img src={locationDotIcon} alt="" />
-                        <input name="location" value={form.location} onChange={change} placeholder="Ubicación de la propiedad" />
+                        <input name="ubicacion" value={formulario.ubicacion} onChange={actualizarCampo} placeholder="Ubicación de la propiedad" />
                       </span>
                     </Campo>
                     <Campo label="Dueño / Propietario">
                       <span className="propiedad-modal__input-wrap">
                         <img src={userIcon} alt="" />
-                        <select name="ownerId" value={form.ownerId} onChange={change} aria-label="Dueño o propietario">
+                        <select name="idPropietario" value={formulario.idPropietario} onChange={actualizarCampo} aria-label="Dueño o propietario">
                           <option value="">Sin asignar</option>
-                          {(catalogs.propietarios || []).map((owner) => (
-                            <option key={owner.id} value={owner.id}>{owner.nombre}</option>
+                          {(catalogos.propietarios || []).map((propietario) => (
+                            <option key={propietario.id} value={propietario.id}>{propietario.nombre}</option>
                           ))}
                         </select>
                       </span>
@@ -357,14 +468,14 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
                     <Campo label="Agente">
                       <select
                         className="propiedad-modal__plain-input"
-                        name="agentId"
-                        value={form.agentId}
-                        onChange={change}
+                        name="idAgente"
+                        value={formulario.idAgente}
+                        onChange={actualizarCampo}
                       >
                         <option value="">Sin asignar</option>
-                        {catalogs.agentes.map((agent) => (
-                          <option key={agent.id} value={agent.id}>
-                            {agent.nombre}
+                        {catalogos.agentes.map((agente) => (
+                          <option key={agente.id} value={agente.id}>
+                            {agente.nombre}
                           </option>
                         ))}
                       </select>
@@ -378,18 +489,13 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
                   </div>
                   <div className="propiedad-modal__photos-body">
                     <div className="propiedad-modal__photos-list">
-                      {form.photos.map((photo, index) => (
-                        <figure className="propiedad-modal__photo" key={photo.id || photo.src}>
-                          <img src={photo.src} alt={photo.alt} />
+                      {formulario.fotos.map((foto, index) => (
+                        <figure className="propiedad-modal__photo" key={foto.id || foto.src}>
+                          <img src={foto.src} alt={foto.alt} />
                           <button
                             type="button"
                             aria-label={`Quitar foto ${index + 1}`}
-                            onClick={() =>
-                              setForm((current) => ({
-                                ...current,
-                                photos: current.photos.filter((_, i) => i !== index),
-                              }))
-                            }
+                            onClick={() => quitarFoto(index)}
                           >
                             ×
                           </button>
@@ -410,7 +516,7 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
                       type="file"
                       accept="image/jpeg,image/png,image/webp"
                       multiple
-                      onChange={addPhotos}
+                      onChange={agregarFotos}
                     />
                   </div>
                 </section>
@@ -423,22 +529,22 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
                   </div>
                   <div className="propiedad-modal__card-body propiedad-modal__feature-grid">
                     {[
-                      ["Antigüedad", "age", calendarIcon],
-                      ["Habitaciones", "bedrooms", bedIcon],
-                      ["Superficie (m²)", "area", rulerCombinedIcon],
-                      ["Baños", "bathrooms", bathIcon],
-                    ].map(([label, name, icon]) => (
-                      <Campo label={label} key={name}>
+                      ["Antigüedad", "antiguedad", calendarIcon],
+                      ["Habitaciones", "habitaciones", bedIcon],
+                      ["Superficie (m²)", "tamano", rulerCombinedIcon],
+                      ["Baños", "banos", bathIcon],
+                    ].map(([label, nombre, icon]) => (
+                      <Campo label={label} key={nombre}>
                         <span className="propiedad-modal__input-wrap propiedad-modal__input-wrap--counter">
                           <img src={icon} alt="" />
                           <input
                             type="number"
                             min="0"
-                            step={name === "area" ? "0.01" : "1"}
-                            name={name}
-                            value={form[name]}
-                            placeholder={name === "area" ? "0" : undefined}
-                            onChange={change}
+                            step={nombre === "tamano" ? "0.01" : "1"}
+                            name={nombre}
+                            value={formulario[nombre]}
+                            placeholder={nombre === "tamano" ? "0" : undefined}
+                            onChange={actualizarCampo}
                           />
                         </span>
                       </Campo>
@@ -454,13 +560,13 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
                     <Campo label="Estado">
                       <select
                         className="propiedad-modal__plain-input"
-                        name="statusId"
-                        value={form.statusId}
-                        onChange={change}
-                        disabled={form.contractEnabled && form.documents.length > 0}
-                        title={form.contractEnabled && form.documents.length > 0 ? "El estado se define por el tipo de contrato" : undefined}
+                        name="idEstadoComercial"
+                        value={formulario.idEstadoComercial}
+                        onChange={actualizarCampo}
+                        disabled={formulario.contratoHabilitado && formulario.documentos.length > 0}
+                        title={formulario.contratoHabilitado && formulario.documentos.length > 0 ? "El estado se define por el tipo de contrato" : undefined}
                       >
-                        {catalogs.estados.map((status) => (
+                        {catalogos.estados.map((status) => (
                           <option key={status.id} value={status.id}>
                             {status.nombre}
                           </option>
@@ -473,18 +579,18 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
                         type="number"
                         min="0"
                         step="0.01"
-                        name="price"
-                        value={form.price}
+                        name="precio"
+                        value={formulario.precio}
                         placeholder="0"
-                        onChange={change}
+                        onChange={actualizarCampo}
                       />
                     </Campo>
                     <Campo label="Moneda">
                       <select
                         className="propiedad-modal__plain-input"
-                        name="currency"
-                        value={form.currency}
-                        onChange={change}
+                        name="moneda"
+                        value={formulario.moneda}
+                        onChange={actualizarCampo}
                       >
                         <option value="ARS">ARS</option>
                         <option value="USD">USD</option>
@@ -493,9 +599,9 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
                     <Campo label="Publicada">
                       <input
                         type="checkbox"
-                        name="published"
-                        checked={form.published}
-                        onChange={change}
+                        name="publicada"
+                        checked={formulario.publicada}
+                        onChange={actualizarCampo}
                       />
                     </Campo>
                   </div>
@@ -507,15 +613,15 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
                   <h3>Servicios</h3>
                 </div>
                 <div className="propiedad-modal__card-body propiedad-modal__services-grid">
-                  {(catalogs.servicios || []).map((service) => {
+                  {(catalogos.servicios || []).map((service) => {
                     const icon = {
                       Agua: dropletIcon, Gas: fireFlameSimpleIcon,
                       Luz: boltIcon, Estacionamiento: carIcon
                     }[service.nombre];
-                    const checked = form.services.includes(service.id);
+                    const checked = formulario.servicios.includes(service.id);
                     return (
                       <label className={`propiedad-modal__service${checked ? " is-checked" : ""}${icon ? "" : " no-icon"}`} key={service.id}>
-                        <input type="checkbox" checked={checked} onChange={() => toggleService(service.id)} />
+                        <input type="checkbox" checked={checked} onChange={() => alternarServicio(service.id)} />
                         <span className="propiedad-modal__fake-checkbox" aria-hidden="true" />
                         {icon && <img src={icon} alt="" />}
                         <span>{service.nombre}</span>
@@ -535,34 +641,34 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
                 <div className="propiedad-modal__card-body propiedad-modal__contract-grid">
                   <p className="propiedad-modal__contract-note">Estos datos se guardan como borrador de la propiedad hasta completar el contrato con sus participantes.</p>
                   <Campo label="Tipo">
-                    <select className="propiedad-modal__plain-input" name="tipo" value={form.contract.tipo} onChange={changeContract}>
+                    <select className="propiedad-modal__plain-input" name="tipo" value={formulario.contrato.tipo} onChange={actualizarContrato}>
                       <option value="Alquiler">Alquiler</option>
                       <option value="Venta">Venta</option>
                     </select>
                   </Campo>
-                  {form.contract.tipo === "Alquiler" && (
+                  {formulario.contrato.tipo === "Alquiler" && (
                     <>
                       <Campo label="Fecha inicio">
-                        <input className="propiedad-modal__plain-input" type="date" name="fechaInicio" value={form.contract.fechaInicio} onChange={changeContract} />
+                        <input className="propiedad-modal__plain-input" type="date" name="fechaInicio" value={formulario.contrato.fechaInicio} onChange={actualizarContrato} />
                       </Campo>
                       <Campo label="Fecha fin">
-                        <input className="propiedad-modal__plain-input" type="date" name="fechaFin" min={form.contract.fechaInicio || undefined} value={form.contract.fechaFin} onChange={changeContract} />
+                        <input className="propiedad-modal__plain-input" type="date" name="fechaFin" min={formulario.contrato.fechaInicio || undefined} value={formulario.contrato.fechaFin} onChange={actualizarContrato} />
                       </Campo>
                       <Campo label="Meses de aumento">
-                        <input className="propiedad-modal__plain-input" type="number" min="1" max="120" name="mesesAumento" value={form.contract.mesesAumento} onChange={changeContract} />
+                        <input className="propiedad-modal__plain-input" type="number" min="1" max="120" name="mesesAumento" value={formulario.contrato.mesesAumento} onChange={actualizarContrato} />
                       </Campo>
                       <Campo label="Estado">
-                        <select className="propiedad-modal__plain-input" name="estado" value={form.contract.estado} onChange={changeContract}>
+                        <select className="propiedad-modal__plain-input" name="estado" value={formulario.contrato.estado} onChange={actualizarContrato}>
                           <option value="Borrador">Borrador</option>
                           <option value="Vigente">Activo</option>
                           <option value="Finalizado">Finalizado</option>
                         </select>
                       </Campo>
                       <Campo label="Monto inicial acordado">
-                        <input className="propiedad-modal__plain-input" type="number" min="0" step="0.01" name="montoInicial" value={form.contract.montoInicial} onChange={changeContract} />
+                        <input className="propiedad-modal__plain-input" type="number" min="0" step="0.01" name="montoInicial" value={formulario.contrato.montoInicial} onChange={actualizarContrato} />
                       </Campo>
                       <Campo label="Tipo de aumento">
-                        <select className="propiedad-modal__plain-input" name="tipoAumento" value={form.contract.tipoAumento} onChange={changeContract}>
+                        <select className="propiedad-modal__plain-input" name="tipoAumento" value={formulario.contrato.tipoAumento} onChange={actualizarContrato}>
                           <option value="">Sin aumento</option>
                           <option value="FIJO">Fijo</option>
                           <option value="INDEC">INDEC</option>
@@ -570,7 +676,7 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
                       </Campo>
                       <Campo label="Aumento fijo">
                         <input className="propiedad-modal__plain-input" type="number" min="0" step="0.01" name="aumentoFijo"
-                          value={form.contract.aumentoFijo} onChange={changeContract} disabled={form.contract.tipoAumento !== "FIJO"} />
+                          value={formulario.contrato.aumentoFijo} onChange={actualizarContrato} disabled={formulario.contrato.tipoAumento !== "FIJO"} />
                       </Campo>
                     </>
                   )}
@@ -588,27 +694,21 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
                       <span>Agregar archivo</span>
                     </button>
                     <Campo label="Nombre" className="propiedad-modal__document-name">
-                      <input className="propiedad-modal__plain-input" maxLength={255} name="documentTitle"
-                        value={form.documentTitle} onChange={change} placeholder="Contrato de alquiler" />
+                      <input className="propiedad-modal__plain-input" maxLength={255} name="tituloDocumento"
+                        value={formulario.tituloDocumento} onChange={actualizarCampo} placeholder="Contrato de alquiler" />
                     </Campo>
                   </div>
-                  {form.documents.map((doc, index) => (
+                  {formulario.documentos.map((doc, index) => (
                     <div
                       className="propiedad-modal__document-row"
-                      key={doc.id || `${doc.fileName}-${index}`}
+                      key={doc.id || `${doc.nombreArchivo}-${index}`}
                     >
-                      <span title={doc.fileName}>{doc.fileName}</span>
+                      <span title={doc.nombreArchivo}>{doc.nombreArchivo}</span>
                       <button
                         className="propiedad-modal__remove-document"
                         type="button"
                         aria-label={`Quitar documento ${index + 1}`}
-                        onClick={() => setForm((current) => {
-                          const documents = current.documents.filter((_, i) => i !== index);
-                          return {
-                            ...current, documents,
-                            ...(documents.length ? {} : { contractEnabled: false, contract: contratoVacio() })
-                          };
-                        })}
+                        onClick={() => quitarDocumento(index)}
                       >
                         <img src={xIcon} alt="" />
                       </button>
@@ -619,7 +719,7 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
                     className="propiedad-modal__hidden-input"
                     type="file"
                     accept="application/pdf"
-                    onChange={addDocuments}
+                    onChange={agregarDocumentos}
                   />
                 </div>
               </section>
@@ -629,7 +729,7 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
             <button
               className="propiedad-modal__cancel"
               type="button"
-              disabled={saving}
+              disabled={guardando}
               onClick={close}
             >
               Cancelar
@@ -637,9 +737,9 @@ export default function PropiedadModal({ isOpen, mode, property, catalogs, onClo
             <Boton
               className="propiedad-modal__submit"
               type="submit"
-              disabled={saving}
+              disabled={guardando}
               text={
-                saving ? "Guardando..." : mode === "edit" ? "Guardar cambios" : "Crear propiedad"
+                guardando ? "Guardando..." : mode === "edit" ? "Guardar cambios" : "Crear propiedad"
               }
             />
           </footer>

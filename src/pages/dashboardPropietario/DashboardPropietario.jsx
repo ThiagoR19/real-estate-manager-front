@@ -68,7 +68,7 @@ function ConversacionRapida({ chat }) {
     if (messageList) messageList.scrollTop = messageList.scrollHeight;
   }, [messages]);
 
-  async function sendMessage(event) {
+  async function enviarMensaje(event) {
     event.preventDefault();
     const text = draft.trim();
     if (!text || enviando || !conversacion) return;
@@ -132,7 +132,7 @@ function ConversacionRapida({ chat }) {
         })}
       </div>
 
-      <form className="dashboard-propietario__chat-form" onSubmit={sendMessage}>
+      <form className="dashboard-propietario__chat-form" onSubmit={enviarMensaje}>
         <input
           value={draft}
           onChange={(event) => setDraft(event.target.value)}

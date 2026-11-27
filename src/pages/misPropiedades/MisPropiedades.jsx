@@ -110,13 +110,13 @@ export default function MisPropiedades() {
     };
   }, [activeContractId]);
 
-  function changePropertyPage(nextPage) {
+  function cambiarPaginaPropiedades(nextPage) {
     propertyPages.setPage(nextPage);
     setSelectedId(properties[(nextPage - 1) * PROPERTY_PAGE_SIZE]?.id ?? null);
     reportPages.resetPage();
   }
 
-  async function downloadDocument(document) {
+  async function descargarDocumento(document) {
     try {
       await api.descargarDocumento(document);
       mostrarAviso({
@@ -231,7 +231,7 @@ export default function MisPropiedades() {
               page={propertyPages.page}
               totalPages={propertyPages.totalPages}
               total={properties.length}
-              onPageChange={changePropertyPage}
+              onPageChange={cambiarPaginaPropiedades}
               pageSize={PROPERTY_PAGE_SIZE}
             />
           </aside>
@@ -289,7 +289,7 @@ export default function MisPropiedades() {
                     className="propiedades-propietario__download"
                     type="button"
                     key={document.id}
-                    onClick={() => downloadDocument(document)}
+                    onClick={() => descargarDocumento(document)}
                   >
                     Descargar {document.titulo}
                   </button>

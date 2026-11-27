@@ -24,61 +24,61 @@ function FiltroSelect({ filter, value, onChange }) {
   );
 }
 
-function buildFilterOptions(catalogs, properties) {
+function crearOpcionesFiltro(catalogos, propiedades) {
   return [
     {
       id: "type",
       label: "Tipo",
       icon: houseIcon,
-      options: ["Todos", ...catalogs.tipos.map((item) => item.nombre)],
+      options: ["Todos", ...catalogos.tipos.map((item) => item.nombre)],
     },
     {
       id: "location",
       label: "Ubicación",
       icon: locationDotIcon,
-      options: ["Todas", ...new Set(properties.map((item) => item.ubicacion).filter(Boolean))],
+      options: ["Todas", ...new Set(propiedades.map((item) => item.ubicacion).filter(Boolean))],
     },
     {
       id: "status",
       label: "Estado",
       icon: tagIcon,
-      options: ["Todos", ...catalogs.estados.map((item) => item.nombre)],
+      options: ["Todos", ...catalogos.estados.map((item) => item.nombre)],
     },
   ];
 }
 
-function matchesFilters(property, filters, search) {
-  const searchableText = [property.nombre, property.ubicacion, property.descripcion]
+function coincideConFiltros(propiedad, filtros, busqueda) {
+  const textoBuscable = [propiedad.nombre, propiedad.ubicacion, propiedad.descripcion]
     .join(" ")
     .toLocaleLowerCase("es-AR");
 
   return (
-    (filters.type === "Todos" || property.tipo === filters.type) &&
-    (filters.location === "Todas" || property.ubicacion === filters.location) &&
-    (filters.status === "Todos" || property.estadoComercial === filters.status) &&
-    (!search || searchableText.includes(search))
+    (filtros.type === "Todos" || propiedad.tipo === filtros.type) &&
+    (filtros.location === "Todas" || propiedad.ubicacion === filtros.location) &&
+    (filtros.status === "Todos" || propiedad.estadoComercial === filtros.status) &&
+    (!busqueda || textoBuscable.includes(busqueda))
   );
 }
 
 export default function Propiedades() {
   const [, navigate] = useLocation();
-  const [properties, setProperties] = useState([]);
-  const [catalogs, setCatalogs] = useState({ tipos: [], estados: [], agentes: [] });
-  const [filters, setFilters] = useState({ type: "Todos", status: "Todos", location: "Todas" });
+  const [propiedades, setPropiedades] = useState([]);
+  const [catalogos, setCatalogos] = useState({ tipos: [], estados: [], agentes: [] });
+  const [filtros, setFiltros] = useState({ type: "Todos", status: "Todos", location: "Todas" });
   const [modal, setModal] = useState(null);
-  const [pendingDelete, setPendingDelete] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [pendienteEliminar, setPendienteEliminar] = useState(null);
+  const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
-  const [search, setSearch] = useState("");
-  const filterItems = buildFilterOptions(catalogs, properties);
-  const visibleProperties = properties.filter((property) =>
-    matchesFilters(property, filters, search),
+  const [busqueda, setBusqueda] = useState("");
+  const opcionesFiltros = crearOpcionesFiltro(catalogos, propiedades);
+  const propiedadesVisibles = propiedades.filter((propiedad) =>
+    coincideConFiltros(propiedad, filtros, busqueda),
   );
-  const { page, totalPages, pageItems, setPage, resetPage } = usePaginacion(visibleProperties, PROPERTY_PAGE_SIZE);
+  const { page, totalPages, pageItems, setPage, resetPage } = usePaginacion(propiedadesVisibles, PROPERTY_PAGE_SIZE);
 
   useEffect(() => {
     const onSearch = (event) => {
-      setSearch(String(event.detail || "").toLocaleLowerCase("es-AR"));
+      setBusqueda(String(event.detail || "").toLocaleLowerCase("es-AR"));
       setPage(1);
     };
     window.addEventListener("propiedad-search", onSearch);
@@ -91,8 +91,8 @@ export default function Propiedades() {
     Promise.all([api.propiedades(), api.catalogosPropiedades()])
       .then(([rows, lists]) => {
         if (!active) return;
-        setProperties(rows);
-        setCatalogs(lists);
+        setPropiedades(rows);
+        setCatalogos(lists);
       })
       .catch((cause) => {
         if (active) {
@@ -101,7 +101,7 @@ export default function Propiedades() {
         }
       })
       .finally(() => {
-        if (active) setLoading(false);
+        if (active) setCargando(false);
       });
 
     return () => {
@@ -110,55 +110,55 @@ export default function Propiedades() {
   }, []);
 
   useEffect(() => {
-    if (!loading && !error && (!catalogs.tipos.length || !catalogs.estados.length)) {
+    if (!cargando && !error && (!catalogos.tipos.length || !catalogos.estados.length)) {
       mostrarAviso({
         tipo: "advertencia",
         titulo: "Faltan datos para crear propiedades",
         mensaje: "La base de datos necesita tipos y estados comerciales configurados.",
       });
     }
-  }, [catalogs.estados.length, catalogs.tipos.length, error, loading]);
+  }, [catalogos.estados.length, catalogos.tipos.length, error, cargando]);
 
-  async function openEdit(property) {
+  async function abrirEdicion(propiedad) {
     try {
-      setModal({ mode: "edit", property: await api.obtenerPropiedad(property.id) });
+      setModal({ mode: "edit", propiedad: await api.obtenerPropiedad(propiedad.id) });
     } catch (cause) {
       mostrarAviso({ tipo: "error", titulo: "No se pudo abrir la propiedad", mensaje: cause.message });
     }
   }
 
-  function save(property, fileError) {
-    setProperties((current) => {
+  function guardarPropiedad(propiedad, errorArchivos) {
+    setPropiedades((current) => {
       if (modal.mode === "edit") {
-        return current.map((item) => (item.id === property.id ? property : item))
+        return current.map((item) => (item.id === propiedad.id ? propiedad : item))
       } else {
-        return [property, ...current]
+        return [propiedad, ...current]
       }
     },);
     setModal(null);
-    if (fileError) {
-      const mensaje = `La propiedad se guardó, pero hubo un problema con sus archivos: ${fileError}`;
+    if (errorArchivos) {
+      const mensaje = `La propiedad se guardó, pero hubo un problema con sus archivos: ${errorArchivos}`;
       mostrarAviso({ tipo: "advertencia", titulo: "Propiedad guardada con observaciones", mensaje });
     } else {
-      mostrarAviso({ tipo: "exito", titulo: "Propiedad guardada", mensaje: `${property.nombre} se guardó correctamente.` });
+      mostrarAviso({ tipo: "exito", titulo: "Propiedad guardada", mensaje: `${propiedad.nombre} se guardó correctamente.` });
     }
   }
 
-  async function remove() {
-    if (!pendingDelete) return;
+  async function eliminarPropiedad() {
+    if (!pendienteEliminar) return;
 
     try {
-      await api.eliminarPropiedad(pendingDelete.id);
-      setProperties((current) => current.filter((item) => item.id !== pendingDelete.id));
-      mostrarAviso({ tipo: "exito", titulo: "Propiedad eliminada", mensaje: `${pendingDelete.nombre} se eliminó.` });
-      setPendingDelete(null);
+      await api.eliminarPropiedad(pendienteEliminar.id);
+      setPropiedades((current) => current.filter((item) => item.id !== pendienteEliminar.id));
+      mostrarAviso({ tipo: "exito", titulo: "Propiedad eliminada", mensaje: `${pendienteEliminar.nombre} se eliminó.` });
+      setPendienteEliminar(null);
     } catch (error) {
       mostrarAviso({ tipo: "error", titulo: "No se pudo eliminar la propiedad", mensaje: error.message });
-      setPendingDelete(null);
+      setPendienteEliminar(null);
     }
   }
 
-  if (loading) return <PageSkeleton variant="properties" />;
+  if (cargando) return <PageSkeleton variant="properties" />;
 
   return (
     <main id="propiedades">
@@ -168,18 +168,18 @@ export default function Propiedades() {
           <p>Gestiona la información de todas las propiedades</p>
         </div>
         <div className="propiedades__toolbar" aria-label="Filtros de propiedades">
-          {filterItems.map((filter) => (
+          {opcionesFiltros.map((filter) => (
             <FiltroSelect
               key={filter.id}
               filter={filter}
-              value={filters[filter.id]}
-              onChange={(value) => { setFilters((current) => ({ ...current, [filter.id]: value })); resetPage(); }}
+              value={filtros[filter.id]}
+              onChange={(value) => { setFiltros((current) => ({ ...current, [filter.id]: value })); resetPage(); }}
             />
           ))}
           <Boton
             className="propiedades__new-button"
-            onClick={() => setModal({ mode: "create", property: null })}
-            disabled={!catalogs.tipos.length || !catalogs.estados.length}
+            onClick={() => setModal({ mode: "create", propiedad: null })}
+            disabled={!catalogos.tipos.length || !catalogos.estados.length}
             icon={plusIcon}
             text="Nueva Propiedad"
           />
@@ -191,49 +191,46 @@ export default function Propiedades() {
           {error}
         </p>
       )}
-      {!loading && !error && (!catalogs.tipos.length || !catalogs.estados.length) && (
+      {!error && (!catalogos.tipos.length || !catalogos.estados.length) && (
         <p className="propiedades__feedback" role="alert">
           Faltan tipos o estados comerciales en la base de datos para crear propiedades.
         </p>
       )}
 
-      {loading ? (
-        <p className="propiedades__empty">Cargando propiedades...</p>
-      ) : (
-        <section className="propiedades__grid" aria-label="Listado de propiedades">
-          {visibleProperties.length ? (
-            pageItems.map((property) => (
-              <TarjetaPropiedadSimple
-                key={property.id}
-                property={property}
-                onEdit={openEdit}
-                onDelete={setPendingDelete}
-                onOpen={() => navigate("/propiedad/" + property.id)}
-              />
-            ))
-          ) : (
-            <p className="propiedades__empty">
-              No hay propiedades que coincidan con los filtros seleccionados.
-            </p>
-          )}
-        </section>
-      )}
-      {!loading && <Paginacion page={page} totalPages={totalPages} total={visibleProperties.length} onPageChange={setPage} pageSize={PROPERTY_PAGE_SIZE} mostrarTamanoPagina />}
+      <section className="propiedades__grid" aria-label="Listado de propiedades">
+        {propiedadesVisibles.length ? (
+          pageItems.map((propiedad) => (
+            <TarjetaPropiedadSimple
+              key={propiedad.id}
+              propiedad={propiedad}
+              onEdit={abrirEdicion}
+              onDelete={setPendienteEliminar}
+              onOpen={() => navigate("/propiedad/" + propiedad.id)}
+            />
+          ))
+        ) : (
+          <p className="propiedades__empty">
+            No hay propiedades que coincidan con los filtros seleccionados.
+          </p>
+        )}
+      </section>
+
+      <Paginacion page={page} totalPages={totalPages} total={propiedadesVisibles.length} onPageChange={setPage} pageSize={PROPERTY_PAGE_SIZE} mostrarTamanoPagina />
 
       <ConfirmarEliminacionModal
-        isOpen={Boolean(pendingDelete)}
-        onClose={() => setPendingDelete(null)}
-        onConfirm={remove}
+        isOpen={Boolean(pendienteEliminar)}
+        onClose={() => setPendienteEliminar(null)}
+        onConfirm={eliminarPropiedad}
         title="¿Seguro que desea eliminar esta propiedad?"
       />
       {modal && (
         <PropiedadModal
           isOpen
           mode={modal.mode}
-          property={modal.property}
-          catalogs={catalogs}
+          propiedad={modal.propiedad}
+          catalogos={catalogos}
           onClose={() => setModal(null)}
-          onSubmit={save}
+          onSubmit={guardarPropiedad}
         />
       )}
     </main>

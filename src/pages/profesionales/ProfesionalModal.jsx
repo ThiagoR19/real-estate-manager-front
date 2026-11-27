@@ -5,30 +5,30 @@ import { Boton, mostrarAviso } from "../../components";
 import useClosingTransition from "../../hooks/useClosingTransition.js";
 import "./ProfesionalModal.css";
 
-function getInitialForm(professional) {
-  if (!professional) {
+function formularioInicial(profesional) {
+  if (!profesional) {
     return {
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      specialty: "",
+      nombre: "",
+      apellido: "",
+      correo: "",
+      telefono: "",
+      profesion: "",
     };
   }
 
-  const [firstName = "", ...lastNameParts] = professional.name.trim().split(/\s+/);
+  const [nombre = "", ...partesApellido] = profesional.nombreCompleto.trim().split(/\s+/);
 
   return {
-    firstName,
-    lastName: lastNameParts.join(" "),
-    email: professional.email || "",
-    phone: professional.phone || "",
-    specialty: professional.specialty || "",
+    nombre,
+    apellido: partesApellido.join(" "),
+    correo: profesional.correo || "",
+    telefono: profesional.telefono || "",
+    profesion: profesional.profesion || "",
   };
 }
 
-function getInitials(name) {
-  const initials = name
+function obtenerIniciales(nombre) {
+  const initials = nombre
     .trim()
     .split(/\s+/)
     .filter(Boolean)
@@ -58,19 +58,19 @@ function EntradaConIcono({ icon, ...props }) {
   );
 }
 
-export default function ProfesionalModal({ isOpen, mode, professional, onClose, onSubmit }) {
-  const [form, setForm] = useState(() => getInitialForm(professional));
+export default function ProfesionalModal({ isOpen, mode, profesional, onClose, onSubmit }) {
+  const [formulario, setFormulario] = useState(() => formularioInicial(profesional));
   const { isClosing, close } = useClosingTransition(onClose);
-  const isEditing = mode === "edit";
-  const displayName = isEditing ? professional?.name || "Profesional" : "Profesional";
-  const displaySpecialty = isEditing ? professional?.specialty || "Profesión" : "Profesión";
+  const esEdicion = mode === "edit";
+  const nombreVisible = esEdicion ? profesional?.nombreCompleto || "Profesional" : "Profesional";
+  const profesionVisible = esEdicion ? profesional?.profesion || "Profesión" : "Profesión";
 
   useEffect(() => {
     if (!isOpen) {
       return undefined;
     }
 
-    function closeWithEscape(event) {
+    function cerrarConEscape(event) {
       if (event.key === "Escape") {
         close();
       }
@@ -78,11 +78,11 @@ export default function ProfesionalModal({ isOpen, mode, professional, onClose, 
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    document.addEventListener("keydown", closeWithEscape);
+    document.addEventListener("keydown", cerrarConEscape);
 
     return () => {
       document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", closeWithEscape);
+      document.removeEventListener("keydown", cerrarConEscape);
     };
   }, [isOpen, close]);
 
@@ -90,19 +90,19 @@ export default function ProfesionalModal({ isOpen, mode, professional, onClose, 
     return null;
   }
 
-  function updateField(event) {
-    const { name, value } = event.target;
-    setForm((current) => ({ ...current, [name]: value }));
+  function actualizarCampo(event) {
+    const { name: nombre, value } = event.target;
+    setFormulario((current) => ({ ...current, [nombre]: value }));
   }
 
-  async function handleSubmit(event) {
+  async function enviarFormulario(event) {
     event.preventDefault();
     try {
-      await onSubmit({ ...form, name: `${form.firstName.trim()} ${form.lastName.trim()}`.trim() });
+      await onSubmit({ ...formulario, nombreCompleto: `${formulario.nombre.trim()} ${formulario.apellido.trim()}`.trim() });
     } catch (cause) {
       mostrarAviso({
         tipo: "error",
-        titulo: isEditing ? "No se pudo actualizar el profesional" : "No se pudo crear el profesional",
+        titulo: esEdicion ? "No se pudo actualizar el profesional" : "No se pudo crear el profesional",
         mensaje: cause.message,
       });
     }
@@ -129,24 +129,24 @@ export default function ProfesionalModal({ isOpen, mode, professional, onClose, 
       >
         <header className="profesional-modal__header">
           <h2 id="profesional-modal-title">
-            {isEditing ? "Editar profesional" : "Crear profesional"}
+            {esEdicion ? "Editar profesional" : "Crear profesional"}
           </h2>
           <p>
-            {isEditing
+            {esEdicion
               ? "Actualiza la información principal del profesional"
               : "Ingrese la información principal del profesional"}
           </p>
         </header>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={enviarFormulario}>
           <div className="profesional-modal__form-card">
             <div className="profesional-modal__summary">
               <span className="profesional-modal__avatar" aria-hidden="true">
-                {isEditing ? getInitials(displayName) : "PP"}
+                {esEdicion ? obtenerIniciales(nombreVisible) : "PP"}
               </span>
               <span>
-                <strong>{isEditing ? displayName : "Profesional"}</strong>
-                <small>{displaySpecialty}</small>
+                <strong>{esEdicion ? nombreVisible : "Profesional"}</strong>
+                <small>{profesionVisible}</small>
               </span>
             </div>
 
@@ -154,9 +154,9 @@ export default function ProfesionalModal({ isOpen, mode, professional, onClose, 
               <Campo label="Nombre">
                 <EntradaConIcono
                   icon={userIcon}
-                  name="firstName"
-                  value={form.firstName}
-                  onChange={updateField}
+                  name="nombre"
+                  value={formulario.nombre}
+                  onChange={actualizarCampo}
                   placeholder="Nombre"
                   autoComplete="given-name"
                 />
@@ -165,9 +165,9 @@ export default function ProfesionalModal({ isOpen, mode, professional, onClose, 
               <Campo label="Apellido">
                 <EntradaConIcono
                   icon={userIcon}
-                  name="lastName"
-                  value={form.lastName}
-                  onChange={updateField}
+                  name="apellido"
+                  value={formulario.apellido}
+                  onChange={actualizarCampo}
                   placeholder="Apellido"
                   autoComplete="family-name"
                 />
@@ -176,10 +176,10 @@ export default function ProfesionalModal({ isOpen, mode, professional, onClose, 
               <Campo label="Correo">
                 <EntradaConIcono
                   icon={envelopeIcon}
-                  name="email"
+                  name="correo"
                   type="text"
-                  value={form.email}
-                  onChange={updateField}
+                  value={formulario.correo}
+                  onChange={actualizarCampo}
                   placeholder="ejemplo@gmail.com"
                   autoComplete="email"
                 />
@@ -188,10 +188,10 @@ export default function ProfesionalModal({ isOpen, mode, professional, onClose, 
               <Campo label="Teléfono">
                 <EntradaConIcono
                   icon={phoneIcon}
-                  name="phone"
+                  name="telefono"
                   type="tel"
-                  value={form.phone}
-                  onChange={updateField}
+                  value={formulario.telefono}
+                  onChange={actualizarCampo}
                   placeholder="1234 123123"
                   autoComplete="tel"
                 />
@@ -200,9 +200,9 @@ export default function ProfesionalModal({ isOpen, mode, professional, onClose, 
               <Campo label="Profesión">
                 <EntradaConIcono
                   icon={briefcaseIcon}
-                  name="specialty"
-                  value={form.specialty}
-                  onChange={updateField}
+                  name="profesion"
+                  value={formulario.profesion}
+                  onChange={actualizarCampo}
                   placeholder="Profesión"
                 />
               </Campo>
@@ -216,7 +216,7 @@ export default function ProfesionalModal({ isOpen, mode, professional, onClose, 
             <Boton
               className="profesional-modal__submit"
               type="submit"
-              text={isEditing ? "Guardar cambios" : "Crear profesional"}
+              text={esEdicion ? "Guardar cambios" : "Crear profesional"}
             />
           </footer>
         </form>

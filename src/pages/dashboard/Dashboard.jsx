@@ -89,35 +89,34 @@ export default function Dashboard() {
   }, []);
   if (error) return <main className="dashboard-page"><p role="alert">{error}</p></main>;
   if (loading) return <PageSkeleton variant="dashboard" title="administrador" />;
-  if (!loading) {
-    return (
-      <main className="dashboard-page">
-        <div className="dashboard-page__background" aria-hidden="true" />
-        <header className="dashboard-hero">
-          <div>
-            <h1>¡Hola, Thiago!</h1>
-            <p><span className="dashboard-hero__desktop-copy">Aquí tienes un resumen de la actividad de la inmobiliaria</span><span className="dashboard-hero__mobile-copy">Aquí tienes un resumen de tu inmobiliaria</span></p>
-          </div>
-          <Link className="dashboard-cita-button" href="/agenda">
-            <img src={plusIconWhite} alt="" aria-hidden="true" />
-            Agendar cita
-          </Link>
-        </header>
-        <div className="dashboard-content">
-          <TarjetaAgentes
-            agents={datos.topAgentes}
-          />
-          <TarjetaRendimiento
-            indicadores={datos.indicadores}
-            grafico={datos.rendimiento}
-          />
-          <TarjetaEstado
-            valores={datos.estadosPropiedades}
-          />
-          <TarjetaActividad className="dashboard-shared-activity" />
+
+  return (
+    <main className="dashboard-page">
+      <div className="dashboard-page__background" aria-hidden="true" />
+      <header className="dashboard-hero">
+        <div>
+          <h1>¡Hola, Thiago!</h1>
+          <p><span className="dashboard-hero__desktop-copy">Aquí tienes un resumen de la actividad de la inmobiliaria</span><span className="dashboard-hero__mobile-copy">Aquí tienes un resumen de tu inmobiliaria</span></p>
         </div>
-      </main>
-    );
-  }
+        <Link className="dashboard-cita-button" href="/agenda">
+          <img src={plusIconWhite} alt="" aria-hidden="true" />
+          Agendar cita
+        </Link>
+      </header>
+      <div className="dashboard-content">
+        <TarjetaAgentes
+          agents={datos.topAgentes}
+        />
+        <TarjetaRendimiento
+          indicadores={datos.indicadores}
+          grafico={datos.rendimiento}
+        />
+        <TarjetaEstado
+          valores={datos.estadosPropiedades}
+        />
+        <TarjetaActividad className="dashboard-shared-activity" />
+      </div>
+    </main>
+  );
 }
 

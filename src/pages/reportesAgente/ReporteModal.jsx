@@ -5,12 +5,12 @@ import { Boton } from "../../components";
 import useClosingTransition from "../../hooks/useClosingTransition.js";
 import "./ReporteModal.css";
 
-function getInitialForm() {
+function formularioInicial() {
   return {
-    name: "",
+    nombre: "",
     idPropiedad: "",
     idCategoria: "",
-    description: "",
+    descripcion: "",
   };
 }
 
@@ -24,9 +24,9 @@ function Campo({ children, label }) {
 }
 
 export default function ReporteModal({ isOpen, onClose, onSubmit, propiedades = [], categorias = [], busy = false }) {
-  const [form, setForm] = useState(getInitialForm);
-  const [photos, setPhotos] = useState([]);
-  const photosRef = useRef([]);
+  const [formulario, setFormulario] = useState(formularioInicial);
+  const [fotos, setFotos] = useState([]);
+  const fotosRef = useRef([]);
   const { isClosing, close } = useClosingTransition(onClose);
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function ReporteModal({ isOpen, onClose, onSubmit, propiedades = 
       return undefined;
     }
 
-    function closeWithEscape(event) {
+    function cerrarConEscape(event) {
       if (event.key === "Escape") {
         close();
       }
@@ -42,17 +42,17 @@ export default function ReporteModal({ isOpen, onClose, onSubmit, propiedades = 
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    document.addEventListener("keydown", closeWithEscape);
+    document.addEventListener("keydown", cerrarConEscape);
 
     return () => {
       document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", closeWithEscape);
+      document.removeEventListener("keydown", cerrarConEscape);
     };
   }, [isOpen, close]);
 
   useEffect(
     () => () => {
-      photosRef.current.forEach(({ url }) => URL.revokeObjectURL(url));
+      fotosRef.current.forEach(({ url }) => URL.revokeObjectURL(url));
     },
     [],
   );
@@ -61,48 +61,48 @@ export default function ReporteModal({ isOpen, onClose, onSubmit, propiedades = 
     return null;
   }
 
-  function updateField(event) {
-    const { name, value } = event.target;
-    setForm((current) => ({ ...current, [name]: value }));
+  function actualizarCampo(event) {
+    const { name: nombre, value } = event.target;
+    setFormulario((current) => ({ ...current, [nombre]: value }));
   }
 
-  function addPhotos(event) {
-    const selectedPhotos = Array.from(event.target.files ?? []).slice(0, Math.max(0, 10 - photosRef.current.length)).map((file) => ({
+  function agregarFotos(event) {
+    const fotosSeleccionadas = Array.from(event.target.files ?? []).slice(0, Math.max(0, 10 - fotosRef.current.length)).map((file) => ({
       id: `${file.name}-${file.lastModified}-${file.size}-${Math.random()}`,
-      file,
+      archivo: file,
       url: URL.createObjectURL(file),
     }));
 
-    if (selectedPhotos.length) {
-      const nextPhotos = [...photosRef.current, ...selectedPhotos];
-      photosRef.current = nextPhotos;
-      setPhotos(nextPhotos);
+    if (fotosSeleccionadas.length) {
+      const nuevasFotos = [...fotosRef.current, ...fotosSeleccionadas];
+      fotosRef.current = nuevasFotos;
+      setFotos(nuevasFotos);
     }
 
     event.target.value = "";
   }
 
-  function removePhoto(photoId) {
-    const photo = photosRef.current.find(({ id }) => id === photoId);
-    if (photo) {
-      URL.revokeObjectURL(photo.url);
+  function quitarFoto(idFoto) {
+    const foto = fotosRef.current.find(({ id }) => id === idFoto);
+    if (foto) {
+      URL.revokeObjectURL(foto.url);
     }
 
-    const nextPhotos = photosRef.current.filter(({ id }) => id !== photoId);
-    photosRef.current = nextPhotos;
-    setPhotos(nextPhotos);
+    const nuevasFotos = fotosRef.current.filter(({ id }) => id !== idFoto);
+    fotosRef.current = nuevasFotos;
+    setFotos(nuevasFotos);
   }
 
-  function handleSubmit(event) {
+  function enviarFormulario(event) {
     event.preventDefault();
     if (busy) return;
     onSubmit({
-      ...form,
-      idPropiedad: form.idPropiedad || propiedades[0]?.id,
-      idCategoria: form.idCategoria || categorias[0]?.id,
-      name: form.name.trim(),
-      description: form.description.trim(),
-      photos: photosRef.current.map(({ file }) => file),
+      ...formulario,
+      idPropiedad: formulario.idPropiedad || propiedades[0]?.id,
+      idCategoria: formulario.idCategoria || categorias[0]?.id,
+      nombre: formulario.nombre.trim(),
+      descripcion: formulario.descripcion.trim(),
+      fotos: fotosRef.current.map(({ archivo: file }) => file),
     });
   }
 
@@ -130,7 +130,7 @@ export default function ReporteModal({ isOpen, onClose, onSubmit, propiedades = 
           <p>Completa la información para registrar un nuevo reporte</p>
         </header>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={enviarFormulario}>
           <section className="reporte-modal__card" aria-labelledby="reporte-modal-main-data">
             <header className="reporte-modal__section-header">
               <span className="reporte-modal__step" aria-hidden="true">
@@ -143,9 +143,9 @@ export default function ReporteModal({ isOpen, onClose, onSubmit, propiedades = 
               <Campo label="Nombre">
                 <input
                   className="reporte-modal__input"
-                  name="name"
-                  value={form.name}
-                  onChange={updateField}
+                  name="nombre"
+                  value={formulario.nombre}
+                  onChange={actualizarCampo}
                   placeholder="Rotura de cortinas"
                   autoComplete="off"
                   autoFocus
@@ -157,7 +157,7 @@ export default function ReporteModal({ isOpen, onClose, onSubmit, propiedades = 
                 <span className="reporte-modal__native-select-wrap">
                   <img src={houseIcon} alt="" aria-hidden="true" />
                   <select className="reporte-modal__native-select" name="idPropiedad"
-                    value={form.idPropiedad || propiedades[0]?.id || ""} onChange={updateField} required>
+                    value={formulario.idPropiedad || propiedades[0]?.id || ""} onChange={actualizarCampo} required>
                     {propiedades.map((propiedad) => <option key={propiedad.id} value={propiedad.id}>{propiedad.nombre}{propiedad.ubicacion ? ` · ${propiedad.ubicacion}` : ""}</option>)}
                   </select>
                 </span>
@@ -165,7 +165,7 @@ export default function ReporteModal({ isOpen, onClose, onSubmit, propiedades = 
 
               <Campo label="Tipo">
                 <select className="reporte-modal__native-select" name="idCategoria"
-                  value={form.idCategoria || categorias[0]?.id || ""} onChange={updateField} required>
+                  value={formulario.idCategoria || categorias[0]?.id || ""} onChange={actualizarCampo} required>
                   {categorias.map((categoria) => <option key={categoria.id} value={categoria.id}>{categoria.nombre}</option>)}
                 </select>
               </Campo>
@@ -174,14 +174,14 @@ export default function ReporteModal({ isOpen, onClose, onSubmit, propiedades = 
                 <span className="reporte-modal__textarea-wrap">
                   <textarea
                     className="reporte-modal__textarea"
-                    name="description"
-                    value={form.description}
-                    onChange={updateField}
+                    name="descripcion"
+                    value={formulario.descripcion}
+                    onChange={actualizarCampo}
                     placeholder="Ingrese una descripción del reporte..."
                     maxLength={500}
                     required
                   />
-                  <span className="reporte-modal__counter">{form.description.length}/500</span>
+                  <span className="reporte-modal__counter">{formulario.descripcion.length}/500</span>
                 </span>
               </Campo>
             </div>
@@ -200,13 +200,13 @@ export default function ReporteModal({ isOpen, onClose, onSubmit, propiedades = 
 
             <div className="reporte-modal__photos-scroll">
               <div className="reporte-modal__photos">
-                {photos.map((photo, index) => (
-                  <figure className="reporte-modal__photo" key={photo.id}>
-                    <img src={photo.url} alt={`Foto ${index + 1} del reporte`} />
+                {fotos.map((foto, index) => (
+                  <figure className="reporte-modal__photo" key={foto.id}>
+                    <img src={foto.url} alt={`Foto ${index + 1} del reporte`} />
                     <button
                       type="button"
                       aria-label={`Quitar foto ${index + 1}`}
-                      onClick={() => removePhoto(photo.id)}
+                      onClick={() => quitarFoto(foto.id)}
                     >
                       <img src={xIcon} alt="" aria-hidden="true" />
                     </button>
@@ -216,7 +216,7 @@ export default function ReporteModal({ isOpen, onClose, onSubmit, propiedades = 
                 <label className="reporte-modal__add-photos">
                   <img className="reporte-modal__add-icon" src={plusIcon} alt="" aria-hidden="true" />
                   <span>Agregar fotos</span>
-                  <input type="file" accept="image/*" multiple onChange={addPhotos} disabled={photos.length >= 10 || busy} />
+                  <input type="file" accept="image/*" multiple onChange={agregarFotos} disabled={fotos.length >= 10 || busy} />
                 </label>
               </div>
             </div>

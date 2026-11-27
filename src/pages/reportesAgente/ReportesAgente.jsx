@@ -27,26 +27,26 @@ export default function ReportesAgente() {
   const rol = rolActual();
   const puedeCambiarEstado = rol === ROLES.ADMIN || rol === ROLES.AGENTE;
   const puedeCrearReporte = rol === ROLES.INQUILINO;
-  const [reportItems, setReportItems] = useState([]);
+  const [reportes, setReportes] = useState([]);
   const [catalogos, setCatalogos] = useState({ categorias: [], estados: [], propiedades: [] });
-  const [loading, setLoading] = useState(true);
+  const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
-  const [createOpen, setCreateOpen] = useState(false);
-  const [activeReportId, setActiveReportId] = useState(null);
-  const [query, setQuery] = useState("");
-  const [selectedProperty, setSelectedProperty] = useState("");
-  const [selectedPhotos, setSelectedPhotos] = useState({});
+  const [modalCreacionAbierto, setModalCreacionAbierto] = useState(false);
+  const [idReporteActivo, setIdReporteActivo] = useState(null);
+  const [textoBusqueda, setTextoBusqueda] = useState("");
+  const [propiedadSeleccionada, setPropiedadSeleccionada] = useState("");
+  const [fotosSeleccionadas, setSelectedPhotos] = useState({});
   const thumbnailsRef = useRef(null);
 
   useEffect(() => {
     let active = true;
     Promise.all([api.reportes(), api.catalogosReportes()])
-      .then(([reports, catalogs]) => {
+      .then(([reportesActualizados, catalogos]) => {
         if (!active) return;
-        setReportItems(reports);
-        setCatalogos(catalogs);
-        setActiveReportId(reports[0]?.id ?? null);
+        setReportes(reportesActualizados);
+        setCatalogos(catalogos);
+        setIdReporteActivo(reportesActualizados[0]?.id ?? null);
         setError("");
       })
       .catch((cause) => {
@@ -54,51 +54,51 @@ export default function ReportesAgente() {
         setError(cause.message);
         mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar los reportes", mensaje: cause.message });
       })
-      .finally(() => { if (active) setLoading(false); });
+      .finally(() => { if (active) setCargando(false); });
     return () => { active = false; };
   }, []);
 
   const visibleReports = useMemo(() => {
-    const search = query.trim().toLocaleLowerCase("es-AR");
-    return reportItems.filter((report) =>
-      (!selectedProperty || String(report.idPropiedad) === selectedProperty) &&
-      (!search || `${report.titulo} ${report.propiedad} ${report.categoria} ${report.descripcion || ""}`
-        .toLocaleLowerCase("es-AR").includes(search)));
-  }, [query, reportItems, selectedProperty]);
+    const busqueda = textoBusqueda.trim().toLocaleLowerCase("es-AR");
+    return reportes.filter((report) =>
+      (!propiedadSeleccionada || String(report.idPropiedad) === propiedadSeleccionada) &&
+      (!busqueda || `${report.titulo} ${report.propiedad} ${report.categoria} ${report.descripcion || ""}`
+        .toLocaleLowerCase("es-AR").includes(busqueda)));
+  }, [textoBusqueda, reportes, propiedadSeleccionada]);
   const { page, totalPages, pageItems, setPage, resetPage } = usePaginacion(visibleReports, 5);
-  const activeReport = pageItems.find(({ id }) => id === activeReportId) ?? pageItems[0] ?? null;
-  const photos = activeReport?.imagenes ?? [];
-  const selectedPhoto = Math.min(selectedPhotos[activeReport?.id] ?? 0, Math.max(photos.length - 1, 0));
+  const reporteActivo = pageItems.find(({ id }) => id === idReporteActivo) ?? pageItems[0] ?? null;
+  const fotos = reporteActivo?.imagenes ?? [];
+  const fotoSeleccionada = Math.min(fotosSeleccionadas[reporteActivo?.id] ?? 0, Math.max(fotos.length - 1, 0));
 
   useEffect(() => {
     const track = thumbnailsRef.current;
-    const thumbnail = track?.children[selectedPhoto];
+    const thumbnail = track?.children[fotoSeleccionada];
     if (thumbnail) track.scrollTo({ left: thumbnail.offsetLeft - track.offsetLeft, behavior: "smooth" });
-  }, [activeReport?.id, selectedPhoto]);
+  }, [reporteActivo?.id, fotoSeleccionada]);
 
-  async function createReport(form) {
+  async function crearReporte(formulario) {
     setBusy(true);
     let created;
     try {
       created = await api.crearReporte({
-        idPropiedad: Number(form.idPropiedad), idCategoria: Number(form.idCategoria),
-        titulo: form.name, descripcion: form.description,
+        idPropiedad: Number(formulario.idPropiedad), idCategoria: Number(formulario.idCategoria),
+        titulo: formulario.nombre, descripcion: formulario.descripcion,
         fecha: new Intl.DateTimeFormat("en-CA", { timeZone: "America/Argentina/Buenos_Aires", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date()),
       });
-      if (form.photos.length) await api.subirImagenesReporte(created.id, form.photos);
-      const reports = await api.reportes();
-      setReportItems(reports);
-      setActiveReportId(created.id);
-      setQuery("");
-      setSelectedProperty("");
+      if (formulario.fotos.length) await api.subirImagenesReporte(created.id, formulario.fotos);
+      const reportesActualizados = await api.reportes();
+      setReportes(reportesActualizados);
+      setIdReporteActivo(created.id);
+      setTextoBusqueda("");
+      setPropiedadSeleccionada("");
       resetPage();
-      setCreateOpen(false);
+      setModalCreacionAbierto(false);
       mostrarAviso({ tipo: "exito", titulo: "Reporte creado", mensaje: "El reporte se guardó correctamente." });
     } catch (cause) {
       if (created) {
-        const reports = await api.reportes().catch(() => null);
-        if (reports) setReportItems(reports);
-        setCreateOpen(false);
+        const reportesActualizados = await api.reportes().catch(() => null);
+        if (reportesActualizados) setReportes(reportesActualizados);
+        setModalCreacionAbierto(false);
         mostrarAviso({ tipo: "error", titulo: "Reporte creado sin todas las fotos", mensaje: cause.message });
       } else {
         mostrarAviso({ tipo: "error", titulo: "No se pudo crear el reporte", mensaje: cause.message });
@@ -106,13 +106,13 @@ export default function ReportesAgente() {
     } finally { setBusy(false); }
   }
 
-  async function changeStatus(event) {
+  async function cambiarEstado(event) {
     const idEstado = Number(event.target.value);
-    if (!activeReport || idEstado === activeReport.idEstado) return;
+    if (!reporteActivo || idEstado === reporteActivo.idEstado) return;
     setBusy(true);
     try {
-      const updated = await api.actualizarReporte(activeReport.id, { idEstado });
-      setReportItems((items) => items.map((item) => item.id === updated.id ? updated : item));
+      const updated = await api.actualizarReporte(reporteActivo.id, { idEstado });
+      setReportes((items) => items.map((item) => item.id === updated.id ? updated : item));
       mostrarAviso({ tipo: "exito", titulo: "Estado actualizado", mensaje: `El reporte está ${estadoReporte(updated.estado).toLowerCase()}.` });
     } catch (cause) {
       mostrarAviso({ tipo: "error", titulo: "No se pudo cambiar el estado", mensaje: cause.message });
@@ -120,12 +120,12 @@ export default function ReportesAgente() {
   }
 
   return (
-    <Skeleton as="main" id="reportes-agent" cargando={loading}>
+    <Skeleton as="main" id="reportes-agent" cargando={cargando}>
       <section className="reportes__hero" aria-labelledby="reportes-title">
         <div><h1 id="reportes-title">Reportes</h1><p>Gestioná los reportes de tus propiedades</p></div>
         {puedeCrearReporte && <button className="reportes__create-button" type="button"
-          disabled={loading || !catalogos.propiedades.length || !catalogos.categorias.length}
-          onClick={() => setCreateOpen(true)}>
+          disabled={cargando || !catalogos.propiedades.length || !catalogos.categorias.length}
+          onClick={() => setModalCreacionAbierto(true)}>
           <Icono src={plusIconWhite} /> Nuevo reporte
         </button>}
       </section>
@@ -133,24 +133,24 @@ export default function ReportesAgente() {
         <aside className="reportes__list-panel" aria-label="Listado de reportes">
           <label className="reportes__search">
             <Icono src={magnifyingGlassIcon} />
-            <input type="search" value={query}
-              onChange={(event) => { setQuery(event.target.value); resetPage(); }}
+            <input type="search" value={textoBusqueda}
+              onChange={(event) => { setTextoBusqueda(event.target.value); resetPage(); }}
               placeholder="Buscar reportes..." aria-label="Buscar reportes" />
           </label>
           <label className="reportes__propiedad-filter">
             <span className="reportes__propiedad-icon"><Icono src={houseIcon} /></span>
-            <select value={selectedProperty}
-              onChange={(event) => { setSelectedProperty(event.target.value); resetPage(); }}
+            <select value={propiedadSeleccionada}
+              onChange={(event) => { setPropiedadSeleccionada(event.target.value); resetPage(); }}
               aria-label="Filtrar reportes por propiedad">
               <option value="">Todas las propiedades</option>
-              {catalogos.propiedades.map((property) => <option key={property.id} value={property.id}>{property.nombre}</option>)}
+              {catalogos.propiedades.map((propiedad) => <option key={propiedad.id} value={propiedad.id}>{propiedad.nombre}</option>)}
             </select>
           </label>
           <div className="reportes__list">
             {pageItems.map((report) => (
-              <button key={report.id} className={`reportes__list-item ${activeReport?.id === report.id ? "is-active" : ""}`}
-                type="button" onClick={() => setActiveReportId(report.id)}
-                aria-pressed={activeReport?.id === report.id}>
+              <button key={report.id} className={`reportes__list-item ${reporteActivo?.id === report.id ? "is-active" : ""}`}
+                type="button" onClick={() => setIdReporteActivo(report.id)}
+                aria-pressed={reporteActivo?.id === report.id}>
                 <FotoReporte className="reportes__list-photo" label={report.titulo} src={report.imagenes?.[0]?.url} />
                 <span className="reportes__list-copy">
                   <strong>{report.titulo}</strong>
@@ -161,46 +161,46 @@ export default function ReportesAgente() {
                 <Icono src={angleDownIcon} className="reportes__chevron" />
               </button>
             ))}
-            {!loading && !error && !visibleReports.length &&
-              <p className="reportes__empty">{reportItems.length ? "No se encontraron reportes." : catalogos.propiedades.length ? "Todavía no hay reportes para tus propiedades." : "No tenés propiedades habilitadas para reportar."}</p>}
-            {loading && <p className="reportes__empty">Cargando reportes...</p>}
+            {!cargando && !error && !visibleReports.length &&
+              <p className="reportes__empty">{reportes.length ? "No se encontraron reportes." : catalogos.propiedades.length ? "Todavía no hay reportes para tus propiedades." : "No tenés propiedades habilitadas para reportar."}</p>}
+            {cargando && <p className="reportes__empty">Cargando reportes...</p>}
             {error && <p className="reportes__empty" role="alert">{error}</p>}
           </div>
           <Paginacion page={page} totalPages={totalPages} total={visibleReports.length} pageSize={5} onPageChange={setPage} />
         </aside>
         <section className="reportes__detail-panel" aria-labelledby="report-detail-title">
-          {activeReport ? <>
+          {reporteActivo ? <>
             <header className="reportes__detail-header">
-              <h2 id="report-detail-title">{activeReport.titulo}</h2>
-              <p><Icono src={locationDotIcon} />{activeReport.propiedad}</p>
+              <h2 id="report-detail-title">{reporteActivo.titulo}</h2>
+              <p><Icono src={locationDotIcon} />{reporteActivo.propiedad}</p>
             </header>
             <div className="reportes__detail-content">
               <div className="reportes__gallery">
                 <div className="reportes__main-photo-frame">
-                  <FotoReporte className="reportes__main-photo" label={activeReport.titulo} src={photos[selectedPhoto]?.url} />
-                  {photos.length > 1 && <>
+                  <FotoReporte className="reportes__main-photo" label={reporteActivo.titulo} src={fotos[fotoSeleccionada]?.url} />
+                  {fotos.length > 1 && <>
                     <button className="reportes__gallery-arrow reportes__gallery-arrow--previous" type="button"
-                      aria-label="Foto anterior" onClick={() => setSelectedPhotos((current) => ({ ...current, [activeReport.id]: (selectedPhoto - 1 + photos.length) % photos.length }))}><Icono src={angleDownIcon} /></button>
+                      aria-label="Foto anterior" onClick={() => setSelectedPhotos((current) => ({ ...current, [reporteActivo.id]: (fotoSeleccionada - 1 + fotos.length) % fotos.length }))}><Icono src={angleDownIcon} /></button>
                     <button className="reportes__gallery-arrow reportes__gallery-arrow--next" type="button"
-                      aria-label="Foto siguiente" onClick={() => setSelectedPhotos((current) => ({ ...current, [activeReport.id]: (selectedPhoto + 1) % photos.length }))}><Icono src={angleDownIcon} /></button>
+                      aria-label="Foto siguiente" onClick={() => setSelectedPhotos((current) => ({ ...current, [reporteActivo.id]: (fotoSeleccionada + 1) % fotos.length }))}><Icono src={angleDownIcon} /></button>
                   </>}
-                  {!!photos.length && <span className="reportes__photo-count">{selectedPhoto + 1}/{photos.length}</span>}
+                  {!!fotos.length && <span className="reportes__photo-count">{fotoSeleccionada + 1}/{fotos.length}</span>}
                 </div>
-                {!!photos.length && <div ref={thumbnailsRef} className="reportes__thumbnails" aria-label="Fotos del reporte">
-                  {photos.map((photo, index) => <button key={photo.id} className={`reportes__thumbnail-button${selectedPhoto === index ? " is-selected" : ""}`}
-                    type="button" aria-label={`Ver foto ${index + 1}`} aria-pressed={selectedPhoto === index}
-                    onClick={() => setSelectedPhotos((current) => ({ ...current, [activeReport.id]: index }))}>
-                    <FotoReporte className="reportes__thumbnail" src={photo.url} label={`Foto ${index + 1}`} />
+                {!!fotos.length && <div ref={thumbnailsRef} className="reportes__thumbnails" aria-label="Fotos del reporte">
+                  {fotos.map((foto, index) => <button key={foto.id} className={`reportes__thumbnail-button${fotoSeleccionada === index ? " is-selected" : ""}`}
+                    type="button" aria-label={`Ver foto ${index + 1}`} aria-pressed={fotoSeleccionada === index}
+                    onClick={() => setSelectedPhotos((current) => ({ ...current, [reporteActivo.id]: index }))}>
+                    <FotoReporte className="reportes__thumbnail" src={foto.url} label={`Foto ${index + 1}`} />
                   </button>)}
                 </div>}
               </div>
               <div className="reportes__details">
-                <article className="reportes__description-card"><h3>Descripción del problema</h3><p>{activeReport.descripcion || "Sin descripción."}</p></article>
+                <article className="reportes__description-card"><h3>Descripción del problema</h3><p>{reporteActivo.descripcion || "Sin descripción."}</p></article>
                 <div className="reportes__facts">
-                  <article><h3>Propiedad</h3><p><Icono src={houseIcon} />{activeReport.propiedad}</p></article>
-                  <article><h3>Tipo de problema</h3><p>{activeReport.categoria}</p></article>
-                  <article><h3>Reportado por</h3><p>{activeReport.personaReporta}</p></article>
-                  <article><h3>Fecha</h3><p>{fecha(activeReport.fecha)}</p></article>
+                  <article><h3>Propiedad</h3><p><Icono src={houseIcon} />{reporteActivo.propiedad}</p></article>
+                  <article><h3>Tipo de problema</h3><p>{reporteActivo.categoria}</p></article>
+                  <article><h3>Reportado por</h3><p>{reporteActivo.personaReporta}</p></article>
+                  <article><h3>Fecha</h3><p>{fecha(reporteActivo.fecha)}</p></article>
                 </div>
                 {rol !== ROLES.AGENTE && <aside className="reportes__info-card">
                   <span className="reportes__info-icon"><Icono src={commentsIcon} /></span>
@@ -209,13 +209,13 @@ export default function ReportesAgente() {
               </div>
             </div>
             <div className="reportes__status-row">
-              <div className={`reportes__status reportes__status--${activeReport.estado === "Resuelto" ? "solucionado" : activeReport.estado === "En proceso" ? "proceso" : "pendiente"}`} aria-label="Estado del reporte">
-                <Icono src={ICONOS_ESTADO[activeReport.estado] || clockIcon} className="reportes__status-icon" />
-                {estadoReporte(activeReport.estado)}
+              <div className={`reportes__status reportes__status--${reporteActivo.estado === "Resuelto" ? "solucionado" : reporteActivo.estado === "En proceso" ? "proceso" : "pendiente"}`} aria-label="Estado del reporte">
+                <Icono src={ICONOS_ESTADO[reporteActivo.estado] || clockIcon} className="reportes__status-icon" />
+                {estadoReporte(reporteActivo.estado)}
               </div>
               {puedeCambiarEstado && <label className="reportes__status-control">
                 Cambiar estado
-                <select value={activeReport.idEstado} onChange={changeStatus} disabled={busy} aria-label="Cambiar estado del reporte">
+                <select value={reporteActivo.idEstado} onChange={cambiarEstado} disabled={busy} aria-label="Cambiar estado del reporte">
                   {catalogos.estados.map((estado) => <option key={estado.id} value={estado.id}>{estadoReporte(estado.nombre)}</option>)}
                 </select>
               </label>}
@@ -223,7 +223,7 @@ export default function ReportesAgente() {
           </> : <p className="reportes__empty" id="report-detail-title">Seleccioná un reporte para ver el detalle.</p>}
         </section>
       </div>
-      {puedeCrearReporte && createOpen && <ReporteModal isOpen onClose={() => setCreateOpen(false)} onSubmit={createReport}
+      {puedeCrearReporte && modalCreacionAbierto && <ReporteModal isOpen onClose={() => setModalCreacionAbierto(false)} onSubmit={crearReporte}
         propiedades={catalogos.propiedades} categorias={catalogos.categorias} busy={busy} />}
     </Skeleton>
   );

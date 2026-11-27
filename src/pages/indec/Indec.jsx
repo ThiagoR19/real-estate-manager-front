@@ -158,9 +158,8 @@ export default function Indec() {
             <b>{record.porcentaje ?? record.percentage}%</b>
           </div>
         ))}
-        {loading && <p className="indec__empty">Cargando porcentajes...</p>}
-        {!loading && error && <p className="indec__empty">{error}</p>}
-        {!loading && !error && !records.length && (
+        {error && <p className="indec__empty">{error}</p>}
+        {!error && !records.length && (
           <p className="indec__empty">Todavía no hay porcentajes cargados para este año.</p>
         )}
       </section>

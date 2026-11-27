@@ -322,7 +322,7 @@ export default function PropiedadesPublicas() {
           {cargando ? <PublicPropertiesSkeleton /> : (
             <Skeleton key={busqueda} className="propiedades-publicas__grid">
               {resultado.propiedades.map((property) => (
-                <TarjetaPropiedadSimple key={property.id} property={property} variant="public" />
+                <TarjetaPropiedadSimple key={property.id} propiedad={property} variant="public" />
               ))}
             </Skeleton>
           )}

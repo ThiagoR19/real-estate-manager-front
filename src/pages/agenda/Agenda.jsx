@@ -8,45 +8,45 @@ import { ROLES, tieneRol } from "../../utils/roles.js";
 import propertyImage from "/images (1).jpg";
 import "./Agenda.css";
 
-const viewOptions = [
+const opcionesVista = [
   { id: "day", label: "Día" },
   { id: "week", label: "Semana" },
   { id: "month", label: "Mes" },
 ];
-const timeSlots = ["08:00", "11:00", "14:00", "17:00", "20:00"];
-function toVisit(row) {
+const franjasHorarias = ["08:00", "11:00", "14:00", "17:00", "20:00"];
+function prepararVisita(row) {
   const at = new Date(row.fecha);
   return {
-    id: row.id, date: dateKey(at),
-    time: at.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" }),
-    property: row.propiedad, client: `${row.clienteNombre} ${row.clienteApellido}`,
-    agent: `${row.agenteNombre} ${row.agenteApellido}`, status: row.estado,
+    id: row.id, fecha: claveFecha(at),
+    hora: at.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" }),
+    propiedad: row.propiedad, cliente: `${row.clienteNombre} ${row.clienteApellido}`,
+    agente: `${row.agenteNombre} ${row.agenteApellido}`, estado: row.estado,
     idCliente: row.idCliente, idPropiedad: row.idPropiedad, idAgente: row.idAgente,
   };
 }
 
-function parseDate(value) {
+function interpretarFecha(value) {
   const [year, month, day] = value.split("-").map(Number);
   return new Date(year, month - 1, day);
 }
 
-function dateKey(date) {
+function claveFecha(date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
 
-function capitalize(value) {
+function capitalizar(value) {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
-function statusTone(status) {
+function tonoEstado(status) {
   if (status === "Programada") return "green";
   if (status === "Cancelada") return "red";
   if (status === "Realizada") return "slate";
   return "blue";
 }
 
-function moveDate(value, amount, unit = "day") {
-  const next = parseDate(value);
+function desplazarFecha(value, amount, unit = "day") {
+  const next = interpretarFecha(value);
   if (unit === "month") {
     const day = next.getDate();
     next.setDate(1);
@@ -54,10 +54,10 @@ function moveDate(value, amount, unit = "day") {
     next.setDate(Math.min(day, new Date(next.getFullYear(), next.getMonth() + 1, 0).getDate()));
   }
   else next.setDate(next.getDate() + amount);
-  return dateKey(next);
+  return claveFecha(next);
 }
 
-function ControlesPeriodo({ date, view, onDateChange }) {
+function ControlesPeriodo({ fecha: date, view, onDateChange }) {
   const step = view === "week" ? 7 : 1;
   const unit = view === "month" ? "month" : "day";
   const label = view === "month" ? "Mes" : view === "week" ? "Semana" : "Día";
@@ -66,21 +66,21 @@ function ControlesPeriodo({ date, view, onDateChange }) {
       <button
         type="button"
         aria-label={`${label} anterior`}
-        onClick={() => onDateChange(moveDate(date, -step, unit))}
+        onClick={() => onDateChange(desplazarFecha(date, -step, unit))}
       >
         ‹
       </button>
       <button
         type="button"
         className="agenda__today-button"
-        onClick={() => onDateChange(dateKey(new Date()))}
+        onClick={() => onDateChange(claveFecha(new Date()))}
       >
         Hoy
       </button>
       <button
         type="button"
         aria-label={`${label} siguiente`}
-        onClick={() => onDateChange(moveDate(date, step, unit))}
+        onClick={() => onDateChange(desplazarFecha(date, step, unit))}
       >
         ›
       </button>
@@ -94,37 +94,37 @@ function ControlesPeriodo({ date, view, onDateChange }) {
   );
 }
 
-function TarjetaVisita({ visit, onEdit }) {
+function TarjetaVisita({ visita, onEdit }) {
   return (
     <button
-      className={`agenda__visit-card is-${statusTone(visit.status)}`}
+      className={`agenda__visit-card is-${tonoEstado(visita.estado)}`}
       type="button"
-      onClick={() => onEdit(visit)}
-      aria-label={`Editar visita a ${visit.property} con ${visit.client || "cliente sin asignar"}, ${visit.date}, ${visit.time || "sin horario"}`}
+      onClick={() => onEdit(visita)}
+      aria-label={`Editar visita a ${visita.propiedad} con ${visita.cliente || "cliente sin asignar"}, ${visita.fecha}, ${visita.hora || "sin horario"}`}
     >
       <img className="agenda__visit-image" src={propertyImage} alt="" />
       <span className="agenda__visit-copy">
-        <span className="agenda__visit-time">{visit.time || "Sin horario"}</span>
-        <strong>{visit.property}</strong>
-        <span className="agenda__visit-client">{visit.client || "Cliente sin asignar"}</span>
+        <span className="agenda__visit-time">{visita.hora || "Sin horario"}</span>
+        <strong>{visita.propiedad}</strong>
+        <span className="agenda__visit-client">{visita.cliente || "Cliente sin asignar"}</span>
       </span>
-      <span className={`agenda__visit-status is-${statusTone(visit.status)}`}>
-        {visit.status}
+      <span className={`agenda__visit-status is-${tonoEstado(visita.estado)}`}>
+        {visita.estado}
       </span>
     </button>
   );
 }
 
-function EncabezadoAgenda({ view, onViewChange, onCreate, onUpcomingOpen, canManage }) {
+function EncabezadoAgenda({ view, onViewChange, onCreate, onUpcomingOpen, puedeGestionar }) {
   return (
-    <div className={`agenda__topbar${canManage ? " has-new-visit" : ""}`}>
+    <div className={`agenda__topbar${puedeGestionar ? " has-new-visit" : ""}`}>
       <header className="agenda__hero">
         <h1>Agenda</h1>
         <p>Organizá tus visitas y seguí cada encuentro con tus clientes.</p>
       </header>
-      {canManage && <Boton className="agenda__new-visit" icon={plusIcon} text="Nueva visita" onClick={onCreate} />}
+      {puedeGestionar && <Boton className="agenda__new-visit" icon={plusIcon} text="Nueva visita" onClick={onCreate} />}
       <div className="agenda__view-toggle" role="group" aria-label="Tipo de vista">
-        {viewOptions.map(({ id, label }) => (
+        {opcionesVista.map(({ id, label }) => (
           <Boton
             key={id}
             className={view === id ? "is-active" : ""}
@@ -143,9 +143,9 @@ function EncabezadoAgenda({ view, onViewChange, onCreate, onUpcomingOpen, canMan
   );
 }
 
-function ProximasVisitas({ visits, onEdit, open, onClose }) {
+function ProximasVisitas({ visitas, onEdit, open, onClose }) {
   const [showAll, setShowAll] = useState(false);
-  const { page, totalPages, pageItems, setPage, resetPage } = usePaginacion(visits);
+  const { page, totalPages, pageItems, setPage, resetPage } = usePaginacion(visitas);
   return (
     <aside
       className={`agenda__sidebar${open ? " is-open" : ""}`}
@@ -170,67 +170,67 @@ function ProximasVisitas({ visits, onEdit, open, onClose }) {
       </div>
       <p className="agenda__sidebar-caption">Tus encuentros desde hoy</p>
       <div className="agenda__upcoming-list">
-        {(showAll ? pageItems : visits.slice(0, 5)).map((visit) => (
+        {(showAll ? pageItems : visitas.slice(0, 5)).map((visita) => (
           <button
             className="agenda__upcoming-item"
             type="button"
-            key={visit.id}
-            onClick={() => onEdit(visit)}
-            aria-label={`Editar visita a ${visit.property} del ${visit.date}`}
+            key={visita.id}
+            onClick={() => onEdit(visita)}
+            aria-label={`Editar visita a ${visita.propiedad} del ${visita.fecha}`}
           >
             <img src={propertyImage} alt="" />
             <span className="agenda__upcoming-copy">
-              <strong>{visit.property}</strong>
+              <strong>{visita.propiedad}</strong>
               <span>
-                {capitalize(
-                  parseDate(visit.date).toLocaleDateString("es-AR", {
+                {capitalizar(
+                  interpretarFecha(visita.fecha).toLocaleDateString("es-AR", {
                     day: "numeric",
                     month: "short",
                   }),
                 )}{" "}
-                · {visit.time?.split(" - ")[0] || "Sin horario"}
+                · {visita.hora?.split(" - ")[0] || "Sin horario"}
               </span>
               <small>
                 <img src={userIcon} alt="" />
-                {visit.client || visit.agent}
+                {visita.cliente || visita.agente}
               </small>
             </span>
             <span
-              className={`agenda__upcoming-dot is-${statusTone(visit.status)}`}
-              aria-label={visit.status}
+              className={`agenda__upcoming-dot is-${tonoEstado(visita.estado)}`}
+              aria-label={visita.estado}
             />
           </button>
         ))}
-        {!visits.length && (
+        {!visitas.length && (
           <p className="agenda__empty-upcoming">
             No hay próximas visitas. Agendá una nueva para verla acá.
           </p>
         )}
       </div>
-      {showAll && <Paginacion page={page} totalPages={totalPages} total={visits.length} onPageChange={setPage} />}
-      {visits.length > 5 && (
+      {showAll && <Paginacion page={page} totalPages={totalPages} total={visitas.length} onPageChange={setPage} />}
+      {visitas.length > 5 && (
         <button
           className="agenda__show-all"
           type="button"
           onClick={() => { setShowAll((value) => !value); resetPage(); }}
         >
-          {showAll ? "Ver menos" : `Ver todas (${visits.length})`}
+          {showAll ? "Ver menos" : `Ver todas (${visitas.length})`}
         </button>
       )}
     </aside>
   );
 }
 
-function VistaDia({ visits, date, onEdit, onDateChange }) {
-  const visitsForDay = visits.filter((visit) => visit.date === date);
+function VistaDia({ visitas, fecha: date, onEdit, onDateChange }) {
+  const visitsForDay = visitas.filter((visita) => visita.fecha === date);
   return (
     <section className="agenda__panel agenda__day" aria-labelledby="day-title">
       <div className="agenda__panel-heading">
         <div>
           <p className="agenda__eyebrow">Vista diaria</p>
           <h2 id="day-title">
-            {capitalize(
-              parseDate(date).toLocaleDateString("es-AR", {
+            {capitalizar(
+              interpretarFecha(date).toLocaleDateString("es-AR", {
                 weekday: "long",
                 day: "numeric",
                 month: "long",
@@ -245,12 +245,12 @@ function VistaDia({ visits, date, onEdit, onDateChange }) {
         <ControlesPeriodo date={date} view="day" onDateChange={onDateChange} />
       </div>
       <div className="agenda__day-list">
-        {timeSlots.map((time, index) => {
-          const events = visitsForDay.filter((visit) => {
-            const hour = Number.parseInt(visit.time || "8", 10);
+        {franjasHorarias.map((time, index) => {
+          const events = visitsForDay.filter((visita) => {
+            const hour = Number.parseInt(visita.hora || "8", 10);
             return (
               (index === 0 || hour >= Number.parseInt(time, 10)) &&
-              (index === timeSlots.length - 1 || hour < Number.parseInt(timeSlots[index + 1], 10))
+              (index === franjasHorarias.length - 1 || hour < Number.parseInt(franjasHorarias[index + 1], 10))
             );
           });
           return (
@@ -261,7 +261,7 @@ function VistaDia({ visits, date, onEdit, onDateChange }) {
               </div>
               <div className="agenda__day-events">
                 {events.length ? (
-                  events.map((visit) => <TarjetaVisita key={visit.id} visit={visit} onEdit={onEdit} />)
+                  events.map((visita) => <TarjetaVisita key={visita.id} visita={visita} onEdit={onEdit} />)
                 ) : (
                   <p>Sin visitas en este horario</p>
                 )}
@@ -275,8 +275,8 @@ function VistaDia({ visits, date, onEdit, onDateChange }) {
   );
 }
 
-function VistaSemana({ visits, date, onEdit, onDateChange, onDaySelect }) {
-  const start = parseDate(date);
+function VistaSemana({ visitas, fecha: date, onEdit, onDateChange, onDaySelect }) {
+  const start = interpretarFecha(date);
   start.setDate(start.getDate() - ((start.getDay() + 6) % 7));
   const days = Array.from(
     { length: 7 },
@@ -288,8 +288,8 @@ function VistaSemana({ visits, date, onEdit, onDateChange, onDaySelect }) {
   const range = sameMonth
     ? `${start.getDate()} al ${end.toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric" })}`
     : `${start.toLocaleDateString("es-AR", { day: "numeric", month: "short" })} al ${end.toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric" })}`;
-  const weekCount = visits.filter(
-    (visit) => visit.date >= dateKey(start) && visit.date <= dateKey(end),
+  const weekCount = visitas.filter(
+    (visita) => visita.fecha >= claveFecha(start) && visita.fecha <= claveFecha(end),
   ).length;
   return (
     <section className="agenda__panel agenda__week" aria-labelledby="week-title">
@@ -305,22 +305,22 @@ function VistaSemana({ visits, date, onEdit, onDateChange, onDaySelect }) {
       </div>
       <div className="agenda__week-list">
         {days.map((day) => {
-          const events = visits.filter((visit) => visit.date === dateKey(day));
+          const events = visitas.filter((visita) => visita.fecha === claveFecha(day));
           return (
-            <div className="agenda__week-row" key={dateKey(day)}>
+            <div className="agenda__week-row" key={claveFecha(day)}>
               <button
-                className={`agenda__date-pill${dateKey(day) === dateKey(new Date()) ? " is-today" : ""}`}
+                className={`agenda__date-pill${claveFecha(day) === claveFecha(new Date()) ? " is-today" : ""}`}
                 type="button"
-                onClick={() => onDaySelect(dateKey(day))}
+                onClick={() => onDaySelect(claveFecha(day))}
                 aria-label={`Ver agenda del ${day.toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long" })}`}
               >
                 <small>{day.toLocaleDateString("es-AR", { weekday: "short" }).toUpperCase()}</small>
                 <strong>{day.getDate()}</strong>
-                <small>{capitalize(day.toLocaleDateString("es-AR", { month: "short" }))}</small>
+                <small>{capitalizar(day.toLocaleDateString("es-AR", { month: "short" }))}</small>
               </button>
               <div className="agenda__week-events">
                 {events.length ? (
-                  events.map((visit) => <TarjetaVisita key={visit.id} visit={visit} onEdit={onEdit} />)
+                  events.map((visita) => <TarjetaVisita key={visita.id} visita={visita} onEdit={onEdit} />)
                 ) : (
                   <p>No hay visitas programadas</p>
                 )}
@@ -334,8 +334,8 @@ function VistaSemana({ visits, date, onEdit, onDateChange, onDaySelect }) {
   );
 }
 
-function VistaMes({ visits, date, onEdit, onDateChange }) {
-  const activeDate = parseDate(date);
+function VistaMes({ visitas, fecha: date, onEdit, onDateChange }) {
+  const activeDate = interpretarFecha(date);
   const first = new Date(activeDate.getFullYear(), activeDate.getMonth(), 1);
   const leading = (first.getDay() + 6) % 7;
   const totalDays = new Date(activeDate.getFullYear(), activeDate.getMonth() + 1, 0).getDate();
@@ -344,15 +344,15 @@ function VistaMes({ visits, date, onEdit, onDateChange }) {
     (_, index) => new Date(first.getFullYear(), first.getMonth(), 1 - leading + index),
   );
 
-  const monthCount = visits.filter((visit) => visit.date.slice(0, 7) === date.slice(0, 7)).length;
-  const selectedVisits = visits.filter((visit) => visit.date === date);
+  const monthCount = visitas.filter((visita) => visita.fecha.slice(0, 7) === date.slice(0, 7)).length;
+  const selectedVisits = visitas.filter((visita) => visita.fecha === date);
   return (
     <section className="agenda__panel agenda__month" aria-labelledby="month-title">
       <div className="agenda__panel-heading">
         <div>
           <p className="agenda__eyebrow">Vista mensual</p>
           <h2 id="month-title">
-            {capitalize(activeDate.toLocaleDateString("es-AR", { month: "long", year: "numeric" }))}
+            {capitalizar(activeDate.toLocaleDateString("es-AR", { month: "long", year: "numeric" }))}
           </h2>
           <span className="agenda__total">
             {monthCount} {monthCount === 1 ? "visita" : "visitas"}
@@ -372,11 +372,11 @@ function VistaMes({ visits, date, onEdit, onDateChange }) {
           </strong>
         ))}
         {days.map((day) => {
-          const key = dateKey(day);
-          const events = visits.filter((visit) => visit.date === key);
+          const key = claveFecha(day);
+          const events = visitas.filter((visita) => visita.fecha === key);
           return (
             <div
-              className={`agenda__month-cell${day.getMonth() !== activeDate.getMonth() ? " is-outside" : ""}${key === date ? " is-selected" : ""}${key === dateKey(new Date()) ? " is-today" : ""}`}
+              className={`agenda__month-cell${day.getMonth() !== activeDate.getMonth() ? " is-outside" : ""}${key === date ? " is-selected" : ""}${key === claveFecha(new Date()) ? " is-today" : ""}`}
               key={key}
               role="gridcell"
               aria-selected={key === date}
@@ -390,16 +390,16 @@ function VistaMes({ visits, date, onEdit, onDateChange }) {
                 {day.getDate()}
               </button>
               <div className="agenda__month-events">
-                {events.slice(0, 2).map((visit) => (
+                {events.slice(0, 2).map((visita) => (
                   <button
-                    className={`agenda__month-event is-${statusTone(visit.status)}`}
+                    className={`agenda__month-event is-${tonoEstado(visita.estado)}`}
                     type="button"
-                    key={visit.id}
-                    onClick={() => onEdit(visit)}
-                    aria-label={`Editar visita a ${visit.property} del ${key}`}
+                    key={visita.id}
+                    onClick={() => onEdit(visita)}
+                    aria-label={`Editar visita a ${visita.propiedad} del ${key}`}
                   >
                     <span>
-                      {visit.time?.split(" - ")[0] || "Sin horario"} {visit.property}
+                      {visita.hora?.split(" - ")[0] || "Sin horario"} {visita.propiedad}
                     </span>
                   </button>
                 ))}
@@ -420,7 +420,7 @@ function VistaMes({ visits, date, onEdit, onDateChange }) {
       <div className="agenda__selected-day">
         <div className="agenda__selected-day-heading">
           <h3>
-            {capitalize(
+            {capitalizar(
               activeDate.toLocaleDateString("es-AR", {
                 weekday: "long",
                 day: "numeric",
@@ -434,8 +434,8 @@ function VistaMes({ visits, date, onEdit, onDateChange }) {
         </div>
         {selectedVisits.length ? (
           <div className="agenda__selected-day-cards">
-            {selectedVisits.map((visit) => (
-              <TarjetaVisita key={visit.id} visit={visit} onEdit={onEdit} />
+            {selectedVisits.map((visita) => (
+              <TarjetaVisita key={visita.id} visita={visita} onEdit={onEdit} />
             ))}
           </div>
         ) : (
@@ -448,76 +448,76 @@ function VistaMes({ visits, date, onEdit, onDateChange }) {
 
 export default function Agenda() {
   const [view, setView] = useState("day");
-  const [date, setDate] = useState(() => dateKey(new Date()));
-  const [visits, setVisits] = useState([]);
-  const [properties, setProperties] = useState([]);
-  const [clients, setClients] = useState([]);
-  const [agents, setAgents] = useState([]);
+  const [date, setDate] = useState(() => claveFecha(new Date()));
+  const [visitas, setVisitas] = useState([]);
+  const [propiedades, setPropiedades] = useState([]);
+  const [clientes, setClientes] = useState([]);
+  const [agentes, setAgentes] = useState([]);
   const [modal, setModal] = useState(null);
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [upcomingOpen, setUpcomingOpen] = useState(false);
-  const canManage = tieneRol(ROLES.AGENTE);
+  const [cargando, setCargando] = useState(true);
+  const [proximasAbiertas, setProximasAbiertas] = useState(false);
+  const puedeGestionar = tieneRol(ROLES.AGENTE);
 
   useEffect(() => {
     let active = true;
-    const requests = canManage
+    const requests = puedeGestionar
       ? Promise.all([api.todasLasVisitas(), api.propiedades(), api.catalogosPropiedades(), api.clientesVisitas()])
       : Promise.all([api.todasLasVisitas()]);
 
     requests
-      .then(([visitRows, propertyRows = [], catalogs = { agentes: [] }, clientRows = []]) => {
+      .then(([visitasRecibidas, propiedadesRecibidas = [], catalogos = { agentes: [] }, clientesRecibidos = []]) => {
         if (!active) return;
-        setVisits(visitRows.map(toVisit));
-        setProperties(propertyRows);
-        setAgents(catalogs.agentes);
-        setClients(clientRows);
+        setVisitas(visitasRecibidas.map(prepararVisita));
+        setPropiedades(propiedadesRecibidas);
+        setAgentes(catalogos.agentes);
+        setClientes(clientesRecibidos);
       })
       .catch((cause) => {
         if (!active) return;
         setError(cause.message);
         mostrarAviso({ tipo: "error", titulo: "No se pudo cargar la agenda", mensaje: cause.message });
       })
-      .finally(() => { if (active) setLoading(false); });
+      .finally(() => { if (active) setCargando(false); });
     return () => { active = false; };
-  }, [canManage]);
+  }, [puedeGestionar]);
 
   useEffect(() => {
-    if (!upcomingOpen) return undefined;
-    function closeOnEscape(event) {
-      if (event.key === "Escape") setUpcomingOpen(false);
+    if (!proximasAbiertas) return undefined;
+    function cerrarConEscape(event) {
+      if (event.key === "Escape") setProximasAbiertas(false);
     }
-    document.addEventListener("keydown", closeOnEscape);
-    return () => document.removeEventListener("keydown", closeOnEscape);
-  }, [upcomingOpen]);
+    document.addEventListener("keydown", cerrarConEscape);
+    return () => document.removeEventListener("keydown", cerrarConEscape);
+  }, [proximasAbiertas]);
 
-  function editVisit(visit) {
-    if (!canManage) return;
-    setUpcomingOpen(false);
-    setModal({ visit });
+  function editarVisita(visita) {
+    if (!puedeGestionar) return;
+    setProximasAbiertas(false);
+    setModal({ visita });
   }
 
-  async function saveVisit(values) {
-    const editing = modal.visit;
-    const { status, motivo, clientName, clientSurname, clientInterest, ...body } = values;
+  async function guardarVisita(values) {
+    const enEdicion = modal.visita;
+    const { estado: status, motivo, nombreCliente, apellidoCliente, interesCliente, ...body } = values;
     if (!body.idCliente && status !== "Cancelada") {
-      const client = await api.crearClienteVisita({ nombre: clientName, apellido: clientSurname, interes: clientInterest });
-      body.idCliente = client.id;
-      setClients((current) => [...current, client]);
+      const cliente = await api.crearClienteVisita({ nombre: nombreCliente, apellido: apellidoCliente, interes: interesCliente });
+      body.idCliente = cliente.id;
+      setClientes((current) => [...current, cliente]);
     }
     let saved;
-    if (editing && status === "Cancelada") {
-      saved = await api.cancelarVisita(editing.id, motivo);
-    } else if (editing) {
-      saved = await api.actualizarVisita(editing.id, { ...body, estado: status });
+    if (enEdicion && status === "Cancelada") {
+      saved = await api.cancelarVisita(enEdicion.id, motivo);
+    } else if (enEdicion) {
+      saved = await api.actualizarVisita(enEdicion.id, { ...body, estado: status });
     } else {
       saved = await api.crearVisita(body);
     }
-    const normalized = toVisit(saved);
-    setVisits((current) => editing ? current.map((visit) => visit.id === editing.id ? normalized : visit) : [...current, normalized]);
-    setDate(normalized.date);
+    const normalized = prepararVisita(saved);
+    setVisitas((current) => enEdicion ? current.map((visita) => visita.id === enEdicion.id ? normalized : visita) : [...current, normalized]);
+    setDate(normalized.fecha);
     setView("day");
-    const titulo = editing
+    const titulo = enEdicion
       ? status === "Cancelada" ? "Visita cancelada" : "Visita modificada"
       : "Visita agendada";
     mostrarAviso({
@@ -525,46 +525,45 @@ export default function Agenda() {
       titulo,
       mensaje: titulo === "Visita cancelada"
         ? "La visita se canceló correctamente."
-        : editing ? "Los cambios de la visita se guardaron." : "La visita se agregó a la agenda.",
+        : enEdicion ? "Los cambios de la visita se guardaron." : "La visita se agregó a la agenda.",
     });
     setModal(null);
     setError("");
   }
 
-  const upcomingVisits = visits
-    .filter((visit) => visit.date >= dateKey(new Date()) && visit.status !== "Cancelada")
+  const proximasVisitas = visitas
+    .filter((visita) => visita.fecha >= claveFecha(new Date()) && visita.estado !== "Cancelada")
     .sort(
       (first, second) =>
-        first.date.localeCompare(second.date) ||
-        (first.time || "").localeCompare(second.time || ""),
+        first.fecha.localeCompare(second.fecha) ||
+        (first.hora || "").localeCompare(second.hora || ""),
     );
 
-  if (loading) return <PageSkeleton variant="agenda" />;
+  if (cargando) return <PageSkeleton variant="agenda" />;
 
   return (
     <main id="agenda">
-      <div className={`agenda__content${loading || error ? " has-message" : ""}`}>
+      <div className={`agenda__content${error ? " has-message" : ""}`}>
         <EncabezadoAgenda
-          canManage={canManage}
+          puedeGestionar={puedeGestionar}
           view={view}
           onViewChange={setView}
-          onCreate={() => { if (canManage) setModal({ visit: null }); }}
-          onUpcomingOpen={() => setUpcomingOpen(true)}
+          onCreate={() => { if (puedeGestionar) setModal({ visita: null }); }}
+          onUpcomingOpen={() => setProximasAbiertas(true)}
         />
-        {(loading || error) && (
+        {error && (
           <div className="agenda__messages">
-            {loading && <p className="agenda__message" role="status">Cargando visitas…</p>}
-            {error && <p className="agenda__message" role="alert">{error}</p>}
+            <p className="agenda__message" role="alert">{error}</p>
           </div>
         )}
         {view === "day" && (
-          <VistaDia visits={visits} date={date} onEdit={editVisit} onDateChange={setDate} />
+          <VistaDia visitas={visitas} date={date} onEdit={editarVisita} onDateChange={setDate} />
         )}
         {view === "week" && (
           <VistaSemana
-            visits={visits}
+            visitas={visitas}
             date={date}
-            onEdit={editVisit}
+            onEdit={editarVisita}
             onDateChange={setDate}
             onDaySelect={(value) => {
               setDate(value);
@@ -573,32 +572,32 @@ export default function Agenda() {
           />
         )}
         {view === "month" && (
-          <VistaMes visits={visits} date={date} onEdit={editVisit} onDateChange={setDate} />
+          <VistaMes visitas={visitas} date={date} onEdit={editarVisita} onDateChange={setDate} />
         )}
         <ProximasVisitas
-          visits={upcomingVisits}
-          onEdit={editVisit}
-          open={upcomingOpen}
-          onClose={() => setUpcomingOpen(false)}
+          visitas={proximasVisitas}
+          onEdit={editarVisita}
+          open={proximasAbiertas}
+          onClose={() => setProximasAbiertas(false)}
         />
-        {upcomingOpen && (
+        {proximasAbiertas && (
           <button
             className="agenda__sidebar-backdrop"
             type="button"
             aria-label="Cerrar próximas visitas"
-            onClick={() => setUpcomingOpen(false)}
+            onClick={() => setProximasAbiertas(false)}
           />
         )}
       </div>
       {modal && (
         <VisitaModal
-          visit={modal.visit}
-          defaultDate={date}
-          properties={properties}
-          clients={clients}
-          agents={agents}
+          visita={modal.visita}
+          fechaInicial={date}
+          propiedades={propiedades}
+          clientes={clientes}
+          agentes={agentes}
           onClose={() => setModal(null)}
-          onSubmit={saveVisit}
+          onSubmit={guardarVisita}
         />
       )}
     </main>

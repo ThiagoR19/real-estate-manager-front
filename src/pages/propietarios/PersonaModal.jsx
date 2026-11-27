@@ -2,30 +2,30 @@ import { useState } from "react";
 import { addressCardIcon, buildingColumnsIcon, envelopeIcon, houseIcon, locationDotIcon, peopleIcon, phoneIcon, userIcon } from "../../assets/icons";
 import { GestionModal, AccionesModal, CampoModal, EntradaModal, ModalSelect, mostrarAviso } from "../../components";
 
-const propertyOptions = ["Av. San Martín 1250", "Av. Santa Fe 850"];
-const ownerStatusOptions = ["Activo", "Inactivo"];
-const agentStatusOptions = ["Activo", "Inactivo", "Pendiente"];
+const opcionesPropiedad = ["Av. San Martín 1250", "Av. Santa Fe 850"];
+const estadosPropietario = ["Activo", "Inactivo"];
+const estadosAgente = ["Activo", "Inactivo", "Pendiente"];
 
-function initialForm(person, kind) {
-  const [firstName = "", ...lastName] = (person?.name || "").trim().split(/\s+/);
+function formularioInicial(persona, kind) {
+  const [nombre = "", ...apellido] = (persona?.nombreCompleto || "").trim().split(/\s+/);
 
   return {
-    firstName: person && "nombre" in person ? person.nombre || "" : firstName,
-    lastName: person && "apellido" in person ? person.apellido || "" : lastName.join(" "),
-    email: person?.email || "",
-    phone: person?.phone || "",
-    address: person?.address || "",
-    dni: person?.dni || "",
-    cbu: person?.cbu || "",
-    alias: person?.alias || "",
-    property: person?.property || (kind === "owner" ? person?.address : "") || propertyOptions[0],
-    zone: person?.zone || person?.area || "",
-    status: person?.status || ownerStatusOptions[0],
+    nombre: persona && "nombre" in persona ? persona.nombre || "" : nombre,
+    apellido: persona && "apellido" in persona ? persona.apellido || "" : apellido.join(" "),
+    correo: persona?.correo || "",
+    telefono: persona?.telefono || "",
+    direccion: persona?.direccion || "",
+    dni: persona?.dni || "",
+    cbu: persona?.cbu || "",
+    alias: persona?.alias || "",
+    propiedad: persona?.propiedad || (kind === "owner" ? persona?.direccion : "") || opcionesPropiedad[0],
+    zona: persona?.zona || persona?.area || "",
+    estado: persona?.estado || estadosPropietario[0],
   };
 }
 
-function personInitials(name) {
-  return name
+function inicialesPersona(nombre) {
+  return nombre
     .trim()
     .split(/\s+/)
     .filter(Boolean)
@@ -35,27 +35,27 @@ function personInitials(name) {
     .toUpperCase();
 }
 
-export default function PersonaModal({ kind, mode, person, zones = [], onClose, onSubmit }) {
-  const [form, setForm] = useState(() => initialForm(person, kind));
-  const isOwner = kind === "owner";
-  const isEditing = mode === "edit";
-  const noun = isOwner ? "propietario" : "agente";
-  const displayName = person?.name || (isOwner ? "Propietario" : "Agente");
+export default function PersonaModal({ kind, mode, persona, zones = [], onClose, onSubmit }) {
+  const [formulario, setFormulario] = useState(() => formularioInicial(persona, kind));
+  const esPropietario = kind === "owner";
+  const esEdicion = mode === "edit";
+  const entidad = esPropietario ? "propietario" : "agente";
+  const nombreVisible = persona?.nombreCompleto || (esPropietario ? "Propietario" : "Agente");
 
-  function updateField(event) {
-    const { name, value } = event.target;
-    setForm((current) => ({ ...current, [name]: value }));
+  function actualizarCampo(event) {
+    const { name: nombre, value } = event.target;
+    setFormulario((current) => ({ ...current, [nombre]: value }));
   }
 
-  async function submit(event) {
+  async function enviarFormulario(event) {
     event.preventDefault();
-    const name = `${form.firstName.trim()} ${form.lastName.trim()}`.trim();
+    const nombreCompleto = `${formulario.nombre.trim()} ${formulario.apellido.trim()}`.trim();
     try {
-      await onSubmit({ ...form, name, initials: personInitials(name) });
+      await onSubmit({ ...formulario, nombreCompleto, iniciales: inicialesPersona(nombreCompleto) });
     } catch (cause) {
       mostrarAviso({
         tipo: "error",
-        titulo: isEditing ? `No se pudo actualizar el ${noun}` : `No se pudo crear el ${noun}`,
+        titulo: esEdicion ? `No se pudo actualizar el ${entidad}` : `No se pudo crear el ${entidad}`,
         mensaje: cause.message || "No se pudieron guardar los cambios.",
       });
     }
@@ -64,51 +64,51 @@ export default function PersonaModal({ kind, mode, person, zones = [], onClose, 
   return (
     <GestionModal
       onClose={onClose}
-      title={`${isEditing ? "Editar" : "Crear"} ${noun}`}
-      subtitle={isEditing ? `Actualiza la información principal del ${noun}` : `Completá los datos del ${noun} para crear su cuenta.`}
-      variant={isOwner ? "person-owner" : "person-agent"}
+      title={`${esEdicion ? "Editar" : "Crear"} ${entidad}`}
+      subtitle={esEdicion ? `Actualiza la información principal del ${entidad}` : `Completá los datos del ${entidad} para crear su cuenta.`}
+      variant={esPropietario ? "person-owner" : "person-agent"}
     >
-      <form onSubmit={submit}>
+      <form onSubmit={enviarFormulario}>
         <div className="gestion-modal__card">
           <div className="gestion-modal__summary">
             <span className="gestion-modal__avatar" aria-hidden="true">
-              {person ? personInitials(displayName) : isOwner ? "PR" : "AG"}
+              {persona ? inicialesPersona(nombreVisible) : esPropietario ? "PR" : "AG"}
             </span>
             <span>
-              <strong>{displayName}</strong>
-              <small>{isOwner && isEditing ? form.status : person?.status || "Estado"}</small>
+              <strong>{nombreVisible}</strong>
+              <small>{esPropietario && esEdicion ? formulario.estado : persona?.estado || "Estado"}</small>
             </span>
           </div>
           <div className="gestion-modal__fields">
             <CampoModal label="Nombre">
               <EntradaModal
                 icon={userIcon}
-                name="firstName"
-                value={form.firstName}
-                onChange={updateField}
+                name="nombre"
+                value={formulario.nombre}
+                onChange={actualizarCampo}
                 placeholder="Nombre"
                 autoComplete="given-name"
-                required={!isEditing}
+                required={!esEdicion}
               />
             </CampoModal>
             <CampoModal label="Apellido">
               <EntradaModal
                 icon={userIcon}
-                name="lastName"
-                value={form.lastName}
-                onChange={updateField}
+                name="apellido"
+                value={formulario.apellido}
+                onChange={actualizarCampo}
                 placeholder="Apellido"
                 autoComplete="family-name"
-                required={!isEditing}
+                required={!esEdicion}
               />
             </CampoModal>
             <CampoModal label="Correo">
               <EntradaModal
                 icon={envelopeIcon}
-                name="email"
+                name="correo"
                 type="email"
-                value={form.email}
-                onChange={updateField}
+                value={formulario.correo}
+                onChange={actualizarCampo}
                 placeholder="ejemplo@gmail.com"
                 autoComplete="email"
               />
@@ -116,10 +116,10 @@ export default function PersonaModal({ kind, mode, person, zones = [], onClose, 
             <CampoModal label="Teléfono">
               <EntradaModal
                 icon={phoneIcon}
-                name="phone"
+                name="telefono"
                 type="tel"
-                value={form.phone}
-                onChange={updateField}
+                value={formulario.telefono}
+                onChange={actualizarCampo}
                 placeholder="2133 123123"
                 autoComplete="tel"
               />
@@ -127,9 +127,9 @@ export default function PersonaModal({ kind, mode, person, zones = [], onClose, 
             <CampoModal label="Dirección">
               <EntradaModal
                 icon={locationDotIcon}
-                name="address"
-                value={form.address}
-                onChange={updateField}
+                name="direccion"
+                value={formulario.direccion}
+                onChange={actualizarCampo}
                 placeholder="Av. San Martín 12"
                 autoComplete="street-address"
               />
@@ -138,23 +138,23 @@ export default function PersonaModal({ kind, mode, person, zones = [], onClose, 
               <EntradaModal
                 icon={addressCardIcon}
                 name="dni"
-                value={form.dni}
-                onChange={updateField}
+                value={formulario.dni}
+                onChange={actualizarCampo}
                 placeholder="12123123"
                 inputMode="numeric"
                 required
                 pattern="[0-9]{7,8}"
-                readOnly={isEditing}
+                readOnly={esEdicion}
               />
             </CampoModal>
-            {isOwner && (
+            {esPropietario && (
               <>
                 <CampoModal label="CBU">
                   <EntradaModal
                     icon={buildingColumnsIcon}
                     name="cbu"
-                    value={form.cbu}
-                    onChange={updateField}
+                    value={formulario.cbu}
+                    onChange={actualizarCampo}
                     placeholder="2680000611000012436763"
                     inputMode="numeric"
                     maxLength={22}
@@ -164,38 +164,38 @@ export default function PersonaModal({ kind, mode, person, zones = [], onClose, 
                   <EntradaModal
                     icon={buildingColumnsIcon}
                     name="alias"
-                    value={form.alias}
-                    onChange={updateField}
+                    value={formulario.alias}
+                    onChange={actualizarCampo}
                     placeholder="pepe.cacho.felicidad"
                   />
                 </CampoModal>
               </>
             )}
-            {isEditing && !isOwner && <CampoModal label="Ciudad">
+            {esEdicion && !esPropietario && <CampoModal label="Ciudad">
               <ModalSelect
                 label="Ciudad"
                 icon={houseIcon}
                 options={["Sin asignar", ...zones]}
-                value={form.zone || "Sin asignar"}
+                value={formulario.zona || "Sin asignar"}
                 onChange={(value) => {
-                  setForm((current) => ({ ...current, zone: value === "Sin asignar" ? "" : value }));
+                  setFormulario((current) => ({ ...current, zona: value === "Sin asignar" ? "" : value }));
                 }}
               />
             </CampoModal>}
-            {isEditing && <CampoModal label="Estado">
+            {esEdicion && <CampoModal label="Estado">
               <ModalSelect
                 label="Estado"
                 icon={peopleIcon}
-                options={isOwner ? ownerStatusOptions : ["Estado", ...agentStatusOptions]}
-                value={form.status}
-                onChange={(status) => {
-                  if (status !== "Estado") setForm((current) => ({ ...current, status }));
+                options={esPropietario ? estadosPropietario : ["Estado", ...estadosAgente]}
+                value={formulario.estado}
+                onChange={(estado) => {
+                  if (estado !== "Estado") setFormulario((current) => ({ ...current, estado }));
                 }}
               />
             </CampoModal>}
           </div>
         </div>
-        <AccionesModal onClose={onClose} submitText={isEditing ? "Guardar cambios" : `Crear ${noun}`} />
+        <AccionesModal onClose={onClose} submitText={esEdicion ? "Guardar cambios" : `Crear ${entidad}`} />
       </form>
     </GestionModal>
   );

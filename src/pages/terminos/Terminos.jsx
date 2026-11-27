@@ -65,7 +65,7 @@ export default function Terminos({ publico = false }) {
   const contentRef = useRef(null);
   const sectionRefs = useRef({});
 
-  function navigateToSection(event, id) {
+  function irASeccion(event, id) {
     event.preventDefault();
     const section = sectionRefs.current[id];
     const content = contentRef.current;
@@ -128,7 +128,7 @@ export default function Terminos({ publico = false }) {
                 className="terminos__aside-nav-a"
                 href={`#terminos-${id}`}
                 aria-current={activeSection === id ? "location" : undefined}
-                onClick={(event) => navigateToSection(event, id)}
+                onClick={(event) => irASeccion(event, id)}
               >
                 <img src={icon} className="terminos__nav-a-img" alt="" />
                 <span className="terminos__nav-a-span">{title}</span>

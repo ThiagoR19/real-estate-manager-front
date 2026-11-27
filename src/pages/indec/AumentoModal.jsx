@@ -28,7 +28,7 @@ export default function AumentoModal({ year, error, onClose, onSubmit }) {
   if (!years.includes(year)) years.push(year);
   years.sort();
 
-  function update(name, value) {
+  function actualizarCampo(name, value) {
     setForm((current) => ({ ...current, [name]: value }));
   }
 
@@ -59,7 +59,7 @@ export default function AumentoModal({ year, error, onClose, onSubmit }) {
                 icon={calendarIcon}
                 options={years}
                 value={form.year}
-                onChange={(value) => update("year", value)}
+                onChange={(value) => actualizarCampo("year", value)}
               />
             </CampoModal>
             <CampoModal label="Mes">
@@ -68,7 +68,7 @@ export default function AumentoModal({ year, error, onClose, onSubmit }) {
                 icon={calendarIcon}
                 options={monthNames}
                 value={form.month}
-                onChange={(value) => update("month", value)}
+                onChange={(value) => actualizarCampo("month", value)}
               />
             </CampoModal>
             <CampoModal label="Porcentaje">
@@ -80,7 +80,7 @@ export default function AumentoModal({ year, error, onClose, onSubmit }) {
                 step="0.01"
                 placeholder="Porcentaje de aumento"
                 value={form.percentage}
-                onChange={(event) => update("percentage", event.target.value)}
+                onChange={(event) => actualizarCampo("percentage", event.target.value)}
                 required
               />
             </CampoModal>

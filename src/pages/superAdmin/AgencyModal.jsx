@@ -62,15 +62,7 @@ function Invitacion({ agency, invitacion, onClose }) {
   );
 }
 
-export default function AgencyModal({
-  mode = "create",
-  agency,
-  invitacion,
-  enviando = false,
-  onClose,
-  onSubmit,
-  onDelete,
-}) {
+export default function AgencyModal({ mode = "create", agency, invitacion, enviando = false, onClose, onSubmit, onDelete }) {
   const isAdmin = mode === "admin";
   const isEditing = mode === "edit";
   const [value, setValue] = useState(isEditing ? agency?.name || "" : "");
@@ -87,7 +79,7 @@ export default function AgencyModal({
     setAdmin((actual) => ({ ...actual, [name]: name === "dni" ? valor.replace(/\D/g, "").slice(0, 8) : valor }));
   }
 
-  function handleSubmit(event) {
+  function enviarFormulario(event) {
     event.preventDefault();
     if (isAdmin) {
       onSubmit({ nombre: admin.nombre.trim(), apellido: admin.apellido.trim(), dni: admin.dni });
@@ -104,7 +96,7 @@ export default function AgencyModal({
       onClose={onClose}
       variant="inmobiliaria"
     >
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={enviarFormulario}>
         <div className="gestion-modal__card agency-modal__card">
           <div className="gestion-modal__summary agency-modal__band" aria-hidden="true" />
           {isEditing && onDelete && (

@@ -118,7 +118,7 @@ export default function Perfil() {
     setVisiblePasswords((current) => ({ ...current, [id]: !current[id] }));
   }, []);
 
-  async function closeSession() {
+  async function cerrarSesion() {
     setLoggingOut(true);
     try {
       await api.cerrarSesion();
@@ -129,7 +129,7 @@ export default function Perfil() {
     }
   }
 
-  const handleSubmit = async (e) => {
+  const enviarFormulario = async (e) => {
     e.preventDefault();
     const form = e.currentTarget;
     setSaving(true);
@@ -280,7 +280,7 @@ export default function Perfil() {
           </section>
         </aside>
 
-        <form id="perfil-form" className="perfil__content" onSubmit={handleSubmit}>
+        <form id="perfil-form" className="perfil__content" onSubmit={enviarFormulario}>
           <header className="perfil__content-header">
             <h2>Mi perfil</h2>
             <p>Administra tu información personal, seguridad y preferencias de cuenta</p>
@@ -345,7 +345,7 @@ export default function Perfil() {
           className="perfil__logout-button"
           icon={trashCanIcon}
           text={loggingOut ? "Cerrando sesión..." : "Cerrar sesión"}
-          onClick={closeSession}
+          onClick={cerrarSesion}
           disabled={loggingOut}
         />
         <Boton

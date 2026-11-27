@@ -4,67 +4,67 @@ import { GestionModal, AccionesModal, CampoModal, EntradaModal, mostrarAviso } f
 import "./VisitaModal.css";
 
 export default function VisitaModal({
-  visit,
-  defaultDate,
-  properties,
-  clients,
-  agents,
+  visita,
+  fechaInicial,
+  propiedades,
+  clientes,
+  agentes,
   onClose,
   onSubmit,
 }) {
-  const editing = Boolean(visit);
-  const [form, setForm] = useState({
-    date: visit?.date || defaultDate || "",
-    time: visit?.time || "10:00",
-    idCliente: String(visit?.idCliente || clients[0]?.id || "new"),
-    clientName: "",
-    clientSurname: "",
-    clientInterest: "ALQUILER",
-    idPropiedad: String(visit?.idPropiedad || properties[0]?.id || ""),
-    idAgente: String(visit?.idAgente || ""),
-    status: visit?.status || "Programada",
+  const enEdicion = Boolean(visita);
+  const [formulario, setFormulario] = useState({
+    fecha: visita?.fecha || fechaInicial || "",
+    hora: visita?.hora || "10:00",
+    idCliente: String(visita?.idCliente || clientes[0]?.id || "new"),
+    nombreCliente: "",
+    apellidoCliente: "",
+    interesCliente: "ALQUILER",
+    idPropiedad: String(visita?.idPropiedad || propiedades[0]?.id || ""),
+    idAgente: String(visita?.idAgente || ""),
+    estado: visita?.estado || "Programada",
     motivo: "",
   });
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
-  function update(name, value) {
-    setForm((current) => ({ ...current, [name]: value }));
+  function actualizarCampo(nombre, value) {
+    setFormulario((current) => ({ ...current, [nombre]: value }));
     setError("");
   }
 
-  async function submit(event) {
+  async function enviarFormulario(event) {
     event.preventDefault();
-    if (!form.idCliente || !form.idPropiedad) {
+    if (!formulario.idCliente || !formulario.idPropiedad) {
       setError("Seleccioná un cliente y una propiedad.");
       return;
     }
-    if (form.status === "Cancelada" && !form.motivo.trim()) {
+    if (formulario.estado === "Cancelada" && !formulario.motivo.trim()) {
       setError("Indicá el motivo de cancelación.");
       return;
     }
-    const fecha = new Date(`${form.date}T${form.time}:00`).toISOString();
-    if (form.idCliente === "new" && (!form.clientName.trim() || !form.clientSurname.trim())) {
+    const fecha = new Date(`${formulario.fecha}T${formulario.hora}:00`).toISOString();
+    if (formulario.idCliente === "new" && (!formulario.nombreCliente.trim() || !formulario.apellidoCliente.trim())) {
       setError("Ingresá el nombre y apellido del cliente.");
       return;
     }
     setBusy(true);
     try {
       await onSubmit({
-        idCliente: form.idCliente === "new" ? null : Number(form.idCliente),
-        clientName: form.clientName.trim(),
-        clientSurname: form.clientSurname.trim(),
-        clientInterest: form.clientInterest,
-        idPropiedad: Number(form.idPropiedad),
-        ...(editing || form.idAgente ? { idAgente: Number(form.idAgente) } : {}),
+        idCliente: formulario.idCliente === "new" ? null : Number(formulario.idCliente),
+        nombreCliente: formulario.nombreCliente.trim(),
+        apellidoCliente: formulario.apellidoCliente.trim(),
+        interesCliente: formulario.interesCliente,
+        idPropiedad: Number(formulario.idPropiedad),
+        ...(enEdicion || formulario.idAgente ? { idAgente: Number(formulario.idAgente) } : {}),
         fecha,
-        status: form.status,
-        motivo: form.motivo.trim(),
+        estado: formulario.estado,
+        motivo: formulario.motivo.trim(),
       });
     } catch (cause) {
       mostrarAviso({
         tipo: "error",
-        titulo: editing ? "No se pudo guardar la visita" : "No se pudo agendar la visita",
+        titulo: enEdicion ? "No se pudo guardar la visita" : "No se pudo agendar la visita",
         mensaje: cause.message,
       });
     } finally {
@@ -75,11 +75,11 @@ export default function VisitaModal({
   return (
     <GestionModal
       onClose={onClose}
-      title={editing ? "Editar visita" : "Agendar visita"}
+      title={enEdicion ? "Editar visita" : "Agendar visita"}
       subtitle="Completá los datos de la visita"
       variant="compact"
     >
-      <form className="visita-modal" onSubmit={submit}>
+      <form className="visita-modal" onSubmit={enviarFormulario}>
         <div className="gestion-modal__card">
           <div className="gestion-modal__summary visita-modal__summary">
             <strong className="visita-modal__section-title">
@@ -88,11 +88,11 @@ export default function VisitaModal({
             <div className="visita-modal__date">
               <EntradaModal
                 icon={calendarIcon}
-                name="date"
+                name="fecha"
                 type="date"
                 aria-label="Fecha de la visita"
-                value={form.date}
-                onChange={(event) => update("date", event.target.value)}
+                value={formulario.fecha}
+                onChange={(event) => actualizarCampo("fecha", event.target.value)}
                 required
               />
             </div>
@@ -103,40 +103,40 @@ export default function VisitaModal({
               <span className="visita-modal__select-wrap">
                 <img src={userIcon} alt="" />
                 <select
-                  value={form.idCliente}
-                  onChange={(event) => update("idCliente", event.target.value)}
+                  value={formulario.idCliente}
+                  onChange={(event) => actualizarCampo("idCliente", event.target.value)}
                   required
                 >
                   <option value="new">+ Nuevo cliente</option>
-                  {clients.map((client) => (
-                    <option value={client.id} key={client.id}>
-                      {client.nombre} {client.apellido}
+                  {clientes.map((cliente) => (
+                    <option value={cliente.id} key={cliente.id}>
+                      {cliente.nombre} {cliente.apellido}
                     </option>
                   ))}
                 </select>
               </span>
             </CampoModal>
 
-            {form.idCliente === "new" && (
+            {formulario.idCliente === "new" && (
               <div className="visita-modal__new-client">
                 <CampoModal label="Nombre">
                   <input
-                    value={form.clientName}
-                    onChange={(event) => update("clientName", event.target.value)}
+                    value={formulario.nombreCliente}
+                    onChange={(event) => actualizarCampo("nombreCliente", event.target.value)}
                     required
                   />
                 </CampoModal>
                 <CampoModal label="Apellido">
                   <input
-                    value={form.clientSurname}
-                    onChange={(event) => update("clientSurname", event.target.value)}
+                    value={formulario.apellidoCliente}
+                    onChange={(event) => actualizarCampo("apellidoCliente", event.target.value)}
                     required
                   />
                 </CampoModal>
                 <CampoModal label="Interés">
                   <select
-                    value={form.clientInterest}
-                    onChange={(event) => update("clientInterest", event.target.value)}
+                    value={formulario.interesCliente}
+                    onChange={(event) => actualizarCampo("interesCliente", event.target.value)}
                   >
                     <option value="ALQUILER">Alquiler</option>
                     <option value="COMPRA">Compra</option>
@@ -150,14 +150,14 @@ export default function VisitaModal({
               <span className="visita-modal__select-wrap">
                 <img src={houseIcon} alt="" />
                 <select
-                  value={form.idPropiedad}
-                  onChange={(event) => update("idPropiedad", event.target.value)}
+                  value={formulario.idPropiedad}
+                  onChange={(event) => actualizarCampo("idPropiedad", event.target.value)}
                   required
                 >
                   <option value="">Seleccioná una propiedad</option>
-                  {properties.map((property) => (
-                    <option value={property.id} key={property.id}>
-                      {property.nombre}
+                  {propiedades.map((propiedad) => (
+                    <option value={propiedad.id} key={propiedad.id}>
+                      {propiedad.nombre}
                     </option>
                   ))}
                 </select>
@@ -167,10 +167,10 @@ export default function VisitaModal({
             <CampoModal label="Hora">
               <EntradaModal
                 icon={clockIcon}
-                name="time"
+                name="hora"
                 type="time"
-                value={form.time}
-                onChange={(event) => update("time", event.target.value)}
+                value={formulario.hora}
+                onChange={(event) => actualizarCampo("hora", event.target.value)}
                 required
               />
             </CampoModal>
@@ -179,27 +179,27 @@ export default function VisitaModal({
               <span className="visita-modal__select-wrap">
                 <img src={peopleIcon} alt="" />
                 <select
-                  value={form.idAgente}
-                  onChange={(event) => update("idAgente", event.target.value)}
-                  required={editing}
+                  value={formulario.idAgente}
+                  onChange={(event) => actualizarCampo("idAgente", event.target.value)}
+                  required={enEdicion}
                 >
                   <option value="">Asignarme la visita</option>
-                  {agents.map((agent) => (
-                    <option value={agent.id} key={agent.id}>
-                      {agent.nombre}
+                  {agentes.map((agente) => (
+                    <option value={agente.id} key={agente.id}>
+                      {agente.nombre}
                     </option>
                   ))}
                 </select>
               </span>
             </CampoModal>
 
-            {editing && (
+            {enEdicion && (
               <CampoModal label="Estado">
                 <span className="visita-modal__select-wrap">
                   <img src={clockIcon} alt="" />
                   <select
-                    value={form.status}
-                    onChange={(event) => update("status", event.target.value)}
+                    value={formulario.estado}
+                    onChange={(event) => actualizarCampo("estado", event.target.value)}
                   >
                     {["Programada", "Realizada", "Cancelada"].map((status) => (
                       <option value={status} key={status}>
@@ -211,12 +211,12 @@ export default function VisitaModal({
               </CampoModal>
             )}
 
-            {form.status === "Cancelada" && (
+            {formulario.estado === "Cancelada" && (
               <CampoModal label="Motivo de cancelación">
                 <textarea
                   className="visita-modal__reason"
-                  value={form.motivo}
-                  onChange={(event) => update("motivo", event.target.value)}
+                  value={formulario.motivo}
+                  onChange={(event) => actualizarCampo("motivo", event.target.value)}
                   maxLength={500}
                   required
                 />
@@ -233,7 +233,7 @@ export default function VisitaModal({
 
         <AccionesModal
           onClose={onClose}
-          submitText={editing ? "Guardar cambios" : "Agendar visita"}
+          submitText={enEdicion ? "Guardar cambios" : "Agendar visita"}
           disabled={busy}
         />
       </form>

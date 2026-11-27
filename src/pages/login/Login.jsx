@@ -19,7 +19,7 @@ export default function Login() {
     if (fromRegister) window.history.replaceState(null, "");
   }, [fromRegister]);
 
-  const handleSubmit = async (e) => {
+  const enviarFormulario = async (e) => {
     e.preventDefault();
     setSubmitState("enviando");
     setCuentasPassword([]);
@@ -76,7 +76,7 @@ export default function Login() {
     <Skeleton as="main" className="login">
       <PanelImagen conMarca className={`login__hero ${fromRegister ? "Skeleton-no" : ""}`} />
       <section className="login__panel">
-        <form className="login__form" onSubmit={handleSubmit}>
+        <form className="login__form" onSubmit={enviarFormulario}>
           <header className="login__header">
             <h1 className="login__title">Bienvenido de nuevo</h1>
             <p className="login__subtitle">Ingresa tus datos para continuar</p>

@@ -50,14 +50,14 @@ export default function Cobros() {
 
   useEffect(() => {
     if (!timelineOpen && !summaryOpen) return undefined;
-    function closeOnEscape(event) {
+    function cerrarConEscape(event) {
       if (event.key === "Escape") {
         setTimelineOpen(false);
         setSummaryOpen(false);
       }
     }
-    document.addEventListener("keydown", closeOnEscape);
-    return () => document.removeEventListener("keydown", closeOnEscape);
+    document.addEventListener("keydown", cerrarConEscape);
+    return () => document.removeEventListener("keydown", cerrarConEscape);
   }, [timelineOpen, summaryOpen]);
 
   useEffect(() => {
@@ -67,24 +67,24 @@ export default function Cobros() {
     return () => boton?.focus();
   }, [timelineOpen]);
 
-  function chooseProperty(etiqueta) {
+  function elegirPropiedad(etiqueta) {
     historial.elegirContrato(contratos.find((item) => item.etiqueta === etiqueta).idContrato);
   }
 
-  function changeProperty(direction) {
+  function cambiarPropiedad(direction) {
     historial.moverContrato(direction);
   }
 
-  function choosePeriod(id) {
+  function elegirPeriodo(id) {
     historial.elegir(id);
     setTimelineOpen(false);
   }
 
-  function toggleYear(anio, abierto) {
+  function alternarAnio(anio, abierto) {
     setOpenYears((current) => ({ ...current, [anio]: !abierto }));
   }
 
-  function downloadReceipt() {
+  function descargarComprobante() {
     descargarComprobanteCobro(cobroSeleccionado.id, cobroSeleccionado.nombreArchivo).catch((error) =>
       mostrarAviso({ tipo: "error", titulo: "No se pudo descargar el comprobante", mensaje: error.message }),
     );
@@ -112,7 +112,7 @@ export default function Cobros() {
           placeholder={contrato?.etiqueta}
           value={contrato?.etiqueta}
           options={propertyOptions}
-          onChange={chooseProperty}
+          onChange={elegirPropiedad}
           icon={buildingColumnsIcon}
           className="cobros__mobile-propiedad-select"
           triggerClassName="cobros__mobile-propiedad-trigger"
@@ -177,7 +177,7 @@ export default function Cobros() {
           <span className="pago-movil__chronology">Cronología</span>
         </h1>
         <div className="cobros__propiedad-row">
-          <button type="button" aria-label="Propiedad anterior" onClick={() => changeProperty(-1)}>
+          <button type="button" aria-label="Propiedad anterior" onClick={() => cambiarPropiedad(-1)}>
             ‹
           </button>
           <SelectDesplegable
@@ -185,14 +185,14 @@ export default function Cobros() {
             placeholder={contrato?.etiqueta}
             value={contrato?.etiqueta}
             options={propertyOptions}
-            onChange={chooseProperty}
+            onChange={elegirPropiedad}
             className="cobros__propiedad-select"
             triggerClassName="cobros__propiedad-trigger"
             valueClassName="cobros__propiedad-value"
             showChevron={false}
             blurOnSelect
           />
-          <button type="button" aria-label="Propiedad siguiente" onClick={() => changeProperty(1)}>
+          <button type="button" aria-label="Propiedad siguiente" onClick={() => cambiarPropiedad(1)}>
             ›
           </button>
         </div>
@@ -205,7 +205,7 @@ export default function Cobros() {
                 <button
                   className="cobros__year-toggle"
                   type="button"
-                  onClick={() => toggleYear(clave, abierto)}
+                  onClick={() => alternarAnio(clave, abierto)}
                   aria-expanded={abierto}
                 >
                   <strong>{anio}</strong>
@@ -221,7 +221,7 @@ export default function Cobros() {
                           className={`cobros__month cobros__month--${tono}${elegido ? " is-selected" : ""}`}
                           type="button"
                           key={item.id}
-                          onClick={() => choosePeriod(item.id)}
+                          onClick={() => elegirPeriodo(item.id)}
                           aria-pressed={elegido}
                         >
                           <strong>{nombreMes(item.periodo)}</strong>
@@ -355,7 +355,7 @@ export default function Cobros() {
             )}
             <div className="cobros__actions">
               {hasReceipt && (
-                <Boton className="cobros__download" onClick={downloadReceipt}>
+                <Boton className="cobros__download" onClick={descargarComprobante}>
                   <Icono src={downloadIcon} />
                   <span>Descargar comprobante</span>
                 </Boton>

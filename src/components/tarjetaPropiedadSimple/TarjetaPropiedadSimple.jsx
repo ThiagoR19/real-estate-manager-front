@@ -5,27 +5,27 @@ import propertyImage from "/images (1).jpg";
 import { api } from "../../services/api.js";
 
 export default function TarjetaPropiedadSimple({
-  property,
+  propiedad,
   onEdit,
   onDelete,
   onOpen,
   variant = "managed",
 }) {
   const isPublic = variant === "public";
-  const image = isPublic ? property.photos?.[0]?.src || property.image || propertyImage : api.urlRecurso(property.imagenes?.[0]?.url) || propertyImage;
-  const title = isPublic ? property.title : property.nombre;
-  const location = isPublic ? property.location : property.ubicacion;
-  const status = isPublic ? property.status || (property.operation === "buy" ? "Disponible Venta" : "Disponible Alquiler") : property.estadoComercial;
+  const image = isPublic ? propiedad.photos?.[0]?.src || propiedad.image || propertyImage : api.urlRecurso(propiedad.imagenes?.[0]?.url) || propertyImage;
+  const title = isPublic ? propiedad.title : propiedad.nombre;
+  const location = isPublic ? propiedad.location : propiedad.ubicacion;
+  const status = isPublic ? propiedad.status || (propiedad.operation === "buy" ? "Disponible Venta" : "Disponible Alquiler") : propiedad.estadoComercial;
 
-  function openProperty() {
-    onOpen?.(property);
+  function abrirPropiedad() {
+    onOpen?.(propiedad);
   }
 
-  function handleCardKeyDown(event) {
+  function manejarTecladoTarjeta(event) {
     if (event.target !== event.currentTarget) return;
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
-      openProperty();
+      abrirPropiedad();
     }
   }
 
@@ -34,8 +34,8 @@ export default function TarjetaPropiedadSimple({
       className={isPublic ? "propiedades-publicas__card" : "propiedades__card"}
       role={isPublic ? undefined : "link"}
       tabIndex={isPublic ? undefined : 0}
-      onClick={isPublic ? undefined : openProperty}
-      onKeyDown={isPublic ? undefined : handleCardKeyDown}
+      onClick={isPublic ? undefined : abrirPropiedad}
+      onKeyDown={isPublic ? undefined : manejarTecladoTarjeta}
       aria-label={isPublic ? undefined : `Ver detalle de ${title}`}
     >
       <img
@@ -72,9 +72,9 @@ export default function TarjetaPropiedadSimple({
               aria-hidden="true"
             />
             {isPublic ? (
-              (property.bedrooms ?? property.rooms)
+              (propiedad.bedrooms ?? propiedad.rooms)
             ) : (
-              <span>{property.habitaciones}</span>
+              <span>{propiedad.habitaciones}</span>
             )}
           </span>
           <span className={isPublic ? undefined : "propiedades__metric"}>
@@ -84,7 +84,7 @@ export default function TarjetaPropiedadSimple({
               alt=""
               aria-hidden="true"
             />
-            {isPublic ? (property.bathrooms ?? property.baths) : <span>{property.banos}</span>}
+            {isPublic ? (propiedad.bathrooms ?? propiedad.baths) : <span>{propiedad.banos}</span>}
           </span>
           <span className={isPublic ? undefined : "propiedades__metric"}>
             <img
@@ -93,13 +93,13 @@ export default function TarjetaPropiedadSimple({
               alt=""
               aria-hidden="true"
             />
-            {isPublic ? `${property.area} m²` : <span>{property.tamano} m²</span>}
+            {isPublic ? `${propiedad.area} m²` : <span>{propiedad.tamano} m²</span>}
           </span>
           {isPublic ? <em>{status}</em> : <span className="propiedades__status">{status}</span>}
         </div>
 
         {isPublic ? (
-          <Link className="propiedades-publicas__details" href={`/propiedad-publica?id=${property.id}`}>
+          <Link className="propiedades-publicas__details" href={`/propiedad-publica?id=${propiedad.id}`}>
             <img src={eyeIcon} alt="" aria-hidden="true" />
             Ver detalle
           </Link>
@@ -110,16 +110,16 @@ export default function TarjetaPropiedadSimple({
               type="button"
               onClick={(event) => {
                 event.stopPropagation();
-                openProperty();
+                abrirPropiedad();
               }}
             >
               <img className="propiedades__icon" src={eyeIcon} alt="" aria-hidden="true" />
               <span>Ver detalle</span>
             </button>
             <AccionesPropiedad
-              name={title}
-              onEdit={() => onEdit(property)}
-              onDelete={() => onDelete(property)}
+              nombre={title}
+              onEdit={() => onEdit(propiedad)}
+              onDelete={() => onDelete(propiedad)}
             />
           </div>
         )}

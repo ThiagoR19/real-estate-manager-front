@@ -24,7 +24,7 @@ function formatearPrecio(precio, moneda) {
   return `${moneda} ${new Intl.NumberFormat("es-AR").format(precio)}`;
 }
 
-function linkWhatsapp(telefono, nombrePropiedad) {
+function enlaceWhatsapp(telefono, nombrePropiedad) {
   const numero = telefono.replace(/\D/g, "");
   const texto = encodeURIComponent(`Hola, me interesa la propiedad "${nombrePropiedad}".`);
   return `https://wa.me/${numero}?text=${texto}`;
@@ -57,13 +57,13 @@ function DetallePropiedad({ propiedad }) {
     };
   }, [propiedad.nombre]);
 
-  function changeImage(direction) {
+  function cambiarImagen(direction) {
     setActiveImage((current) => (current + direction + fotos.length) % fotos.length);
   }
 
-  function contactAgent() {
+  function contactarAgente() {
     if (propiedad.telefonoAgente) {
-      window.open(linkWhatsapp(propiedad.telefonoAgente, propiedad.nombre), "_blank", "noopener");
+      window.open(enlaceWhatsapp(propiedad.telefonoAgente, propiedad.nombre), "_blank", "noopener");
       return;
     }
     mostrarAviso({ tipo: "info", titulo: "Contacto no disponible", mensaje: "Esta propiedad no tiene un teléfono de contacto publicado." });
@@ -88,7 +88,7 @@ function DetallePropiedad({ propiedad }) {
                     className="propiedad-publica__gallery-arrow propiedad-publica__gallery-arrow--previous"
                     type="button"
                     aria-label="Imagen anterior"
-                    onClick={() => changeImage(-1)}
+                    onClick={() => cambiarImagen(-1)}
                   >
                     <img className="izquierda" src={angleDownIcon} alt="" />
                   </button>
@@ -96,7 +96,7 @@ function DetallePropiedad({ propiedad }) {
                     className="propiedad-publica__gallery-arrow propiedad-publica__gallery-arrow--next"
                     type="button"
                     aria-label="Imagen siguiente"
-                    onClick={() => changeImage(1)}
+                    onClick={() => cambiarImagen(1)}
                   >
                     <img className="derecha" src={angleDownIcon} alt="" />
                   </button>
@@ -145,7 +145,7 @@ function DetallePropiedad({ propiedad }) {
             <small>
               {propiedad.tipo} · {propiedad.operacion}
             </small>
-            <button type="button" onClick={contactAgent}>
+            <button type="button" onClick={contactarAgente}>
               {propiedad.operacion}
             </button>
           </div>
@@ -185,7 +185,7 @@ function DetallePropiedad({ propiedad }) {
         </section>
       </div>
 
-      <button className="propiedad-publica__contact" type="button" onClick={contactAgent}>
+      <button className="propiedad-publica__contact" type="button" onClick={contactarAgente}>
         <img src={whatsappIcon} alt="" />
         Contactar
       </button>

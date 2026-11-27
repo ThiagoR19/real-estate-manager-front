@@ -47,21 +47,21 @@ function Chevron({ open }) {
   );
 }
 
-function formatCurrency(value, moneda = "ARS") {
+function formatearMoneda(value, moneda = "ARS") {
   return Number(value).toLocaleString("es-AR", { style: "currency", currency: moneda, minimumFractionDigits: 2 });
 }
 
-function formatDate(value) {
+function formatearFecha(value) {
   if (!value) return "-";
   const [anio, mes, dia] = String(value).slice(0, 10).split("-");
   return `${dia}/${mes}/${anio}`;
 }
 
-function formatDateTime(value) {
+function formatearFechaHora(value) {
   return new Date(value).toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" });
 }
 
-function formatPeriodo(periodo) {
+function formatearPeriodo(periodo) {
   const [anio, mes] = periodo.split("-").map(Number);
   return `${MESES[mes - 1]} ${anio}`;
 }
@@ -191,7 +191,7 @@ function ColaRevision({ pendientes, idSeleccionado, onSelect, onRefresh, ocupado
                   aria-current={idSeleccionado === pago.id || undefined}
                 >
                   <strong>{pago.nombre} {pago.apellido}</strong>
-                  <span>{pago.propiedad} · {formatPeriodo(pago.periodo)}</span>
+                  <span>{pago.propiedad} · {formatearPeriodo(pago.periodo)}</span>
                   <span className="pagos-agente__queue-action">Revisar</span>
                 </button>
               </li>
@@ -248,7 +248,7 @@ function PanelRevisionPago({ revision, guardando, onVolver, onAprobar, onRechaza
   const comprobante = pago?.comprobantes?.[0];
   const enRevision = pago?.estado === "En revision";
   const moneda = pago?.moneda;
-  const mostrarImporte = moneda ? (monto) => formatCurrency(monto, moneda) : (monto) =>
+  const mostrarImporte = moneda ? (monto) => formatearMoneda(monto, moneda) : (monto) =>
     Number(monto).toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   return (
@@ -263,7 +263,7 @@ function PanelRevisionPago({ revision, guardando, onVolver, onAprobar, onRechaza
           <div className="pagos-agente__review-heading">
             <div>
               <h2>{pago.nombre} {pago.apellido}</h2>
-              <p>{pago.propiedad} · {formatPeriodo(pago.periodo)}</p>
+              <p>{pago.propiedad} · {formatearPeriodo(pago.periodo)}</p>
               <p role="status">Estado: {ESTADOS_PAGO[pago.estado] ?? pago.estado}</p>
             </div>
             {enRevision && (
@@ -286,7 +286,7 @@ function PanelRevisionPago({ revision, guardando, onVolver, onAprobar, onRechaza
           )}
           <div className="pagos-agente__review-detail">
             <dl>
-              {pago.fechaPago && <div><dt>Fecha de pago</dt><dd>{formatDate(pago.fechaPago)}</dd></div>}
+              {pago.fechaPago && <div><dt>Fecha de pago</dt><dd>{formatearFecha(pago.fechaPago)}</dd></div>}
               {pago.conceptos?.map(({ idConcepto, nombre, monto }) => (
                 <div key={idConcepto}><dt>{nombre}</dt><dd>{mostrarImporte(monto)}</dd></div>
               ))}
@@ -350,7 +350,7 @@ export default function PagosYCobros() {
   const total = liquidacion?.neto ?? incluidas.reduce((suma, linea) => suma + parseAmount(linea.monto), 0);
 
   function cerrarFormularios() {
-    closeConceptForm();
+    cerrarFormularioConcepto();
     setRechazando(false);
     setComprobanteAbierto(false);
   }
@@ -372,23 +372,23 @@ export default function PagosYCobros() {
     datos.elegirRevision(id);
   }
 
-  function openConceptForm(tipo) {
+  function abrirFormularioConcepto(tipo) {
     setAdding(tipo);
   }
 
-  function closeConceptForm() {
+  function cerrarFormularioConcepto() {
     setAdding("");
     setNewConcept({ label: "", amount: "" });
   }
 
-  async function submitConcept(event) {
+  async function enviarConcepto(event) {
     event.preventDefault();
     const label = newConcept.label.trim();
     if (!label || parseAmount(newConcept.amount) <= 0) {
       mostrarAviso({ tipo: "advertencia", titulo: "Datos incompletos", mensaje: "Ingresá un concepto y un importe mayor a cero." });
       return;
     }
-    if (await datos.agregarConcepto(label, newConcept.amount.trim(), adding === "temporary")) closeConceptForm();
+    if (await datos.agregarConcepto(label, newConcept.amount.trim(), adding === "temporary")) cerrarFormularioConcepto();
   }
 
   function subirComprobante(event) {
@@ -568,9 +568,9 @@ export default function PagosYCobros() {
                         <p>Motivo del rechazo: {detalle.comprobante.motivoRechazo}</p>
                       )}
                       <p>
-                        Vigencia: {formatDate(detalle.contrato.fechaInicio)} – {formatDate(detalle.contrato.fechaFin)}
+                        Vigencia: {formatearFecha(detalle.contrato.fechaInicio)} – {formatearFecha(detalle.contrato.fechaFin)}
                       </p>
-                      <p>Monto acordado: {formatCurrency(detalle.contrato.montoAcordado, moneda)}</p>
+                      <p>Monto acordado: {formatearMoneda(detalle.contrato.montoAcordado, moneda)}</p>
                     </div>
                     <div className="pagos-agente__concepts" aria-label="Conceptos">
                       {conceptos.map((linea) => {
@@ -614,17 +614,17 @@ export default function PagosYCobros() {
                       })}
                     </div>
                     <div className="pagos-agente__concept-actions">
-                      <button type="button" disabled={bloqueado} onClick={() => openConceptForm("permanent")}>
+                      <button type="button" disabled={bloqueado} onClick={() => abrirFormularioConcepto("permanent")}>
                         <Icono src={plusIconWhite} />
                         Nuevo concepto
                       </button>
-                      <button type="button" disabled={bloqueado} onClick={() => openConceptForm("temporary")}>
+                      <button type="button" disabled={bloqueado} onClick={() => abrirFormularioConcepto("temporary")}>
                         <Icono src={plusIconWhite} />
                         Concepto temporal
                       </button>
                     </div>
                     {adding && !bloqueado && (
-                      <form className="pagos-agente__new-concept" onSubmit={submitConcept}>
+                      <form className="pagos-agente__new-concept" onSubmit={enviarConcepto}>
                         <label>
                           <span>Concepto {adding === "temporary" ? "temporal" : "nuevo"}</span>
                           <input
@@ -646,7 +646,7 @@ export default function PagosYCobros() {
                           />
                         </label>
                         <div>
-                          <button type="button" onClick={closeConceptForm}>
+                          <button type="button" onClick={cerrarFormularioConcepto}>
                             Cancelar
                           </button>
                           <button type="submit">Agregar</button>
@@ -689,7 +689,7 @@ export default function PagosYCobros() {
                       <Icono src={fileLinesIcon} />
                       <span>
                         {esLocatario ? "Comprobante del inquilino" : "Comprobante de la liquidación"}
-                        {detalle.comprobante && <small>{formatDateTime(detalle.comprobante.fecha)}</small>}
+                        {detalle.comprobante && <small>{formatearFechaHora(detalle.comprobante.fecha)}</small>}
                       </span>
                     </div>
                     {!esLocatario && detalle.registro && detalle.editable && (
@@ -714,7 +714,7 @@ export default function PagosYCobros() {
                       {incluidas.map((linea) => (
                         <div className="pagos-agente__total-line" key={linea.idConcepto}>
                           <span>{linea.nombre}</span>
-                          <b>{formatCurrency(parseAmount(linea.monto), moneda)}</b>
+                          <b>{formatearMoneda(parseAmount(linea.monto), moneda)}</b>
                         </div>
                       ))}
                       {liquidacion && (
@@ -733,14 +733,14 @@ export default function PagosYCobros() {
                           </label>
                           <div className="pagos-agente__total-line">
                             <span>Comisión inmobiliaria</span>
-                            <b>-{formatCurrency(liquidacion.comision, moneda)}</b>
+                            <b>-{formatearMoneda(liquidacion.comision, moneda)}</b>
                           </div>
                         </>
                       )}
                     </div>
                     <div className="pagos-agente__total-sum">
                       <span>{liquidacion ? "Total neto:" : "Total:"}</span>
-                      <b>{formatCurrency(total, moneda)}</b>
+                      <b>{formatearMoneda(total, moneda)}</b>
                     </div>
                   </aside>
                   <button

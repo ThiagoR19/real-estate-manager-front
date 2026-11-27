@@ -6,36 +6,36 @@ import useClosingTransition from "../../hooks/useClosingTransition.js";
 import { propiedades } from "../../services/propiedades.js";
 import "./InquilinoModal.css";
 
-const statusOptions = ["Activo", "Inactivo"];
+const opcionesEstado = ["Activo", "Inactivo"];
 
-function getInitialForm(tenant) {
-  if (!tenant) {
+function formularioInicial(inquilino) {
+  if (!inquilino) {
     return {
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      address: "",
+      nombre: "",
+      apellido: "",
+      correo: "",
+      telefono: "",
+      direccion: "",
       dni: "",
-      active: true,
-      propertyId: null,
+      activo: true,
+      idPropiedad: null,
     };
   }
 
   return {
-    firstName: tenant.nombre || "",
-    lastName: tenant.apellido || "",
-    email: tenant.correo || "",
-    phone: tenant.telefono || "",
-    address: tenant.direccion || "",
-    dni: tenant.dni || "",
-    active: Boolean(tenant.activo),
-    propertyId: tenant.idPropiedad || null,
+    nombre: inquilino.nombre || "",
+    apellido: inquilino.apellido || "",
+    correo: inquilino.correo || "",
+    telefono: inquilino.telefono || "",
+    direccion: inquilino.direccion || "",
+    dni: inquilino.dni || "",
+    activo: Boolean(inquilino.activo),
+    idPropiedad: inquilino.idPropiedad || null,
   };
 }
 
-function getInitials(name) {
-  const initials = name
+function obtenerIniciales(nombre) {
+  const initials = nombre
     .trim()
     .split(/\s+/)
     .filter(Boolean)
@@ -65,47 +65,47 @@ function EntradaConIcono({ icon, ...props }) {
   );
 }
 
-export default function InquilinoModal({ isOpen, mode, tenant, onClose, onSubmit }) {
-  const [form, setForm] = useState(() => getInitialForm(tenant));
-  const [saving, setSaving] = useState(false);
-  const [availableProperties, setAvailableProperties] = useState([]);
-  const [loadingProperties, setLoadingProperties] = useState(isOpen && mode === "edit");
-  const [propertiesError, setPropertiesError] = useState("");
+export default function InquilinoModal({ isOpen, mode, inquilino, onClose, onSubmit }) {
+  const [formulario, setFormulario] = useState(() => formularioInicial(inquilino));
+  const [guardando, setGuardando] = useState(false);
+  const [propiedadesDisponibles, setPropiedadesDisponibles] = useState([]);
+  const [cargandoPropiedades, setCargandoPropiedades] = useState(isOpen && mode === "edit");
+  const [errorPropiedades, setErrorPropiedades] = useState("");
   const { isClosing, close } = useClosingTransition(onClose);
-  const isEditing = mode === "edit";
-  const displayName = isEditing
-    ? `${tenant?.nombre || ""} ${tenant?.apellido || ""}`.trim() || `DNI ${tenant?.dni}`
+  const esEdicion = mode === "edit";
+  const nombreVisible = esEdicion
+    ? `${inquilino?.nombre || ""} ${inquilino?.apellido || ""}`.trim() || `DNI ${inquilino?.dni}`
     : "Inquilino";
-  const displayStatus = isEditing ? (form.active ? "Activo" : "Inactivo") : "Estado";
-  const propertyChoices = availableProperties.map((property) => ({
-    id: property.id,
-    label: `${property.ubicacion ? `${property.ubicacion} · ` : ""}${property.nombre} (#${property.id})`,
+  const estadoVisible = esEdicion ? (formulario.activo ? "Activo" : "Inactivo") : "Estado";
+  const opcionesPropiedades = propiedadesDisponibles.map((propiedad) => ({
+    id: propiedad.id,
+    label: `${propiedad.ubicacion ? `${propiedad.ubicacion} · ` : ""}${propiedad.nombre} (#${propiedad.id})`,
   }));
-  const selectedProperty = propertyChoices.find((property) => Number(property.id) === Number(form.propertyId));
-  const propertyOptions = ["Seleccionar propiedad", ...propertyChoices.map((property) => property.label)];
+  const propiedadSeleccionada = opcionesPropiedades.find((propiedad) => Number(propiedad.id) === Number(formulario.idPropiedad));
+  const opcionesPropiedad = ["Seleccionar propiedad", ...opcionesPropiedades.map((propiedad) => propiedad.label)];
 
   useEffect(() => {
-    if (!isOpen || !isEditing) return undefined;
+    if (!isOpen || !esEdicion) return undefined;
     let mounted = true;
     propiedades()
       .then((items) => {
-        if (mounted) setAvailableProperties(items);
+        if (mounted) setPropiedadesDisponibles(items);
       })
       .catch((error) => {
-        if (mounted) setPropertiesError(error.message || "No se pudieron cargar las propiedades.");
+        if (mounted) setErrorPropiedades(error.message || "No se pudieron cargar las propiedades.");
       })
       .finally(() => {
-        if (mounted) setLoadingProperties(false);
+        if (mounted) setCargandoPropiedades(false);
       });
     return () => { mounted = false; };
-  }, [isOpen, isEditing]);
+  }, [isOpen, esEdicion]);
 
   useEffect(() => {
     if (!isOpen) {
       return undefined;
     }
 
-    function closeWithEscape(event) {
+    function cerrarConEscape(event) {
       if (event.key === "Escape") {
         close();
       }
@@ -113,11 +113,11 @@ export default function InquilinoModal({ isOpen, mode, tenant, onClose, onSubmit
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    document.addEventListener("keydown", closeWithEscape);
+    document.addEventListener("keydown", cerrarConEscape);
 
     return () => {
       document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", closeWithEscape);
+      document.removeEventListener("keydown", cerrarConEscape);
     };
   }, [isOpen, close]);
 
@@ -125,27 +125,27 @@ export default function InquilinoModal({ isOpen, mode, tenant, onClose, onSubmit
     return null;
   }
 
-  function updateField(event) {
-    const { name, value } = event.target;
-    setForm((current) => ({ ...current, [name]: value }));
+  function actualizarCampo(event) {
+    const { name: nombre, value } = event.target;
+    setFormulario((current) => ({ ...current, [nombre]: value }));
   }
 
-  async function handleSubmit(event) {
+  async function enviarFormulario(event) {
     event.preventDefault();
-    setSaving(true);
+    setGuardando(true);
     try {
       await onSubmit({
-        ...form,
-        name: `${form.firstName.trim()} ${form.lastName.trim()}`.trim(),
+        ...formulario,
+        nombreCompleto: `${formulario.nombre.trim()} ${formulario.apellido.trim()}`.trim(),
       });
     } catch (submitError) {
       mostrarAviso({
         tipo: "error",
-        titulo: isEditing ? "No se pudo actualizar el inquilino" : "No se pudo crear el inquilino",
+        titulo: esEdicion ? "No se pudo actualizar el inquilino" : "No se pudo crear el inquilino",
         mensaje: submitError.message || "No se pudieron guardar los cambios.",
       });
     } finally {
-      setSaving(false);
+      setGuardando(false);
     }
   }
 
@@ -169,23 +169,23 @@ export default function InquilinoModal({ isOpen, mode, tenant, onClose, onSubmit
         onMouseDown={(event) => event.stopPropagation()}
       >
         <header className="inquilino-modal__header">
-          <h2 id="inquilino-modal-title">{isEditing ? "Editar inquilino" : "Crear inquilino"}</h2>
+          <h2 id="inquilino-modal-title">{esEdicion ? "Editar inquilino" : "Crear inquilino"}</h2>
           <p>
-            {isEditing
+            {esEdicion
               ? "Actualiza la información principal del inquilino."
               : "Completá los datos del inquilino para crear su cuenta."}
           </p>
         </header>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={enviarFormulario}>
           <div className="inquilino-modal__form-card">
             <div className="inquilino-modal__summary">
               <span className="inquilino-modal__avatar" aria-hidden="true">
-                {isEditing ? getInitials(displayName) : "IN"}
+                {esEdicion ? obtenerIniciales(nombreVisible) : "IN"}
               </span>
               <span>
-                <strong>{displayName}</strong>
-                <small>{displayStatus}</small>
+                <strong>{nombreVisible}</strong>
+                <small>{estadoVisible}</small>
               </span>
             </div>
 
@@ -193,34 +193,34 @@ export default function InquilinoModal({ isOpen, mode, tenant, onClose, onSubmit
               <Campo label="Nombre">
                 <EntradaConIcono
                   icon={userIcon}
-                  name="firstName"
-                  value={form.firstName}
-                  onChange={updateField}
+                  name="nombre"
+                  value={formulario.nombre}
+                  onChange={actualizarCampo}
                   placeholder="Nombre"
                   autoComplete="given-name"
-                  required={!isEditing}
+                  required={!esEdicion}
                 />
               </Campo>
 
               <Campo label="Apellido">
                 <EntradaConIcono
                   icon={userIcon}
-                  name="lastName"
-                  value={form.lastName}
-                  onChange={updateField}
+                  name="apellido"
+                  value={formulario.apellido}
+                  onChange={actualizarCampo}
                   placeholder="Apellido"
                   autoComplete="family-name"
-                  required={!isEditing}
+                  required={!esEdicion}
                 />
               </Campo>
 
               <Campo label="Correo">
                 <EntradaConIcono
                   icon={envelopeIcon}
-                  name="email"
+                  name="correo"
                   type="email"
-                  value={form.email}
-                  onChange={updateField}
+                  value={formulario.correo}
+                  onChange={actualizarCampo}
                   placeholder="ejemplo@gmail.com"
                   autoComplete="email"
                 />
@@ -229,10 +229,10 @@ export default function InquilinoModal({ isOpen, mode, tenant, onClose, onSubmit
               <Campo label="Teléfono">
                 <EntradaConIcono
                   icon={phoneIcon}
-                  name="phone"
+                  name="telefono"
                   type="tel"
-                  value={form.phone}
-                  onChange={updateField}
+                  value={formulario.telefono}
+                  onChange={actualizarCampo}
                   placeholder="2133 123123"
                   autoComplete="tel"
                 />
@@ -241,9 +241,9 @@ export default function InquilinoModal({ isOpen, mode, tenant, onClose, onSubmit
               <Campo label="Dirección">
                 <EntradaConIcono
                   icon={locationDotIcon}
-                  name="address"
-                  value={form.address}
-                  onChange={updateField}
+                  name="direccion"
+                  value={formulario.direccion}
+                  onChange={actualizarCampo}
                   placeholder="Av. San Martín 12"
                   autoComplete="street-address"
                 />
@@ -253,31 +253,31 @@ export default function InquilinoModal({ isOpen, mode, tenant, onClose, onSubmit
                 <EntradaConIcono
                   icon={addressCardIcon}
                   name="dni"
-                  value={form.dni}
-                  onChange={updateField}
+                  value={formulario.dni}
+                  onChange={actualizarCampo}
                   placeholder="12123123"
                   inputMode="numeric"
                   pattern="[0-9]{7,8}"
                   required
-                  readOnly={isEditing}
+                  readOnly={esEdicion}
                 />
               </Campo>
 
-              {isEditing && <Campo label="Propiedad">
-                {loadingProperties || propertiesError || !propertyChoices.length ? (
-                  <span className="inquilino-modal__select-trigger" role={propertiesError ? "alert" : undefined}>
-                    {loadingProperties
+              {esEdicion && <Campo label="Propiedad">
+                {cargandoPropiedades || errorPropiedades || !opcionesPropiedades.length ? (
+                  <span className="inquilino-modal__select-trigger" role={errorPropiedades ? "alert" : undefined}>
+                    {cargandoPropiedades
                       ? "Cargando propiedades..."
-                      : propertiesError || "No hay propiedades disponibles"}
+                      : errorPropiedades || "No hay propiedades disponibles"}
                   </span>
                 ) : (
                   <SelectDesplegable
                     label="Propiedad"
-                    value={selectedProperty?.label || propertyOptions[0]}
-                    options={propertyOptions}
+                    value={propiedadSeleccionada?.label || opcionesPropiedad[0]}
+                    options={opcionesPropiedad}
                     onChange={(label) => {
-                      const property = propertyChoices.find((choice) => choice.label === label);
-                      if (property) setForm((current) => ({ ...current, propertyId: property.id }));
+                      const propiedad = opcionesPropiedades.find((choice) => choice.label === label);
+                      if (propiedad) setFormulario((current) => ({ ...current, idPropiedad: propiedad.id }));
                     }}
                     icon={houseIcon}
                     className="inquilino-modal__select"
@@ -290,13 +290,13 @@ export default function InquilinoModal({ isOpen, mode, tenant, onClose, onSubmit
                 )}
               </Campo>}
 
-              {isEditing && <Campo label="Estado">
+              {esEdicion && <Campo label="Estado">
                 <SelectDesplegable
                   label="Estado"
-                  value={form.active ? statusOptions[0] : statusOptions[1]}
-                  options={statusOptions}
+                  value={formulario.activo ? opcionesEstado[0] : opcionesEstado[1]}
+                  options={opcionesEstado}
                   onChange={(status) =>
-                    setForm((current) => ({ ...current, active: status === statusOptions[0] }))
+                    setFormulario((current) => ({ ...current, activo: status === opcionesEstado[0] }))
                   }
                   icon={userIcon}
                   className="inquilino-modal__select"
@@ -316,15 +316,15 @@ export default function InquilinoModal({ isOpen, mode, tenant, onClose, onSubmit
               className="inquilino-modal__cancel"
               type="button"
               onClick={close}
-              disabled={saving}
+              disabled={guardando}
             >
               Cancelar
             </button>
             <Boton
               className="inquilino-modal__submit"
               type="submit"
-              text={saving ? "Guardando..." : isEditing ? "Guardar cambios" : "Crear inquilino"}
-              disabled={saving}
+              text={guardando ? "Guardando..." : esEdicion ? "Guardar cambios" : "Crear inquilino"}
+              disabled={guardando}
             />
           </footer>
         </form>

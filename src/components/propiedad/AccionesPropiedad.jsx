@@ -1,10 +1,10 @@
 import { AccionesEntidad } from "../index";
 
-export default function AccionesPropiedad({ onEdit, onDelete, name, className = "" }) {
+export default function AccionesPropiedad({ onEdit, onDelete, nombre, className = "" }) {
   return (
     <AccionesEntidad
-      entity="propiedad"
-      name={name}
+      entidad="propiedad"
+      nombre={nombre}
       onEdit={onEdit}
       onDelete={onDelete}
       variant="propiedad"
