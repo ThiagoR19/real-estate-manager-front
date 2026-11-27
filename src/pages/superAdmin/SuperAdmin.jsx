@@ -7,19 +7,19 @@ import initials from "../../utils/initials";
 import avatarClass from "../../utils/avatarClass";
 
 import { PildoraResumen, Boton, ConfirmarEliminacionModal, mostrarAviso } from "../../components";
-import AgencyModal from "./AgencyModal";
+import InmobiliariaModal from "./InmobiliariaModal";
 import { building, editSuper, plusIcon, trashCanIcon } from "../../assets/icons";
 import "./SuperAdmin.css";
 
-function AgencyLogo({ agency }) {
-  if (agency.imagenLogo) {
+function InmobiliariaLogo({ inmobiliaria }) {
+  if (inmobiliaria.imagenLogo) {
     return (
       <span className="super-admin__inmobiliaria-logo" aria-hidden="true">
-        <img src={assetUrl(`/uploads/logos/${agency.imagenLogo}`)} alt="" />
+        <img src={assetUrl(`/uploads/logos/${inmobiliaria.imagenLogo}`)} alt="" />
       </span>
     );
   }
-  const [primera = "", segunda = ""] = agency.nombre.split(/\s+/);
+  const [primera = "", segunda = ""] = inmobiliaria.nombre.split(/\s+/);
   return (
     <span className="super-admin__inmobiliaria-logo" aria-hidden="true">
       {initials(primera, segunda)}
@@ -43,10 +43,10 @@ function PersonAvatar({ persona }) {
   );
 }
 
-function personasDe(agency) {
+function personasDe(inmobiliaria) {
   return [
-    ...agency.admins.map((admin) => ({ ...admin, tipo: "admin", rol: "Admin", clave: `admin-${admin.id}` })),
-    ...agency.agentes.map((agente) => ({ ...agente, tipo: "agente", rol: "Agente", clave: `agente-${agente.id}` })),
+    ...inmobiliaria.admins.map((admin) => ({ ...admin, tipo: "admin", rol: "Admin", clave: `admin-${admin.id}` })),
+    ...inmobiliaria.agentes.map((agente) => ({ ...agente, tipo: "agente", rol: "Agente", clave: `agente-${agente.id}` })),
   ];
 }
 
@@ -102,21 +102,21 @@ export default function SuperAdmin() {
     await ejecutar(() => api.crearInmobiliaria({ nombre }), "Inmobiliaria creada");
   }
 
-  function editarInmobiliaria(agency, nombre) {
-    if (nombre === agency.nombre) {
+  function editarInmobiliaria(inmobiliaria, nombre) {
+    if (nombre === inmobiliaria.nombre) {
       setModal(null);
       return;
     }
-    ejecutar(() => api.renombrarInmobiliaria(agency.id, nombre), "Inmobiliaria actualizada");
+    ejecutar(() => api.renombrarInmobiliaria(inmobiliaria.id, nombre), "Inmobiliaria actualizada");
   }
 
-  async function agregarAdmin(agency, datos) {
+  async function agregarAdmin(inmobiliaria, datos) {
     setEnviando(true);
     try {
-      const admin = await api.crearAdministrador({ ...datos, idInmobiliaria: agency.id });
+      const admin = await api.crearAdministrador({ ...datos, idInmobiliaria: inmobiliaria.id });
       setModal({
         mode: "invitacion",
-        agency,
+        inmobiliaria,
         invitacion: {
           enlace: enlaceActivacion(admin.activacion),
           expiraEn: admin.activacion?.expiraEn,
@@ -132,12 +132,12 @@ export default function SuperAdmin() {
     }
   }
 
-  async function generarEnlaceAdmin(agency, persona) {
+  async function generarEnlaceAdmin(inmobiliaria, persona) {
     try {
       const activacion = await api.generarEnlaceAdministrador(persona.id);
       setModal({
         mode: "invitacion",
-        agency,
+        inmobiliaria,
         invitacion: {
           titulo: "Enlace generado",
           enlace: enlaceActivacion(activacion),
@@ -159,9 +159,9 @@ export default function SuperAdmin() {
     setAEliminar(persona);
   }
 
-  function eliminarInmobiliaria(agency) {
+  function eliminarInmobiliaria(inmobiliaria) {
     setModal(null);
-    setAEliminar({ ...agency, tipo: "inmobiliaria" });
+    setAEliminar({ ...inmobiliaria, tipo: "inmobiliaria" });
   }
 
   async function confirmarEliminar() {
@@ -194,8 +194,8 @@ export default function SuperAdmin() {
   }
 
   function guardarModal(valor) {
-    if (modal.mode === "admin") agregarAdmin(modal.agency, valor);
-    else if (modal.mode === "edit") editarInmobiliaria(modal.agency, valor);
+    if (modal.mode === "admin") agregarAdmin(modal.inmobiliaria, valor);
+    else if (modal.mode === "edit") editarInmobiliaria(modal.inmobiliaria, valor);
     else crearInmobiliaria(valor);
   }
 
@@ -245,19 +245,19 @@ export default function SuperAdmin() {
           {!mensaje && !inmobiliarias.length && (
             <p className="super-admin__no-admins">Todavía no hay inmobiliarias registradas.</p>
           )}
-          {inmobiliarias.map((agency) => {
-            const personas = personasDe(agency);
-            const abierta = Boolean(expanded[agency.id]);
+          {inmobiliarias.map((inmobiliaria) => {
+            const personas = personasDe(inmobiliaria);
+            const abierta = Boolean(expanded[inmobiliaria.id]);
             return (
-              <article className={`super-admin__inmobiliaria${abierta ? " is-expanded" : ""}`} key={agency.id}>
+              <article className={`super-admin__inmobiliaria${abierta ? " is-expanded" : ""}`} key={inmobiliaria.id}>
                 <header>
-                  <AgencyLogo agency={agency} />
-                  <h2>{agency.nombre}</h2>
+                  <InmobiliariaLogo inmobiliaria={inmobiliaria} />
+                  <h2>{inmobiliaria.nombre}</h2>
                   <div className="super-admin__inmobiliaria-controls">
                     <button
                       className="super-admin__add-admin"
                       type="button"
-                      onClick={() => setModal({ mode: "admin", agency })}
+                      onClick={() => setModal({ mode: "admin", inmobiliaria })}
                     >
                       <span className="material-symbols-outlined">
                         add
@@ -267,16 +267,16 @@ export default function SuperAdmin() {
                     <button
                       className="super-admin__edit"
                       type="button"
-                      onClick={() => setModal({ mode: "edit", agency })}
-                      aria-label={`Editar ${agency.nombre}`}
+                      onClick={() => setModal({ mode: "edit", inmobiliaria })}
+                      aria-label={`Editar ${inmobiliaria.nombre}`}
                     >
                       <img src={editSuper} alt="" />
                     </button>
                     <button
                       className="super-admin__expand"
                       type="button"
-                      onClick={() => setExpanded((current) => ({ ...current, [agency.id]: !current[agency.id] }))}
-                      aria-label={`${abierta ? "Contraer" : "Expandir"} ${agency.nombre}`}
+                      onClick={() => setExpanded((current) => ({ ...current, [inmobiliaria.id]: !current[inmobiliaria.id] }))}
+                      aria-label={`${abierta ? "Contraer" : "Expandir"} ${inmobiliaria.nombre}`}
                       aria-expanded={abierta}
                     >
                       <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -317,7 +317,7 @@ export default function SuperAdmin() {
                             <button
                               className="super-admin__activation-link"
                               type="button"
-                              onClick={() => generarEnlaceAdmin(agency, persona)}
+                              onClick={() => generarEnlaceAdmin(inmobiliaria, persona)}
                             >
                               Generar enlace para crear cuenta
                             </button>
@@ -337,15 +337,15 @@ export default function SuperAdmin() {
         </section>
       </section>
       {modal && (
-        <AgencyModal
-          key={`${modal.mode}-${modal.agency?.id || "new"}`}
+        <InmobiliariaModal
+          key={`${modal.mode}-${modal.inmobiliaria?.id || "new"}`}
           mode={modal.mode}
-          agency={modal.agency && { ...modal.agency, name: modal.agency.nombre }}
+          inmobiliaria={modal.inmobiliaria && { ...modal.inmobiliaria, name: modal.inmobiliaria.nombre }}
           invitacion={modal.invitacion}
           enviando={enviando}
           onClose={() => setModal(null)}
           onSubmit={guardarModal}
-          onDelete={modal.mode === "edit" ? () => eliminarInmobiliaria(modal.agency) : undefined}
+          onDelete={modal.mode === "edit" ? () => eliminarInmobiliaria(modal.inmobiliaria) : undefined}
         />
       )}
       <ConfirmarEliminacionModal
