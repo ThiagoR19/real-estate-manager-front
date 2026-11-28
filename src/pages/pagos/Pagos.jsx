@@ -1,3 +1,4 @@
+import ControlesHistorial from "../../components/paginacion/ControlesHistorial.jsx";
 import { useEffect, useRef, useState } from "react";
 import { buildingColumnsIcon, calendarIcon, checkIcon, commentsIcon, downloadIcon, fileLinesIcon, imageIcon, optionsIcon, paperPlaneIcon, plusIconWhite, xIcon } from "../../assets/icons";
 import { Boton, mostrarAviso } from "../../components";
@@ -38,12 +39,12 @@ function EstadoPago({ estado, destacado = false }) {
   );
 }
 
-function ResumenPagos({ abierto, periodos }) {
-  const total = periodos.length;
+function ResumenPagos({ abierto, totales }) {
+  const total = totales.total ?? "—";
   const tarjetas = [
-    { titulo: "Comprobantes enviados", icono: fileLinesIcon, tono: "blue", contar: (item) => item.tieneComprobante && item.estado !== "Pendiente" },
-    { titulo: "Pagos aprobados", icono: checkIcon, tono: "green", contar: (item) => item.estado === "Aprobado" },
-    { titulo: "Pagos rechazados", icono: xIcon, tono: "red", contar: (item) => item.estado === "Rechazado" },
+    { titulo: "Comprobantes enviados", icono: fileLinesIcon, tono: "blue", cantidad: "—" },
+    { titulo: "Pagos aprobados", icono: checkIcon, tono: "green", cantidad: totales.aprobados ?? "—" },
+    { titulo: "Pagos rechazados", icono: xIcon, tono: "red", cantidad: totales.rechazados ?? "—" },
   ];
   return (
     <section
@@ -51,13 +52,14 @@ function ResumenPagos({ abierto, periodos }) {
       id="vista-pago-summary"
       aria-label="Resumen de pagos"
     >
-      {tarjetas.map(({ titulo, icono, tono, contar }) => (
+      {tarjetas.map(({ titulo, icono, tono, cantidad }) => (
         <article key={titulo}>
           <span className={`vista-pago__metric vista-pago__metric--${tono}`}><img className="vista-pago__icon" src={icono} alt="" /></span>
           <strong>{titulo}</strong>
-          <b>{periodos.filter(contar).length}/{total}</b>
+          <b>{cantidad}/{total}</b>
         </article>
       ))}
+      <p>Resumen del contrato completo. El total de comprobantes enviados aún no está disponible.</p>
     </section>
   );
 }
@@ -252,7 +254,7 @@ function DetallePago({ pago, cargando, error, recargar }) {
 
 export default function Pagos() {
   const historial = useHistorialPeriodos(pagos, pago);
-  const { items, contratos, contrato, delContrato, anios, detalle: pagoSeleccionado } = historial;
+  const { items, contratos, contrato, anios, detalle: pagoSeleccionado } = historial;
   const [aniosAbiertos, setAniosAbiertos] = useState({});
   const [panel, setPanel] = useState(null);
   const [formularioAbierto, setFormularioAbierto] = useState(false);
@@ -316,6 +318,7 @@ export default function Pagos() {
   if (items === null) {
     return (
       <main id="vista-pago" className="vista-pago--sin-periodos">
+        <ControlesHistorial historial={historial} />
         <section className="vista-pago__empty-page" aria-label="Zona de pago">
           <p role="status">Cargando zona de pago…</p>
         </section>
@@ -373,6 +376,7 @@ export default function Pagos() {
 
   return (
     <main id="vista-pago">
+      <ControlesHistorial historial={historial} />
       <div className="pago-movil__toolbar">
         <SelectDesplegable
           {...selector}
@@ -461,7 +465,7 @@ export default function Pagos() {
             />
           </div>
         )}
-        <ResumenPagos abierto={resumenAbierto} periodos={delContrato} />
+        <ResumenPagos abierto={resumenAbierto} totales={historial.totales} />
         <DetallePago key={pagoSeleccionado.id} pago={pagoSeleccionado} cargando={historial.cargandoDetalle} error={historial.errorDetalle} recargar={historial.recargar} />
       </section>
     </main>

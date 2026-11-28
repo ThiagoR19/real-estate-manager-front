@@ -520,3 +520,33 @@
     font-size: 18px;
   }
 }
+.super-admin__personal {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #dfe6ed;
+}
+
+.super-admin__personal > input {
+  width: min(100%, 360px);
+  min-height: 40px;
+  margin-bottom: 16px;
+  padding: 8px 12px;
+  border: 1px solid #cdd8e6;
+  border-radius: 8px;
+  font: inherit;
+}
+
+.super-admin__personal .super-admin__admin {
+  flex: 0 1 260px;
+}
+
+.super-admin__personal .super-admin__admin > button {
+  display: block;
+  min-height: 32px;
+  margin-top: 10px;
+  border: 1px solid #cdd8e6;
+  border-radius: 6px;
+  background: #f7fafe;
+  color: inherit;
+  cursor: pointer;
+}

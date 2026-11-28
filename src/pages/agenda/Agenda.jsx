@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { calendarIcon, plusIcon, userIcon } from "../../assets/icons";
-import { Boton, Paginacion, usePaginacion, mostrarAviso } from "../../components";
+import { Boton, mostrarAviso } from "../../components";
 import VisitaModal from "./VisitaModal";
 import { api } from "../../services/api.js";
-import PageSkeleton from "../../components/skeleton/PageSkeleton";
+import useListadoPaginado from "../../hooks/useListadoPaginado.js";
+import EstadoListado from "../../components/paginacion/EstadoListado.jsx";
+import PaginacionServidor from "../../components/paginacion/PaginacionServidor.jsx";
 import { ROLES, tieneRol } from "../../utils/roles.js";
 import propertyImage from "/images (1).jpg";
 import "./Agenda.css";
@@ -143,9 +145,8 @@ function EncabezadoAgenda({ view, onViewChange, onCreate, onUpcomingOpen, puedeG
   );
 }
 
-function ProximasVisitas({ visitas, onEdit, open, onClose }) {
-  const [showAll, setShowAll] = useState(false);
-  const { page, totalPages, pageItems, setPage, resetPage } = usePaginacion(visitas);
+function ProximasVisitas({ listado, onEdit, open, onClose }) {
+  const visitas = listado.datos.map(prepararVisita);
   return (
     <aside
       className={`agenda__sidebar${open ? " is-open" : ""}`}
@@ -168,9 +169,9 @@ function ProximasVisitas({ visitas, onEdit, open, onClose }) {
           ×
         </button>
       </div>
-      <p className="agenda__sidebar-caption">Tus encuentros desde hoy</p>
+      <p className="agenda__sidebar-caption">Visitas programadas desde hoy</p>
       <div className="agenda__upcoming-list">
-        {(showAll ? pageItems : visitas.slice(0, 5)).map((visita) => (
+        {visitas.map((visita) => (
           <button
             className="agenda__upcoming-item"
             type="button"
@@ -201,22 +202,9 @@ function ProximasVisitas({ visitas, onEdit, open, onClose }) {
             />
           </button>
         ))}
-        {!visitas.length && (
-          <p className="agenda__empty-upcoming">
-            No hay próximas visitas. Agendá una nueva para verla acá.
-          </p>
-        )}
+        <EstadoListado cargando={listado.cargando} error={listado.error} alReintentar={listado.recargar} vacio={!visitas.length} mensajeVacio="No hay próximas visitas programadas." />
       </div>
-      {showAll && <Paginacion page={page} totalPages={totalPages} total={visitas.length} onPageChange={setPage} />}
-      {visitas.length > 5 && (
-        <button
-          className="agenda__show-all"
-          type="button"
-          onClick={() => { setShowAll((value) => !value); resetPage(); }}
-        >
-          {showAll ? "Ver menos" : `Ver todas (${visitas.length})`}
-        </button>
-      )}
+      <PaginacionServidor paginacion={listado.paginacion} alCambiar={listado.cambiarPagina} />
     </aside>
   );
 }
@@ -242,7 +230,7 @@ function VistaDia({ visitas, fecha: date, onEdit, onDateChange }) {
             {visitsForDay.length} {visitsForDay.length === 1 ? "visita" : "visitas"}
           </span>
         </div>
-        <ControlesPeriodo date={date} view="day" onDateChange={onDateChange} />
+        <ControlesPeriodo fecha={date} view="day" onDateChange={onDateChange} />
       </div>
       <div className="agenda__day-list">
         {franjasHorarias.map((time, index) => {
@@ -301,7 +289,7 @@ function VistaSemana({ visitas, fecha: date, onEdit, onDateChange, onDaySelect }
             {weekCount} {weekCount === 1 ? "visita" : "visitas"}
           </span>
         </div>
-        <ControlesPeriodo date={date} view="week" onDateChange={onDateChange} />
+        <ControlesPeriodo fecha={date} view="week" onDateChange={onDateChange} />
       </div>
       <div className="agenda__week-list">
         {days.map((day) => {
@@ -358,7 +346,7 @@ function VistaMes({ visitas, fecha: date, onEdit, onDateChange }) {
             {monthCount} {monthCount === 1 ? "visita" : "visitas"}
           </span>
         </div>
-        <ControlesPeriodo date={date} view="month" onDateChange={onDateChange} />
+        <ControlesPeriodo fecha={date} view="month" onDateChange={onDateChange} />
       </div>
       <div
         className="agenda__calendar"
@@ -446,41 +434,56 @@ function VistaMes({ visitas, fecha: date, onEdit, onDateChange }) {
   );
 }
 
+function rangoAgenda(fecha, vista) {
+  const inicio = interpretarFecha(fecha);
+  const fin = interpretarFecha(fecha);
+  if (vista === "week") {
+    inicio.setDate(inicio.getDate() - ((inicio.getDay() + 6) % 7));
+    fin.setTime(inicio.getTime());
+    fin.setDate(fin.getDate() + 6);
+  } else if (vista === "month") {
+    inicio.setDate(1);
+    inicio.setDate(inicio.getDate() - ((inicio.getDay() + 6) % 7));
+    fin.setMonth(fin.getMonth() + 1, 0);
+    fin.setDate(fin.getDate() + ((7 - fin.getDay()) % 7));
+  }
+  return { desde: claveFecha(inicio), hasta: claveFecha(fin) };
+}
+
 export default function Agenda() {
   const [view, setView] = useState("day");
   const [date, setDate] = useState(() => claveFecha(new Date()));
-  const [visitas, setVisitas] = useState([]);
-  const [propiedades, setPropiedades] = useState([]);
+  const periodo = useListadoPaginado(api.visitasDelPeriodo, { filtros: rangoAgenda(date, view) });
+  const visitas = periodo.datos.map(prepararVisita);
+  const proximas = useListadoPaginado(api.visitas, { filtros: { desde: claveFecha(new Date()), estado: "Programada" } });
   const [clientes, setClientes] = useState([]);
   const [agentes, setAgentes] = useState([]);
   const [modal, setModal] = useState(null);
   const [error, setError] = useState("");
-  const [cargando, setCargando] = useState(true);
+  const [revisionCatalogos, setRevisionCatalogos] = useState(0);
   const [proximasAbiertas, setProximasAbiertas] = useState(false);
   const puedeGestionar = tieneRol(ROLES.AGENTE);
 
   useEffect(() => {
     let active = true;
     const requests = puedeGestionar
-      ? Promise.all([api.todasLasVisitas(), api.propiedades(), api.catalogosPropiedades(), api.clientesVisitas()])
-      : Promise.all([api.todasLasVisitas()]);
+      ? Promise.all([api.catalogosPropiedades(), api.clientesVisitas()])
+      : Promise.resolve([{ agentes: [] }, []]);
 
     requests
-      .then(([visitasRecibidas, propiedadesRecibidas = [], catalogos = { agentes: [] }, clientesRecibidos = []]) => {
+      .then(([catalogos = { agentes: [] }, clientesRecibidos = []]) => {
         if (!active) return;
-        setVisitas(visitasRecibidas.map(prepararVisita));
-        setPropiedades(propiedadesRecibidas);
         setAgentes(catalogos.agentes);
         setClientes(clientesRecibidos);
+        setError("");
       })
       .catch((error) => {
         if (!active) return;
         setError(error.message);
         mostrarAviso({ tipo: "error", titulo: "No se pudo cargar la agenda", mensaje: error.message });
-      })
-      .finally(() => { if (active) setCargando(false); });
+      });
     return () => { active = false; };
-  }, [puedeGestionar]);
+  }, [puedeGestionar, revisionCatalogos]);
 
   useEffect(() => {
     if (!proximasAbiertas) return undefined;
@@ -514,7 +517,8 @@ export default function Agenda() {
       saved = await api.crearVisita(body);
     }
     const normalized = prepararVisita(saved);
-    setVisitas((current) => enEdicion ? current.map((visita) => visita.id === enEdicion.id ? normalized : visita) : [...current, normalized]);
+    periodo.recargar();
+    proximas.recargar();
     setDate(normalized.fecha);
     setView("day");
     const titulo = enEdicion
@@ -531,16 +535,6 @@ export default function Agenda() {
     setError("");
   }
 
-  const proximasVisitas = visitas
-    .filter((visita) => visita.fecha >= claveFecha(new Date()) && visita.estado !== "Cancelada")
-    .sort(
-      (first, second) =>
-        first.fecha.localeCompare(second.fecha) ||
-        (first.hora || "").localeCompare(second.hora || ""),
-    );
-
-  if (cargando) return <PageSkeleton variant="agenda" />;
-
   return (
     <main id="agenda">
       <div className={`agenda__content${error ? " has-message" : ""}`}>
@@ -553,16 +547,17 @@ export default function Agenda() {
         />
         {error && (
           <div className="agenda__messages">
-            <p className="agenda__message" role="alert">{error}</p>
+            <p className="agenda__message" role="alert">{error} <button type="button" onClick={() => setRevisionCatalogos((actual) => actual + 1)}>Reintentar</button></p>
           </div>
         )}
-        {view === "day" && (
-          <VistaDia visitas={visitas} date={date} onEdit={editarVisita} onDateChange={setDate} />
+        <EstadoListado cargando={periodo.cargando} error={periodo.error} alReintentar={periodo.recargar} />
+        {!periodo.cargando && !periodo.error && view === "day" && (
+          <VistaDia visitas={visitas} fecha={date} onEdit={editarVisita} onDateChange={setDate} />
         )}
-        {view === "week" && (
+        {!periodo.cargando && !periodo.error && view === "week" && (
           <VistaSemana
             visitas={visitas}
-            date={date}
+            fecha={date}
             onEdit={editarVisita}
             onDateChange={setDate}
             onDaySelect={(value) => {
@@ -571,11 +566,11 @@ export default function Agenda() {
             }}
           />
         )}
-        {view === "month" && (
-          <VistaMes visitas={visitas} date={date} onEdit={editarVisita} onDateChange={setDate} />
+        {!periodo.cargando && !periodo.error && view === "month" && (
+          <VistaMes visitas={visitas} fecha={date} onEdit={editarVisita} onDateChange={setDate} />
         )}
         <ProximasVisitas
-          visitas={proximasVisitas}
+          listado={proximas}
           onEdit={editarVisita}
           open={proximasAbiertas}
           onClose={() => setProximasAbiertas(false)}
@@ -593,7 +588,6 @@ export default function Agenda() {
         <VisitaModal
           visita={modal.visita}
           fechaInicial={date}
-          propiedades={propiedades}
           clientes={clientes}
           agentes={agentes}
           onClose={() => setModal(null)}

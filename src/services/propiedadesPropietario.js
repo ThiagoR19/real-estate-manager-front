@@ -1,13 +1,4 @@
-import { request } from "../utils/request.js";
+import { crearListadoPaginado } from "./listadoPaginado.js";
 
-async function todasLasPaginas(path, limit = 10) {
-  const items = [];
-  for (let page = 1; ; page++) {
-    const result = await request(`${path}?page=${page}&limit=${limit}`);
-    items.push(...result.data);
-    if (page >= (result.paginacion?.paginas || 1)) return items;
-  }
-}
-
-export const contratos = () => todasLasPaginas("/contratos");
-export const reportes = () => todasLasPaginas("/reportes", 5);
+export const contratos = crearListadoPaginado("/contratos", { admiteBusqueda: false, filtrosPermitidos: ["tipo", "estado", "idPropiedad", "desde", "hasta"] });
+export const reportes = crearListadoPaginado("/reportes", { limitePredeterminado: 5, filtrosPermitidos: ["idInmobiliaria"] });

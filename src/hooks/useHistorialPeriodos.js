@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import useListadoPaginado from "./useListadoPaginado.js";
+import { api } from "../services/api.js";
 
 const MESES = [
   "Enero",
@@ -52,39 +54,23 @@ export function etiquetarContratos(contratos) {
   });
 }
 
-export default function useHistorialPeriodos(listar, consultar) {
-  const [items, setItems] = useState(null);
-  const [error, setError] = useState("");
+export default function useHistorialPeriodos(listar, consultar, tipo = "pagos") {
   const [contratoElegido, setContratoElegido] = useState(null);
   const [periodoElegido, setPeriodoElegido] = useState(null);
+  const [anio, setAnio] = useState("");
   const [recargas, setRecargas] = useState(0);
   const [estado, setEstado] = useState({ clave: null, detalle: null });
-
-  useEffect(() => {
-    let activo = true;
-    listar()
-      .then((lista) => {
-        if (!activo) return;
-        setItems(lista);
-        setError("");
-      })
-      .catch((error) => {
-        if (!activo) return;
-        setItems([]);
-        setError(error.message);
-      });
-    return () => {
-      activo = false;
-    };
-  }, [listar, recargas]);
-
-  const contratosPorId = new Map();
-  for (const { idContrato, propiedad } of items ?? []) {
-    contratosPorId.set(idContrato, { idContrato, propiedad });
-  }
-  const contratos = etiquetarContratos([...contratosPorId.values()]);
-  const idContrato = contratosPorId.has(contratoElegido) ? contratoElegido : contratos[0]?.idContrato;
-  const delContrato = (items ?? []).filter((item) => item.idContrato === idContrato);
+  const catalogo = useListadoPaginado(api.contratos);
+  const contratos = etiquetarContratos(catalogo.datos.map((contrato) => ({ ...contrato, idContrato: contrato.id })));
+  const idContrato = contratoElegido ?? contratos[0]?.idContrato;
+  const filtros = { idContrato, anio: anio || undefined };
+  const listado = useListadoPaginado(listar, { filtros, limite: 12, habilitada: Boolean(idContrato), version: recargas });
+  const totalContrato = useListadoPaginado(listar, { filtros: { idContrato }, limite: 1, habilitada: Boolean(idContrato), version: recargas });
+  const aprobados = useListadoPaginado(listar, { filtros: { idContrato, estado: tipo === "cobros" ? "Liquidado" : "Aprobado" }, limite: 1, habilitada: Boolean(idContrato), version: recargas });
+  const rechazados = useListadoPaginado(listar, { filtros: { idContrato, estado: tipo === "cobros" ? "Pendiente" : "Rechazado" }, limite: 1, habilitada: Boolean(idContrato), version: recargas });
+  const cargando = catalogo.cargando || listado.cargando;
+  const items = cargando ? null : listado.datos;
+  const delContrato = listado.datos;
   const seleccionado = delContrato.find((item) => item.id === periodoElegido || item.periodo === periodoElegido) ?? delContrato[0] ?? null;
   const idSeleccionado = seleccionado?.id;
   const clave = idSeleccionado == null ? null : `${idSeleccionado}|${recargas}`;
@@ -92,67 +78,44 @@ export default function useHistorialPeriodos(listar, consultar) {
   useEffect(() => {
     if (!clave) return undefined;
     let activo = true;
-    consultar(idSeleccionado)
-      .then((detalle) => {
-        if (!activo) return;
-        setEstado({ clave, detalle });
-      })
-      .catch((error) => {
-        if (!activo) return;
-        setEstado({ clave, detalle: null, error: error.message });
-      });
-    return () => {
-      activo = false;
-    };
+    const controlador = new AbortController();
+    consultar(idSeleccionado, { signal: controlador.signal })
+      .then((detalle) => { if (activo) setEstado({ clave, detalle }); })
+      .catch((error) => { if (activo && !controlador.signal.aborted) setEstado({ clave, detalle: null, error: error.message }); });
+    return () => { activo = false; controlador.abort(); };
   }, [consultar, clave, idSeleccionado]);
 
   const anios = [...new Set(delContrato.map((item) => item.periodo.slice(0, 4)))].map((anio) => ({
-    anio,
-    periodos: delContrato.filter((item) => item.periodo.startsWith(anio)),
+    anio, periodos: delContrato.filter((item) => item.periodo.startsWith(anio)),
   }));
   const detalle = estado.clave === clave && estado.detalle ? estado.detalle : seleccionado;
+  const contrato = contratos.find((item) => item.idContrato === idContrato) ??
+    (idContrato ? { idContrato, etiqueta: seleccionado?.propiedad || `Contrato #${idContrato}` } : null);
 
-  function elegir(id) {
-    setPeriodoElegido(id);
-  }
-
-  function incorporar(item) {
-    setItems((actual) => [item, ...(actual ?? []).filter(({ id }) => id !== item.id)]);
-    setContratoElegido(item.idContrato);
-    setPeriodoElegido(item.id);
-    recargar();
-  }
-
-  function recargar() {
-    setRecargas((cantidad) => cantidad + 1);
-  }
-
+  function recargar() { setRecargas((cantidad) => cantidad + 1); }
   function elegirContrato(nuevoId, periodo = null) {
     setContratoElegido(nuevoId);
     setPeriodoElegido(periodo);
+    setAnio(typeof periodo === "string" && /^\d{4}-\d{2}$/.test(periodo) ? periodo.slice(0, 4) : "");
   }
-
+  function incorporar(item) {
+    elegirContrato(item.idContrato, item.periodo);
+    setPeriodoElegido(item.id);
+    recargar();
+  }
   function moverContrato(direccion) {
     if (!contratos.length) return;
     const indice = contratos.findIndex((contrato) => contrato.idContrato === idContrato);
     elegirContrato(contratos[(indice + direccion + contratos.length) % contratos.length].idContrato);
   }
-
   return {
-    items,
-    error,
-    contratos,
-    contrato: contratos.find((item) => item.idContrato === idContrato) ?? null,
-    delContrato,
-    anios,
-    seleccionado,
-    detalle,
+    items, error: catalogo.error || listado.error, contratos, contrato, delContrato, anios, anio,
+    cambiarAnio: setAnio, seleccionado, detalle, cargando,
+    catalogo, listado,
+    totales: { total: totalContrato.paginacion?.total, aprobados: aprobados.paginacion?.total, rechazados: rechazados.paginacion?.total },
+    errorResumen: totalContrato.error || aprobados.error || rechazados.error,
     cargandoDetalle: Boolean(clave) && estado.clave !== clave,
     errorDetalle: estado.clave === clave ? estado.error : null,
-    elegirContrato,
-    moverContrato,
-    elegir,
-    incorporar,
-    recargar,
+    elegirContrato, moverContrato, elegir: setPeriodoElegido, incorporar, recargar,
   };
 }

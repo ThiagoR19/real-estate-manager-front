@@ -1,17 +1,22 @@
 import { request } from "../utils/request.js";
+import { crearListadoPaginado } from "./listadoPaginado.js";
 
-export function visitas(filtros = {}) {
-  const query = new URLSearchParams(filtros).toString();
-  return request(`/visitas?${query}`);
-}
+export const visitas = crearListadoPaginado("/visitas", {
+  admiteBusqueda: false, filtrosPermitidos: ["desde", "hasta", "idAgente", "idCliente", "idPropiedad", "estado"],
+});
 
-export async function todasLasVisitas() {
-  const items = [];
-  for (let page = 1; ; page++) {
-    const result = await visitas({ page, limit: 10 });
-    items.push(...result.data);
-    if (page >= (result.paginacion?.paginas || 1)) return items;
+export async function visitasDelPeriodo({ filtros } = {}, { signal } = {}) {
+  if (!filtros?.desde || !filtros?.hasta) throw new Error("Indicá el período de la agenda.");
+  const filas = [];
+  let paginacion;
+  for (let pagina = 1; ; pagina++) {
+    signal?.throwIfAborted();
+    const resultado = await visitas({ pagina, filtros }, { signal });
+    filas.push(...resultado.data);
+    paginacion = resultado.paginacion;
+    if (pagina >= paginacion.paginas) break;
   }
+  return { data: filas, paginacion: { pagina: 1, limite: Math.max(1, filas.length), total: filas.length, paginas: filas.length ? 1 : 0 } };
 }
 
 export const clientesVisitas = () => request("/visitas/clientes").then(({ data }) => data);

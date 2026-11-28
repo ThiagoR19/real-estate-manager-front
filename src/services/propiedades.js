@@ -1,22 +1,12 @@
+import { crearListadoPaginado } from "./listadoPaginado.js";
 import { http, request } from "../utils/request.js";
 import { limpiarSesion, obtenerSesion } from "../utils/sesion.js";
 
 export const catalogosPropiedades = () => request("/propiedades/catalogos").then(({ data }) => data);
 
-export async function propiedades() {
-  const items = [];
-  let page = 1;
-  let hasNext = true;
-  while (hasNext) {
-    const result = await request(`/propiedades?page=${page}&limit=12`);
-    items.push(...result.data);
-    hasNext = page < (result.paginacion?.paginas || 1);
-    page++;
-  }
-  return items;
-}
+export const propiedades = crearListadoPaginado("/propiedades", { limitePredeterminado: 12, limiteMaximo: 12, filtrosPermitidos: ["idInmobiliaria"] });
 
-export const propiedad = (id) => request(`/propiedades/${id}`).then(({ data }) => data);
+export const propiedad = (id, { signal } = {}) => request(`/propiedades/${id}`, { signal }).then(({ data }) => data);
 export const archivosPropiedad = (id) => request(`/propiedades/${id}/archivos`).then(({ data }) => data);
 export const crearPropiedad = (body) => request("/propiedades", { method: "POST", body }).then(({ data }) => data);
 export const actualizarPropiedad = (id, body) => request(`/propiedades/${id}`, { method: "PUT", body }).then(({ data }) => data);

@@ -1,9 +1,11 @@
 import { assetUrl } from "../../utils/assetUrl.js";
 import { useEffect, useState } from "react";
 import { clockIcon, calendarIcon, envelopeIcon, locationDotIcon, magnifyingGlassIcon, peopleIcon, phoneIcon, plusIcon, xIcon } from "../../assets/icons";
-import { SelectDesplegable, Boton, PildoraResumen, GestionModal, AccionesModal, CampoModal, EntradaModal, ModalSelect, ConfirmarEliminacionModal, AccionesEntidad, AvisoEnlaceActivacion, Paginacion, usePaginacion, mostrarAviso } from "../../components";
+import { Boton, PildoraResumen, GestionModal, AccionesModal, CampoModal, EntradaModal, ModalSelect, ConfirmarEliminacionModal, AccionesEntidad, AvisoEnlaceActivacion, mostrarAviso } from "../../components";
 import { api } from "../../services/api.js";
-import PageSkeleton from "../../components/skeleton/PageSkeleton";
+import useListadoPaginado from "../../hooks/useListadoPaginado.js";
+import EstadoListado from "../../components/paginacion/EstadoListado.jsx";
+import PaginacionServidor from "../../components/paginacion/PaginacionServidor.jsx";
 import avatarClass from "../../utils/avatarClass.js";
 import initials from "../../utils/initials.js";
 import "./Agentes.css";
@@ -11,23 +13,6 @@ import "./Agentes.css";
 function enlaceActivacion(activacion) {
   if (activacion?.enlace) return activacion.enlace;
   return activacion?.codigo ? `${window.location.origin}/activar?codigo=${encodeURIComponent(activacion.codigo)}` : "";
-}
-
-function FiltroZona({ value, onChange, zones }) {
-  return (
-    <SelectDesplegable
-      label="Zona"
-      placeholder="Zona"
-      value={value}
-      options={zones}
-      onChange={onChange}
-      icon={locationDotIcon}
-      className="agentes__filter"
-      triggerClassName="agentes__filter-trigger"
-      iconClassName="agentes__filter-icon"
-      chevronClassName="agentes__filter-chevron"
-    />
-  );
 }
 
 function FilaAgente({ agente, onEdit, onDelete, onGenerateActivation }) {
@@ -147,59 +132,33 @@ function AgenteModal({ agente, areas, onClose, onSubmit }) {
 }
 
 export default function Agentes() {
-  const [agentes, setAgentes] = useState([]);
   const [areas, setAreas] = useState([]);
-  const [visitas, setVisitas] = useState([]);
+  const [errorAreas, setErrorAreas] = useState("");
+  const [revisionAreas, setRevisionAreas] = useState(0);
   const [textoBusqueda, setTextoBusqueda] = useState("");
-  const [zone, setZone] = useState("Todas las zonas");
   const [modal, setModal] = useState(null);
   const [pendienteEliminar, setPendienteEliminar] = useState(null);
   const [aviso, setAviso] = useState("");
   const [enlaceActivacionGenerado, setEnlaceActivacion] = useState("");
 
-  const [error, setError] = useState("");
-  const [cargando, setCargando] = useState(true);
-  const zones = ["Todas las zonas", ...new Set(areas.map((area) => area.nombre))];
-  const visibleAgents = agentes.filter(
-    (agente) =>
-      [agente.nombre, agente.apellido, agente.dni, agente.correo, agente.zona].some((value) =>
-        String(value ?? "").toLowerCase().includes(textoBusqueda.toLowerCase()),
-      ) &&
-      (zone === zones[0] || agente.zona === zone),
-  );
-  const today = new Date().toDateString();
-  const todayVisits = visitas.filter((visita) => new Date(visita.fecha).toDateString() === today).length;
-  const cancelledVisits = visitas.filter((visita) => visita.estado === "Cancelada").length;
-  const { page, totalPages, pageItems, setPage, resetPage } = usePaginacion(visibleAgents);
-
+  const listado = useListadoPaginado(api.agentes, { busqueda: textoBusqueda });
+  const agentes = listado.datos;
+  const hoy = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Argentina/Buenos_Aires" }).format(new Date());
+  const visitasHoy = useListadoPaginado(api.visitas, { filtros: { desde: hoy, hasta: hoy }, limite: 1 });
+  const visitasCanceladas = useListadoPaginado(api.visitas, { filtros: { estado: "Cancelada" }, limite: 1 });
   useEffect(() => {
-    let active = true;
-    Promise.all([api.agentes(), api.areas(), api.todasLasVisitas()])
-      .then(([agentRows, areaRows, visitasRecibidas]) => {
-        if (!active) return;
-        setAgentes(agentRows);
-        setAreas(areaRows);
-        setVisitas(visitasRecibidas);
-      })
-      .catch((error) => {
-        if (!active) return;
-        setError(error.message);
-        mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar los agentes", mensaje: error.message });
-      })
-      .finally(() => { if (active) setCargando(false); });
-    return () => { active = false; };
-  }, []);
+    let activa = true;
+    api.areas().then((filas) => { if (activa) { setAreas(filas); setErrorAreas(""); } })
+      .catch((error) => { if (activa) setErrorAreas(error.message); });
+    return () => { activa = false; };
+  }, [revisionAreas]);
 
   async function guardarAgente(body) {
     const result =
       modal.mode === "edit"
         ? await api.actualizarAgente(modal.persona.id, body)
         : await api.crearAgente(body);
-    setAgentes((current) =>
-      modal.mode === "edit"
-        ? current.map((agente) => (agente.id === result.id ? result : agente))
-        : [...current, result],
-    );
+    listado.recargar();
     const urlActivacion = enlaceActivacion(result.activacion);
     setEnlaceActivacion(modal.mode === "edit" ? "" : urlActivacion);
     setAviso(modal.mode === "edit" || !urlActivacion ? "" : "Agente creado. Copiá el enlace y compartilo para que active su cuenta.");
@@ -213,7 +172,6 @@ export default function Agentes() {
 
   async function generarEnlaceActivacion(agente) {
     try {
-      setError("");
       const activacion = await api.generarEnlaceAgente(agente.id);
       setEnlaceActivacion(enlaceActivacion(activacion));
       setAviso(`Enlace nuevo para ${agente.nombre || `DNI ${agente.dni}`}. Compartilo con el agente para activar su cuenta.`);
@@ -226,7 +184,7 @@ export default function Agentes() {
   async function eliminarAgente() {
     try {
       await api.eliminarAgente(pendienteEliminar.id);
-      setAgentes((current) => current.filter((agente) => agente.id !== pendienteEliminar.id));
+      listado.recargar();
       setPendienteEliminar(null);
       setEnlaceActivacion("");
       setAviso("");
@@ -236,7 +194,6 @@ export default function Agentes() {
     }
   }
 
-  if (cargando) return <PageSkeleton variant="table" title="agentes" />;
 
   return (
     <main id="agentes">
@@ -249,31 +206,34 @@ export default function Agentes() {
           <div className="agentes__summary" aria-label="Resumen de agentes">
             <PildoraResumen
               label="Agentes activos"
-              value={agentes.filter((agente) => agente.estadoCuenta === "ACTIVO").length}
+              value="—"
               icon={peopleIcon}
               tone="success"
             />
             <PildoraResumen
               label="Pendientes"
-              value={agentes.filter((agente) => agente.estadoCuenta === "PENDIENTE_ACTIVACION").length}
+              value="—"
               icon={clockIcon}
               tone="warning"
             />
             <PildoraResumen
               label="Visitas de hoy"
-              value={todayVisits}
+              value={visitasHoy.paginacion?.total ?? "—"}
               icon={calendarIcon}
               tone="info"
             />
             <PildoraResumen
               label="Visitas canceladas"
-              value={cancelledVisits}
+              value={visitasCanceladas.paginacion?.total ?? "—"}
               icon={xIcon}
               tone="danger"
             />
           </div>
         </section>
 
+        <p>Los totales de agentes activos y pendientes y el filtro por zona aún no están disponibles.</p>
+        <EstadoListado error={errorAreas} alReintentar={() => setRevisionAreas((actual) => actual + 1)} />
+        <EstadoListado error={visitasHoy.error || visitasCanceladas.error} alReintentar={() => { visitasHoy.recargar(); visitasCanceladas.recargar(); }} />
         <section className="agentes__toolbar" aria-label="Buscar y filtrar agentes">
           <label className="agentes__search">
             <img src={magnifyingGlassIcon} alt="" />
@@ -282,10 +242,11 @@ export default function Agentes() {
               placeholder="Buscar contacto..."
               aria-label="Buscar contacto"
               value={textoBusqueda}
-              onChange={(event) => { setTextoBusqueda(event.target.value); resetPage(); }}
+              maxLength={255}
+              onChange={(event) => setTextoBusqueda(event.target.value)}
             />
           </label>
-          <FiltroZona value={zone} onChange={(value) => { setZone(value); resetPage(); }} zones={zones} />
+          <select className="agentes__filter" aria-label="Zona" disabled><option>Zona · Próximamente</option></select>
           <Boton
             className="agentes__new-button"
             onClick={() => setModal({ mode: "create", persona: null })}
@@ -307,7 +268,7 @@ export default function Agentes() {
                 </tr>
               </thead>
               <tbody>
-                {pageItems.map((agente) => (
+                {agentes.map((agente) => (
                   <FilaAgente
                     key={agente.id}
                     agente={agente}
@@ -319,10 +280,8 @@ export default function Agentes() {
               </tbody>
             </table>
           </div>
-          {!visibleAgents.length && (
-            <p className="agentes__empty">No encontramos agentes con esos criterios.</p>
-          )}
-          <Paginacion page={page} totalPages={totalPages} total={visibleAgents.length} onPageChange={setPage} />
+          <EstadoListado cargando={listado.cargando} error={listado.error} alReintentar={listado.recargar} vacio={!agentes.length} />
+          <PaginacionServidor paginacion={listado.paginacion} alCambiar={listado.cambiarPagina} />
         </section>
       </div>
 
@@ -333,11 +292,7 @@ export default function Agentes() {
           onDismiss={() => { setAviso(""); setEnlaceActivacion(""); }}
         />
       )}
-      {error && (
-        <p className="agentes__notice" role="alert">
-          {error}
-        </p>
-      )}
+
 
       {modal && (
         <AgenteModal

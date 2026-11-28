@@ -1,3 +1,4 @@
+import ControlesHistorial from "../../components/paginacion/ControlesHistorial.jsx";
 import { useEffect, useRef, useState } from "react";
 import { buildingColumnsIcon, calendarIcon, checkIcon, downloadIcon, fileLinesIcon, imageIcon, optionsIcon, paperPlaneIcon, xIcon, } from "../../assets/icons";
 import { Boton, mostrarAviso } from "../../components";
@@ -31,8 +32,8 @@ function estadoDe(cobro) {
 }
 
 export default function Cobros() {
-  const historial = useHistorialPeriodos(cobros, cobro);
-  const { items, contratos, contrato, delContrato, anios, detalle: cobroSeleccionado } = historial;
+  const historial = useHistorialPeriodos(cobros, cobro, "cobros");
+  const { items, contratos, contrato, anios, detalle: cobroSeleccionado } = historial;
   const [openYears, setOpenYears] = useState({});
   const [timelineOpen, setTimelineOpen] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
@@ -42,7 +43,7 @@ export default function Cobros() {
   const estado = estadoDe(cobroSeleccionado);
   const hasReceipt = Boolean(cobroSeleccionado?.tieneComprobante);
   const comprobante = { cargar: obtenerComprobanteCobro, id: cobroSeleccionado?.id, nombre: cobroSeleccionado?.nombreArchivo, version: cobroSeleccionado?.fechaComprobante };
-  const contar = (condicion) => `${delContrato.filter(condicion).length}/${delContrato.length}`;
+  const contar = (cantidad) => `${cantidad ?? "—"}/${historial.totales.total ?? "—"}`;
 
   useEffect(() => {
     if (!timelineOpen && !summaryOpen) return undefined;
@@ -89,6 +90,7 @@ export default function Cobros() {
   if (!items || !items.length || !cobroSeleccionado) {
     return (
       <main id="cobros" className="cobros--sin-periodos">
+        <ControlesHistorial historial={historial} />
         <section className="cobros__empty-page">
           <h1>Zona de cobro</h1>
           <p role="status">{historial.error || (items ? "Todavía no tenés liquidaciones registradas." : "Cargando cobros…")}</p>
@@ -102,6 +104,7 @@ export default function Cobros() {
 
   return (
     <main id="cobros">
+      <ControlesHistorial historial={historial} />
       <div className="pago-movil__toolbar">
         <SelectDesplegable
           label="Propiedad"
@@ -248,13 +251,13 @@ export default function Cobros() {
           <TarjetaResumen
             icon={checkIcon}
             label="Liquidaciones cobradas"
-            value={contar((item) => item.estado === "Liquidado")}
+            value={contar(historial.totales.aprobados)}
             tone="green"
           />
           <TarjetaResumen
             icon={xIcon}
             label="Liquidaciones pendientes"
-            value={contar((item) => item.estado === "Pendiente")}
+            value={contar(historial.totales.rechazados)}
             tone="red"
           />
         </section>

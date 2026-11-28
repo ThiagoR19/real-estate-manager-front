@@ -1,14 +1,16 @@
 import { assetUrl } from "../../utils/assetUrl.js";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { api } from "../../services/api";
-import PageSkeleton from "../../components/skeleton/PageSkeleton";
+import useListadoPaginado from "../../hooks/useListadoPaginado.js";
+import EstadoListado from "../../components/paginacion/EstadoListado.jsx";
+import PaginacionServidor from "../../components/paginacion/PaginacionServidor.jsx";
+import PersonalSuperAdmin from "./PersonalSuperAdmin.jsx";
 
 import initials from "../../utils/initials";
-import avatarClass from "../../utils/avatarClass";
 
 import { PildoraResumen, Boton, ConfirmarEliminacionModal, mostrarAviso } from "../../components";
 import InmobiliariaModal from "./InmobiliariaModal";
-import { angleDownIcon, building, editSuper, plusIcon, trashCanIcon } from "../../assets/icons";
+import { angleDownIcon, building, editSuper, plusIcon } from "../../assets/icons";
 import "./SuperAdmin.css";
 
 function InmobiliariaLogo({ inmobiliaria }) {
@@ -27,63 +29,27 @@ function InmobiliariaLogo({ inmobiliaria }) {
   );
 }
 
-function PersonAvatar({ persona }) {
-  const [fotoRota, setFotoRota] = useState(false);
-  if (persona.urlFotoPerfil && !fotoRota) {
-    return (
-      <span className="super-admin__avatar">
-        <img src={assetUrl(persona.urlFotoPerfil)} alt="" onError={() => setFotoRota(true)} />
-      </span>
-    );
-  }
-  return (
-    <span className={`super-admin__avatar ${avatarClass(persona.nombre, persona.apellido)}`}>
-      {initials(persona.nombre, persona.apellido)}
-    </span>
-  );
-}
-
-function personasDe(inmobiliaria) {
-  return [
-    ...inmobiliaria.admins.map((admin) => ({ ...admin, tipo: "admin", rol: "Admin", clave: `admin-${admin.id}` })),
-    ...inmobiliaria.agentes.map((agente) => ({ ...agente, tipo: "agente", rol: "Agente", clave: `agente-${agente.id}` })),
-  ];
-}
-
 function enlaceActivacion(activacion) {
   if (activacion?.enlace) return activacion.enlace;
   return activacion?.codigo ? `${window.location.origin}/activar?codigo=${encodeURIComponent(activacion.codigo)}` : "";
 }
 
 export default function SuperAdmin() {
-  const [estado, setEstado] = useState({ inmobiliarias: [], mensaje: "" });
-  const [loading, setLoading] = useState(true);
+  const listado = useListadoPaginado(api.inmobiliarias);
+  const inmobiliarias = listado.datos;
+  const mensaje = listado.error;
+  const [versionUsuarios, setVersionUsuarios] = useState(0);
   const [expanded, setExpanded] = useState({});
   const [modal, setModal] = useState(null);
   const [aEliminar, setAEliminar] = useState(null);
   const [enviando, setEnviando] = useState(false);
 
+  const recargarListado = listado.recargar;
   const cargar = useCallback(() => {
-    let activo = true;
-    api.panelSuperAdmin()
-      .then((inmobiliarias) => activo && setEstado({ inmobiliarias, mensaje: "" }))
-      .catch((error) => {
-        if (!activo) return;
-        setEstado({ inmobiliarias: [], mensaje: error.message });
-        mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar las inmobiliarias", mensaje: error.message });
-      })
-      .finally(() => activo && setLoading(false));
-    return () => {
-      activo = false;
-    };
-  }, []);
-
-  useEffect(() => cargar(), [cargar]);
-
-  function reintentar() {
-    setLoading(true);
-    cargar();
-  }
+    recargarListado();
+    setVersionUsuarios((actual) => actual + 1);
+  }, [recargarListado]);
+  const reintentar = listado.recargar;
 
   async function ejecutar(peticion, exito) {
     try {
@@ -195,9 +161,6 @@ export default function SuperAdmin() {
   }
 
 
-  if (loading) return <PageSkeleton variant="super-admin" />;
-
-  const { inmobiliarias, mensaje } = estado;
 
   return (
     <main id="super-admin">
@@ -217,7 +180,7 @@ export default function SuperAdmin() {
             <PildoraResumen
               icon={building}
               label="Inmobiliarias activas"
-              value={inmobiliarias.length}
+              value={listado.paginacion?.total ?? "—"}
               tone="success"
             />
             <Boton
@@ -237,11 +200,11 @@ export default function SuperAdmin() {
               </button>
             </p>
           )}
-          {!mensaje && !inmobiliarias.length && (
+          {!listado.cargando && !mensaje && !inmobiliarias.length && (
             <p className="super-admin__no-admins">Todavía no hay inmobiliarias registradas.</p>
           )}
+          <EstadoListado cargando={listado.cargando} />
           {inmobiliarias.map((inmobiliaria) => {
-            const personas = personasDe(inmobiliaria);
             const abierta = Boolean(expanded[inmobiliaria.id]);
             return (
               <article className={`super-admin__inmobiliaria${abierta ? " is-expanded" : ""}`} key={inmobiliaria.id}>
@@ -278,56 +241,16 @@ export default function SuperAdmin() {
                     </button>
                   </div>
                 </header>
-                {abierta && (
-                  <div className="super-admin__admins">
-                    {personas.length ? (
-                      personas.map((persona) => (
-                        <article className="super-admin__admin" key={persona.clave}>
-                          <PersonAvatar persona={persona} />
-                          <button
-                            className="super-admin__delete"
-                            type="button"
-                            onClick={() => eliminarPersona(persona)}
-                            aria-label={`Eliminar a ${persona.nombre} ${persona.apellido}`}
-                          >
-                            <img src={trashCanIcon} alt="" />
-                          </button>
-                          <h3>
-                            {persona.nombre} {persona.apellido}
-                          </h3>
-                          <label className="super-admin__role-label" htmlFor={`rol-${persona.clave}`}>Rol</label>
-                          <select
-                            className={`super-admin__rol super-admin__rol--${persona.tipo}`}
-                            id={`rol-${persona.clave}`}
-                            value={persona.rol}
-                            onChange={(event) => cambiarRol(persona, event.target.value)}
-                            aria-label={`Rol de ${persona.nombre} ${persona.apellido}`}
-                          >
-                            <option>Admin</option>
-                            <option>Agente</option>
-                          </select>
-                          {persona.tipo === "admin" && persona.estadoCuenta === "PENDIENTE_ACTIVACION" && (
-                            <button
-                              className="super-admin__activation-link"
-                              type="button"
-                              onClick={() => generarEnlaceAdmin(inmobiliaria, persona)}
-                            >
-                              Generar enlace para crear cuenta
-                            </button>
-                          )}
-                        </article>
-                      ))
-                    ) : (
-                      <p className="super-admin__no-admins">
-                        Esta inmobiliaria todavía no tiene administradores ni agentes.
-                      </p>
-                    )}
-                  </div>
-                )}
+                {abierta && <p className="super-admin__no-admins">
+                  Consultá Administradores o Agentes más abajo para gestionar usuarios de la inmobiliaria #{inmobiliaria.id}.
+                </p>}
               </article>
             );
           })}
         </section>
+        <PaginacionServidor paginacion={listado.paginacion} alCambiar={listado.cambiarPagina} />
+        <PersonalSuperAdmin tipo="admin" version={versionUsuarios} alEliminar={eliminarPersona} alCambiarRol={cambiarRol} alGenerarEnlace={generarEnlaceAdmin} />
+        <PersonalSuperAdmin tipo="agente" version={versionUsuarios} alEliminar={eliminarPersona} alCambiarRol={cambiarRol} alGenerarEnlace={generarEnlaceAdmin} />
       </section>
       {modal && (
         <InmobiliariaModal

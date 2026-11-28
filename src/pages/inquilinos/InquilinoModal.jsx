@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { addressCardIcon, envelopeIcon, houseIcon, locationDotIcon, phoneIcon, userIcon } from "../../assets/icons";
+import { addressCardIcon, envelopeIcon, locationDotIcon, phoneIcon, userIcon } from "../../assets/icons";
 import { SelectDesplegable, Boton, mostrarAviso } from "../../components";
 import useClosingTransition from "../../hooks/useClosingTransition.js";
-import { propiedades } from "../../services/propiedades.js";
+import SelectorPropiedad from "../../components/propiedad/SelectorPropiedad.jsx";
 import "./InquilinoModal.css";
 
 const opcionesEstado = ["Activo", "Inactivo"];
@@ -68,37 +68,12 @@ function EntradaConIcono({ icon, ...props }) {
 export default function InquilinoModal({ isOpen, mode, inquilino, onClose, onSubmit }) {
   const [formulario, setFormulario] = useState(() => formularioInicial(inquilino));
   const [guardando, setGuardando] = useState(false);
-  const [propiedadesDisponibles, setPropiedadesDisponibles] = useState([]);
-  const [cargandoPropiedades, setCargandoPropiedades] = useState(isOpen && mode === "edit");
-  const [errorPropiedades, setErrorPropiedades] = useState("");
   const { isClosing, close } = useClosingTransition(onClose);
   const esEdicion = mode === "edit";
   const nombreVisible = esEdicion
     ? `${inquilino?.nombre || ""} ${inquilino?.apellido || ""}`.trim() || `DNI ${inquilino?.dni}`
     : "Inquilino";
   const estadoVisible = esEdicion ? (formulario.activo ? "Activo" : "Inactivo") : "Estado";
-  const opcionesPropiedades = propiedadesDisponibles.map((propiedad) => ({
-    id: propiedad.id,
-    label: `${propiedad.ubicacion ? `${propiedad.ubicacion} · ` : ""}${propiedad.nombre} (#${propiedad.id})`,
-  }));
-  const propiedadSeleccionada = opcionesPropiedades.find((propiedad) => Number(propiedad.id) === Number(formulario.idPropiedad));
-  const opcionesPropiedad = ["Seleccionar propiedad", ...opcionesPropiedades.map((propiedad) => propiedad.label)];
-
-  useEffect(() => {
-    if (!isOpen || !esEdicion) return undefined;
-    let mounted = true;
-    propiedades()
-      .then((items) => {
-        if (mounted) setPropiedadesDisponibles(items);
-      })
-      .catch((error) => {
-        if (mounted) setErrorPropiedades(error.message || "No se pudieron cargar las propiedades.");
-      })
-      .finally(() => {
-        if (mounted) setCargandoPropiedades(false);
-      });
-    return () => { mounted = false; };
-  }, [isOpen, esEdicion]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -263,32 +238,12 @@ export default function InquilinoModal({ isOpen, mode, inquilino, onClose, onSub
                 />
               </Campo>
 
-              {esEdicion && <Campo label="Propiedad">
-                {cargandoPropiedades || errorPropiedades || !opcionesPropiedades.length ? (
-                  <span className="inquilino-modal__select-trigger" role={errorPropiedades ? "alert" : undefined}>
-                    {cargandoPropiedades
-                      ? "Cargando propiedades..."
-                      : errorPropiedades || "No hay propiedades disponibles"}
-                  </span>
-                ) : (
-                  <SelectDesplegable
-                    label="Propiedad"
-                    value={propiedadSeleccionada?.label || opcionesPropiedad[0]}
-                    options={opcionesPropiedad}
-                    onChange={(label) => {
-                      const propiedad = opcionesPropiedades.find((choice) => choice.label === label);
-                      if (propiedad) setFormulario((current) => ({ ...current, idPropiedad: propiedad.id }));
-                    }}
-                    icon={houseIcon}
-                    className="inquilino-modal__select"
-                    triggerClassName="inquilino-modal__select-trigger"
-                    iconClassName="inquilino-modal__select-icon"
-                    valueClassName="inquilino-modal__select-value"
-                    chevronClassName="inquilino-modal__select-arrow"
-                    optionsClassName="inquilino-modal__select-options"
-                  />
-                )}
-              </Campo>}
+              {esEdicion && <div className="inquilino-modal__field" role="group" aria-label="Propiedad">
+                <span className="inquilino-modal__label">Propiedad</span>
+                <SelectorPropiedad valor={formulario.idPropiedad}
+                  propiedadInicial={inquilino?.idPropiedad ? { id: inquilino.idPropiedad, nombre: inquilino.propiedad, ubicacion: inquilino.propiedadUbicacion } : null}
+                  alCambiar={(idPropiedad) => setFormulario((actual) => ({ ...actual, idPropiedad }))} />
+              </div>}
 
               {esEdicion && <Campo label="Estado">
                 <SelectDesplegable

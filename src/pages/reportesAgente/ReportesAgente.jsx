@@ -1,5 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Paginacion, usePaginacion, Skeleton, mostrarAviso } from "../../components";
+import useListadoPaginado from "../../hooks/useListadoPaginado.js";
+import PaginacionServidor from "../../components/paginacion/PaginacionServidor.jsx";
+import { useEffect, useRef, useState } from "react";
+import { Skeleton, mostrarAviso } from "../../components";
 import { api } from "../../services/api.js";
 import { assetUrl } from "../../utils/assetUrl.js";
 import { ROLES, rolActual } from "../../utils/roles.js";
@@ -16,26 +18,27 @@ export default function ReportesAgente() {
   const rol = rolActual();
   const puedeCambiarEstado = rol === ROLES.ADMIN || rol === ROLES.AGENTE;
   const puedeCrearReporte = rol === ROLES.INQUILINO;
-  const [reportes, setReportes] = useState([]);
   const [catalogos, setCatalogos] = useState({ categorias: [], estados: [], propiedades: [] });
-  const [cargando, setCargando] = useState(true);
+  const [cargandoCatalogos, setCargandoCatalogos] = useState(true);
+  const [revisionCatalogos, setRevisionCatalogos] = useState(0);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [modalCreacionAbierto, setModalCreacionAbierto] = useState(false);
   const [idReporteActivo, setIdReporteActivo] = useState(null);
   const [textoBusqueda, setTextoBusqueda] = useState("");
-  const [propiedadSeleccionada, setPropiedadSeleccionada] = useState("");
+  const listado = useListadoPaginado(api.reportes, { busqueda: textoBusqueda, limite: 5 });
+  const reportes = listado.datos;
+  const cargando = listado.cargando;
+  const errorVisible = listado.error || error;
   const [fotosSeleccionadas, setSelectedPhotos] = useState({});
   const thumbnailsRef = useRef(null);
 
   useEffect(() => {
     let active = true;
-    Promise.all([api.reportes(), api.catalogosReportes()])
-      .then(([reportesActualizados, catalogos]) => {
+    api.catalogosReportes()
+      .then((catalogos) => {
         if (!active) return;
-        setReportes(reportesActualizados);
         setCatalogos(catalogos);
-        setIdReporteActivo(reportesActualizados[0]?.id ?? null);
         setError("");
       })
       .catch((error) => {
@@ -43,19 +46,12 @@ export default function ReportesAgente() {
         setError(error.message);
         mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar los reportes", mensaje: error.message });
       })
-      .finally(() => { if (active) setCargando(false); });
+      .finally(() => { if (active) setCargandoCatalogos(false); });
     return () => { active = false; };
-  }, []);
+  }, [revisionCatalogos]);
 
-  const visibleReports = useMemo(() => {
-    const busqueda = textoBusqueda.trim().toLocaleLowerCase("es-AR");
-    return reportes.filter((report) =>
-      (!propiedadSeleccionada || String(report.idPropiedad) === propiedadSeleccionada) &&
-      (!busqueda || `${report.titulo} ${report.propiedad} ${report.categoria} ${report.descripcion || ""}`
-        .toLocaleLowerCase("es-AR").includes(busqueda)));
-  }, [textoBusqueda, reportes, propiedadSeleccionada]);
-  const { page, totalPages, pageItems, setPage, resetPage } = usePaginacion(visibleReports, 5);
-  const reporteActivo = pageItems.find(({ id }) => id === idReporteActivo) ?? pageItems[0] ?? null;
+
+  const reporteActivo = reportes.find(({ id }) => id === idReporteActivo) ?? reportes[0] ?? null;
   const fotos = reporteActivo?.imagenes ?? [];
   const fotoSeleccionada = Math.min(fotosSeleccionadas[reporteActivo?.id] ?? 0, Math.max(fotos.length - 1, 0));
 
@@ -75,18 +71,16 @@ export default function ReportesAgente() {
         fecha: new Intl.DateTimeFormat("en-CA", { timeZone: "America/Argentina/Buenos_Aires", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date()),
       });
       if (formulario.fotos.length) await api.subirImagenesReporte(created.id, formulario.fotos);
-      const reportesActualizados = await api.reportes();
-      setReportes(reportesActualizados);
+      listado.recargar();
+      listado.cambiarPagina(1);
       setIdReporteActivo(created.id);
       setTextoBusqueda("");
-      setPropiedadSeleccionada("");
-      resetPage();
       setModalCreacionAbierto(false);
       mostrarAviso({ tipo: "exito", titulo: "Reporte creado", mensaje: "El reporte se guardó correctamente." });
     } catch (error) {
       if (created) {
-        const reportesActualizados = await api.reportes().catch(() => null);
-        if (reportesActualizados) setReportes(reportesActualizados);
+        listado.recargar();
+        listado.cambiarPagina(1);
         setModalCreacionAbierto(false);
         mostrarAviso({ tipo: "error", titulo: "Reporte creado sin todas las fotos", mensaje: error.message });
       } else {
@@ -101,7 +95,7 @@ export default function ReportesAgente() {
     setBusy(true);
     try {
       const updated = await api.actualizarReporte(reporteActivo.id, { idEstado });
-      setReportes((items) => items.map((item) => item.id === updated.id ? updated : item));
+      listado.recargar();
       mostrarAviso({ tipo: "exito", titulo: "Estado actualizado", mensaje: `El reporte está ${estadoReporte(updated.estado).toLowerCase()}.` });
     } catch (error) {
       mostrarAviso({ tipo: "error", titulo: "No se pudo cambiar el estado", mensaje: error.message });
@@ -113,7 +107,7 @@ export default function ReportesAgente() {
       <section className="reportes__hero" aria-labelledby="reportes-title">
         <div><h1 id="reportes-title">Reportes</h1><p>Gestioná los reportes de tus propiedades</p></div>
         {puedeCrearReporte && <button className="reportes__create-button" type="button"
-          disabled={cargando || !catalogos.propiedades.length || !catalogos.categorias.length}
+          disabled={cargandoCatalogos || Boolean(error) || !catalogos.propiedades.length || !catalogos.categorias.length}
           onClick={() => setModalCreacionAbierto(true)}>
           <img src={plusIconWhite} alt="" aria-hidden="true" /> Nuevo reporte
         </button>}
@@ -123,20 +117,15 @@ export default function ReportesAgente() {
           <label className="reportes__search">
             <img src={magnifyingGlassIcon} alt="" aria-hidden="true" />
             <input type="search" value={textoBusqueda}
-              onChange={(event) => { setTextoBusqueda(event.target.value); resetPage(); }}
+              maxLength={255} onChange={(event) => setTextoBusqueda(event.target.value)}
               placeholder="Buscar reportes..." aria-label="Buscar reportes" />
           </label>
           <label className="reportes__propiedad-filter">
             <span className="reportes__propiedad-icon"><img src={houseIcon} alt="" aria-hidden="true" /></span>
-            <select value={propiedadSeleccionada}
-              onChange={(event) => { setPropiedadSeleccionada(event.target.value); resetPage(); }}
-              aria-label="Filtrar reportes por propiedad">
-              <option value="">Todas las propiedades</option>
-              {catalogos.propiedades.map((propiedad) => <option key={propiedad.id} value={propiedad.id}>{propiedad.nombre}</option>)}
-            </select>
+            <select disabled aria-label="Filtrar reportes por propiedad"><option>Propiedad · Próximamente</option></select>
           </label>
           <div className="reportes__list">
-            {pageItems.map((report) => (
+            {reportes.map((report) => (
               <button key={report.id} className={`reportes__list-item ${reporteActivo?.id === report.id ? "is-active" : ""}`}
                 type="button" onClick={() => setIdReporteActivo(report.id)}
                 aria-pressed={reporteActivo?.id === report.id}>
@@ -154,12 +143,15 @@ export default function ReportesAgente() {
                 <img src={angleDownIcon} className="reportes__chevron" alt="" aria-hidden="true" />
               </button>
             ))}
-            {!cargando && !error && !visibleReports.length &&
+            {!cargando && !errorVisible && !reportes.length &&
               <p className="reportes__empty">{reportes.length ? "No se encontraron reportes." : catalogos.propiedades.length ? "Todavía no hay reportes para tus propiedades." : "No tenés propiedades habilitadas para reportar."}</p>}
             {cargando && <p className="reportes__empty">Cargando reportes...</p>}
-            {error && <p className="reportes__empty" role="alert">{error}</p>}
+            {errorVisible && <p className="reportes__empty" role="alert">{errorVisible} <button type="button" onClick={() => {
+              listado.recargar();
+              if (error) { setCargandoCatalogos(true); setRevisionCatalogos((actual) => actual + 1); }
+            }}>Reintentar</button></p>}
           </div>
-          <Paginacion page={page} totalPages={totalPages} total={visibleReports.length} pageSize={5} onPageChange={setPage} />
+          <PaginacionServidor paginacion={listado.paginacion} alCambiar={listado.cambiarPagina} />
         </aside>
         <section className="reportes__detail-panel" aria-labelledby="report-detail-title">
           {reporteActivo ? <>

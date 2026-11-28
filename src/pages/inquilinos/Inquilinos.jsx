@@ -1,23 +1,16 @@
 import { assetUrl } from "../../utils/assetUrl.js";
-import { useEffect, useMemo, useState } from "react";
-import PageSkeleton from "../../components/skeleton/PageSkeleton";
-import { calendarIcon, envelopeIcon, fileLinesIcon, houseIcon, locationDotIcon, magnifyingGlassIcon, peopleIcon, phoneIcon, plusIcon, xIcon } from "../../assets/icons";
-import { SelectDesplegable, ConfirmarEliminacionModal, AccionesEntidad, AvisoEnlaceActivacion, Boton, PildoraResumen, Paginacion, usePaginacion, mostrarAviso } from "../../components";
+import { useEffect, useState } from "react";
+import useListadoPaginado from "../../hooks/useListadoPaginado.js";
+import EstadoListado from "../../components/paginacion/EstadoListado.jsx";
+import PaginacionServidor from "../../components/paginacion/PaginacionServidor.jsx";
+import { calendarIcon, envelopeIcon, fileLinesIcon, houseIcon, magnifyingGlassIcon, peopleIcon, phoneIcon, plusIcon, xIcon } from "../../assets/icons";
+import { ConfirmarEliminacionModal, AccionesEntidad, AvisoEnlaceActivacion, Boton, PildoraResumen, mostrarAviso } from "../../components";
 import InquilinoModal from "./InquilinoModal";
 import "./Inquilinos.css";
 import { api } from "../../services/api.js";
 
 import avatarClass from "../../utils/avatarClass";
 import initials from "../../utils/initials.js";
-
-const definicionesFiltros = [
-  { label: "Propiedad", icon: houseIcon, all: "Todas las propiedades" },
-  { label: "Estado", icon: locationDotIcon, all: "Todos los estados" },
-  { label: "Vencimiento", icon: calendarIcon, all: "Todos los vencimientos" },
-];
-
-const opcionesEstado = ["Todos los estados", "Activo", "Inactivo"];
-const opcionesVencimiento = ["Todos los vencimientos", "Este mes", "Próximos 30 días"];
 
 function interpretarFecha(value) {
   if (!value) return null;
@@ -40,48 +33,6 @@ function formatearFecha(value) {
   return date
     ? date.toLocaleDateString("es-AR", { day: "2-digit", month: "short", year: "numeric" })
     : "—";
-}
-
-function venceEnPlazo(value, days, today = new Date()) {
-  const date = interpretarFecha(value);
-  if (!date) return false;
-  const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  const end = new Date(start);
-  end.setDate(end.getDate() + days);
-  return date >= start && date <= end;
-}
-
-function coincideVencimiento(inquilino, selected, today) {
-  if (selected === opcionesVencimiento[0]) return true;
-  if (inquilino.estadoContrato !== "Vigente") return false;
-  const date = interpretarFecha(inquilino.fechaFin);
-  if (!date) return false;
-  const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  if (selected === opcionesVencimiento[1]) {
-    return (
-      date >= start &&
-      date.getFullYear() === start.getFullYear() &&
-      date.getMonth() === start.getMonth()
-    );
-  }
-  return venceEnPlazo(date, 30, start);
-}
-
-function ControlFiltro({ filter, value, onChange }) {
-  return (
-    <SelectDesplegable
-      label={filter.label}
-      placeholder={filter.label}
-      value={value}
-      options={filter.options}
-      onChange={onChange}
-      icon={filter.icon}
-      className="inquilinos__filter"
-      triggerClassName="inquilinos__filter-trigger"
-      iconClassName="inquilinos__filter-icon"
-      chevronClassName="inquilinos__filter-chevron"
-    />
-  );
 }
 
 function ImagenPropiedad({ src }) {
@@ -180,130 +131,46 @@ function FilaInquilino({ inquilino, imagenesPropiedades, onEdit, onDelete, onGen
 }
 
 export default function Inquilinos() {
-  const [inquilinos, setInquilinos] = useState([]);
-  const [imagenesPropiedades, setPropertyImages] = useState({});
+  const [imagenesPropiedades, setImagenesPropiedades] = useState({});
   const [textoBusqueda, setTextoBusqueda] = useState("");
-  const [valoresFiltros, setValoresFiltros] = useState(definicionesFiltros.map((filter) => filter.all));
   const [modal, setModal] = useState({ isOpen: false, mode: "create", inquilino: null });
   const [aviso, setAviso] = useState("");
   const [enlaceActivacionGenerado, setEnlaceActivacion] = useState("");
-  const [loadError, setLoadError] = useState("");
-  const [cargando, setCargando] = useState(true);
+  const listado = useListadoPaginado(api.inquilinos, { busqueda: textoBusqueda });
+  const inquilinos = listado.datos;
   const [pendienteEliminar, setPendienteEliminar] = useState(null);
 
+  const summaryCards = [
+    { label: "Inquilinos activos", value: "—", icon: peopleIcon, tone: "success" },
+    { label: "Inquilinos inactivos", value: "—", icon: xIcon, tone: "warning" },
+    { label: "Contratos vigentes", value: "—", icon: fileLinesIcon, tone: "info" },
+    { label: "Vencen en 30 días", value: "—", icon: calendarIcon, tone: "danger" },
+  ];
+  const idsPropiedadesVisibles = [...new Set(inquilinos.map((inquilino) => inquilino.idPropiedad).filter(Boolean))].join(",");
+
   useEffect(() => {
-    let mounted = true;
-    async function cargarInquilinos() {
-      setCargando(true);
-      setLoadError("");
-      try {
-        const [tenantResult, propertyResult] = await Promise.allSettled([api.inquilinos(), api.propiedades()]);
-        if (tenantResult.status === "rejected") throw tenantResult.reason;
-        if (!mounted) return;
-        setInquilinos(tenantResult.value);
-        if (propertyResult.status === "fulfilled") {
-          setPropertyImages(Object.fromEntries(propertyResult.value
-            .filter((propiedad) => propiedad.imagenes?.[0]?.url)
-            .map((propiedad) => [propiedad.id, assetUrl(propiedad.imagenes[0].url)])));
-        } else {
-          mostrarAviso({
-            tipo: "advertencia",
-            titulo: "No se pudieron cargar las imágenes de propiedades",
-            mensaje: propertyResult.reason?.message || "Las imágenes no están disponibles en este momento.",
-          });
+    if (!idsPropiedadesVisibles) return undefined;
+    let activa = true;
+    const controlador = new AbortController();
+    // Solo las propiedades de esta página de inquilinos, sin recorrer el catálogo.
+    Promise.allSettled(idsPropiedadesVisibles.split(",").map((id) => api.propiedad(id, { signal: controlador.signal })))
+      .then((resultados) => {
+        if (!activa) return;
+        const imagenes = Object.fromEntries(resultados.flatMap((resultado) => resultado.status === "fulfilled"
+          ? [[resultado.value.id, assetUrl(resultado.value.imagenes?.[0]?.url)]] : []));
+        setImagenesPropiedades(imagenes);
+        if (resultados.some((resultado) => resultado.status === "rejected")) {
+          mostrarAviso({ tipo: "advertencia", titulo: "Algunas imágenes de propiedades no están disponibles", mensaje: "Podés seguir gestionando los inquilinos." });
         }
-      } catch (error) {
-        if (mounted) {
-          setLoadError(error.message || "No se pudieron cargar los inquilinos.");
-          mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar los inquilinos", mensaje: error.message });
-        }
-      } finally {
-        if (mounted) setCargando(false);
-      }
-    }
-    cargarInquilinos();
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  const filterControls = useMemo(() => {
-    const opcionesPropiedad = [
-      ...new Set(inquilinos.map((inquilino) => inquilino.propiedad).filter(Boolean)),
-    ].sort((first, second) => first.localeCompare(second, "es"));
-    return [
-      { ...definicionesFiltros[0], options: [definicionesFiltros[0].all, ...opcionesPropiedad] },
-      { ...definicionesFiltros[1], options: opcionesEstado },
-      { ...definicionesFiltros[2], options: opcionesVencimiento },
-    ];
-  }, [inquilinos]);
-
-  const summaryCards = useMemo(
-    () => [
-      {
-        label: "Inquilinos activos",
-        value: inquilinos.filter((inquilino) => inquilino.activo).length,
-        icon: peopleIcon,
-        tone: "success",
-      },
-      {
-        label: "Inquilinos inactivos",
-        value: inquilinos.filter((inquilino) => !inquilino.activo).length,
-        icon: xIcon,
-        tone: "warning",
-      },
-      {
-        label: "Contratos vigentes",
-        value: inquilinos.filter((inquilino) => inquilino.estadoContrato === "Vigente").length,
-        icon: fileLinesIcon,
-        tone: "info",
-      },
-      {
-        label: "Vencen en 30 días",
-        value: inquilinos.filter(
-          (inquilino) => inquilino.estadoContrato === "Vigente" && venceEnPlazo(inquilino.fechaFin, 30),
-        ).length,
-        icon: calendarIcon,
-        tone: "danger",
-      },
-    ],
-    [inquilinos],
-  );
-
-  const inquilinosVisibles = useMemo(() => {
-    const busquedaNormalizada = textoBusqueda.trim().toLocaleLowerCase("es");
-    const today = new Date();
-    return inquilinos.filter((inquilino) => {
-      const searchable = [
-        inquilino.nombre,
-        inquilino.apellido,
-        inquilino.dni,
-        inquilino.correo,
-        inquilino.telefono,
-        inquilino.direccion,
-        inquilino.propiedad,
-        inquilino.propiedadUbicacion,
-      ].some((value) =>
-        String(value ?? "")
-          .toLocaleLowerCase("es")
-          .includes(busquedaNormalizada),
-      );
-      const matchesQuery = !busquedaNormalizada || searchable;
-      const matchesProperty =
-        valoresFiltros[0] === definicionesFiltros[0].all || inquilino.propiedad === valoresFiltros[0];
-      const status = inquilino.activo ? "Activo" : "Inactivo";
-      const matchesStatus = valoresFiltros[1] === opcionesEstado[0] || status === valoresFiltros[1];
-      const matchesDate = coincideVencimiento(inquilino, valoresFiltros[2], today);
-      return matchesQuery && matchesProperty && matchesStatus && matchesDate;
-    });
-  }, [valoresFiltros, textoBusqueda, inquilinos]);
-  const { page, totalPages, pageItems, setPage, resetPage } = usePaginacion(inquilinosVisibles);
+      });
+    return () => { activa = false; controlador.abort(); };
+  }, [idsPropiedadesVisibles]);
 
   async function confirmarEliminacionInquilino() {
     if (!pendienteEliminar) return;
     try {
       await api.eliminarInquilino(pendienteEliminar.id);
-      setInquilinos((current) => current.filter((inquilino) => inquilino.id !== pendienteEliminar.id));
+      listado.recargar();
       mostrarAviso({
         tipo: "exito",
         titulo: "Inquilino eliminado",
@@ -363,11 +230,7 @@ export default function Inquilinos() {
         })
       : await api.crearInquilino(body);
     const result = { inquilino: raw, activationUrl: enlaceActivacion(raw.activacion) };
-    setInquilinos((current) =>
-      existing
-        ? current.map((inquilino) => (inquilino.id === existing.id ? result.inquilino : inquilino))
-        : [result.inquilino, ...current],
-    );
+    listado.recargar();
     const titular = `${raw.nombre || ""} ${raw.apellido || ""}`.trim() || `DNI ${raw.dni}`;
     setAviso(!existing && result.activationUrl
       ? `Se creó el acceso de ${titular}. Compartí el enlace con su titular.`
@@ -380,15 +243,6 @@ export default function Inquilinos() {
     });
     cerrarModalInquilino();
   }
-
-  function actualizarFiltro(index, value) {
-    resetPage();
-    setValoresFiltros((current) =>
-      current.map((item, itemIndex) => (itemIndex === index ? value : item)),
-    );
-  }
-
-  if (cargando) return <PageSkeleton variant="table" title="inquilinos" />;
 
   return (
     <main id="inquilinos">
@@ -405,6 +259,7 @@ export default function Inquilinos() {
           </div>
         </section>
 
+        <p>Los indicadores globales y filtros avanzados aún no están disponibles.</p>
         <section className="inquilinos__toolbar" aria-label="Buscar y filtrar inquilinos">
           <label className="inquilinos__search">
             <img src={magnifyingGlassIcon} alt="" />
@@ -413,16 +268,12 @@ export default function Inquilinos() {
               placeholder="Buscar contacto..."
               aria-label="Buscar contacto"
               value={textoBusqueda}
-              onChange={(event) => { setTextoBusqueda(event.target.value); resetPage(); }}
+              maxLength={255}
+              onChange={(event) => setTextoBusqueda(event.target.value)}
             />
           </label>
-          {filterControls.map((filter, index) => (
-            <ControlFiltro
-              key={filter.label}
-              filter={filter}
-              value={valoresFiltros[index] || filter.options[0]}
-              onChange={(value) => actualizarFiltro(index, value)}
-            />
+          {["Propiedad", "Estado", "Vencimiento"].map((nombre) => (
+            <select key={nombre} className="inquilinos__filter" aria-label={nombre} disabled><option>{nombre} · Próximamente</option></select>
           ))}
           <Boton
             className="inquilinos__new-button"
@@ -447,7 +298,7 @@ export default function Inquilinos() {
                 </tr>
               </thead>
               <tbody>
-                {pageItems.map((inquilino) => (
+                {inquilinos.map((inquilino) => (
                   <FilaInquilino
                     key={inquilino.id}
                     inquilino={inquilino}
@@ -460,15 +311,8 @@ export default function Inquilinos() {
               </tbody>
             </table>
           </div>
-          {loadError && (
-            <p className="inquilinos__empty" role="alert">
-              {loadError}
-            </p>
-          )}
-          {!loadError && !inquilinosVisibles.length && (
-            <p className="inquilinos__empty">No encontramos inquilinos con esos criterios.</p>
-          )}
-          <Paginacion page={page} totalPages={totalPages} total={inquilinosVisibles.length} onPageChange={setPage} />
+          <EstadoListado cargando={listado.cargando} error={listado.error} alReintentar={listado.recargar} vacio={!inquilinos.length} />
+          <PaginacionServidor paginacion={listado.paginacion} alCambiar={listado.cambiarPagina} />
         </section>
       </div>
 

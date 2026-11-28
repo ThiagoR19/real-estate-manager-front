@@ -1,18 +1,8 @@
+import { crearListadoPaginado } from "./listadoPaginado.js";
 import { http, request } from "../utils/request.js";
 import { limpiarSesion, obtenerSesion } from "../utils/sesion.js";
 
-export async function inquilinos() {
-  const items = [];
-  let page = 1;
-  let hasNext = true;
-  while (hasNext) {
-    const result = await request(`/inquilinos?page=${page}&limit=10`);
-    items.push(...(Array.isArray(result.data) ? result.data : []));
-    hasNext = page < (result.paginacion?.paginas || 1);
-    page++;
-  }
-  return items;
-}
+export const inquilinos = crearListadoPaginado("/inquilinos");
 
 export const inquilino = (id) => request(`/inquilinos/${id}`).then(({ data }) => data);
 export const archivosInquilino = (id) => request(`/inquilinos/${id}/archivos`).then(({ data }) => data);

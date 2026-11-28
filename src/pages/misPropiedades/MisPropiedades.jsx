@@ -1,5 +1,8 @@
+import useListadoPaginado from "../../hooks/useListadoPaginado.js";
+import EstadoListado from "../../components/paginacion/EstadoListado.jsx";
+import PaginacionServidor from "../../components/paginacion/PaginacionServidor.jsx";
 import { assetUrl } from "../../utils/assetUrl.js";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { angleDownIcon, buildingColumnsIcon, clockIcon, fileLinesIcon, houseIcon, locationDotIcon, peopleIcon, tagIcon, toolboxIcon, userIcon, walletIcon, xIcon } from "../../assets/icons";
 import { SelectDesplegable, PildoraResumen, Paginacion, usePaginacion, PROPERTY_PAGE_SIZE, mostrarAviso } from "../../components";
 import { api } from "../../services/api.js";
@@ -18,92 +21,51 @@ const date = (value) =>
 const pending = (report) => report.estado !== "Resuelto";
 
 export default function MisPropiedades() {
-  const [contracts, setContracts] = useState([]);
-  const [reports, setReports] = useState([]);
+  const [catalogos, setCatalogos] = useState({ propiedades: [] });
   const [selectedId, setSelectedId] = useState(null);
   const [openReport, setOpenReport] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [documents, setDocuments] = useState({ contractId: null, items: [] });
-
+  const [revisionCatalogos, setRevisionCatalogos] = useState(0);
   useEffect(() => {
-    let active = true;
-    Promise.all([api.contratos(), api.reportes()])
-      .then(([contractRows, reportRows]) => {
-        if (!active) return;
-        setContracts(contractRows);
-        setReports(reportRows);
-        setSelectedId(contractRows[0]?.idPropiedad ?? null);
-      })
-      .catch((error) => {
-        if (!active) return;
-        setError(error.message);
-        mostrarAviso({
-          tipo: "error",
-          titulo: "No se pudieron cargar tus propiedades",
-          mensaje: error.message,
-        });
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
-    return () => {
-      active = false;
-    };
-  }, []);
+    let activa = true;
+    api.catalogosReportes().then((resultado) => {
+      if (activa) { setCatalogos(resultado); setError(""); }
+    }).catch((error) => { if (activa) setError(error.message); })
+      .finally(() => { if (activa) setLoading(false); });
+    return () => { activa = false; };
+  }, [revisionCatalogos]);
 
-  const properties = useMemo(() => {
-    const unique = new Map();
-    for (const contract of contracts) {
-      if (!unique.has(contract.idPropiedad)) {
-        unique.set(contract.idPropiedad, {
-          id: contract.idPropiedad,
-          name: contract.propiedad,
-          address: contract.propiedadUbicacion,
-          contracts: [],
-        });
-      }
-      unique.get(contract.idPropiedad).contracts.push(contract);
-    }
-    return [...unique.values()];
-  }, [contracts]);
+  // Catálogo resumido autorizado para el propietario; no se reconstruye desde todos los contratos.
+  const properties = catalogos.propiedades.map((propiedad) => ({
+    id: propiedad.id, name: propiedad.nombre, address: propiedad.ubicacion,
+  }));
   const propertyPages = usePaginacion(properties, PROPERTY_PAGE_SIZE);
-  const property = properties.find((item) => item.id === selectedId);
-  const propertyContracts = property?.contracts || [];
-  const activeContract = propertyContracts.find((item) => item.estado === "Vigente") || propertyContracts[0];
+  const idPropiedad = selectedId ?? properties[0]?.id ?? null;
+  const property = properties.find((propiedad) => propiedad.id === idPropiedad);
+  const contratosPropiedad = useListadoPaginado(api.contratos, {
+    filtros: { idPropiedad }, limite: 1, habilitada: Boolean(idPropiedad),
+  });
+  const contratoVigente = useListadoPaginado(api.contratos, {
+    filtros: { idPropiedad, estado: "Vigente" }, limite: 1, habilitada: Boolean(idPropiedad),
+  });
+  const contratosVigentes = useListadoPaginado(api.contratos, { filtros: { estado: "Vigente" }, limite: 1 });
+  const ventasVigentes = useListadoPaginado(api.contratos, { filtros: { estado: "Vigente", tipo: "Venta" }, limite: 1 });
+  const activeContract = contratoVigente.datos[0] ?? contratosPropiedad.datos[0];
   const activeContractId = activeContract?.id;
-  const visibleDocuments = documents.contractId === activeContractId ? documents.items : [];
-  const visibleReports = reports.filter((item) => item.idPropiedad === selectedId);
-  const reportPages = usePaginacion(visibleReports);
-  const pendingReports = reports.filter((item) => properties.some((propertyItem) => propertyItem.id === item.idPropiedad) && pending(item),);
-  const tenant = activeContract?.participantes?.filter((item) => item.rol === "Inquilino").map((item) => `${item.nombre} ${item.apellido}`).join(", ") || "—";
-
-  useEffect(() => {
-    if (!activeContractId) return undefined;
-    let active = true;
-    api
-      .documentosContrato(activeContractId)
-      .then((rows) => {
-        if (active) setDocuments({ contractId: activeContractId, items: rows });
-      })
-      .catch((error) => {
-        if (!active) return;
-        setError(error.message);
-        mostrarAviso({
-          tipo: "error",
-          titulo: "No se pudieron cargar los documentos",
-          mensaje: error.message,
-        });
-      });
-    return () => {
-      active = false;
-    };
-  }, [activeContractId]);
+  const documentos = useListadoPaginado(api.documentosContrato, {
+    filtros: { idContrato: activeContractId, tipo: "CONTRATO" }, habilitada: Boolean(activeContractId),
+  });
+  const visibleDocuments = documentos.datos;
+  // La API aún no filtra reportes por propiedad. Este panel muestra el listado global autorizado.
+  const listadoReportes = useListadoPaginado(api.reportes);
+  const visibleReports = listadoReportes.datos;
+  const tenant = activeContract?.participantes?.filter((persona) => persona.rol === "Inquilino")
+    .map((persona) => `${persona.nombre} ${persona.apellido}`).join(", ") || "—";
 
   function cambiarPaginaPropiedades(nextPage) {
     propertyPages.setPage(nextPage);
     setSelectedId(properties[(nextPage - 1) * PROPERTY_PAGE_SIZE]?.id ?? null);
-    reportPages.resetPage();
   }
 
   async function descargarDocumento(document) {
@@ -139,29 +101,25 @@ export default function MisPropiedades() {
           <PildoraResumen
             icon={peopleIcon}
             label="Propiedades"
-            value={properties.length}
+            value={loading || error ? "—" : properties.length}
             tone="success"
           />
           <PildoraResumen
             icon={xIcon}
             label="Reportes pendientes"
-            value={pendingReports.length}
+            value="—"
             tone="danger"
           />
           <PildoraResumen
             icon={fileLinesIcon}
             label="Contratos vigentes"
-            value={contracts.filter((item) => item.estado === "Vigente").length}
+            value={contratosVigentes.paginacion?.total ?? "—"}
             tone="info"
           />
           <PildoraResumen
             icon={clockIcon}
-            label="Propiedades en venta"
-            value={properties.filter((item) =>
-              item.contracts.some(
-                (contract) => contract.tipo === "Venta" && contract.estado === "Vigente",
-              ),
-            ).length}
+            label="Ventas vigentes"
+            value={ventasVigentes.paginacion?.total ?? "—"}
             tone="warning"
           />
         </div>
@@ -169,7 +127,7 @@ export default function MisPropiedades() {
 
       {error && (
         <p className="propiedades-propietario__message" role="alert">
-          {error}
+          {error} <button type="button" onClick={() => { setLoading(true); setRevisionCatalogos((actual) => actual + 1); }}>Reintentar</button>
         </p>
       )}
       {loading && (
@@ -183,6 +141,8 @@ export default function MisPropiedades() {
         </p>
       )}
 
+      <p className="propiedades-propietario__message">El panel de reportes incluye todas tus propiedades. El total de reportes pendientes aún no está disponible.</p>
+      <EstadoListado error={contratosVigentes.error || ventasVigentes.error} alReintentar={() => { contratosVigentes.recargar(); ventasVigentes.recargar(); }} />
       {property && (
         <div className="propiedades-propietario__layout">
           <aside className="propiedades-propietario__list">
@@ -196,7 +156,6 @@ export default function MisPropiedades() {
                 if (index < 0) return;
                 setSelectedId(properties[index].id);
                 propertyPages.setPage(Math.floor(index / PROPERTY_PAGE_SIZE) + 1);
-                reportPages.resetPage();
               }}
               className="propiedades-propietario__propiedad-select"
               triggerClassName="propiedades-propietario__propiedad-trigger"
@@ -204,13 +163,12 @@ export default function MisPropiedades() {
             />
             {propertyPages.pageItems.map((item, index) => (
               <button
-                className={`propiedades-propietario__propiedad${selectedId === item.id ? " is-selected" : ""
+                className={`propiedades-propietario__propiedad${idPropiedad === item.id ? " is-selected" : ""
                   }`}
                 type="button"
                 key={item.id}
                 onClick={() => {
                   setSelectedId(item.id);
-                  reportPages.resetPage();
                 }}
               >
                 <img className="propiedades-propietario__icon" src={index === 0 ? houseIcon : buildingColumnsIcon} alt="" aria-hidden="true" />
@@ -263,6 +221,7 @@ export default function MisPropiedades() {
               </div>
             </header>
 
+            <EstadoListado cargando={contratosPropiedad.cargando || contratoVigente.cargando} error={contratosPropiedad.error || contratoVigente.error} alReintentar={() => { contratosPropiedad.recargar(); contratoVigente.recargar(); }} />
             <div className="propiedades-propietario__document">
               <div>
                 <img className="propiedades-propietario__icon" src={fileLinesIcon} alt="" aria-hidden="true" />
@@ -285,12 +244,14 @@ export default function MisPropiedades() {
                   </button>
                 ))
               ) : (
-                <small>No hay un contrato disponible para descargar.</small>
+                !documentos.cargando && !documentos.error && <small>No hay un contrato disponible para descargar.</small>
               )}
             </div>
-            {propertyContracts.length > 1 && (
+            <EstadoListado cargando={documentos.cargando} error={documentos.error} alReintentar={documentos.recargar} />
+            <PaginacionServidor paginacion={documentos.paginacion} alCambiar={documentos.cambiarPagina} />
+            {contratosPropiedad.paginacion?.total > 1 && (
               <p className="propiedades-propietario__message">
-                {propertyContracts.length} contratos asociados a esta propiedad
+                {contratosPropiedad.paginacion.total} contratos asociados a esta propiedad
               </p>
             )}
           </section>
@@ -301,18 +262,18 @@ export default function MisPropiedades() {
           >
             <header>
               <img className="propiedades-propietario__icon" src={toolboxIcon} alt="" aria-hidden="true" />
-              <h2 id="propiedades-propietario-reportes-title">Reportes de inquilinos</h2>
+              <h2 id="propiedades-propietario-reportes-title">Reportes de tus propiedades</h2>
               <span className="propiedades-propietario__pending">
-                {visibleReports.filter(pending).length} pendientes
+                {listadoReportes.paginacion?.total ?? "—"} reportes
               </span>
             </header>
             <div className="propiedades-propietario__report-list">
-              {!visibleReports.length && (
+              {!listadoReportes.cargando && !listadoReportes.error && !visibleReports.length && (
                 <p className="propiedades-propietario__message">
-                  No hay reportes para esta propiedad.
+                  No hay reportes para tus propiedades.
                 </p>
               )}
-              {reportPages.pageItems.map((report) => (
+              {visibleReports.map((report) => (
                 <button
                   className={`propiedades-propietario__report${openReport === report.id ? " is-open" : ""
                     }`}
@@ -373,12 +334,8 @@ export default function MisPropiedades() {
                 </button>
               ))}
             </div>
-            <Paginacion
-              page={reportPages.page}
-              totalPages={reportPages.totalPages}
-              total={visibleReports.length}
-              onPageChange={reportPages.setPage}
-            />
+<EstadoListado cargando={listadoReportes.cargando} error={listadoReportes.error} alReintentar={listadoReportes.recargar} />
+            <PaginacionServidor paginacion={listadoReportes.paginacion} alCambiar={listadoReportes.cambiarPagina} />
           </aside>
         </div>
       )}

@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { envelopeIcon, fileLinesIcon, clockIcon, magnifyingGlassIcon, peopleIcon, phoneIcon, plusIcon, xIcon } from "../../assets/icons";
 import propertyImage from "/images.jpg";
-import { Boton, PildoraResumen, ConfirmarEliminacionModal, AccionesEntidad, AvisoEnlaceActivacion, Paginacion, usePaginacion, mostrarAviso } from "../../components";
+import { Boton, PildoraResumen, ConfirmarEliminacionModal, AccionesEntidad, AvisoEnlaceActivacion, mostrarAviso } from "../../components";
 import PersonaModal from "./PersonaModal";
 import "./Propietarios.css";
 import { api } from "../../services/api.js";
-import PageSkeleton from "../../components/skeleton/PageSkeleton";
+import useListadoPaginado from "../../hooks/useListadoPaginado.js";
+import EstadoListado from "../../components/paginacion/EstadoListado.jsx";
+import PaginacionServidor from "../../components/paginacion/PaginacionServidor.jsx";
 import avatarClass from "../../utils/avatarClass.js";
 import initials from "../../utils/initials.js";
 
@@ -98,63 +100,28 @@ function FilaPropietario({ propietario, onEdit, onDelete, onGenerateActivation }
 }
 
 export default function Propietarios() {
-  const [propietarios, setPropietarios] = useState([]);
   const [resumen, setResumen] = useState(null);
   const [errorResumen, setErrorResumen] = useState("");
+  const [revisionResumen, setRevisionResumen] = useState(0);
   const [textoBusqueda, setTextoBusqueda] = useState("");
   const [modal, setModal] = useState(null);
   const [pendienteEliminar, setPendienteEliminar] = useState(null);
   const [aviso, setAviso] = useState("");
   const [enlaceActivacionGenerado, setEnlaceActivacion] = useState("");
-  const [error, setError] = useState("");
-  const [cargando, setCargando] = useState(true);
-
-  useEffect(() => {
-    let active = true;
-    api.propietarios()
-      .then((rows) => { if (active) setPropietarios(rows.map(prepararPropietario)); })
-      .catch((error) => {
-        if (!active) return;
-        setError(error.message);
-        mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar los propietarios", mensaje: error.message });
-      })
-      .finally(() => { if (active) setCargando(false); });
-    return () => { active = false; };
-  }, []);
+  const listado = useListadoPaginado(api.propietarios, { busqueda: textoBusqueda });
+  const propietarios = listado.datos.map(prepararPropietario);
 
   useEffect(() => {
     let active = true;
     api.resumenPropietarios()
-      .then((result) => { if (active) setResumen(result); })
+      .then((result) => { if (active) { setResumen(result); setErrorResumen(""); } })
       .catch((error) => { if (active) setErrorResumen(error.message); });
     return () => { active = false; };
-  }, []);
+  }, [revisionResumen]);
 
-  async function actualizarResumen() {
-    try {
-      setResumen(await api.resumenPropietarios());
-      setErrorResumen("");
-    } catch (error) {
-      setErrorResumen(error.message);
-    }
-  }
+  function actualizarResumen() { setRevisionResumen((actual) => actual + 1); }
 
-  const busquedaNormalizada = textoBusqueda.trim().toLowerCase();
-  const propietariosVisibles = propietarios.filter(
-    (propietario) =>
-      !busquedaNormalizada ||
-      [
-        propietario.nombreCompleto,
-        propietario.dni,
-        propietario.correo,
-        propietario.direccion,
-        propietario.propiedad || "",
-        propietario.cbu,
-        propietario.alias,
-      ].some((value) => String(value ?? "").toLowerCase().includes(busquedaNormalizada)),
-  );
-  const cards = tarjetasResumen(resumen, propietarios.filter((propietario) => propietario.activo).length);
-  const { page, totalPages, pageItems, setPage, resetPage } = usePaginacion(propietariosVisibles);
+  const cards = tarjetasResumen(resumen, resumen?.propietariosActivos.total ?? "—");
 
   async function guardarPropietario(data) {
     const raw = modal.mode === "edit"
@@ -174,10 +141,7 @@ export default function Propietarios() {
         cbu: data.cbu || null,
         alias: data.alias || null,
       });
-    const saved = prepararPropietario(raw);
-    setPropietarios((current) => modal.mode === "edit"
-      ? current.map((propietario) => propietario.id === saved.id ? saved : propietario)
-      : [saved, ...current]);
+    listado.recargar();
     actualizarResumen();
     const urlActivacion = enlaceActivacion(raw.activacion);
     setEnlaceActivacion(modal.mode === "edit" ? "" : urlActivacion);
@@ -194,7 +158,6 @@ export default function Propietarios() {
 
   async function generarEnlaceActivacion(propietario) {
     try {
-      setError("");
       const activacion = await api.generarEnlacePropietario(propietario.id);
       setEnlaceActivacion(enlaceActivacion(activacion));
       setAviso(`Enlace nuevo para ${propietario.nombreCompleto}. Compartilo con el propietario para activar su cuenta.`);
@@ -207,7 +170,7 @@ export default function Propietarios() {
   async function eliminarPropietario() {
     try {
       await api.eliminarPropietario(pendienteEliminar.id);
-      setPropietarios((current) => current.filter((propietario) => propietario.id !== pendienteEliminar.id));
+      listado.recargar();
       actualizarResumen();
       setAviso("");
       setEnlaceActivacion("");
@@ -218,7 +181,6 @@ export default function Propietarios() {
     finally { setPendienteEliminar(null); }
   }
 
-  if (cargando) return <PageSkeleton variant="table" title="propietarios" />;
 
   return (
     <main id="propietarios">
@@ -239,7 +201,7 @@ export default function Propietarios() {
           </div>
         </section>
 
-        {errorResumen && <p className="propietarios__summary-error" role="alert">No se pudo actualizar el resumen: {errorResumen}</p>}
+        {errorResumen && <p className="propietarios__summary-error" role="alert">No se pudo actualizar el resumen: {errorResumen} <button type="button" onClick={actualizarResumen}>Reintentar resumen</button></p>}
         <section className="propietarios__toolbar" aria-label="Buscar propietarios">
           <label className="propietarios__search">
             <img src={magnifyingGlassIcon} alt="" />
@@ -248,7 +210,8 @@ export default function Propietarios() {
               placeholder="Buscar propietario..."
               aria-label="Buscar propietario"
               value={textoBusqueda}
-              onChange={(event) => { setTextoBusqueda(event.target.value); resetPage(); }}
+              maxLength={255}
+              onChange={(event) => setTextoBusqueda(event.target.value)}
             />
           </label>
           <Boton
@@ -274,7 +237,7 @@ export default function Propietarios() {
                 </tr>
               </thead>
               <tbody>
-                {pageItems.map((propietario) => (
+                {propietarios.map((propietario) => (
                   <FilaPropietario
                     key={propietario.id}
                     propietario={propietario}
@@ -286,10 +249,8 @@ export default function Propietarios() {
               </tbody>
             </table>
           </div>
-          {!propietariosVisibles.length && (
-            <p className="propietarios__empty">No encontramos propietarios con ese criterio.</p>
-          )}
-          <Paginacion page={page} totalPages={totalPages} total={propietariosVisibles.length} onPageChange={setPage} />
+          <EstadoListado cargando={listado.cargando} error={listado.error} alReintentar={listado.recargar} vacio={!propietarios.length} />
+          <PaginacionServidor paginacion={listado.paginacion} alCambiar={listado.cambiarPagina} />
         </section>
       </div>
 
@@ -300,7 +261,6 @@ export default function Propietarios() {
           onDismiss={() => { setAviso(""); setEnlaceActivacion(""); }}
         />
       )}
-      {error && <p className="propietarios__notice" role="alert">{error}</p>}
 
       {modal && (
         <PersonaModal

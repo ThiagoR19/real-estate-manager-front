@@ -1,3 +1,4 @@
+import PaginacionServidor from "../../components/paginacion/PaginacionServidor.jsx";
 import { useEffect, useState } from "react";
 import { angleDownIcon, checkIcon, circleInfoIcon, fileLinesIcon, imageIcon, paperPlaneIcon, plusIconWhite, xIcon } from "../../assets/icons";
 import { PanelDeslizable, mostrarAviso } from "../../components";
@@ -156,14 +157,14 @@ function PanelPersonas({ personas, query, persona, idContrato, onSelect, guardan
   );
 }
 
-function ColaRevision({ pendientes, idSeleccionado, onSelect, onRefresh, ocupado }) {
-  const { items, error } = pendientes ?? {};
+function ColaRevision({ pendientes, idSeleccionado, onSelect, onRefresh, alCambiarPagina, ocupado }) {
+  const { items, error, paginacion } = pendientes ?? {};
 
   return (
     <details className="pagos-agente__queue" open>
       <summary>
         <span>Pagos pendientes de revisión</span>
-        {items && !error && <span className="pagos-agente__queue-count">{items.length}</span>}
+        {items && !error && <span className="pagos-agente__queue-count">{paginacion?.total ?? "—"}</span>}
       </summary>
       <div className="pagos-agente__queue-body">
         {items?.length ? (
@@ -188,6 +189,7 @@ function ColaRevision({ pendientes, idSeleccionado, onSelect, onRefresh, ocupado
             {!pendientes ? "Cargando pagos…" : error || "No hay pagos pendientes de revisión."}
           </p>
         )}
+        <PaginacionServidor paginacion={paginacion} alCambiar={alCambiarPagina} />
         <button className="pagos-agente__queue-refresh" type="button" disabled={!pendientes} onClick={onRefresh}>
           Actualizar
         </button>
@@ -434,6 +436,7 @@ export default function PagosYCobros() {
         <section className="pagos-agente__workspace" aria-label="Gestión de pagos y cobros">
           <ColaRevision
             pendientes={pendientes}
+            alCambiarPagina={datos.cambiarPaginaPendientes}
             idSeleccionado={idRevision}
             onSelect={elegirPendiente}
             onRefresh={datos.actualizarPendientes}

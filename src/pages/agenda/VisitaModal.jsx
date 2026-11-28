@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { calendarIcon, clockIcon, houseIcon, peopleIcon, userIcon } from "../../assets/icons";
+import { calendarIcon, clockIcon, peopleIcon, userIcon } from "../../assets/icons";
 import { GestionModal, AccionesModal, CampoModal, EntradaModal, mostrarAviso } from "../../components";
+import SelectorPropiedad from "../../components/propiedad/SelectorPropiedad.jsx";
 import "./VisitaModal.css";
 
 export default function VisitaModal({
   visita,
   fechaInicial,
-  propiedades,
   clientes,
   agentes,
   onClose,
@@ -20,7 +20,7 @@ export default function VisitaModal({
     nombreCliente: "",
     apellidoCliente: "",
     interesCliente: "ALQUILER",
-    idPropiedad: String(visita?.idPropiedad || propiedades[0]?.id || ""),
+    idPropiedad: String(visita?.idPropiedad || ""),
     idAgente: String(visita?.idAgente || ""),
     estado: visita?.estado || "Programada",
     motivo: "",
@@ -146,23 +146,12 @@ export default function VisitaModal({
               </div>
             )}
 
-            <CampoModal label="Propiedad">
-              <span className="visita-modal__select-wrap">
-                <img src={houseIcon} alt="" />
-                <select
-                  value={formulario.idPropiedad}
-                  onChange={(event) => actualizarCampo("idPropiedad", event.target.value)}
-                  required
-                >
-                  <option value="">Seleccioná una propiedad</option>
-                  {propiedades.map((propiedad) => (
-                    <option value={propiedad.id} key={propiedad.id}>
-                      {propiedad.nombre}
-                    </option>
-                  ))}
-                </select>
-              </span>
-            </CampoModal>
+            <div className="gestion-modal__field" role="group" aria-label="Propiedad">
+              <span className="gestion-modal__label">Propiedad</span>
+              <SelectorPropiedad valor={formulario.idPropiedad} requerida
+                propiedadInicial={visita?.idPropiedad ? { id: visita.idPropiedad, nombre: visita.propiedad } : null}
+                alCambiar={(idPropiedad) => actualizarCampo("idPropiedad", String(idPropiedad))} />
+            </div>
 
             <CampoModal label="Hora">
               <EntradaModal

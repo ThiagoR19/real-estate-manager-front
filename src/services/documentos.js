@@ -1,14 +1,10 @@
-import { http, request } from "../utils/request.js";
+import { http } from "../utils/request.js";
 import { obtenerSesion } from "../utils/sesion.js";
+import { crearListadoPaginado } from "./listadoPaginado.js";
 
-export async function documentosContrato(idContrato) {
-  const items = [];
-  for (let page = 1; ; page++) {
-    const result = await request(`/documentos?idContrato=${idContrato}&tipo=CONTRATO&page=${page}&limit=10`);
-    items.push(...result.data);
-    if (page >= (result.paginacion?.paginas || 1)) return items;
-  }
-}
+export const documentosContrato = crearListadoPaginado("/documentos", {
+  admiteBusqueda: false, filtrosPermitidos: ["idContrato", "tipo"],
+});
 
 export async function descargarDocumento(document) {
   const { data } = await http.get(`/documentos/${document.id}/descargar`, {

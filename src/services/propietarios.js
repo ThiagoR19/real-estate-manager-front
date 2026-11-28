@@ -1,13 +1,7 @@
+import { crearListadoPaginado } from "./listadoPaginado.js";
 import { request } from "../utils/request.js";
 
-export async function propietarios() {
-  const rows = [];
-  for (let page = 1; ; page++) {
-    const result = await request(`/propietarios?page=${page}&limit=10`);
-    rows.push(...result.data);
-    if (page >= (result.paginacion?.paginas || 1)) return rows;
-  }
-}
+export const propietarios = crearListadoPaginado("/propietarios", { filtrosPermitidos: ["idInmobiliaria"] });
 
 export const resumenPropietarios = () => request("/propietarios/resumen").then(({ data }) => data);
 

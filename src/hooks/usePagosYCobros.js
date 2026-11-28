@@ -1,3 +1,4 @@
+import useListadoPaginado from "./useListadoPaginado.js";
 import { useEffect, useState } from "react";
 import { api } from "../services/api";
 import { mostrarAviso } from "../components/avisos/almacenAvisos";
@@ -126,7 +127,8 @@ export default function usePagosYCobros() {
   const [intentosPendientes, setIntentosPendientes] = useState(0);
   const [estado, setEstado] = useState(null);
   const [estadoRevision, setEstadoRevision] = useState(null);
-  const [pendientes, setPendientes] = useState(null);
+  const listaPendientes = useListadoPaginado(api.pagos, { filtros: { estado: "En revision" }, limite: 12, version: `${intentosPendientes}|${recargas}` });
+  const pendientes = listaPendientes.cargando ? null : { items: listaPendientes.datos, error: listaPendientes.error, paginacion: listaPendientes.paginacion };
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState("");
 
@@ -158,16 +160,6 @@ export default function usePagosYCobros() {
     };
   }, []);
 
-  useEffect(() => {
-    let activo = true;
-    api.pagos({ estado: "En revision" })
-      .then((items) => activo && setPendientes({ items, error: "" }))
-      .catch((error) => activo && setPendientes({ items: [], error: error.message }));
-
-    return () => {
-      activo = false;
-    };
-  }, [intentosPendientes, recargas]);
 
   useEffect(() => {
     if (!idRevision) return undefined;
@@ -349,7 +341,6 @@ export default function usePagosYCobros() {
   }
 
   function actualizarPendientes() {
-    setPendientes(null);
     setIntentosPendientes((cantidad) => cantidad + 1);
   }
 
@@ -365,6 +356,7 @@ export default function usePagosYCobros() {
     guardando,
     error: error || (!cargando ? estado?.error : ""),
     pendientes,
+    cambiarPaginaPendientes: listaPendientes.cambiarPagina,
     idRevision,
     revision,
     elegirRevision,

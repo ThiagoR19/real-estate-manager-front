@@ -1,6 +1,9 @@
-import { useEffect, useState } from "react";
-import { envelopeIcon, peopleIcon, phoneIcon, penIcon, plusIcon, starIcon, trashCanIcon, } from "../../assets/icons/index.js";
-import {SelectDesplegable,ConfirmarEliminacionModal,GestionModal,AccionesModal,Boton,Paginacion,usePaginacion,mostrarAviso,} from "../../components/index.js";
+import useListadoPaginado from "../../hooks/useListadoPaginado.js";
+import EstadoListado from "../../components/paginacion/EstadoListado.jsx";
+import PaginacionServidor from "../../components/paginacion/PaginacionServidor.jsx";
+import { useState } from "react";
+import { envelopeIcon, phoneIcon, penIcon, plusIcon, starIcon, trashCanIcon, } from "../../assets/icons/index.js";
+import {ConfirmarEliminacionModal,GestionModal,AccionesModal,Boton,mostrarAviso,} from "../../components/index.js";
 import ProfesionalModal from "./ProfesionalModal";
 import "./Profesionales.css";
 
@@ -9,38 +12,17 @@ import { ROLES, tieneRol } from "../../utils/roles.js";
 import avatarClass from "../../utils/avatarClass.js";
 
 export default function Profesionales() {
-  const [profesionales, setProfesionales] = useState([]);
-  const [tipoSeleccionado, setTipoSeleccionado] = useState("Tipo");
+  const [busqueda, setBusqueda] = useState("");
+  const listado = useListadoPaginado(api.profesionales, { busqueda });
+  const profesionales = listado.datos;
   const [modal, setModal] = useState({ isOpen: false, mode: "create", profesional: null });
   const [pendienteEliminar, setPendienteEliminar] = useState(null);
   const [pendienteValorar, setPendienteValorar] = useState(null);
   const [puntuacionSeleccionada, setPuntuacionSeleccionada] = useState(0);
   const [enviandoValoracion, setEnviandoValoracion] = useState(false);
-  const [error, setError] = useState("");
   const puedeValorar = tieneRol(ROLES.AGENTE);
 
-  useEffect(() => {
-    let active = true;
-    api
-      .profesionales()
-      .then((rows) => { if (active) setProfesionales(rows); })
-      .catch((error) => {
-        if (!active) return;
-        setError(error.message);
-        mostrarAviso({ tipo: "error", titulo: "No se pudieron cargar los profesionales", mensaje: error.message });
-      });
-    return () => { active = false; };
-  }, []);
 
-  const opcionesFiltro = [
-    "Tipo",
-    ...new Set(profesionales.map((item) => item.profesion).filter(Boolean)),
-  ];
-  const profesionalesVisibles =
-    tipoSeleccionado === "Tipo"
-      ? profesionales
-      : profesionales.filter(({ profesion }) => profesion === tipoSeleccionado);
-  const { page, totalPages, pageItems, setPage, resetPage } = usePaginacion(profesionalesVisibles);
 
   function abrirModalCreacion() {
     setModal({ isOpen: true, mode: "create", profesional: null });
@@ -63,12 +45,12 @@ export default function Profesionales() {
       profesion: formulario.profesion,
     };
     if (modal.mode === "edit") {
-      const saved = await api.actualizarProfesional(modal.profesional.id, body);
-      setProfesionales((current) => current.map((item) => (item.id === saved.id ? saved : item)));
+      await api.actualizarProfesional(modal.profesional.id, body);
+      listado.recargar();
       mostrarAviso({ tipo: "exito", titulo: "Profesional actualizado", mensaje: `Se actualizó la información de ${formulario.nombreCompleto}.` });
     } else {
-      const saved = await api.crearProfesional(body);
-      setProfesionales((current) => [...current, saved]);
+      await api.crearProfesional(body);
+      listado.recargar();
       mostrarAviso({ tipo: "exito", titulo: "Profesional agregado", mensaje: `Se agregó a ${formulario.nombreCompleto} a la lista.` });
     }
     cerrarModalProfesional();
@@ -77,7 +59,7 @@ export default function Profesionales() {
   async function eliminarProfesional(profesional) {
     try {
       await api.eliminarProfesional(profesional.id);
-      setProfesionales((current) => current.filter(({ id }) => id !== profesional.id));
+      listado.recargar();
       mostrarAviso({ tipo: "exito", titulo: "Profesional eliminado", mensaje: `${profesional.nombre} ${profesional.apellido} fue eliminado de la lista.` });
       setPendienteEliminar(null);
     } catch (error) {
@@ -91,7 +73,7 @@ export default function Profesionales() {
     setEnviandoValoracion(true);
     try {
       const saved = await api.valorarProfesional(pendienteValorar.id, puntuacionSeleccionada);
-      setProfesionales((current) => current.map((item) => item.id === saved.id ? saved : item));
+      listado.recargar();
       setPendienteValorar(null);
       setPuntuacionSeleccionada(0);
       mostrarAviso({ tipo: "exito", titulo: "Valoración guardada", mensaje: `Valoraste a ${saved.nombre} ${saved.apellido} con ${puntuacionSeleccionada} estrellas.` });
@@ -111,19 +93,9 @@ export default function Profesionales() {
         </div>
 
         <div className="profesionales__toolbar">
-          <SelectDesplegable
-            label="Tipo de profesional"
-            placeholder="Tipo"
-            value={tipoSeleccionado}
-            options={opcionesFiltro}
-            onChange={(value) => { setTipoSeleccionado(value); resetPage(); }}
-            icon={peopleIcon}
-            className="profesionales__filter"
-            triggerClassName="profesionales__filter-trigger"
-            iconClassName="profesionales__filter-icon"
-            chevronClassName="profesionales__filter-arrow"
-            optionsClassName="profesionales__filter-options"
-          />
+          <input type="search" value={busqueda} maxLength={255} aria-label="Buscar profesionales"
+            placeholder="Buscar profesional o profesión..." onChange={(evento) => setBusqueda(evento.target.value)} />
+          <select aria-label="Tipo de profesional" disabled><option>Tipo · Próximamente</option></select>
 
           <Boton
             className="profesionales__new"
@@ -154,7 +126,7 @@ export default function Profesionales() {
               </tr>
             </thead>
             <tbody>
-              {pageItems.map((profesional) => (
+              {profesionales.map((profesional) => (
                 <tr key={profesional.id}>
                   <th scope="row" data-label="Profesional">
                     <div className="profesionales__identity">
@@ -239,17 +211,11 @@ export default function Profesionales() {
             </tbody>
           </table>
         </div>
-        {profesionalesVisibles.length === 0 && (
-          <p className="profesionales__empty">No hay profesionales para este tipo.</p>
-        )}
-        <Paginacion page={page} totalPages={totalPages} total={profesionalesVisibles.length} onPageChange={setPage} />
+        <EstadoListado cargando={listado.cargando} error={listado.error} alReintentar={listado.recargar} vacio={!profesionales.length} />
+        <PaginacionServidor paginacion={listado.paginacion} alCambiar={listado.cambiarPagina} />
       </section>
 
-      {error && (
-        <p className="profesionales__feedback" role="alert">
-          {error}
-        </p>
-      )}
+
 
       <ConfirmarEliminacionModal
         isOpen={Boolean(pendienteEliminar)}

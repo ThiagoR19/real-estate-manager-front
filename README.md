@@ -137,6 +137,66 @@ Si una ruta autenticada devuelve `401`, limpia la sesión y redirige a `/login`.
 
 La sesión se guarda en `localStorage` con la clave `agi-session`. El cierre de sesión llama a `POST /api/auth/logout` y luego la elimina localmente. Las imágenes que devuelve la API con rutas `/uploads/...` se convierten a URLs absolutas mediante `src/utils/assetUrl.js`.
 
+### Paginación privada de propiedades
+
+`propiedades({ pagina, limite, busqueda }, { signal })` consulta una sola página y devuelve `{ data, paginacion }`. El contrato actual, verificado en `api/propiedades/propiedades.schema.js` y `propiedades.service.js` del backend, admite exclusivamente `page` (desde 1), `limit` (1 a 12), `q` (hasta 255 caracteres) e `idInmobiliaria` (el usuario autenticado determina el alcance efectivo). La búsqueda se aplica sobre nombre, ubicación y descripción antes de `LIMIT/OFFSET`. La respuesta incluye:
+
+```json
+{
+  "status": "success",
+  "data": [],
+  "paginacion": { "pagina": 1, "limite": 12, "total": 0, "paginas": 0 }
+}
+```
+
+La pantalla usa esos metadatos, reinicia la página al buscar y espera 300 ms para agrupar cambios de búsqueda. Cancela solicitudes anteriores y descarta sus respuestas aunque la cancelación llegue tarde. Después de crear, editar o eliminar vuelve a consultar; si una página deja de existir, consulta la última válida. Los errores permiten reintentar y no se presentan como resultados vacíos.
+
+Agenda e InquilinoModal usan `SelectorPropiedad`: búsqueda remota con páginas de 12 y conservación de la selección actual fuera de los resultados. No existe una ruta privada de opciones resumidas; por eso se usa el listado paginado existente, sin descargar todas las propiedades. Inquilinos consulta por ID únicamente las propiedades de sus filas visibles para obtener imágenes, sin condicionar la carga de inquilinos a esas consultas.
+
+**Cambios pendientes del backend:**
+
+- Ampliar `GET /api/propiedades`, su esquema estricto y las condiciones SQL para filtrar por tipo, estado comercial y ubicación. Los mismos predicados deben aplicarse al listado y al `COUNT(*)`, antes de paginar. Como propuesta de contrato (aún no implementada), usar `idTipo`, `idEstadoComercial` y `ubicacion`.
+- Añadir un orden configurable validado contra una lista cerrada de columnas y sentidos; no interpolar texto libre en SQL. El orden actual es exclusivamente `p.fechaCreacion DESC`. Debe agregar `p.id DESC` como desempate estable para evitar saltos o duplicados entre páginas con fechas iguales. Cualquier otro orden también necesita un desempate por ID.
+- Incorporar ubicaciones distintas de toda la inmobiliaria en `GET /api/propiedades/catalogos`, o una ruta de facetas equivalente; no se pueden obtener las opciones de ubicación solo de la página actual.
+- Opcionalmente, incorporar `GET /api/propiedades/opciones` (ruta propuesta, actualmente inexistente), autenticada para los mismos roles y con el mismo alcance, que admita `q`, `page`, `limit` y devuelva `{ id, nombre, ubicacion }` más `paginacion`. Reduciría el contenido transferido en selectores. Otra mejora posible es incluir la primera imagen de la propiedad en el listado de inquilinos para evitar consultas por ID.
+
+Hasta que existan esas capacidades, los filtros por tipo, ubicación y estado se muestran deshabilitados y se conserva el orden del servidor. El frontend no envía los parámetros propuestos ni filtra u ordena parcialmente una página.
+
+### Otros listados privados
+
+Los servicios de agentes, inquilinos, propietarios, profesionales, reportes, contratos, documentos, inmobiliarias, administradores, pagos y cobros también devuelven `{ data, paginacion }` de **una única página**. `crearListadoPaginado` comprueba límites y metadatos y admite solo los filtros expresamente configurados según los validadores del backend. `useListadoPaginado` centraliza cancelación, protección contra respuestas antiguas, búsqueda con espera de 300 ms, reinicio a página 1 al cambiar criterios, reintento y corrección de páginas que desaparecen tras una modificación. Las pantallas vuelven a consultar después de las mutaciones.
+
+Contrato comprobado en los archivos `api/<módulo>/<módulo>.schema.js` del backend:
+
+| Endpoint | Máximo por página | Búsqueda y filtros admitidos |
+| --- | --- | --- |
+| `/agentes`, `/propietarios`, `/profesionales`, `/reportes` | 10 | `q`, `idInmobiliaria`; la sesión limita el alcance salvo los roles autorizados. |
+| `/inquilinos` | 10 | `q`. |
+| `/inmobiliarias`, `/admins` | 10 | Solo `page`, `limit`. |
+| `/contratos` | 10 | `tipo`, `estado`, `idPropiedad`, `desde`, `hasta`; no `q`. |
+| `/documentos` | 10 | El servicio de contratos usa `idContrato`, `tipo=CONTRATO`. |
+| `/visitas` | 10 | `desde`, `hasta`, `estado`, `idAgente`, `idCliente`, `idPropiedad`; no `q`. |
+| `/pagos` | 12 | `idContrato`, `estado`, `anio`; no `q`. |
+| `/cobros` | 12 | `idContrato`, `idPropietario`, `estado`, `anio`; no `q`. |
+
+La búsqueda ahora tiene el alcance que implementa cada endpoint; ya no busca en todos los campos ensamblados por el frontend. El orden es el definido por cada servicio del backend, sin reordenar una página en el cliente.
+
+- **Agenda:** `visitasDelPeriodo` es la única lectura que recorre páginas de entidades: exige `desde` y `hasta` y completa exclusivamente el período visible (incluidos los días contiguos del calendario mensual). Cancelar la consulta detiene también las páginas siguientes. Las próximas visitas programadas usan una consulta paginada independiente desde hoy. Nunca se descarga todo el historial.
+- **Mis Propiedades:** usa el catálogo resumido y autorizado de `/reportes/catalogos` como opciones de propiedades; la paginación local que queda actúa solo sobre ese catálogo. Para cada propiedad consulta la primera página de contratos y el vigente, sin reconstruir propiedades ni estadísticas descargando contratos completos. Los documentos tienen su propia paginación. Como `/reportes` no admite `idPropiedad`, el panel de reportes muestra explícitamente los de **todas** las propiedades del usuario, con paginación remota.
+- **Superadministración:** inmobiliarias, administradores y agentes tienen listados y páginas independientes. No se asocian usuarios a una inmobiliaria a partir de una página incompleta. Cada usuario identifica su inmobiliaria por ID; se mantienen las acciones de eliminación, cambio de rol e invitación. Los administradores no tienen búsqueda ni filtro por inmobiliaria porque `/admins` no los admite.
+- **Pagos y Cobros:** el historial pagina contratos y períodos por separado; permite filtrar períodos por año y consulta el detalle seleccionado por ID. Los contratos son los autorizados por `/contratos`, incluidos aquellos sin movimientos, que muestran un estado vacío. Los conteos por estado usan `paginacion.total` de consultas de una fila para el contrato completo, sin contar solo los períodos visibles. La cola de pagos en revisión también tiene paginación remota y total del servidor. Los listados resumidos de personas y contratos disponibles para registrar pagos mantienen sus endpoints específicos existentes.
+- **Resúmenes:** Propietarios conserva `/propietarios/resumen`; Agentes obtiene los totales de visitas de hoy y canceladas de los metadatos de consultas de una fila. Mis Propiedades obtiene los contratos y ventas vigentes de metadatos. Los indicadores sin una consulta global compatible se muestran como `—`, nunca como un conteo parcial de la página.
+
+Pendientes adicionales del backend (son propuestas; el frontend **no envía** estos parámetros):
+
+1. Ampliar `/agentes` con filtro por `idArea` y proporcionar `/agentes/resumen` para agentes activos y pendientes. Añadir ID como desempate al orden por apellido y nombre.
+2. Ampliar `/inquilinos` con filtros por `idPropiedad`, `activo` y vencimiento contractual, y un resumen de activos, inactivos, contratos vigentes y vencimientos próximos. El vencimiento exige filtrar por fecha de fin del contrato, no por un rango de solapamiento. Añadir ID como desempate al orden actual.
+3. Ampliar `/profesionales` con filtro por profesión y un catálogo global de profesiones de la inmobiliaria.
+4. Ampliar `/reportes` con `idPropiedad` y `idEstado` y aplicar esos filtros también al conteo. Permitiría recuperar la vista de reportes de la propiedad seleccionada y contar pendientes sin descargar los reportes. Ninguno de esos parámetros está admitido por el esquema estricto actual.
+5. Añadir `idInmobiliaria` a `/admins` y un total de personal por inmobiliaria para recuperar agrupaciones anidadas completas sin recorrer todos los administradores. La búsqueda de inmobiliarias y administradores también necesita soporte explícito de `q` en esquema y SQL.
+6. Proveer un resumen de pagos por contrato que cuente comprobantes enviados con la misma regla del negocio. El listado actual no filtra por existencia/envío de comprobante; ese indicador permanece en `—`. Los demás conteos por estado sí se consultan completos.
+7. Si el catálogo resumido de propiedades del propietario crece, agregar un endpoint paginado específico para sus propiedades/opciones, con los mismos permisos de `/reportes/catalogos`.
+
 Para usar `VITE_API_URL` desde un servidor distinto, el backend debe permitir el origen del frontend mediante `FRONT_URL`. En producción, hay que publicar el contenido de `dist/` y configurar el servidor web para devolver `index.html` en rutas internas de la aplicación; el proxy de Vite solo existe durante `npm run dev`.
 
 ## Google y activación de cuentas
@@ -153,8 +213,9 @@ El registro con Google aparece únicamente después de verificar el DNI de una i
 | `npm run build` | Compila la aplicación en `dist/`. |
 | `npm run preview` | Sirve una vista previa de `dist/`. |
 | `npm run lint` | Ejecuta ESLint sobre el proyecto. |
+| `npm test` | Pruebas de contrato de paginación, filtros, metadatos y cancelación, sin API ni dependencias adicionales. |
 
-No hay un script de pruebas automatizadas en el `package.json` del frontend. Para comprobar cambios de interfaz, ejecutar al menos `npm run build` y `npm run lint`, y revisar en el navegador los flujos afectados con el backend activo.
+Las pruebas usan el ejecutor de Node y módulos VM para sustituir solo el transporte HTTP; Node muestra una advertencia de función experimental por `--experimental-vm-modules`. Para comprobar cambios de interfaz, ejecutar también `npm run build` y `npm run lint`, y revisar en el navegador los flujos afectados con el backend activo.
 
 ## Problemas frecuentes
 
