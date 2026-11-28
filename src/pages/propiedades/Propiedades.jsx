@@ -1,21 +1,34 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
-import { plusIcon } from "../../assets/icons";
-import { PropiedadModal, ConfirmarEliminacionModal, Boton, TarjetaPropiedadSimple, Paginacion, mostrarAviso } from "../../components";
+import { houseIcon, locationDotIcon, plusIcon, tagIcon } from "../../assets/icons";
+import { PropiedadModal, ConfirmarEliminacionModal, Boton, FiltroListado, TarjetaPropiedadSimple, Paginacion, mostrarAviso } from "../../components";
 import { api } from "../../services/api.js";
 import usePropiedadesPaginadas from "../../hooks/usePropiedadesPaginadas.js";
 import "./Propiedades.css";
 
 export default function Propiedades() {
   const [, navegar] = useLocation();
-  const [catalogos, setCatalogos] = useState({ tipos: [], estados: [], agentes: [] });
+  const [catalogos, setCatalogos] = useState({ tipos: [], estados: [], agentes: [], ubicaciones: [] });
+  const [filtros, setFiltros] = useState({});
   const [cargandoCatalogos, setCargandoCatalogos] = useState(true);
   const [errorCatalogos, setErrorCatalogos] = useState("");
   const [revisionCatalogos, setRevisionCatalogos] = useState(0);
   const [modal, setModal] = useState(null);
   const [pendienteEliminar, setPendienteEliminar] = useState(null);
   const [eliminando, setEliminando] = useState(false);
-  const { propiedades, paginacion, error, cargando, cambiarBusqueda, cambiarPagina, recargar } = usePropiedadesPaginadas();
+  const { propiedades, paginacion, error, cargando, cambiarBusqueda, cambiarPagina, recargar: recargarListado } = usePropiedadesPaginadas(filtros);
+  const opcionesTipo = catalogos.tipos.map(({ id, nombre }) => ({ valor: id, etiqueta: nombre }));
+  const opcionesEstado = catalogos.estados.map(({ id, nombre }) => ({ valor: id, etiqueta: nombre }));
+  const opcionesUbicacion = (catalogos.ubicaciones ?? []).map((ubicacion) => ({ valor: ubicacion, etiqueta: ubicacion }));
+
+  function recargar() {
+    recargarListado();
+    setRevisionCatalogos((actual) => actual + 1);
+  }
+
+  function cambiarFiltro(nombre, valor) {
+    setFiltros((actuales) => ({ ...actuales, [nombre]: valor }));
+  }
 
   useEffect(() => {
     const buscar = (evento) => cambiarBusqueda(evento.detail || "");
@@ -80,17 +93,20 @@ export default function Propiedades() {
           <p>Gestiona la información de todas las propiedades</p>
         </div>
         <div className="propiedades__toolbar" aria-label="Filtros de propiedades">
-          {["Tipo", "Ubicación", "Estado"].map((nombre) => (
-            <select key={nombre} className="propiedades__filter" aria-label={nombre} disabled title="Filtro aún no disponible">
-              <option>{nombre} · Próximamente</option>
-            </select>
-          ))}
+          <FiltroListado etiqueta="Tipo" todos="Todos" opciones={opcionesTipo} icono={houseIcon} prefijo="propiedades"
+            valueClassName="propiedades__filter-label" chevronClassName="propiedades__filter-chevron propiedades__icon"
+            valor={filtros.idTipo} alCambiar={(valor) => cambiarFiltro("idTipo", valor)} />
+          <FiltroListado etiqueta="Ubicación" todos="Todas" opciones={opcionesUbicacion} icono={locationDotIcon} prefijo="propiedades"
+            valueClassName="propiedades__filter-label" chevronClassName="propiedades__filter-chevron propiedades__icon"
+            valor={filtros.ubicacion} alCambiar={(valor) => cambiarFiltro("ubicacion", valor)} />
+          <FiltroListado etiqueta="Estado" todos="Todos" opciones={opcionesEstado} icono={tagIcon} prefijo="propiedades"
+            valueClassName="propiedades__filter-label" chevronClassName="propiedades__filter-chevron propiedades__icon"
+            valor={filtros.idEstadoComercial} alCambiar={(valor) => cambiarFiltro("idEstadoComercial", valor)} />
           <Boton className="propiedades__new-button" onClick={() => setModal({ mode: "create", propiedad: null })}
             disabled={!puedeCrear} icon={plusIcon} text="Nueva Propiedad" />
         </div>
       </section>
 
-      <p className="propiedades__nota">Más recientes primero. Los filtros por tipo, ubicación y estado y otros órdenes aún no están disponibles.</p>
       {errorCatalogos && (
         <p className="propiedades__nota" role="alert">
           No se pudieron cargar los datos del formulario: {errorCatalogos}{" "}

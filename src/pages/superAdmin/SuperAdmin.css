@@ -302,20 +302,31 @@
 }
 
 .super-admin__activation-link {
-  min-height: 32px;
-  margin-top: 9px;
-  padding: 5px 8px;
-  border: 1px solid #bfd5ff;
-  border-radius: 6px;
-  background: #eff6ff;
-  color: #174ea6;
-  font-size: 12px !important;
-  font-weight: 600;
+  position: absolute;
+  top: 17px;
+  right: 64px;
+  display: grid;
+  place-items: center;
+  width: 39px;
+  height: 39px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--azulClaroInfo);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25) !important;
   cursor: pointer;
 }
 
 .super-admin__activation-link:hover {
-  background: #dbeafe;
+  filter: brightness(0.95);
+}
+
+.super-admin__activation-icon {
+  width: 18px;
+  height: 18px;
+  background: var(--azulOscInfo);
+  -webkit-mask: var(--icono-enlace) center / contain no-repeat;
+  mask: var(--icono-enlace) center / contain no-repeat;
 }
 
 .super-admin__activation-notice {
@@ -519,34 +530,4 @@
   .super-admin__inmobiliaria h2 {
     font-size: 18px;
   }
-}
-.super-admin__personal {
-  margin-top: 24px;
-  padding-top: 16px;
-  border-top: 1px solid #dfe6ed;
-}
-
-.super-admin__personal > input {
-  width: min(100%, 360px);
-  min-height: 40px;
-  margin-bottom: 16px;
-  padding: 8px 12px;
-  border: 1px solid #cdd8e6;
-  border-radius: 8px;
-  font: inherit;
-}
-
-.super-admin__personal .super-admin__admin {
-  flex: 0 1 260px;
-}
-
-.super-admin__personal .super-admin__admin > button {
-  display: block;
-  min-height: 32px;
-  margin-top: 10px;
-  border: 1px solid #cdd8e6;
-  border-radius: 6px;
-  background: #f7fafe;
-  color: inherit;
-  cursor: pointer;
 }

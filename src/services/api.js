@@ -1,11 +1,11 @@
 import { conceptosPago, crearConceptoPago, inquilinosConAlquiler, propietariosConAlquiler, prepararPago, crearPago, modificarPago, eliminarPago, aprobarPago, rechazarPago, prepararCobro, crearCobro, modificarCobro, eliminarCobro, subirComprobanteCobro, marcarCobroPagado } from "./pagosYCobros.js";
 import { inmobiliarias, todosLosAdministradores, todosLosAgentes, crearInmobiliaria, eliminarInmobiliaria, renombrarInmobiliaria, crearAdministrador, eliminarAdministrador, generarEnlaceAdministrador, administradorAAgente, agenteAAdministrador } from "./inmobiliarias.js";
 import { catalogosPropiedades, propiedades, propiedad, archivosPropiedad, crearPropiedad, actualizarPropiedad, eliminarPropiedad, subirArchivosPropiedad, renombrarDocumentoPropiedad, eliminarArchivoPropiedad, descargarDocumentoPropiedad, obtenerPropiedad } from "./propiedades.js";
-import { inquilinos, inquilino, archivosInquilino, crearInquilino, generarEnlaceInquilino, actualizarInquilino, eliminarInquilino, subirArchivosInquilino, eliminarArchivoInquilino, descargarDocumentoInquilino } from "./inquilinos.js";
+import { inquilinos, propiedadesConInquilinos, inquilino, archivosInquilino, crearInquilino, generarEnlaceInquilino, actualizarInquilino, eliminarInquilino, subirArchivosInquilino, eliminarArchivoInquilino, descargarDocumentoInquilino } from "./inquilinos.js";
 import { login, loginGoogle, registrar, registrarGoogle, verificarDniInvitacion, cerrarSesion } from "./login.js";
 import { propietarios, resumenPropietarios, crearPropietario, generarEnlacePropietario, actualizarPropietario, eliminarPropietario } from "./propietarios.js";
 import { visitas, visitasDelPeriodo, clientesVisitas, crearClienteVisita, crearVisita, actualizarVisita, cancelarVisita } from "./visitas.js";
-import { profesionales, crearProfesional, actualizarProfesional, eliminarProfesional, valorarProfesional } from "./profesionales.js";
+import { profesionales, profesiones, crearProfesional, actualizarProfesional, eliminarProfesional, valorarProfesional } from "./profesionales.js";
 import { infoInmobiliaria, propiedadesDestacadas, catalogoPropiedades, propiedadPublica } from "./infoInmobiliaria.js";
 import { agentes, areas, crearAgente, generarEnlaceAgente, actualizarAgente, eliminarAgente } from "./agentes.js";
 import { conversaciones, contactos, mensajes, enviarMensaje, iniciarConversacion, marcarLeido } from "./chats.js";
@@ -62,6 +62,7 @@ export const api = {
   actualizarContrasena,
   actualizarFotoPerfil,
   inquilinos,
+  propiedadesConInquilinos,
   inquilino,
   archivosInquilino,
   crearInquilino,
@@ -72,6 +73,7 @@ export const api = {
   eliminarArchivoInquilino,
   descargarDocumentoInquilino,
   profesionales,
+  profesiones,
   crearProfesional,
   actualizarProfesional,
   eliminarProfesional,

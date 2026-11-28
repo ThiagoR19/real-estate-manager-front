@@ -23,7 +23,7 @@ export default function TarjetaActividad({ className = "dashboard-agente__card d
   useEffect(() => {
     let vigente = true;
     const hoy = new Date().toLocaleDateString("en-CA");
-    api.visitas({ desde: hoy, estado: "Programada", page, limit: VISITAS_POR_PAGINA })
+    api.visitas({ pagina: page, limite: VISITAS_POR_PAGINA, filtros: { desde: hoy, estado: "Programada" } })
       .then((resultado) => {
         if (!vigente) return;
         setVisitas(resultado.data);

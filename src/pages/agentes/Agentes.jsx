@@ -1,9 +1,10 @@
 import { assetUrl } from "../../utils/assetUrl.js";
 import { useEffect, useState } from "react";
 import { clockIcon, calendarIcon, envelopeIcon, locationDotIcon, magnifyingGlassIcon, peopleIcon, phoneIcon, plusIcon, xIcon } from "../../assets/icons";
-import { Boton, PildoraResumen, GestionModal, AccionesModal, CampoModal, EntradaModal, ModalSelect, ConfirmarEliminacionModal, AccionesEntidad, AvisoEnlaceActivacion, mostrarAviso } from "../../components";
+import { Boton, FiltroListado, PildoraResumen, GestionModal, AccionesModal, CampoModal, EntradaModal, ModalSelect, ConfirmarEliminacionModal, AccionesEntidad, AvisoEnlaceActivacion, mostrarAviso } from "../../components";
 import { api } from "../../services/api.js";
 import useListadoPaginado from "../../hooks/useListadoPaginado.js";
+import useTotalListado from "../../hooks/useTotalListado.js";
 import EstadoListado from "../../components/paginacion/EstadoListado.jsx";
 import PaginacionServidor from "../../components/paginacion/PaginacionServidor.jsx";
 import avatarClass from "../../utils/avatarClass.js";
@@ -141,8 +142,14 @@ export default function Agentes() {
   const [aviso, setAviso] = useState("");
   const [enlaceActivacionGenerado, setEnlaceActivacion] = useState("");
 
-  const listado = useListadoPaginado(api.agentes, { busqueda: textoBusqueda });
+  const [idArea, setIdArea] = useState();
+  const [version, setVersion] = useState(0);
+  const listado = useListadoPaginado(api.agentes, { busqueda: textoBusqueda, filtros: { idArea }, version });
   const agentes = listado.datos;
+  const agentesActivos = useTotalListado(api.agentes, { estado: "ACTIVO" }, { version });
+  const agentesPendientes = useTotalListado(api.agentes, { estado: "PENDIENTE_ACTIVACION" }, { version });
+  const opcionesZona = areas.map((area) => ({ valor: area.id, etiqueta: area.nombre }));
+  const recargarTodo = () => setVersion((actual) => actual + 1);
   const hoy = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Argentina/Buenos_Aires" }).format(new Date());
   const visitasHoy = useListadoPaginado(api.visitas, { filtros: { desde: hoy, hasta: hoy }, limite: 1 });
   const visitasCanceladas = useListadoPaginado(api.visitas, { filtros: { estado: "Cancelada" }, limite: 1 });
@@ -158,7 +165,7 @@ export default function Agentes() {
       modal.mode === "edit"
         ? await api.actualizarAgente(modal.persona.id, body)
         : await api.crearAgente(body);
-    listado.recargar();
+    recargarTodo();
     const urlActivacion = enlaceActivacion(result.activacion);
     setEnlaceActivacion(modal.mode === "edit" ? "" : urlActivacion);
     setAviso(modal.mode === "edit" || !urlActivacion ? "" : "Agente creado. Copiá el enlace y compartilo para que active su cuenta.");
@@ -184,7 +191,7 @@ export default function Agentes() {
   async function eliminarAgente() {
     try {
       await api.eliminarAgente(pendienteEliminar.id);
-      listado.recargar();
+      recargarTodo();
       setPendienteEliminar(null);
       setEnlaceActivacion("");
       setAviso("");
@@ -206,13 +213,13 @@ export default function Agentes() {
           <div className="agentes__summary" aria-label="Resumen de agentes">
             <PildoraResumen
               label="Agentes activos"
-              value="—"
+              value={agentesActivos}
               icon={peopleIcon}
               tone="success"
             />
             <PildoraResumen
               label="Pendientes"
-              value="—"
+              value={agentesPendientes}
               icon={clockIcon}
               tone="warning"
             />
@@ -231,7 +238,6 @@ export default function Agentes() {
           </div>
         </section>
 
-        <p>Los totales de agentes activos y pendientes y el filtro por zona aún no están disponibles.</p>
         <EstadoListado error={errorAreas} alReintentar={() => setRevisionAreas((actual) => actual + 1)} />
         <EstadoListado error={visitasHoy.error || visitasCanceladas.error} alReintentar={() => { visitasHoy.recargar(); visitasCanceladas.recargar(); }} />
         <section className="agentes__toolbar" aria-label="Buscar y filtrar agentes">
@@ -246,7 +252,8 @@ export default function Agentes() {
               onChange={(event) => setTextoBusqueda(event.target.value)}
             />
           </label>
-          <select className="agentes__filter" aria-label="Zona" disabled><option>Zona · Próximamente</option></select>
+          <FiltroListado etiqueta="Zona" todos="Todas las zonas" opciones={opcionesZona} icono={locationDotIcon} prefijo="agentes"
+            valor={idArea} alCambiar={setIdArea} />
           <Boton
             className="agentes__new-button"
             onClick={() => setModal({ mode: "create", persona: null })}

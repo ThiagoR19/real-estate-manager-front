@@ -26,7 +26,8 @@ export default function ReportesAgente() {
   const [modalCreacionAbierto, setModalCreacionAbierto] = useState(false);
   const [idReporteActivo, setIdReporteActivo] = useState(null);
   const [textoBusqueda, setTextoBusqueda] = useState("");
-  const listado = useListadoPaginado(api.reportes, { busqueda: textoBusqueda, limite: 5 });
+  const [propiedadSeleccionada, setPropiedadSeleccionada] = useState("");
+  const listado = useListadoPaginado(api.reportes, { busqueda: textoBusqueda, filtros: { idPropiedad: propiedadSeleccionada }, limite: 5 });
   const reportes = listado.datos;
   const cargando = listado.cargando;
   const errorVisible = listado.error || error;
@@ -122,7 +123,11 @@ export default function ReportesAgente() {
           </label>
           <label className="reportes__propiedad-filter">
             <span className="reportes__propiedad-icon"><img src={houseIcon} alt="" aria-hidden="true" /></span>
-            <select disabled aria-label="Filtrar reportes por propiedad"><option>Propiedad · Próximamente</option></select>
+            <select value={propiedadSeleccionada} onChange={(event) => setPropiedadSeleccionada(event.target.value)}
+              aria-label="Filtrar reportes por propiedad">
+              <option value="">Todas las propiedades</option>
+              {catalogos.propiedades.map((propiedad) => <option key={propiedad.id} value={propiedad.id}>{propiedad.nombre}</option>)}
+            </select>
           </label>
           <div className="reportes__list">
             {reportes.map((report) => (

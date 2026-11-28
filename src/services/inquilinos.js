@@ -2,7 +2,8 @@ import { crearListadoPaginado } from "./listadoPaginado.js";
 import { http, request } from "../utils/request.js";
 import { limpiarSesion, obtenerSesion } from "../utils/sesion.js";
 
-export const inquilinos = crearListadoPaginado("/inquilinos");
+export const inquilinos = crearListadoPaginado("/inquilinos", { filtrosPermitidos: ["idPropiedad", "estado", "contrato", "vencimiento"] });
+export const propiedadesConInquilinos = () => request("/inquilinos/propiedades").then(({ data }) => data);
 
 export const inquilino = (id) => request(`/inquilinos/${id}`).then(({ data }) => data);
 export const archivosInquilino = (id) => request(`/inquilinos/${id}/archivos`).then(({ data }) => data);

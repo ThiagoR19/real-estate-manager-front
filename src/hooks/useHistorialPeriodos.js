@@ -68,6 +68,7 @@ export default function useHistorialPeriodos(listar, consultar, tipo = "pagos") 
   const totalContrato = useListadoPaginado(listar, { filtros: { idContrato }, limite: 1, habilitada: Boolean(idContrato), version: recargas });
   const aprobados = useListadoPaginado(listar, { filtros: { idContrato, estado: tipo === "cobros" ? "Liquidado" : "Aprobado" }, limite: 1, habilitada: Boolean(idContrato), version: recargas });
   const rechazados = useListadoPaginado(listar, { filtros: { idContrato, estado: tipo === "cobros" ? "Pendiente" : "Rechazado" }, limite: 1, habilitada: Boolean(idContrato), version: recargas });
+  const enviados = useListadoPaginado(listar, { filtros: { idContrato, enviados: "1" }, limite: 1, habilitada: Boolean(idContrato) && tipo === "pagos", version: recargas });
   const cargando = catalogo.cargando || listado.cargando;
   const items = cargando ? null : listado.datos;
   const delContrato = listado.datos;
@@ -112,8 +113,8 @@ export default function useHistorialPeriodos(listar, consultar, tipo = "pagos") 
     items, error: catalogo.error || listado.error, contratos, contrato, delContrato, anios, anio,
     cambiarAnio: setAnio, seleccionado, detalle, cargando,
     catalogo, listado,
-    totales: { total: totalContrato.paginacion?.total, aprobados: aprobados.paginacion?.total, rechazados: rechazados.paginacion?.total },
-    errorResumen: totalContrato.error || aprobados.error || rechazados.error,
+    totales: { total: totalContrato.paginacion?.total, aprobados: aprobados.paginacion?.total, rechazados: rechazados.paginacion?.total, enviados: enviados.paginacion?.total },
+    errorResumen: totalContrato.error || aprobados.error || rechazados.error || enviados.error,
     cargandoDetalle: Boolean(clave) && estado.clave !== clave,
     errorDetalle: estado.clave === clave ? estado.error : null,
     elegirContrato, moverContrato, elegir: setPeriodoElegido, incorporar, recargar,

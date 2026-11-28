@@ -7,16 +7,9 @@ export const visitas = crearListadoPaginado("/visitas", {
 
 export async function visitasDelPeriodo({ filtros } = {}, { signal } = {}) {
   if (!filtros?.desde || !filtros?.hasta) throw new Error("Indicá el período de la agenda.");
-  const filas = [];
-  let paginacion;
-  for (let pagina = 1; ; pagina++) {
-    signal?.throwIfAborted();
-    const resultado = await visitas({ pagina, filtros }, { signal });
-    filas.push(...resultado.data);
-    paginacion = resultado.paginacion;
-    if (pagina >= paginacion.paginas) break;
-  }
-  return { data: filas, paginacion: { pagina: 1, limite: Math.max(1, filas.length), total: filas.length, paginas: filas.length ? 1 : 0 } };
+  const parametros = new URLSearchParams({ desde: filtros.desde, hasta: filtros.hasta });
+  const { data } = await request(`/visitas/calendario?${parametros}`, { signal });
+  return { data, paginacion: { pagina: 1, limite: Math.max(1, data.length), total: data.length, paginas: data.length ? 1 : 0 } };
 }
 
 export const clientesVisitas = () => request("/visitas/clientes").then(({ data }) => data);

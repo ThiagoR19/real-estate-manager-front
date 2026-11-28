@@ -2,7 +2,7 @@ import { request } from "../utils/request.js";
 import { crearListadoPaginado } from "./listadoPaginado.js";
 
 export const inmobiliarias = crearListadoPaginado("/inmobiliarias", { admiteBusqueda: false });
-export const todosLosAdministradores = crearListadoPaginado("/admins", { admiteBusqueda: false });
+export const todosLosAdministradores = crearListadoPaginado("/admins", { admiteBusqueda: false, filtrosPermitidos: ["idInmobiliaria"] });
 export const todosLosAgentes = crearListadoPaginado("/agentes", { filtrosPermitidos: ["idInmobiliaria"] });
 
 export const crearInmobiliaria = (body) => request("/inmobiliarias", { method: "POST", body }).then(({ data }) => data);

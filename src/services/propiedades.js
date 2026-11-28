@@ -4,7 +4,7 @@ import { limpiarSesion, obtenerSesion } from "../utils/sesion.js";
 
 export const catalogosPropiedades = () => request("/propiedades/catalogos").then(({ data }) => data);
 
-export const propiedades = crearListadoPaginado("/propiedades", { limitePredeterminado: 12, limiteMaximo: 12, filtrosPermitidos: ["idInmobiliaria"] });
+export const propiedades = crearListadoPaginado("/propiedades", { limitePredeterminado: 12, limiteMaximo: 12, filtrosPermitidos: ["idInmobiliaria", "idTipo", "idEstadoComercial", "ubicacion"] });
 
 export const propiedad = (id, { signal } = {}) => request(`/propiedades/${id}`, { signal }).then(({ data }) => data);
 export const archivosPropiedad = (id) => request(`/propiedades/${id}/archivos`).then(({ data }) => data);

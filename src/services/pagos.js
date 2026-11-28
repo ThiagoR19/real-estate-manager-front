@@ -2,7 +2,7 @@ import { request } from "../utils/request.js";
 import { crearListadoPaginado } from "./listadoPaginado.js";
 import { descargarArchivo, obtenerArchivo } from "../utils/descargarArchivo.js";
 
-export const pagos = crearListadoPaginado("/pagos", { limitePredeterminado: 12, limiteMaximo: 12, admiteBusqueda: false, filtrosPermitidos: ["idContrato", "estado", "anio"] });
+export const pagos = crearListadoPaginado("/pagos", { limitePredeterminado: 12, limiteMaximo: 12, admiteBusqueda: false, filtrosPermitidos: ["idContrato", "estado", "anio", "enviados"] });
 export const pago = (id, { signal } = {}) => request(`/pagos/${id}`, { signal }).then(({ data }) => data);
 
 export const contratosDisponiblesParaPago = () => request("/pagos/contratos-disponibles").then(({ data }) => data);

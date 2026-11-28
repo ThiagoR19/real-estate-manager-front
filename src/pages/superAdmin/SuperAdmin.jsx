@@ -1,10 +1,9 @@
 import { assetUrl } from "../../utils/assetUrl.js";
 import { useCallback, useState } from "react";
 import { api } from "../../services/api";
-import useListadoPaginado from "../../hooks/useListadoPaginado.js";
-import EstadoListado from "../../components/paginacion/EstadoListado.jsx";
-import PaginacionServidor from "../../components/paginacion/PaginacionServidor.jsx";
-import PersonalSuperAdmin from "./PersonalSuperAdmin.jsx";
+import useListadoInfinito from "../../hooks/useListadoInfinito.js";
+import CargaAlFinal from "../../components/paginacion/CargaAlFinal.jsx";
+import MiembrosInmobiliaria from "./MiembrosInmobiliaria.jsx";
 
 import initials from "../../utils/initials";
 
@@ -35,28 +34,28 @@ function enlaceActivacion(activacion) {
 }
 
 export default function SuperAdmin() {
-  const listado = useListadoPaginado(api.inmobiliarias);
+  const [version, setVersion] = useState(0);
+  const [versionMiembros, setVersionMiembros] = useState({});
+  const listado = useListadoInfinito(api.inmobiliarias, { version });
   const inmobiliarias = listado.datos;
   const mensaje = listado.error;
-  const [versionUsuarios, setVersionUsuarios] = useState(0);
   const [expanded, setExpanded] = useState({});
   const [modal, setModal] = useState(null);
   const [aEliminar, setAEliminar] = useState(null);
   const [enviando, setEnviando] = useState(false);
 
-  const recargarListado = listado.recargar;
-  const cargar = useCallback(() => {
-    recargarListado();
-    setVersionUsuarios((actual) => actual + 1);
-  }, [recargarListado]);
-  const reintentar = listado.recargar;
+  const recargarInmobiliarias = useCallback(() => setVersion((actual) => actual + 1), []);
+  const recargarMiembros = useCallback((idInmobiliaria) => {
+    setVersionMiembros((actuales) => ({ ...actuales, [idInmobiliaria]: (actuales[idInmobiliaria] ?? 0) + 1 }));
+  }, []);
+  const reintentar = listado.reintentar;
 
-  async function ejecutar(peticion, exito) {
+  async function ejecutar(peticion, exito, recargar = recargarInmobiliarias) {
     try {
       await peticion();
       setModal(null);
       mostrarAviso({ tipo: "exito", titulo: exito });
-      cargar();
+      recargar();
     } catch (error) {
       mostrarAviso({ tipo: "error", titulo: "No se pudo completar la acción", mensaje: error.message });
     }
@@ -88,7 +87,7 @@ export default function SuperAdmin() {
         },
       });
       mostrarAviso({ tipo: "exito", titulo: "Invitación creada", mensaje: "Copiá el enlace y compartilo con el administrador." });
-      cargar();
+      recargarMiembros(inmobiliaria.id);
     } catch (error) {
       mostrarAviso({ tipo: "error", titulo: "No se pudo crear la invitación", mensaje: error.message });
     } finally {
@@ -137,7 +136,7 @@ export default function SuperAdmin() {
     }
     const nombre = `${elemento.nombre} ${elemento.apellido}`;
     await ejecutar(() => (elemento.tipo === "admin" ? api.eliminarAdministrador(elemento.id) : api.eliminarAgente(elemento.id)), `${elemento.rol} ${nombre} eliminado`,
-    );
+      () => recargarMiembros(elemento.idInmobiliaria));
   }
 
   function tituloConfirmacion() {
@@ -151,7 +150,8 @@ export default function SuperAdmin() {
   function cambiarRol(persona, rol) {
     if (rol === persona.rol) return;
     const nombre = `${persona.nombre} ${persona.apellido}`;
-    ejecutar(() => (persona.tipo === "agente" ? api.agenteAAdministrador(persona.id) : api.administradorAAgente(persona.id)), `${nombre} ahora es ${rol}`,);
+    ejecutar(() => (persona.tipo === "agente" ? api.agenteAAdministrador(persona.id) : api.administradorAAgente(persona.id)), `${nombre} ahora es ${rol}`,
+      () => recargarMiembros(persona.idInmobiliaria));
   }
 
   function guardarModal(valor) {
@@ -180,7 +180,7 @@ export default function SuperAdmin() {
             <PildoraResumen
               icon={building}
               label="Inmobiliarias activas"
-              value={listado.paginacion?.total ?? "—"}
+              value={listado.total ?? "—"}
               tone="success"
             />
             <Boton
@@ -200,10 +200,9 @@ export default function SuperAdmin() {
               </button>
             </p>
           )}
-          {!listado.cargando && !mensaje && !inmobiliarias.length && (
+          {!listado.cargando && !listado.hayMas && !mensaje && !inmobiliarias.length && (
             <p className="super-admin__no-admins">Todavía no hay inmobiliarias registradas.</p>
           )}
-          <EstadoListado cargando={listado.cargando} />
           {inmobiliarias.map((inmobiliaria) => {
             const abierta = Boolean(expanded[inmobiliaria.id]);
             return (
@@ -241,16 +240,21 @@ export default function SuperAdmin() {
                     </button>
                   </div>
                 </header>
-                {abierta && <p className="super-admin__no-admins">
-                  Consultá Administradores o Agentes más abajo para gestionar usuarios de la inmobiliaria #{inmobiliaria.id}.
-                </p>}
+                {abierta && (
+                  <MiembrosInmobiliaria
+                    inmobiliaria={inmobiliaria}
+                    version={`${version}-${versionMiembros[inmobiliaria.id] ?? 0}`}
+                    alEliminar={eliminarPersona}
+                    alCambiarRol={cambiarRol}
+                    alGenerarEnlace={generarEnlaceAdmin}
+                  />
+                )}
               </article>
             );
           })}
+          {listado.cargando && <p className="super-admin__no-admins" role="status">Cargando inmobiliarias...</p>}
+          <CargaAlFinal activa={listado.hayMas && !listado.cargando && !mensaje} alLlegar={listado.cargarMas} />
         </section>
-        <PaginacionServidor paginacion={listado.paginacion} alCambiar={listado.cambiarPagina} />
-        <PersonalSuperAdmin tipo="admin" version={versionUsuarios} alEliminar={eliminarPersona} alCambiarRol={cambiarRol} alGenerarEnlace={generarEnlaceAdmin} />
-        <PersonalSuperAdmin tipo="agente" version={versionUsuarios} alEliminar={eliminarPersona} alCambiarRol={cambiarRol} alGenerarEnlace={generarEnlaceAdmin} />
       </section>
       {modal && (
         <InmobiliariaModal

@@ -1,9 +1,9 @@
 import useListadoPaginado from "../../hooks/useListadoPaginado.js";
 import EstadoListado from "../../components/paginacion/EstadoListado.jsx";
 import PaginacionServidor from "../../components/paginacion/PaginacionServidor.jsx";
-import { useState } from "react";
-import { envelopeIcon, phoneIcon, penIcon, plusIcon, starIcon, trashCanIcon, } from "../../assets/icons/index.js";
-import {ConfirmarEliminacionModal,GestionModal,AccionesModal,Boton,mostrarAviso,} from "../../components/index.js";
+import { useEffect, useState } from "react";
+import { envelopeIcon, peopleIcon, phoneIcon, penIcon, plusIcon, starIcon, trashCanIcon, } from "../../assets/icons/index.js";
+import {ConfirmarEliminacionModal,GestionModal,AccionesModal,Boton,FiltroListado,mostrarAviso,} from "../../components/index.js";
 import ProfesionalModal from "./ProfesionalModal";
 import "./Profesionales.css";
 
@@ -13,8 +13,20 @@ import avatarClass from "../../utils/avatarClass.js";
 
 export default function Profesionales() {
   const [busqueda, setBusqueda] = useState("");
-  const listado = useListadoPaginado(api.profesionales, { busqueda });
+  const [profesion, setProfesion] = useState();
+  const [opcionesProfesion, setOpcionesProfesion] = useState([]);
+  const [version, setVersion] = useState(0);
+  const listado = useListadoPaginado(api.profesionales, { busqueda, filtros: { profesion }, version });
   const profesionales = listado.datos;
+  const recargarTodo = () => setVersion((actual) => actual + 1);
+
+  useEffect(() => {
+    let activa = true;
+    api.profesiones()
+      .then((filas) => activa && setOpcionesProfesion(filas.map((nombre) => ({ valor: nombre, etiqueta: nombre }))))
+      .catch((error) => activa && mostrarAviso({ tipo: "advertencia", titulo: "No se pudo cargar el filtro de tipos", mensaje: error.message }));
+    return () => { activa = false; };
+  }, [version]);
   const [modal, setModal] = useState({ isOpen: false, mode: "create", profesional: null });
   const [pendienteEliminar, setPendienteEliminar] = useState(null);
   const [pendienteValorar, setPendienteValorar] = useState(null);
@@ -46,11 +58,11 @@ export default function Profesionales() {
     };
     if (modal.mode === "edit") {
       await api.actualizarProfesional(modal.profesional.id, body);
-      listado.recargar();
+      recargarTodo();
       mostrarAviso({ tipo: "exito", titulo: "Profesional actualizado", mensaje: `Se actualizó la información de ${formulario.nombreCompleto}.` });
     } else {
       await api.crearProfesional(body);
-      listado.recargar();
+      recargarTodo();
       mostrarAviso({ tipo: "exito", titulo: "Profesional agregado", mensaje: `Se agregó a ${formulario.nombreCompleto} a la lista.` });
     }
     cerrarModalProfesional();
@@ -59,7 +71,7 @@ export default function Profesionales() {
   async function eliminarProfesional(profesional) {
     try {
       await api.eliminarProfesional(profesional.id);
-      listado.recargar();
+      recargarTodo();
       mostrarAviso({ tipo: "exito", titulo: "Profesional eliminado", mensaje: `${profesional.nombre} ${profesional.apellido} fue eliminado de la lista.` });
       setPendienteEliminar(null);
     } catch (error) {
@@ -73,7 +85,7 @@ export default function Profesionales() {
     setEnviandoValoracion(true);
     try {
       const saved = await api.valorarProfesional(pendienteValorar.id, puntuacionSeleccionada);
-      listado.recargar();
+      recargarTodo();
       setPendienteValorar(null);
       setPuntuacionSeleccionada(0);
       mostrarAviso({ tipo: "exito", titulo: "Valoración guardada", mensaje: `Valoraste a ${saved.nombre} ${saved.apellido} con ${puntuacionSeleccionada} estrellas.` });
@@ -95,7 +107,9 @@ export default function Profesionales() {
         <div className="profesionales__toolbar">
           <input type="search" value={busqueda} maxLength={255} aria-label="Buscar profesionales"
             placeholder="Buscar profesional o profesión..." onChange={(evento) => setBusqueda(evento.target.value)} />
-          <select aria-label="Tipo de profesional" disabled><option>Tipo · Próximamente</option></select>
+          <FiltroListado etiqueta="Tipo" todos="Todos los tipos" opciones={opcionesProfesion} icono={peopleIcon} prefijo="profesionales"
+            valor={profesion} alCambiar={setProfesion}
+            chevronClassName="profesionales__filter-arrow" optionsClassName="profesionales__filter-options" />
 
           <Boton
             className="profesionales__new"

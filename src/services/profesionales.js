@@ -1,7 +1,8 @@
 import { crearListadoPaginado } from "./listadoPaginado.js";
 import { request } from "../utils/request.js";
 
-export const profesionales = crearListadoPaginado("/profesionales", { filtrosPermitidos: ["idInmobiliaria"] });
+export const profesionales = crearListadoPaginado("/profesionales", { filtrosPermitidos: ["idInmobiliaria", "profesion"] });
+export const profesiones = () => request("/profesionales/profesiones").then(({ data }) => data);
 
 export const crearProfesional = (body) => request("/profesionales", { method: "POST", body }).then(({ data }) => data);
 export const actualizarProfesional = (id, body) => request(`/profesionales/${id}`, { method: "PUT", body }).then(({ data }) => data);

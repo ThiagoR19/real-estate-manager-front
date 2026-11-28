@@ -1,16 +1,20 @@
 import { assetUrl } from "../../utils/assetUrl.js";
 import { useEffect, useState } from "react";
 import useListadoPaginado from "../../hooks/useListadoPaginado.js";
+import useTotalListado from "../../hooks/useTotalListado.js";
 import EstadoListado from "../../components/paginacion/EstadoListado.jsx";
 import PaginacionServidor from "../../components/paginacion/PaginacionServidor.jsx";
-import { calendarIcon, envelopeIcon, fileLinesIcon, houseIcon, magnifyingGlassIcon, peopleIcon, phoneIcon, plusIcon, xIcon } from "../../assets/icons";
-import { ConfirmarEliminacionModal, AccionesEntidad, AvisoEnlaceActivacion, Boton, PildoraResumen, mostrarAviso } from "../../components";
+import { calendarIcon, envelopeIcon, fileLinesIcon, houseIcon, locationDotIcon, magnifyingGlassIcon, peopleIcon, phoneIcon, plusIcon, xIcon } from "../../assets/icons";
+import { ConfirmarEliminacionModal, AccionesEntidad, AvisoEnlaceActivacion, Boton, FiltroListado, PildoraResumen, mostrarAviso } from "../../components";
 import InquilinoModal from "./InquilinoModal";
 import "./Inquilinos.css";
 import { api } from "../../services/api.js";
 
 import avatarClass from "../../utils/avatarClass";
 import initials from "../../utils/initials.js";
+
+const OPCIONES_ESTADO = [{ valor: "activo", etiqueta: "Activo" }, { valor: "inactivo", etiqueta: "Inactivo" }];
+const OPCIONES_VENCIMIENTO = [{ valor: "mes", etiqueta: "Este mes" }, { valor: "30dias", etiqueta: "Próximos 30 días" }];
 
 function interpretarFecha(value) {
   if (!value) return null;
@@ -136,16 +140,39 @@ export default function Inquilinos() {
   const [modal, setModal] = useState({ isOpen: false, mode: "create", inquilino: null });
   const [aviso, setAviso] = useState("");
   const [enlaceActivacionGenerado, setEnlaceActivacion] = useState("");
-  const listado = useListadoPaginado(api.inquilinos, { busqueda: textoBusqueda });
+  const [filtros, setFiltros] = useState({});
+  const [version, setVersion] = useState(0);
+  const [opcionesPropiedad, setOpcionesPropiedad] = useState([]);
+  const listado = useListadoPaginado(api.inquilinos, { busqueda: textoBusqueda, filtros, version });
   const inquilinos = listado.datos;
   const [pendienteEliminar, setPendienteEliminar] = useState(null);
+  const activos = useTotalListado(api.inquilinos, { estado: "activo" }, { version });
+  const inactivos = useTotalListado(api.inquilinos, { estado: "inactivo" }, { version });
+  const conContratoVigente = useTotalListado(api.inquilinos, { contrato: "Vigente" }, { version });
+  const vencenPronto = useTotalListado(api.inquilinos, { vencimiento: "30dias" }, { version });
 
   const summaryCards = [
-    { label: "Inquilinos activos", value: "—", icon: peopleIcon, tone: "success" },
-    { label: "Inquilinos inactivos", value: "—", icon: xIcon, tone: "warning" },
-    { label: "Contratos vigentes", value: "—", icon: fileLinesIcon, tone: "info" },
-    { label: "Vencen en 30 días", value: "—", icon: calendarIcon, tone: "danger" },
+    { label: "Inquilinos activos", value: activos, icon: peopleIcon, tone: "success" },
+    { label: "Inquilinos inactivos", value: inactivos, icon: xIcon, tone: "warning" },
+    { label: "Contratos vigentes", value: conContratoVigente, icon: fileLinesIcon, tone: "info" },
+    { label: "Vencen en 30 días", value: vencenPronto, icon: calendarIcon, tone: "danger" },
   ];
+
+  useEffect(() => {
+    let activa = true;
+    api.propiedadesConInquilinos()
+      .then((propiedades) => activa && setOpcionesPropiedad(propiedades.map(({ id, nombre }) => ({ valor: id, etiqueta: nombre }))))
+      .catch((error) => activa && mostrarAviso({ tipo: "advertencia", titulo: "No se pudo cargar el filtro de propiedades", mensaje: error.message }));
+    return () => { activa = false; };
+  }, [version]);
+
+  function cambiarFiltro(nombre, valor) {
+    setFiltros((actuales) => ({ ...actuales, [nombre]: valor }));
+  }
+
+  function recargarTodo() {
+    setVersion((actual) => actual + 1);
+  }
   const idsPropiedadesVisibles = [...new Set(inquilinos.map((inquilino) => inquilino.idPropiedad).filter(Boolean))].join(",");
 
   useEffect(() => {
@@ -170,7 +197,7 @@ export default function Inquilinos() {
     if (!pendienteEliminar) return;
     try {
       await api.eliminarInquilino(pendienteEliminar.id);
-      listado.recargar();
+      recargarTodo();
       mostrarAviso({
         tipo: "exito",
         titulo: "Inquilino eliminado",
@@ -230,7 +257,7 @@ export default function Inquilinos() {
         })
       : await api.crearInquilino(body);
     const result = { inquilino: raw, activationUrl: enlaceActivacion(raw.activacion) };
-    listado.recargar();
+    recargarTodo();
     const titular = `${raw.nombre || ""} ${raw.apellido || ""}`.trim() || `DNI ${raw.dni}`;
     setAviso(!existing && result.activationUrl
       ? `Se creó el acceso de ${titular}. Compartí el enlace con su titular.`
@@ -259,7 +286,6 @@ export default function Inquilinos() {
           </div>
         </section>
 
-        <p>Los indicadores globales y filtros avanzados aún no están disponibles.</p>
         <section className="inquilinos__toolbar" aria-label="Buscar y filtrar inquilinos">
           <label className="inquilinos__search">
             <img src={magnifyingGlassIcon} alt="" />
@@ -272,9 +298,12 @@ export default function Inquilinos() {
               onChange={(event) => setTextoBusqueda(event.target.value)}
             />
           </label>
-          {["Propiedad", "Estado", "Vencimiento"].map((nombre) => (
-            <select key={nombre} className="inquilinos__filter" aria-label={nombre} disabled><option>{nombre} · Próximamente</option></select>
-          ))}
+          <FiltroListado etiqueta="Propiedad" todos="Todas las propiedades" opciones={opcionesPropiedad} icono={houseIcon} prefijo="inquilinos"
+            valor={filtros.idPropiedad} alCambiar={(valor) => cambiarFiltro("idPropiedad", valor)} />
+          <FiltroListado etiqueta="Estado" todos="Todos los estados" opciones={OPCIONES_ESTADO} icono={locationDotIcon} prefijo="inquilinos"
+            valor={filtros.estado} alCambiar={(valor) => cambiarFiltro("estado", valor)} />
+          <FiltroListado etiqueta="Vencimiento" todos="Todos los vencimientos" opciones={OPCIONES_VENCIMIENTO} icono={calendarIcon} prefijo="inquilinos"
+            valor={filtros.vencimiento} alCambiar={(valor) => cambiarFiltro("vencimiento", valor)} />
           <Boton
             className="inquilinos__new-button"
             onClick={abrirModalCreacion}

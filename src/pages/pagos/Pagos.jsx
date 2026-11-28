@@ -42,7 +42,7 @@ function EstadoPago({ estado, destacado = false }) {
 function ResumenPagos({ abierto, totales }) {
   const total = totales.total ?? "—";
   const tarjetas = [
-    { titulo: "Comprobantes enviados", icono: fileLinesIcon, tono: "blue", cantidad: "—" },
+    { titulo: "Comprobantes enviados", icono: fileLinesIcon, tono: "blue", cantidad: totales.enviados ?? "—" },
     { titulo: "Pagos aprobados", icono: checkIcon, tono: "green", cantidad: totales.aprobados ?? "—" },
     { titulo: "Pagos rechazados", icono: xIcon, tono: "red", cantidad: totales.rechazados ?? "—" },
   ];
@@ -59,7 +59,7 @@ function ResumenPagos({ abierto, totales }) {
           <b>{cantidad}/{total}</b>
         </article>
       ))}
-      <p>Resumen del contrato completo. El total de comprobantes enviados aún no está disponible.</p>
+      <p>Resumen del contrato completo.</p>
     </section>
   );
 }

@@ -1,4 +1,5 @@
 import useListadoPaginado from "../../hooks/useListadoPaginado.js";
+import useTotalListado from "../../hooks/useTotalListado.js";
 import EstadoListado from "../../components/paginacion/EstadoListado.jsx";
 import PaginacionServidor from "../../components/paginacion/PaginacionServidor.jsx";
 import { assetUrl } from "../../utils/assetUrl.js";
@@ -57,9 +58,10 @@ export default function MisPropiedades() {
     filtros: { idContrato: activeContractId, tipo: "CONTRATO" }, habilitada: Boolean(activeContractId),
   });
   const visibleDocuments = documentos.datos;
-  // La API aún no filtra reportes por propiedad. Este panel muestra el listado global autorizado.
-  const listadoReportes = useListadoPaginado(api.reportes);
+  const listadoReportes = useListadoPaginado(api.reportes, { filtros: { idPropiedad }, habilitada: Boolean(idPropiedad) });
   const visibleReports = listadoReportes.datos;
+  const reportesPendientes = useTotalListado(api.reportes, { pendientes: "1" });
+  const pendientesDePropiedad = useTotalListado(api.reportes, { idPropiedad, pendientes: "1" }, { habilitada: Boolean(idPropiedad) });
   const tenant = activeContract?.participantes?.filter((persona) => persona.rol === "Inquilino")
     .map((persona) => `${persona.nombre} ${persona.apellido}`).join(", ") || "—";
 
@@ -107,7 +109,7 @@ export default function MisPropiedades() {
           <PildoraResumen
             icon={xIcon}
             label="Reportes pendientes"
-            value="—"
+            value={reportesPendientes}
             tone="danger"
           />
           <PildoraResumen
@@ -141,7 +143,6 @@ export default function MisPropiedades() {
         </p>
       )}
 
-      <p className="propiedades-propietario__message">El panel de reportes incluye todas tus propiedades. El total de reportes pendientes aún no está disponible.</p>
       <EstadoListado error={contratosVigentes.error || ventasVigentes.error} alReintentar={() => { contratosVigentes.recargar(); ventasVigentes.recargar(); }} />
       {property && (
         <div className="propiedades-propietario__layout">
@@ -262,15 +263,15 @@ export default function MisPropiedades() {
           >
             <header>
               <img className="propiedades-propietario__icon" src={toolboxIcon} alt="" aria-hidden="true" />
-              <h2 id="propiedades-propietario-reportes-title">Reportes de tus propiedades</h2>
+              <h2 id="propiedades-propietario-reportes-title">Reportes de inquilinos</h2>
               <span className="propiedades-propietario__pending">
-                {listadoReportes.paginacion?.total ?? "—"} reportes
+                {pendientesDePropiedad} pendientes
               </span>
             </header>
             <div className="propiedades-propietario__report-list">
               {!listadoReportes.cargando && !listadoReportes.error && !visibleReports.length && (
                 <p className="propiedades-propietario__message">
-                  No hay reportes para tus propiedades.
+                  No hay reportes para esta propiedad.
                 </p>
               )}
               {visibleReports.map((report) => (

@@ -21,6 +21,7 @@ import PropiedadModal from "./propiedad/PropiedadModal";
 import TarjetaPropiedadSimple from "./tarjetaPropiedadSimple/TarjetaPropiedadSimple";
 import TituloSeccion from "./tituloSeccion/TituloSeccion";
 import SelectDesplegable from "./select/SelectDesplegable";
+import FiltroListado from "./select/FiltroListado";
 import Skeleton from "./skeleton/Skeleton";
 import Estadisticas from "./estadisticas/Estadisticas";
 import PildoraResumen from "./pildoraResumen/PildoraResumen";
@@ -61,6 +62,7 @@ export {
   TarjetaPropiedadSimple,
   TituloSeccion,
   SelectDesplegable,
+  FiltroListado,
   Skeleton,
   Estadisticas,
   PildoraResumen,
